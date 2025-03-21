@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/BitCryptic/static/css/main.fa228f94.css",
-    "main.js": "/BitCryptic/static/js/main.959b66bb.js",
+    "main.css": "/BitCryptic/static/css/main.6b6f7de8.css",
+    "main.js": "/BitCryptic/static/js/main.4d4e97da.js",
     "static/js/453.b78a820f.chunk.js": "/BitCryptic/static/js/453.b78a820f.chunk.js",
     "index.html": "/BitCryptic/index.html",
-    "main.fa228f94.css.map": "/BitCryptic/static/css/main.fa228f94.css.map",
-    "main.959b66bb.js.map": "/BitCryptic/static/js/main.959b66bb.js.map",
+    "main.6b6f7de8.css.map": "/BitCryptic/static/css/main.6b6f7de8.css.map",
+    "main.4d4e97da.js.map": "/BitCryptic/static/js/main.4d4e97da.js.map",
     "453.b78a820f.chunk.js.map": "/BitCryptic/static/js/453.b78a820f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fa228f94.css",
-    "static/js/main.959b66bb.js"
+    "static/css/main.6b6f7de8.css",
+    "static/js/main.4d4e97da.js"
   ]
 }
