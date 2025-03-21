@@ -11,11 +11,11 @@ const MAX_ATTEMPTS = 3;
 const crocStages = [
   process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_water.png",
   process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_0.png",
-  process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_1.png", // Using stage 1 as fallback for stage 2
-  process.env.PUBLIC_URL + "/crypticcroc/CC_Stage_Final.png"
+  process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_1.png",
+  process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_final.png"
 ];
 
-export default function CrypticCrocGame() {
+export default function CrypticCrocGame({ dateString }) {
     // eslint-disable-next-line
   const [currentClueIndex, setCurrentClueIndex] = useState(0);
   const [userInput, setUserInput] = useState(Array(clues[0].answer.length).fill(""));
@@ -94,11 +94,12 @@ export default function CrypticCrocGame() {
 
   return (
     <div className="flex flex-col items-center p-5">
-      <h1 className="text-2xl font-bold mb-4">Bit Cryptic</h1>
-      
       {/* Clue Window */}
       <div className="clue-window mb-6">
-        <div className="clue-title-bar">Today's Bit Cryptic Clue</div>
+        <div className="clue-title-bar flex flex-col items-center">
+          <div className="text-lg font-semibold">{dateString}</div>
+          <div className="text-xs text-gray-500 bg-gray-100 border border-gray-300 rounded-full px-4 py-1 mt-1">by Joshua Rollins</div>
+        </div>
         <div className="clue-content">
           <p className="text-lg">
             {showDefinition ? (

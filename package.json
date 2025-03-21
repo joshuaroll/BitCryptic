@@ -2,6 +2,7 @@
   "name": "bitcryptic",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://joshuaroll.github.io/BitCryptic",
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/postcss7-compat": "^2.2.17",
@@ -13,14 +14,16 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "postcss": "^8.5.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
     "react-scripts": "^5.0.1",
     "tailwind-merge": "^3.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -46,6 +49,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.8.8",
+    "gh-pages": "^6.3.0",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-preset-env": "^10.1.5",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
