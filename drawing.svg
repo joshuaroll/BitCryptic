@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    sodipodi:docname="drawing.svg"
+   inkscape:export-filename="drawing.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +36,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="135.17857"
+     inkscape:cx="135"
      inkscape:cy="95.535714"
      inkscape:document-units="mm"
      inkscape:showpageshadow="2"
@@ -60,16 +63,16 @@
      xml:space="preserve"
      style="font-size:26.4583px;line-height:1.25;font-family:sans-serif;stroke-width:0.264583"
      x="4.2522316"
-     y="28.820683"
+     y="30.937351"
      id="text1"><tspan
        sodipodi:role="line"
        id="tspan1"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.4583px;font-family:Rockwell;-inkscape-font-specification:Rockwell;fill:#3885d5;fill-opacity:1;stroke-width:0.264583"
        x="4.2522316"
-       y="28.820683">BC</tspan></text>
+       y="30.937351">BC</tspan></text>
   <text
      xml:space="preserve"
      transform="scale(0.26458333)"
      id="text2"
-     style="line-height:1.25;font-family:sans-serif;font-size:64px;text-orientation:auto;white-space:pre;shape-inside:url(#rect2)" />
+     style="font-size:64px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect2);display:inline" />
 </svg>
