@@ -135,7 +135,7 @@ code {
 /* Clue Window Styles */
 .clue-window {
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   background: #f0f0f0;
   border: 2px solid #8b5cf6;
   border-radius: 8px;
@@ -149,7 +149,7 @@ code {
   color: white;
   padding: 8px 16px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 24px;
   text-align: center;
   border-bottom: 1px solid #8b5cf6;
 }
@@ -158,4 +158,27 @@ code {
   padding: 16px;
   background: white;
   text-align: center;
+  font-weight: bold;
+}
+
+.definition-highlight {
+  background-color: #e9d5ff;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.definition-button {
+  background-color: #9333ea;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.definition-button:hover {
+  background-color: #7c3aed;
 }

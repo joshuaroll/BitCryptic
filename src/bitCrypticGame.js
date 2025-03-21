@@ -25,6 +25,7 @@ export default function CrypticCrocGame() {
   const [guessedWords, setGuessedWords] = useState(new Set());
   const [isSolved, setIsSolved] = useState(false);
   const [guessHistory, setGuessHistory] = useState([]);
+  const [showDefinition, setShowDefinition] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -68,17 +69,21 @@ export default function CrypticCrocGame() {
       return;
     }
     
-    setGuessedWords(prev => new Set(prev).add(userAnswer));
-    setGuessHistory([...guessHistory, userAnswer]);
-    
     if (userAnswer === clues[currentClueIndex].answer) {
       setFlashColors(Array(clues[currentClueIndex].answer.length).fill("bg-green-500"));
       setMessage(`🎉 Congratulations! You solved it!`);
       setIsSolved(true);
+      setGuessedWords(prev => new Set(prev).add(userAnswer));
+      setGuessHistory([...guessHistory, userAnswer]);
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     } else {
       setFlashColors(Array(clues[currentClueIndex].answer.length).fill("bg-red-500"));
       setAttempts(prev => prev + 1);
+      // Only add to guess history if it's not the last attempt
+      if (attempts < MAX_ATTEMPTS - 1) {
+        setGuessedWords(prev => new Set(prev).add(userAnswer));
+        setGuessHistory([...guessHistory, userAnswer]);
+      }
       setMessage(
         attempts + 1 >= MAX_ATTEMPTS 
           ? <div>🐊 Better luck tomorrow! 🐊</div>
@@ -95,7 +100,22 @@ export default function CrypticCrocGame() {
       <div className="clue-window mb-6">
         <div className="clue-title-bar">Today's Bit Cryptic Clue</div>
         <div className="clue-content">
-          <p className="text-lg">{clues[currentClueIndex].clue} ({clues[currentClueIndex].answer.length})</p>
+          <p className="text-lg">
+            {showDefinition ? (
+              <>
+                Church's first meter echos <span className="definition-highlight">bright sound</span>
+              </>
+            ) : (
+              "Church's first meter echos bright sound"
+            )}
+            {" "}({clues[currentClueIndex].answer.length})
+          </p>
+          <button 
+            className="definition-button"
+            onClick={() => setShowDefinition(!showDefinition)}
+          >
+            {showDefinition ? "Hide Definition" : "Show Definition"}
+          </button>
         </div>
       </div>
       
