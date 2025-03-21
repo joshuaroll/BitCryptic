@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Bit Cryptic",
+  "name": "Bit Cryptic - Cryptic Crossword Clues Daily",
   "icons": [
     {
       "src": "favicon.ico",
