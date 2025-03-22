@@ -121,8 +121,46 @@ export default function CrypticCrocGame({ dateString }) {
       </div>
       
       {/* Main game area with flex layout */}
-      <div className="flex gap-8 items-start">
-        {/* Left side - Bit Tank */}
+      <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
+        {/* Game Controls */}
+        <div className="flex flex-col items-center w-full lg:w-auto lg:mt-10">
+          <div className="flex gap-2 mb-4 justify-center">
+            {userInput.map((char, index) => (
+              <input
+                key={index}
+                type="text"
+                maxLength="1"
+                value={char}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                ref={(el) => (inputRefs.current[index] = el)}
+                className={`w-12 h-12 text-center border-2 border-gray-400 rounded-md text-xl font-bold transition-transform duration-300 transform ${flashColors[index]} ${flashColors[index] === 'bg-red-500' ? 'shake' : ''}`}
+                disabled={isSolved || attempts >= MAX_ATTEMPTS}
+              />
+            ))}
+          </div>
+          
+          <Button 
+            className="w-full max-w-xs mb-4 text-lg py-6" 
+            onClick={checkAnswer} 
+            disabled={isSolved || attempts >= MAX_ATTEMPTS}
+          >
+            Check Answer
+          </Button>
+
+          {message && <p className="text-lg font-semibold mb-4 text-center">{message}</p>}
+
+          <div className="w-full max-w-xs">
+            <h2 className="text-xl font-bold mb-2">Previous Guesses:</h2>
+            <ul className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
+              {guessHistory.map((guess, index) => (
+                <li key={index} className="text-lg text-gray-700 mb-1 font-mono text-center">{guess}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bit Tank */}
         <div className={`croc-window ${attempts === 1 ? 'danger-1' : attempts === 2 ? 'danger-2' : attempts >= 3 ? 'danger-3' : ''}`}>
           <div className="croc-title-bar">
             {attempts === 0 && "The Bit Tank is still"}
@@ -143,44 +181,6 @@ export default function CrypticCrocGame({ dateString }) {
             />
           </div>
           <p className="text-lg mt-2 text-center">Attempts: <span className="text-blue-500 font-bold">{attempts} / {MAX_ATTEMPTS}</span></p>
-        </div>
-
-        {/* Right side - Game Controls */}
-        <div className="flex flex-col items-center mt-10">
-          <div className="flex gap-2 mb-4">
-            {userInput.map((char, index) => (
-              <input
-                key={index}
-                type="text"
-                maxLength="1"
-                value={char}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                ref={(el) => (inputRefs.current[index] = el)}
-                className={`w-12 h-12 text-center border-2 border-gray-400 rounded-md text-xl font-bold transition-transform duration-300 transform ${flashColors[index]} ${flashColors[index] === 'bg-red-500' ? 'shake' : ''}`}
-                disabled={isSolved || attempts >= MAX_ATTEMPTS}
-              />
-            ))}
-          </div>
-          
-          <Button 
-            className="w-full mb-4 text-lg py-6" 
-            onClick={checkAnswer} 
-            disabled={isSolved || attempts >= MAX_ATTEMPTS}
-          >
-            Check Answer
-          </Button>
-
-          {message && <p className="text-lg font-semibold mb-4">{message}</p>}
-
-          <div className="w-full">
-            <h2 className="text-xl font-bold mb-2">Previous Guesses:</h2>
-            <ul className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-              {guessHistory.map((guess, index) => (
-                <li key={index} className="text-lg text-gray-700 mb-1 font-mono">{guess}</li>
-              ))}
-            </ul>
-          </div>
         </div>
       </div>
     </div>
