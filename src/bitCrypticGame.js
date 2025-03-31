@@ -3,7 +3,12 @@ import { Button } from "./components/ui/button";
 import confetti from "canvas-confetti";
 
 const clues = [
-  { clue: "Church's first meter echos bright sound", answer: "CHIME" },
+  { 
+    clue: "Tracked train takes in light", 
+    answer: "tan",
+    definition: "takes in light"
+  },
+  // { clue: "Church's first meter echos bright sound", answer: "CHIME" },
   // Add more clues here
 ];
 
@@ -97,17 +102,18 @@ export default function CrypticCrocGame({ dateString }) {
       {/* Clue Window */}
       <div className="clue-window mb-6">
         <div className="clue-title-bar flex flex-col items-center">
-          <div className="text-lg font-semibold">{dateString}</div>
+          <div className="text-lg font-semibold">Tuesday, March 25, 2025</div>
           <div className="text-xs text-gray-500 bg-gray-100 border border-gray-300 rounded-full px-4 py-1 mt-1">by Joshua Rollins</div>
         </div>
         <div className="clue-content">
           <p className="text-lg">
             {showDefinition ? (
               <>
-                Church's first meter echos <span className="definition-highlight">bright sound</span>
+                <span className="definition-highlight">{clues[currentClueIndex].definition}</span>
+                {clues[currentClueIndex].clue.slice(clues[currentClueIndex].definition.length)}
               </>
             ) : (
-              "Church's first meter echos bright sound"
+              clues[currentClueIndex].clue
             )}
             {" "}({clues[currentClueIndex].answer.length})
           </p>
