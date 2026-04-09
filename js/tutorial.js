@@ -53,15 +53,18 @@ const BCWTutorial = (() => {
       if (localStorage.getItem(STORAGE_KEY) === 'true') return;
     } catch {}
 
-    // Wait for loading screen to finish
-    const checkLoading = setInterval(() => {
-      const loadingScreen = document.getElementById('loading-screen');
-      if (loadingScreen && loadingScreen.classList.contains('hidden')) {
-        clearInterval(checkLoading);
-        // Small delay after loading
-        setTimeout(start, 1000);
-      }
-    }, 500);
+    // Wait for intro story to complete (not just loading screen)
+    // The tutorial should show AFTER the player finishes washing ashore
+    const checkReady = setInterval(() => {
+      try {
+        const progress = JSON.parse(localStorage.getItem('bitcryptic_progress') || '{}');
+        if (progress.introComplete) {
+          clearInterval(checkReady);
+          // Delay so unlock animations finish first
+          setTimeout(start, 2000);
+        }
+      } catch {}
+    }, 1000);
   }
 
   function start() {

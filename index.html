@@ -307,26 +307,14 @@
       100% { transform: scale(2.5); opacity: 0; }
     }
 
-    /* Subtle ocean surface animation */
+    /* Ocean surface - no visible lines, just subtle color shift */
     .ocean::after {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        repeating-linear-gradient(
-          95deg,
-          transparent,
-          transparent 80px,
-          rgba(255,255,255,0.015) 80px,
-          rgba(255,255,255,0.015) 82px
-        );
-      animation: oceanSway 12s ease-in-out infinite alternate;
+      background: none;
       z-index: 1;
-    }
-
-    @keyframes oceanSway {
-      0% { transform: translateX(-20px) skewX(-0.3deg); }
-      100% { transform: translateX(20px) skewX(0.3deg); }
+      pointer-events: none;
     }
 
     /* ─── Top HUD ─── */
@@ -1901,7 +1889,7 @@
 
   <!-- HUD Top Bar -->
   <div class="hud-top">
-    <div class="hud-title">BIT CRYPTIC WORLD <span>v2.0</span></div>
+    <div class="hud-title">BIT CRYPTIC WORLD <span>v0.2</span></div>
     <div class="hud-controls">
       <button class="hud-btn" onclick="resetView()" aria-label="Reset map view">Reset View</button>
       <button class="hud-btn" onclick="BCWSharing.shareProgress()" aria-label="Share progress">Share</button>
@@ -2178,7 +2166,21 @@
           <ellipse cx="400" cy="880" rx="6" ry="3" fill="#3a8ab0" opacity="0.2" />
           <ellipse cx="470" cy="940" rx="5" ry="2.5" fill="#3a8ab0" opacity="0.18" />
 
-          <!-- (Dock peninsula removed) -->
+          <!-- Dock pier/jetty extending from SW coast into water -->
+          <path d="M400,960 Q420,1020 430,1080 Q435,1150 440,1220 Q445,1300 455,1380 L480,1380
+               Q470,1300 465,1220 Q460,1150 455,1080 Q445,1020 425,960 Z"
+               fill="#a07d28" opacity="0.7" />
+          <path d="M405,960 Q425,1020 435,1080 Q440,1150 445,1220 Q450,1300 460,1380 L475,1380
+               Q465,1300 460,1220 Q455,1150 450,1080 Q440,1020 420,960 Z"
+               fill="#8b6914" opacity="0.5" />
+          <!-- Pier planks -->
+          <line x1="410" y1="1000" x2="470" y2="1000" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="415" y1="1060" x2="475" y2="1060" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="420" y1="1120" x2="478" y2="1120" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="425" y1="1180" x2="480" y2="1180" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="430" y1="1240" x2="482" y2="1240" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="435" y1="1300" x2="484" y2="1300" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
+          <line x1="440" y1="1360" x2="486" y2="1360" stroke="#6b4e0a" stroke-width="2" opacity="0.3" />
 
           <!-- SE BEACH - wide arc with transitions -->
           <!-- Wet sand outer band -->
@@ -2375,13 +2377,15 @@
             <path d="M1152,742 Q1010,835 820,925 Q670,975 535,985" />
           </g>
 
-          <!-- ── Workshop → House path ── -->
-          <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#6b5a3a" stroke-width="22"
-            stroke-linecap="round" stroke-linejoin="round" opacity="0.35" />
-          <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#b8a070" stroke-width="16"
-            stroke-linecap="round" stroke-linejoin="round" opacity="0.55" />
-          <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#c8b888" stroke-width="6"
-            stroke-linecap="round" stroke-linejoin="round" opacity="0.3" />
+          <!-- ── Workshop → House path (hidden until both workshop AND house unlocked) ── -->
+          <g id="workshop-house-path" style="display:none;">
+            <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#6b5a3a" stroke-width="22"
+              stroke-linecap="round" stroke-linejoin="round" opacity="0.35" />
+            <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#b8a070" stroke-width="16"
+              stroke-linecap="round" stroke-linejoin="round" opacity="0.55" />
+            <path d="M1385,965 Q1250,955 1100,970 Q1050,980 1000,990" fill="none" stroke="#c8b888" stroke-width="6"
+              stroke-linecap="round" stroke-linejoin="round" opacity="0.3" />
+          </g>
 
           <!-- Town Square clearing -->
           <ellipse cx="1200" cy="710" rx="55" ry="35" fill="#a08050" opacity="0.3" />
@@ -3324,8 +3328,9 @@
         icon: '&#x1F332;',
         iconBg: 'linear-gradient(135deg, #2a7a2a, #1a5218)',
         desc: 'The Enigma Forest is dense, dark, and full of riddles carved into ancient trees. Strange creatures guard forgotten wordplay. Only the bravest venture deep enough to find the Riddler\'s Hollow.',
+        customStoryBtn: true,
         actions: [
-          { label: 'Enter Forest', onclick: () => { if (STORIES['forest'] && !isStoryComplete('forest')) { closePanel(); startStory('forest'); } else { alert('The rustling has quieted. The forest path remembers your footsteps.'); } }, primary: !isStoryComplete('forest') },
+          { label: isStoryComplete('forest') ? 'Replay Story' : 'Enter Forest', onclick: () => { closePanel(); startStory('forest'); }, primary: !isStoryComplete('forest') },
           { label: 'Forest Map', onclick: () => alert('The paths shift and change. No map can capture this forest.') }
         ]
       },
@@ -3582,6 +3587,12 @@
           pathEl.style.display = state.unlockedLocations.includes(requiredLoc) ? '' : 'none';
         }
       });
+      // Workshop → House path: only visible when both are unlocked
+      const whPath = document.getElementById('workshop-house-path');
+      if (whPath) {
+        const bothUnlocked = state.unlockedLocations.includes('workshop') && state.unlockedLocations.includes('house');
+        whPath.style.display = bothUnlocked ? '' : 'none';
+      }
     }
 
     // ═══════════════════════════════════
@@ -3599,7 +3610,7 @@
           {
             type: 'narrative',
             speaker: null,
-            text: 'A lantern flickers at the end of the pier. Pinned to its post is a soggy note, the ink barely legible: "WELcome TO BIT CRYPTIC WORLD. NOTHinG IS AS IT SEEMS." At the bottom, in smaller writing: ".S.P .EMOH EMOCLEW"'
+            text: 'A lantern flickers at the end of the pier. Pinned to its post is a soggy note, the ink barely legible: "WELcome TO BIT CRYPTIC WORLD. NOTHinG IS AS IT SEEMS." At the bottom, in smaller writing: "!EMOH EMOCLEW .S.P"'
           },
           {
             type: 'narrative',
@@ -3609,15 +3620,15 @@
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
-            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That line at the end. .S.P is just P.S. written backwards. And if .S.P is reversed, then the rest of that line is too. Give it a read the right way round."'
+            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That line at the end reads .S.P which is just P.S. written backwards. The whole line is reversed. Give it a read the right way round."'
           },
           {
             type: 'puzzle',
             speaker: 'Dock Keeper',
-            text: 'He holds the lantern closer so you can read the reversed postscript: ".S.P .EMOH EMOCLEW" The .S.P tells you it\'s all written backwards. What does the message say when you reverse it?',
-            answer: 'WELCOME HOME',
+            text: 'He holds the lantern closer so you can read the reversed postscript: "!EMOH EMOCLEW .S.P" The .S.P tells you it\'s all written backwards. What does the message say when you reverse it?',
+            answer: ['WELCOME HOME', 'PS WELCOME HOME', 'P.S. WELCOME HOME', 'P.S. WELCOME HOME!'],
             placeholder: 'Read it backwards...',
-            hint: 'The .S.P tells you which direction to read.',
+            hint: 'Read the whole line backwards, starting from the right.',
             wrongReactions: [
               '"Not quite. Take it letter by letter. EMOCLEW backwards is W-E-L-C-O-M-E. Now do the same for EMOH."',
               '"You\'ve almost got it. EMOCLEW is WELCOME. EMOH is HOME. Put them together."',
@@ -4566,13 +4577,12 @@
         completeBtn.textContent = step.btnText || 'Continue';
         completeBtn.classList.add('visible');
 
-        // Add share button for completed stories
-        if (currentStoryId !== '_intro') {
+        // Add share button after cafe is complete (not for early game)
+        if (currentStoryId !== '_intro' && isStoryComplete('cafe')) {
           const shareBtn = document.createElement('button');
           shareBtn.className = 'story-choice-btn';
-          shareBtn.style.borderColor = 'rgba(100,200,255,0.4)';
-          shareBtn.style.color = 'rgba(100,200,255,0.9)';
-          shareBtn.textContent = 'Share This Story';
+          shareBtn.style.cssText = 'border-color:rgba(100,200,255,0.3);color:rgba(100,200,255,0.7);font-size:0.75rem;padding:8px 14px;flex:0 1 auto;min-width:auto;';
+          shareBtn.textContent = 'Share';
           shareBtn.onclick = (e) => {
             e.stopPropagation();
             const story = STORIES[currentStoryId];
@@ -4983,8 +4993,8 @@
       const actionsEl = document.getElementById('detail-actions');
       actionsEl.innerHTML = '';
 
-      // Add story button if story exists
-      if (STORIES[id]) {
+      // Add story button if story exists — but skip if location already has a custom story trigger
+      if (STORIES[id] && !loc.customStoryBtn) {
         const storyBtn = document.createElement('button');
         if (isStoryComplete(id)) {
           storyBtn.className = 'detail-action-btn secondary';
