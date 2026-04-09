@@ -1,0 +1,308 @@
+// Docks story scenes — "Docks" (DRAFT — not live)
+// Keys: docks_0 through docks_6
+
+// Scene 0: Ocean at night, wooden dock planks, red boat rocking, stars
+STORY_SCENES['docks_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="dockSky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#050a18"/><stop offset="60%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a3a5a"/>
+  </linearGradient>
+  <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0a1628"/><stop offset="100%" stop-color="#050a18"/>
+  </linearGradient>
+  <filter id="starGlow"><feGaussianBlur stdDeviation="1.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#dockSky)"/>
+<!-- Stars -->
+<circle cx="40" cy="20" r="1" fill="#fff" opacity="0.7" filter="url(#starGlow)"><animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/></circle>
+<circle cx="120" cy="35" r="0.8" fill="#fff" opacity="0.5" filter="url(#starGlow)"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="4s" repeatCount="indefinite" begin="1s"/></circle>
+<circle cx="200" cy="12" r="1.2" fill="#fff" opacity="0.6" filter="url(#starGlow)"><animate attributeName="opacity" values="0.5;1;0.5" dur="3.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle cx="310" cy="28" r="0.8" fill="#fff" opacity="0.5" filter="url(#starGlow)"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.2s" repeatCount="indefinite" begin="2s"/></circle>
+<circle cx="390" cy="8" r="1" fill="#fff" opacity="0.6" filter="url(#starGlow)"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.8s" repeatCount="indefinite" begin="1.5s"/></circle>
+<circle cx="460" cy="40" r="0.7" fill="#fff" opacity="0.5" filter="url(#starGlow)"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite"/></circle>
+<circle cx="75" cy="55" r="0.6" fill="#fff" opacity="0.4"/><circle cx="260" cy="18" r="0.9" fill="#fff" opacity="0.5"/>
+<circle cx="440" cy="22" r="0.7" fill="#fff" opacity="0.4"/><circle cx="160" cy="50" r="0.6" fill="#fff" opacity="0.3"/>
+<!-- Ocean -->
+<rect x="0" y="140" width="500" height="120" fill="url(#oceanGrad)"/>
+<!-- Waves -->
+<path d="M0,155 Q60,148 120,155 Q180,162 240,155 Q300,148 360,155 Q420,162 500,155 L500,165 Q420,172 360,165 Q300,158 240,165 Q180,172 120,165 Q60,158 0,165Z" fill="#1a3a5a" opacity="0.4"><animate attributeName="d" values="M0,155 Q60,148 120,155 Q180,162 240,155 Q300,148 360,155 Q420,162 500,155 L500,165 Q420,172 360,165 Q300,158 240,165 Q180,172 120,165 Q60,158 0,165Z;M0,158 Q60,152 120,158 Q180,165 240,158 Q300,152 360,158 Q420,165 500,158 L500,168 Q420,175 360,168 Q300,162 240,168 Q180,175 120,168 Q60,162 0,168Z;M0,155 Q60,148 120,155 Q180,162 240,155 Q300,148 360,155 Q420,162 500,155 L500,165 Q420,172 360,165 Q300,158 240,165 Q180,172 120,165 Q60,158 0,165Z" dur="4s" repeatCount="indefinite"/></path>
+<path d="M0,175 Q50,170 100,175 Q150,180 200,175 Q250,170 300,175 Q350,180 400,175 Q450,170 500,175 L500,185 L0,185Z" fill="#0a1628" opacity="0.3"><animate attributeName="d" values="M0,175 Q50,170 100,175 Q150,180 200,175 Q250,170 300,175 Q350,180 400,175 Q450,170 500,175 L500,185 L0,185Z;M0,178 Q50,173 100,178 Q150,183 200,178 Q250,173 300,178 Q350,183 400,178 Q450,173 500,178 L500,188 L0,188Z;M0,175 Q50,170 100,175 Q150,180 200,175 Q250,170 300,175 Q350,180 400,175 Q450,170 500,175 L500,185 L0,185Z" dur="5s" repeatCount="indefinite"/></path>
+<!-- Dock planks -->
+<rect x="150" y="135" width="350" height="8" fill="#6b4e0a" rx="1"/>
+<rect x="150" y="135" width="350" height="3" fill="#8b6914" rx="1" opacity="0.6"/>
+<!-- Dock posts -->
+<rect x="180" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="180" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<rect x="300" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="300" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<rect x="420" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="420" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<!-- Rope details -->
+<path d="M183,125 Q240,132 303,125" fill="none" stroke="#a07d28" stroke-width="1" opacity="0.5"/>
+<path d="M303,125 Q360,132 423,125" fill="none" stroke="#a07d28" stroke-width="1" opacity="0.5"/>
+<!-- Red boat -->
+<g transform="translate(30,130)">
+  <animateTransform attributeName="transform" type="translate" values="30,130;30,133;30,130" dur="3s" repeatCount="indefinite"/>
+  <g transform="scale(2)">
+  <!-- Hull body — wide rowboat shape, tapered bow left, flat stern right -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0 L75,14 Q70,22 55,24 L15,24 Q4,22 0,16 Z" fill="#9b2020"/>
+  <!-- Hull lighter upper half -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0 L75,8 Q70,6 55,5 L15,5 Q4,6 0,10 Z" fill="#c0392b"/>
+  <!-- Plank lines across hull -->
+  <path d="M6,8 Q40,6 72,8" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.5"/>
+  <path d="M3,13 Q40,11 74,13" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.5"/>
+  <path d="M8,18 Q40,16 70,18" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.4"/>
+  <!-- Gunwale (top rim) — thick dark rail -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0" fill="none" stroke="#6b1515" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Gunwale highlight -->
+  <path d="M2,9 Q5,4 11,1 L71,-2 L74,0" fill="none" stroke="#d44a3a" stroke-width="1" opacity="0.4"/>
+  <!-- Stern board (flat back) -->
+  <line x1="75" y1="0" x2="75" y2="14" stroke="#6b1515" stroke-width="2"/>
+  <!-- Portholes -->
+  <circle cx="25" cy="10" r="3.5" fill="#1a3a5a" stroke="#a07d28" stroke-width="1"/>
+  <circle cx="25" cy="10" r="2" fill="#2a5a7a" opacity="0.7"/>
+  <circle cx="45" cy="9" r="3.5" fill="#1a3a5a" stroke="#a07d28" stroke-width="1"/>
+  <circle cx="45" cy="9" r="2" fill="#2a5a7a" opacity="0.7"/>
+  <circle cx="63" cy="9" r="3" fill="#1a3a5a" stroke="#a07d28" stroke-width="0.8"/>
+  <circle cx="63" cy="9" r="1.8" fill="#2a5a7a" opacity="0.7"/>
+  <!-- Mast -->
+  <rect x="35" y="-58" width="3" height="60" fill="#6b4e0a"/>
+  <rect x="35.5" y="-58" width="1.5" height="60" fill="#8b6914" opacity="0.3"/>
+  <!-- Flag -->
+  <polygon points="38,-58 60,-50 38,-42" fill="#ffd700" opacity="0.85"/>
+  <polygon points="38,-58 60,-50 38,-42" fill="none" stroke="#c8a020" stroke-width="0.5" opacity="0.5"/>
+  <!-- Puzzle piece on flag -->
+  <path d="M46,-52 L50,-52 Q51,-52 51,-51 L51,-50 Q52.5,-50.5 54,-50 Q55.5,-49.5 54,-49 L54,-47 Q54,-46 53,-46 L49,-46 Q49,-47.5 48,-47.5 Q47,-47.5 47,-46 L44,-46 Q43,-46 43,-47 L43,-51 Q43,-52 44,-52 Z" fill="#c8a020" opacity="0.7"/>
+  <!-- Mast cap -->
+  <circle cx="36.5" cy="-58" r="2" fill="#a07d28"/>
+  <!-- Seat planks -->
+  <rect x="18" y="3" width="18" height="1.5" rx="0.5" fill="#a07d28" opacity="0.4"/>
+  <rect x="48" y="2.5" width="14" height="1.5" rx="0.5" fill="#a07d28" opacity="0.35"/>
+  </g>
+</g>
+<!-- Water reflection shimmer -->
+<rect x="100" y="180" width="40" height="1" fill="#1a3a5a" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="2.5s" repeatCount="indefinite"/></rect>
+<rect x="250" y="190" width="30" height="1" fill="#1a3a5a" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite" begin="1s"/></rect>
+</svg>`;
+
+// Scene 1: Lantern at end of pier with soggy note
+STORY_SCENES['docks_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="dockSky1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#050a18"/><stop offset="60%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a3a5a"/>
+  </linearGradient>
+  <radialGradient id="lanternGlow1" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.6"/><stop offset="40%" stop-color="#ffeaa7" stop-opacity="0.2"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="warmGlow1"><feGaussianBlur stdDeviation="3" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#dockSky1)"/>
+<!-- Stars (fewer, lantern dominates) -->
+<circle cx="60" cy="25" r="0.8" fill="#fff" opacity="0.4"/><circle cx="180" cy="15" r="0.6" fill="#fff" opacity="0.3"/>
+<circle cx="400" cy="30" r="0.7" fill="#fff" opacity="0.35"/><circle cx="470" cy="18" r="0.6" fill="#fff" opacity="0.3"/>
+<!-- Ocean -->
+<rect x="0" y="150" width="500" height="110" fill="#0a1628"/>
+<path d="M0,160 Q60,154 120,160 Q180,166 240,160 Q300,154 360,160 Q420,166 500,160 L500,170 L0,170Z" fill="#1a3a5a" opacity="0.35"><animate attributeName="d" values="M0,160 Q60,154 120,160 Q180,166 240,160 Q300,154 360,160 Q420,166 500,160 L500,170 L0,170Z;M0,163 Q60,157 120,163 Q180,169 240,163 Q300,157 360,163 Q420,169 500,163 L500,173 L0,173Z;M0,160 Q60,154 120,160 Q180,166 240,160 Q300,154 360,160 Q420,166 500,160 L500,170 L0,170Z" dur="4s" repeatCount="indefinite"/></path>
+<!-- Dock planks -->
+<rect x="150" y="135" width="350" height="8" fill="#6b4e0a" rx="1"/>
+<rect x="150" y="135" width="350" height="3" fill="#8b6914" rx="1" opacity="0.6"/>
+<!-- Dock posts -->
+<rect x="180" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="180" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<rect x="300" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="300" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<rect x="420" y="120" width="6" height="40" fill="#6b4e0a"/><rect x="420" y="120" width="2" height="40" fill="#8b6914" opacity="0.4"/>
+<!-- Rope details -->
+<path d="M183,125 Q240,132 303,125" fill="none" stroke="#a07d28" stroke-width="1" opacity="0.5"/>
+<path d="M303,125 Q360,132 423,125" fill="none" stroke="#a07d28" stroke-width="1" opacity="0.5"/>
+<!-- Red boat -->
+<g transform="translate(30,130)">
+  <animateTransform attributeName="transform" type="translate" values="30,130;30,133;30,130" dur="3s" repeatCount="indefinite"/>
+  <g transform="scale(2)">
+  <!-- Hull body — wide rowboat shape, tapered bow left, flat stern right -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0 L75,14 Q70,22 55,24 L15,24 Q4,22 0,16 Z" fill="#9b2020"/>
+  <!-- Hull lighter upper half -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0 L75,8 Q70,6 55,5 L15,5 Q4,6 0,10 Z" fill="#c0392b"/>
+  <!-- Plank lines across hull -->
+  <path d="M6,8 Q40,6 72,8" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.5"/>
+  <path d="M3,13 Q40,11 74,13" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.5"/>
+  <path d="M8,18 Q40,16 70,18" fill="none" stroke="#7a1818" stroke-width="0.6" opacity="0.4"/>
+  <!-- Gunwale (top rim) — thick dark rail -->
+  <path d="M0,10 Q4,4 10,0 L72,-3 L75,0" fill="none" stroke="#6b1515" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Gunwale highlight -->
+  <path d="M2,9 Q5,4 11,1 L71,-2 L74,0" fill="none" stroke="#d44a3a" stroke-width="1" opacity="0.4"/>
+  <!-- Stern board (flat back) -->
+  <line x1="75" y1="0" x2="75" y2="14" stroke="#6b1515" stroke-width="2"/>
+  <!-- Portholes -->
+  <circle cx="25" cy="10" r="3.5" fill="#1a3a5a" stroke="#a07d28" stroke-width="1"/>
+  <circle cx="25" cy="10" r="2" fill="#2a5a7a" opacity="0.7"/>
+  <circle cx="45" cy="9" r="3.5" fill="#1a3a5a" stroke="#a07d28" stroke-width="1"/>
+  <circle cx="45" cy="9" r="2" fill="#2a5a7a" opacity="0.7"/>
+  <circle cx="63" cy="9" r="3" fill="#1a3a5a" stroke="#a07d28" stroke-width="0.8"/>
+  <circle cx="63" cy="9" r="1.8" fill="#2a5a7a" opacity="0.7"/>
+  <!-- Mast -->
+  <rect x="35" y="-58" width="3" height="60" fill="#6b4e0a"/>
+  <rect x="35.5" y="-58" width="1.5" height="60" fill="#8b6914" opacity="0.3"/>
+  <!-- Flag -->
+  <polygon points="38,-58 60,-50 38,-42" fill="#ffd700" opacity="0.85"/>
+  <polygon points="38,-58 60,-50 38,-42" fill="none" stroke="#c8a020" stroke-width="0.5" opacity="0.5"/>
+  <!-- Puzzle piece on flag -->
+  <path d="M46,-52 L50,-52 Q51,-52 51,-51 L51,-50 Q52.5,-50.5 54,-50 Q55.5,-49.5 54,-49 L54,-47 Q54,-46 53,-46 L49,-46 Q49,-47.5 48,-47.5 Q47,-47.5 47,-46 L44,-46 Q43,-46 43,-47 L43,-51 Q43,-52 44,-52 Z" fill="#c8a020" opacity="0.7"/>
+  <!-- Mast cap -->
+  <circle cx="36.5" cy="-58" r="2" fill="#a07d28"/>
+  <!-- Seat planks -->
+  <rect x="18" y="3" width="18" height="1.5" rx="0.5" fill="#a07d28" opacity="0.4"/>
+  <rect x="48" y="2.5" width="14" height="1.5" rx="0.5" fill="#a07d28" opacity="0.35"/>
+  </g>
+</g>
+<!-- Dock post with lantern at end -->
+<rect x="460" y="60" width="8" height="90" fill="#6b4e0a"/>
+<rect x="460" y="60" width="3" height="90" fill="#8b6914" opacity="0.4"/>
+<!-- Lantern -->
+<rect x="458" y="55" width="12" height="16" fill="#a07d28" rx="2" stroke="#8b6914" stroke-width="1"/>
+<rect x="460" y="58" width="8" height="10" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.7;0.9;0.6" dur="2s" repeatCount="indefinite"/></rect>
+<!-- Lantern glow -->
+<circle cx="464" cy="63" r="50" fill="url(#lanternGlow1)" opacity="0.5"><animate attributeName="opacity" values="0.3;0.6;0.4;0.55;0.3" dur="2s" repeatCount="indefinite"/></circle>
+<!-- Lantern light on water -->
+<ellipse cx="464" cy="180" rx="40" ry="8" fill="#ffd700" opacity="0.08"><animate attributeName="opacity" values="0.05;0.12;0.05" dur="2.5s" repeatCount="indefinite"/></ellipse>
+<!-- Soggy note pinned to post -->
+<rect x="440" y="80" width="18" height="22" fill="#d4c9a0" rx="1" opacity="0.8" transform="rotate(-5,449,91)"/>
+<line x1="443" y1="86" x2="455" y2="85" stroke="#555" stroke-width="0.5" opacity="0.5"/>
+<line x1="443" y1="90" x2="454" y2="89" stroke="#555" stroke-width="0.5" opacity="0.5"/>
+<line x1="443" y1="94" x2="453" y2="93" stroke="#555" stroke-width="0.5" opacity="0.4"/>
+<!-- Pin -->
+<circle cx="449" cy="82" r="1.5" fill="#c0392b"/>
+</svg>`;
+
+// Scene 2: Dock keeper silhouette with glowing lantern, shack behind
+STORY_SCENES['docks_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="dockSky2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#050a18"/><stop offset="50%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a3a5a"/>
+  </linearGradient>
+  <radialGradient id="keeperLantern" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.7"/><stop offset="30%" stop-color="#ffeaa7" stop-opacity="0.3"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="500" height="260" fill="url(#dockSky2)"/>
+<!-- Stars -->
+<circle cx="30" cy="18" r="0.8" fill="#fff" opacity="0.4"/><circle cx="150" cy="10" r="0.6" fill="#fff" opacity="0.3"/>
+<circle cx="280" cy="25" r="0.7" fill="#fff" opacity="0.35"/><circle cx="470" cy="15" r="0.8" fill="#fff" opacity="0.4"/>
+<!-- Ocean -->
+<rect x="0" y="170" width="500" height="90" fill="#0a1628"/>
+<path d="M0,178 Q80,172 160,178 Q240,184 320,178 Q400,172 500,178 L500,188 L0,188Z" fill="#1a3a5a" opacity="0.3"><animate attributeName="d" values="M0,178 Q80,172 160,178 Q240,184 320,178 Q400,172 500,178 L500,188 L0,188Z;M0,181 Q80,175 160,181 Q240,187 320,181 Q400,175 500,181 L500,191 L0,191Z;M0,178 Q80,172 160,178 Q240,184 320,178 Q400,172 500,178 L500,188 L0,188Z" dur="4.5s" repeatCount="indefinite"/></path>
+<!-- Shack -->
+<rect x="60" y="100" width="90" height="65" fill="#3a2a10"/>
+<polygon points="50,100 105,70 160,100" fill="#4a3518"/>
+<rect x="80" y="120" width="20" height="25" fill="#1a1005"/>
+<rect x="130" y="115" width="12" height="15" fill="#2a1a08" opacity="0.7"/>
+<!-- Dock surface -->
+<rect x="0" y="160" width="500" height="8" fill="#6b4e0a" rx="1"/>
+<rect x="0" y="160" width="500" height="3" fill="#8b6914" rx="1" opacity="0.5"/>
+<!-- Dock keeper silhouette -->
+<g transform="translate(250,85)">
+  <!-- Body -->
+  <ellipse cx="0" cy="0" rx="10" ry="12" fill="#0a0a15"/>
+  <!-- Head -->
+  <circle cx="0" cy="-18" r="9" fill="#0a0a15"/>
+  <!-- Blanket draped over shoulders -->
+  <path d="M-14,-5 Q-16,10 -12,30 Q-5,35 0,30 Q5,35 12,30 Q16,10 14,-5 Q8,-10 0,-8 Q-8,-10 -14,-5Z" fill="#1a1a30" opacity="0.8"/>
+  <path d="M-13,-4 Q-8,-8 0,-6 Q8,-8 13,-4" fill="none" stroke="#2a2a45" stroke-width="0.8" opacity="0.5"/>
+  <!-- Legs -->
+  <rect x="-6" y="28" width="5" height="45" fill="#0a0a15"/>
+  <rect x="1" y="28" width="5" height="45" fill="#0a0a15"/>
+  <!-- Arm holding lantern -->
+  <line x1="12" y1="5" x2="30" y2="15" stroke="#0a0a15" stroke-width="4" stroke-linecap="round"/>
+  <!-- Lantern in hand -->
+  <rect x="27" y="10" width="8" height="12" fill="#a07d28" rx="1.5"/>
+  <rect x="28.5" y="12" width="5" height="8" fill="#ffd700" opacity="0.85"><animate attributeName="opacity" values="0.6;1;0.7;0.9;0.6" dur="1.8s" repeatCount="indefinite"/></rect>
+  <!-- Lantern glow -->
+  <circle cx="31" cy="16" r="45" fill="url(#keeperLantern)" opacity="0.4"><animate attributeName="opacity" values="0.3;0.5;0.35;0.45;0.3" dur="1.8s" repeatCount="indefinite"/></circle>
+</g>
+<!-- Dock posts -->
+<rect x="100" y="145" width="5" height="25" fill="#6b4e0a"/>
+<rect x="380" y="145" width="5" height="25" fill="#6b4e0a"/>
+</svg>`;
+
+// Scene 3: Same setting — dock keeper explains note (reuse scene 2)
+STORY_SCENES['docks_3'] = STORY_SCENES['docks_2'];
+
+// Scene 4: Close-up of soggy note with reversed text, lantern light
+STORY_SCENES['docks_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="noteBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0a1628"/><stop offset="100%" stop-color="#050a18"/>
+  </linearGradient>
+  <radialGradient id="noteGlow" cx="50%" cy="40%" r="50%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.3"/><stop offset="60%" stop-color="#ffd700" stop-opacity="0.08"/><stop offset="100%" stop-color="#050a18" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="paperEdge"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#noteBg)"/>
+<!-- Warm light wash from above -->
+<rect width="500" height="260" fill="url(#noteGlow)"/>
+<!-- Soggy note — large close-up -->
+<rect x="100" y="30" width="300" height="200" fill="#c9b97a" rx="3" opacity="0.9"/>
+<rect x="100" y="30" width="300" height="200" fill="#d4c9a0" rx="3" opacity="0.5"/>
+<!-- Water damage stains -->
+<ellipse cx="150" cy="200" rx="40" ry="20" fill="#a09060" opacity="0.3"/>
+<ellipse cx="350" cy="50" rx="30" ry="15" fill="#a09060" opacity="0.25"/>
+<ellipse cx="280" cy="180" rx="25" ry="18" fill="#a09060" opacity="0.2"/>
+<!-- Normal text lines (readable) -->
+<text x="250" y="75" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="12" fill="#3a2a10" opacity="0.7" font-weight="700">WELcome TO</text>
+<text x="250" y="95" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="12" fill="#3a2a10" opacity="0.65" font-weight="700">BIT CRYPTIC WORLD.</text>
+<text x="250" y="118" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="11" fill="#3a2a10" opacity="0.55">NOTHinG IS AS IT SEEMS.</text>
+<!-- Reversed postscript — glowing -->
+<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffd700" opacity="0.9">.S.P EMOCLEW EMOH</text>
+<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffeaa7" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/>.S.P EMOCLEW EMOH</text>
+<!-- Lantern light flicker on edges -->
+<rect x="100" y="30" width="300" height="200" fill="none" stroke="#ffd700" stroke-width="1" rx="3" opacity="0.15"><animate attributeName="opacity" values="0.1;0.25;0.1" dur="2s" repeatCount="indefinite"/></rect>
+<!-- Pin at top -->
+<circle cx="250" cy="35" r="4" fill="#c0392b" stroke="#8b1a1a" stroke-width="1"/>
+<!-- Torn bottom edge hint -->
+<path d="M100,230 L120,226 L140,230 L160,225 L180,230 L200,227 L220,230 L240,224 L260,230 L280,226 L300,230 L320,225 L340,230 L360,227 L380,230 L400,230" fill="#c9b97a" opacity="0.9"/>
+</svg>`;
+
+// Scene 5: Same dock setting as keeper speaks (reuse scene 2)
+STORY_SCENES['docks_5'] = STORY_SCENES['docks_2'];
+
+// Scene 6: Forest treeline with glowing path, compass glow
+STORY_SCENES['docks_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="dockSky6" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#050a18"/><stop offset="50%" stop-color="#0a1628"/><stop offset="100%" stop-color="#0d1a2a"/>
+  </linearGradient>
+  <radialGradient id="pathGlow" cx="50%" cy="80%" r="40%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.5"/><stop offset="50%" stop-color="#ffd700" stop-opacity="0.15"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="500" height="260" fill="url(#dockSky6)"/>
+<!-- Stars -->
+<circle cx="50" cy="15" r="0.8" fill="#fff" opacity="0.5"/><circle cx="140" cy="30" r="0.6" fill="#fff" opacity="0.35"/>
+<circle cx="350" cy="12" r="0.9" fill="#fff" opacity="0.45"/><circle cx="460" cy="35" r="0.7" fill="#fff" opacity="0.4"/>
+<!-- Ground -->
+<rect x="0" y="120" width="500" height="140" fill="#0a1a0e"/>
+<!-- Glowing path (behind trees, shorter — stops at treeline) -->
+<path d="M230,260 Q235,230 240,210 Q243,195 245,175 Q247,165 248,155" fill="none" stroke="#ffeaa7" stroke-width="14" stroke-linecap="round" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite"/></path>
+<path d="M230,260 Q235,230 240,210 Q243,195 245,175 Q247,165 248,155" fill="none" stroke="#ffd700" stroke-width="6" stroke-linecap="round" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></path>
+<path d="M230,260 Q235,230 240,210 Q243,195 245,175 Q247,165 248,155" fill="none" stroke="#ffeaa7" stroke-width="2" stroke-linecap="round" opacity="0.4"><animate attributeName="opacity" values="0.25;0.55;0.25" dur="3s" repeatCount="indefinite"/></path>
+<!-- Path glow on ground -->
+<ellipse cx="240" cy="210" rx="35" ry="50" fill="url(#pathGlow)" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></ellipse>
+<!-- Dark treeline (rendered on top of path) -->
+<polygon points="0,120 20,55 40,120" fill="#0a1a0e" opacity="0.9"/>
+<polygon points="30,125 55,40 80,125" fill="#0c1c12" opacity="0.85"/>
+<polygon points="70,118 100,35 130,118" fill="#0a1a0e" opacity="0.9"/>
+<polygon points="120,122 150,45 180,122" fill="#0d1d14" opacity="0.85"/>
+<polygon points="170,120 195,50 220,120" fill="#0a1a0e" opacity="0.88"/>
+<polygon points="210,118 240,38 270,118" fill="#0c1c12" opacity="0.9"/>
+<polygon points="260,122 285,48 310,122" fill="#0a1a0e" opacity="0.85"/>
+<polygon points="300,120 325,42 350,120" fill="#0d1d14" opacity="0.88"/>
+<polygon points="340,118 370,50 400,118" fill="#0a1a0e" opacity="0.9"/>
+<polygon points="380,122 405,45 430,122" fill="#0c1c12" opacity="0.85"/>
+<polygon points="420,120 445,55 470,120" fill="#0a1a0e" opacity="0.88"/>
+<polygon points="455,125 478,48 500,125" fill="#0d1d14" opacity="0.9"/>
+<!-- Dock keeper silhouette gesturing toward path (far left) -->
+<g transform="translate(80,140)">
+  <circle cx="0" cy="-12" r="6" fill="#0a0a15"/>
+  <ellipse cx="0" cy="2" rx="7" ry="9" fill="#0a0a15"/>
+  <rect x="-4" y="10" width="3.5" height="30" fill="#0a0a15"/>
+  <rect x="0.5" y="10" width="3.5" height="30" fill="#0a0a15"/>
+  <!-- Arm pointing toward path (short) -->
+  <line x1="7" y1="0" x2="18" y2="-5" stroke="#0a0a15" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>`;

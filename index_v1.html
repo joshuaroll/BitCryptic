@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bit Cryptic World</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a1628;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Nunito', sans-serif;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* ─── Loading Screen ─── */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 1000;
+      background: radial-gradient(ellipse at center, #1a2a4a 0%, #0a1628 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loading-logo { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #ffd700; text-shadow: 0 0 30px rgba(255,215,0,0.4); margin-bottom: 1rem; letter-spacing: 2px; }
+    .loading-bar-track { width: 280px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    .loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffd700, #ff8c00); border-radius: 4px; transition: width 0.3s ease; }
+    .loading-text { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: 0.75rem; }
+
+    /* ─── Map Container ─── */
+    #map-container {
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      position: relative;
+      cursor: grab;
+    }
+    #map-container:active { cursor: grabbing; }
+
+    #map-world {
+      width: 2400px; height: 1600px;
+      position: absolute;
+      transform-origin: 0 0;
+    }
+
+    /* ─── Ocean ─── */
+    .ocean {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 50%, #1a5276 0%, #0e3d5c 40%, #0a2944 70%, #061a2e 100%);
+    }
+
+    /* ─── Island Base ─── */
+    .island {
+      position: absolute;
+      left: 200px; top: 150px;
+      width: 2000px; height: 1300px;
+    }
+
+    /* ─── Location Spots ─── */
+    .location {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+      z-index: 10;
+    }
+    .location:hover {
+      transform: scale(1.08) translateY(-4px);
+      filter: brightness(1.15);
+      z-index: 20;
+    }
+    .location:hover .loc-label {
+      transform: translateX(-50%) translateY(-6px) scale(1.08);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    }
+    .location:hover .loc-glow { opacity: 1; }
+    .location:active { transform: scale(1.02) translateY(-2px); }
+
+    /* Building visuals */
+    .loc-building {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .loc-glow {
+      position: absolute; inset: -20px;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    /* Labels */
+    .loc-label {
+      position: absolute;
+      left: 50%; bottom: 100%;
+      transform: translateX(-50%) translateY(-4px);
+      background: linear-gradient(135deg, rgba(30,30,60,0.95), rgba(20,20,50,0.95));
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      border: 2px solid rgba(255,215,0,0.6);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      pointer-events: none;
+      letter-spacing: 0.5px;
+      z-index: 30;
+    }
+    .loc-label::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(255,215,0,0.6);
+    }
+
+    /* ─── SVG Island Shape ─── */
+    svg.island-svg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+    }
+
+    /* ─── Floating Clouds ─── */
+    .cloud {
+      position: absolute;
+      opacity: 0.6;
+      animation: floatCloud linear infinite;
+      pointer-events: none;
+      z-index: 50;
+    }
+    @keyframes floatCloud {
+      from { transform: translateX(-300px); }
+      to   { transform: translateX(2700px); }
+    }
+
+    /* ─── Water Ripples ─── */
+    .water-ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.08);
+      animation: ripple 4s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes ripple {
+      0% { transform: scale(0); opacity: 0.5; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
+    /* ─── Top HUD ─── */
+    .hud-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: linear-gradient(180deg, rgba(10,22,40,0.9) 0%, transparent 100%);
+      z-index: 100;
+      pointer-events: none;
+    }
+    .hud-top > * { pointer-events: all; }
+
+    .hud-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.6rem;
+      color: #ffd700;
+      text-shadow: 0 0 20px rgba(255,215,0,0.3), 0 2px 4px rgba(0,0,0,0.5);
+      letter-spacing: 2px;
+    }
+    .hud-title span { color: #fff; font-size: 0.9rem; margin-left: 8px; opacity: 0.6; letter-spacing: 1px; }
+
+    .hud-controls {
+      display: flex; gap: 8px;
+    }
+    .hud-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .hud-btn:hover { background: rgba(255,215,0,0.2); border-color: rgba(255,215,0,0.4); }
+
+    /* ─── Bottom Toolbar ─── */
+    .toolbar {
+      position: fixed;
+      bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 6px;
+      background: rgba(10,22,40,0.85);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,215,0,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+    .toolbar-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .toolbar-btn:hover {
+      background: rgba(255,215,0,0.2);
+      border-color: rgba(255,215,0,0.5);
+      transform: translateY(-3px);
+    }
+    .toolbar-btn .tooltip-text {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      background: rgba(20,20,50,0.95);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-family: 'Nunito', sans-serif;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .toolbar-btn:hover .tooltip-text { opacity: 1; }
+
+    /* ─── Minimap ─── */
+    .minimap {
+      position: fixed;
+      bottom: 80px; right: 16px;
+      width: 180px; height: 120px;
+      background: rgba(10,22,40,0.85);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .minimap-viewport {
+      position: absolute;
+      border: 2px solid rgba(255,215,0,0.7);
+      border-radius: 3px;
+      background: rgba(255,215,0,0.1);
+      pointer-events: none;
+    }
+    .minimap-dot {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: #ffd700;
+    }
+
+    /* ─── Location Detail Panel ─── */
+    .detail-panel {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.5);
+      border-radius: 20px;
+      padding: 32px;
+      width: 420px;
+      max-width: 90vw;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+    .detail-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .detail-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .detail-overlay.active { opacity: 1; visibility: visible; }
+
+    .detail-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .detail-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      border: 2px solid rgba(255,215,0,0.4);
+    }
+    .detail-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.4rem;
+      color: #ffd700;
+    }
+    .detail-subtitle {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+    .detail-desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .detail-action-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,215,0,0.5);
+      background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+      color: #ffd700;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      min-width: 120px;
+    }
+    .detail-action-btn:hover {
+      background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,215,0,0.1));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(255,215,0,0.2);
+    }
+    .detail-action-btn.secondary {
+      border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.7);
+    }
+    .detail-action-btn.secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .detail-close {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .detail-close:hover { background: rgba(255,80,80,0.3); }
+
+    /* ─── Sparkle particles ─── */
+    .sparkle {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: #ffd700;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 5;
+      animation: sparkleAnim 2s ease-in-out infinite;
+    }
+    @keyframes sparkleAnim {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ─── Ambient fireflies ─── */
+    .firefly {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: rgba(255,255,150,0.8);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255,255,150,0.5);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ─── Day/Night cycle overlay ─── */
+    .day-night-overlay {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 40;
+      transition: background 3s ease;
+    }
+
+    /* ─── Welcome banner ─── */
+    .welcome-banner {
+      position: fixed;
+      top: 70px; left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: linear-gradient(135deg, rgba(30,30,60,0.95), rgba(20,20,50,0.95));
+      border: 2px solid rgba(255,215,0,0.5);
+      border-radius: 16px;
+      padding: 16px 28px;
+      z-index: 100;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .welcome-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .welcome-banner h2 {
+      font-family: 'Fredoka One', cursive;
+      color: #ffd700;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .welcome-banner p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-logo">BIT CRYPTIC WORLD</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill" id="load-bar"></div></div>
+  <div class="loading-text" id="load-text">Decrypting the island...</div>
+</div>
+
+<!-- HUD Top Bar -->
+<div class="hud-top">
+  <div class="hud-title">BIT CRYPTIC WORLD <span>v1.0</span></div>
+  <div class="hud-controls">
+    <button class="hud-btn" onclick="resetView()">Reset View</button>
+  </div>
+</div>
+
+<!-- Welcome Banner -->
+<div class="welcome-banner" id="welcome-banner">
+  <h2>Welcome to Bit Cryptic World!</h2>
+  <p>Click on any location to explore. Drag to pan around the island.</p>
+</div>
+
+<!-- Map Container -->
+<div id="map-container">
+  <div id="map-world">
+
+    <!-- Ocean background -->
+    <div class="ocean"></div>
+
+    <!-- Day/night overlay -->
+    <div class="day-night-overlay" id="day-night"></div>
+
+    <!-- Island SVG -->
+    <svg class="island-svg" viewBox="0 0 2400 1600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Island shadow -->
+        <filter id="islandShadow" x="-5%" y="-5%" width="110%" height="110%">
+          <feDropShadow dx="0" dy="8" stdDeviation="20" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+        <!-- Mountain snow gradient -->
+        <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f0f5ff"/>
+          <stop offset="40%" stop-color="#d4dce8"/>
+          <stop offset="100%" stop-color="#8a9bb5"/>
+        </linearGradient>
+        <!-- Grass gradient -->
+        <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4a7c3f"/>
+          <stop offset="100%" stop-color="#2d5a27"/>
+        </linearGradient>
+        <!-- Sand gradient -->
+        <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e8d5a3"/>
+          <stop offset="100%" stop-color="#c4a86c"/>
+        </linearGradient>
+        <!-- Water shimmer -->
+        <linearGradient id="shallowWater" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2a8ab5"/>
+          <stop offset="100%" stop-color="#1a6a95"/>
+        </linearGradient>
+        <!-- Tree colors -->
+        <linearGradient id="treeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3d7a35"/>
+          <stop offset="100%" stop-color="#1e5218"/>
+        </linearGradient>
+        <linearGradient id="pineGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2a6335"/>
+          <stop offset="100%" stop-color="#1a4525"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Shallow water ring around island -->
+      <ellipse cx="1200" cy="820" rx="950" ry="620" fill="url(#shallowWater)" opacity="0.4" filter="url(#islandShadow)"/>
+
+      <!-- Main island body -->
+      <path d="M380,700 Q350,500 450,380 Q550,280 700,250 Q850,220 950,200 Q1050,190 1200,210
+               Q1350,190 1500,240 Q1650,280 1780,350 Q1900,420 1980,550 Q2020,650 2000,780
+               Q1980,900 1900,1000 Q1800,1100 1650,1150 Q1500,1200 1350,1210
+               Q1200,1220 1050,1200 Q900,1180 750,1120 Q600,1060 480,950
+               Q400,860 380,700 Z"
+            fill="url(#grassGrad)" stroke="#2d5a27" stroke-width="3"/>
+
+      <!-- Beach areas -->
+      <path d="M380,720 Q370,830 450,930 Q520,1010 620,1060 Q580,1080 500,1000
+               Q410,900 390,790 Q375,750 380,720 Z"
+            fill="url(#sandGrad)" opacity="0.85"/>
+      <path d="M1650,1130 Q1750,1090 1850,1000 Q1930,920 1970,800 Q2000,810 1950,940
+               Q1880,1050 1780,1130 Q1700,1180 1650,1130 Z"
+            fill="url(#sandGrad)" opacity="0.85"/>
+      <path d="M700,250 Q850,225 950,205 Q1000,200 1050,215 Q1000,240 900,250 Q800,255 700,250 Z"
+            fill="url(#sandGrad)" opacity="0.7"/>
+
+      <!-- Mountain range (north) -->
+      <path d="M900,200 L960,80 L1020,200" fill="#6b7d94" stroke="#556677" stroke-width="2"/>
+      <path d="M960,80 L990,140 L960,130 L930,140 Z" fill="url(#snowGrad)"/>
+
+      <path d="M1050,210 L1150,50 L1250,200" fill="#7a8da3" stroke="#5a6d83" stroke-width="2"/>
+      <path d="M1150,50 L1190,130 L1150,115 L1110,130 Z" fill="url(#snowGrad)"/>
+
+      <path d="M1200,195 L1320,70 L1420,210" fill="#6b7d94" stroke="#556677" stroke-width="2"/>
+      <path d="M1320,70 L1355,140 L1320,128 L1285,140 Z" fill="url(#snowGrad)"/>
+
+      <path d="M1380,230 L1460,120 L1540,250" fill="#7a8da3" stroke="#5a6d83" stroke-width="2"/>
+      <path d="M1460,120 L1485,175 L1460,165 L1435,175 Z" fill="url(#snowGrad)"/>
+
+      <!-- Smaller hills -->
+      <path d="M500,400 Q550,320 620,390" fill="#5a8a4a" stroke="#4a7a3a" stroke-width="1.5"/>
+      <path d="M1800,500 Q1850,430 1900,500" fill="#5a8a4a" stroke="#4a7a3a" stroke-width="1.5"/>
+
+      <!-- Paths/Roads connecting locations -->
+      <g fill="none" stroke="#8b7355" stroke-width="8" stroke-linecap="round" stroke-dasharray="0" opacity="0.5">
+        <!-- Main path network -->
+        <path d="M600,520 Q700,500 850,550 Q1000,580 1100,600"/>
+        <path d="M1100,600 Q1200,620 1350,580 Q1450,560 1550,600"/>
+        <path d="M1100,600 Q1100,700 1100,800 Q1100,900 1150,950"/>
+        <path d="M600,520 Q550,600 520,700 Q500,800 550,900"/>
+        <path d="M1550,600 Q1650,650 1700,750 Q1750,850 1700,950"/>
+        <path d="M850,550 Q900,450 1000,380 Q1100,340 1200,350"/>
+        <path d="M1200,350 Q1350,340 1450,400 Q1500,450 1550,500"/>
+      </g>
+      <!-- Path outlines (dirt) -->
+      <g fill="none" stroke="#a08050" stroke-width="5" stroke-linecap="round" opacity="0.3">
+        <path d="M600,520 Q700,500 850,550 Q1000,580 1100,600"/>
+        <path d="M1100,600 Q1200,620 1350,580 Q1450,560 1550,600"/>
+        <path d="M1100,600 Q1100,700 1100,800 Q1100,900 1150,950"/>
+        <path d="M600,520 Q550,600 520,700 Q500,800 550,900"/>
+        <path d="M1550,600 Q1650,650 1700,750 Q1750,850 1700,950"/>
+        <path d="M850,550 Q900,450 1000,380 Q1100,340 1200,350"/>
+        <path d="M1200,350 Q1350,340 1450,400 Q1500,450 1550,500"/>
+      </g>
+
+      <!-- Trees (scattered) -->
+      <g class="trees">
+        <!-- Pine trees (clusters) -->
+        <!-- Left forest -->
+        <polygon points="430,460 440,400 450,460" fill="url(#pineGrad)"/><rect x="437" y="460" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="460,480 470,415 480,480" fill="url(#treeGrad)"/><rect x="467" y="480" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="410,500 420,440 430,500" fill="url(#pineGrad)"/><rect x="417" y="500" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="480,430 490,370 500,430" fill="url(#treeGrad)"/><rect x="487" y="430" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="440,530 450,470 460,530" fill="url(#pineGrad)"/><rect x="447" y="530" width="6" height="12" fill="#5a3a1a"/>
+
+        <!-- Central trees -->
+        <polygon points="950,510 960,460 970,510" fill="url(#pineGrad)"/><rect x="957" y="510" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="980,540 990,490 1000,540" fill="url(#treeGrad)"/><rect x="987" y="540" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="1020,520 1030,470 1040,520" fill="url(#pineGrad)"/><rect x="1027" y="520" width="6" height="10" fill="#5a3a1a"/>
+
+        <!-- Right forest -->
+        <polygon points="1620,500 1630,440 1640,500" fill="url(#pineGrad)"/><rect x="1627" y="500" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="1660,480 1670,420 1680,480" fill="url(#treeGrad)"/><rect x="1667" y="480" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="1700,520 1710,460 1720,520" fill="url(#pineGrad)"/><rect x="1707" y="520" width="6" height="12" fill="#5a3a1a"/>
+        <polygon points="1580,530 1590,470 1600,530" fill="url(#treeGrad)"/><rect x="1587" y="530" width="6" height="12" fill="#5a3a1a"/>
+
+        <!-- South trees -->
+        <polygon points="700,950 710,900 720,950" fill="url(#treeGrad)"/><rect x="707" y="950" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="750,980 760,930 770,980" fill="url(#pineGrad)"/><rect x="757" y="980" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="830,1000 840,950 850,1000" fill="url(#treeGrad)"/><rect x="837" y="1000" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="1350,1020 1360,970 1370,1020" fill="url(#pineGrad)"/><rect x="1357" y="1020" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="1400,990 1410,940 1420,990" fill="url(#treeGrad)"/><rect x="1407" y="990" width="6" height="10" fill="#5a3a1a"/>
+        <polygon points="1450,1040 1460,990 1470,1040" fill="url(#pineGrad)"/><rect x="1457" y="1040" width="6" height="10" fill="#5a3a1a"/>
+
+        <!-- Extra scattered trees -->
+        <polygon points="680,700 690,655 700,700" fill="url(#pineGrad)"/><rect x="687" y="700" width="5" height="9" fill="#5a3a1a"/>
+        <polygon points="1500,750 1510,705 1520,750" fill="url(#treeGrad)"/><rect x="1507" y="750" width="5" height="9" fill="#5a3a1a"/>
+        <polygon points="900,850 910,808 920,850" fill="url(#pineGrad)"/><rect x="907" y="850" width="5" height="9" fill="#5a3a1a"/>
+        <polygon points="1300,700 1310,658 1320,700" fill="url(#treeGrad)"/><rect x="1307" y="700" width="5" height="9" fill="#5a3a1a"/>
+      </g>
+
+      <!-- Decorative water features -->
+      <ellipse cx="1100" cy="760" rx="35" ry="20" fill="#2a8ab5" opacity="0.6"/>
+      <ellipse cx="1100" cy="760" rx="25" ry="14" fill="#3a9ac5" opacity="0.4"/>
+
+      <!-- Small bridge over pond -->
+      <path d="M1075,758 Q1100,745 1125,758" fill="none" stroke="#8b6914" stroke-width="4"/>
+    </svg>
+
+    <!-- ═══════════ LOCATIONS ═══════════ -->
+
+    <!-- 1. Decoder Docks (south-west beach) -->
+    <div class="location" style="left: 460px; top: 900px;" onclick="openLocation('docks')" id="loc-docks">
+      <div class="loc-label">Decoder Docks</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(100,180,255,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="120" height="90" viewBox="0 0 120 90">
+          <!-- Dock platform -->
+          <rect x="10" y="55" width="100" height="10" rx="2" fill="#8b6914"/>
+          <rect x="15" y="50" width="90" height="8" rx="2" fill="#a07d28"/>
+          <!-- Dock posts -->
+          <rect x="20" y="55" width="6" height="30" fill="#6b4e0a"/>
+          <rect x="55" y="55" width="6" height="35" fill="#6b4e0a"/>
+          <rect x="90" y="55" width="6" height="28" fill="#6b4e0a"/>
+          <!-- Boat -->
+          <path d="M30,48 Q45,55 75,48 Q80,46 75,42 L35,42 Q30,44 30,48 Z" fill="#c0392b"/>
+          <rect x="52" y="20" width="3" height="24" fill="#8b6914"/>
+          <!-- Flag -->
+          <polygon points="55,20 75,27 55,34" fill="#ffd700"/>
+          <!-- Lantern -->
+          <circle cx="95" cy="48" r="5" fill="#ffeaa7" opacity="0.8"/>
+          <rect x="93" y="42" width="4" height="3" fill="#8b6914"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 2. The Adventure Tower (center) -->
+    <div class="location" style="left: 1040px; top: 520px;" onclick="openLocation('adventure')" id="loc-adventure">
+      <div class="loc-label">Adventure Tower</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,215,0,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="140" height="160" viewBox="0 0 140 160">
+          <!-- Tower base -->
+          <rect x="35" y="80" width="70" height="70" rx="4" fill="#4a3a6a"/>
+          <rect x="38" y="83" width="64" height="64" rx="3" fill="#5a4a7a"/>
+          <!-- Tower top -->
+          <rect x="42" y="50" width="56" height="35" rx="3" fill="#5a4a7a"/>
+          <polygon points="70,15 42,50 98,50" fill="#6a5a8a"/>
+          <!-- Spire -->
+          <rect x="67" y="5" width="6" height="15" fill="#8b7daa"/>
+          <circle cx="70" cy="5" r="5" fill="#ffd700"/>
+          <!-- Windows -->
+          <rect x="52" y="58" width="12" height="16" rx="6" fill="#ffeaa7" opacity="0.8"/>
+          <rect x="76" y="58" width="12" height="16" rx="6" fill="#ffeaa7" opacity="0.8"/>
+          <!-- Door -->
+          <rect x="55" y="115" width="30" height="30" rx="15" fill="#3a2a5a"/>
+          <rect x="58" y="118" width="24" height="27" rx="12" fill="#2a1a4a"/>
+          <circle cx="76" cy="132" r="2" fill="#ffd700"/>
+          <!-- Cryptic symbols on tower -->
+          <text x="70" y="100" text-anchor="middle" fill="#ffd700" font-size="14" font-family="serif" opacity="0.6">&#x2641;</text>
+          <text x="58" y="107" text-anchor="middle" fill="#ffd700" font-size="8" font-family="serif" opacity="0.4">&#x2609;</text>
+          <text x="82" y="107" text-anchor="middle" fill="#ffd700" font-size="8" font-family="serif" opacity="0.4">&#x263D;</text>
+          <!-- Glow from windows -->
+          <ellipse cx="58" cy="66" rx="8" ry="10" fill="#ffeaa7" opacity="0.15"/>
+          <ellipse cx="82" cy="66" rx="8" ry="10" fill="#ffeaa7" opacity="0.15"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 3. Puzzle Workshop (east) -->
+    <div class="location" style="left: 1500px; top: 540px;" onclick="openLocation('workshop')" id="loc-workshop">
+      <div class="loc-label">Puzzle Workshop</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,140,0,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="130" height="110" viewBox="0 0 130 110">
+          <!-- Workshop building -->
+          <rect x="15" y="45" width="100" height="55" rx="4" fill="#8b4513"/>
+          <rect x="18" y="48" width="94" height="49" rx="3" fill="#a0522d"/>
+          <!-- Roof -->
+          <polygon points="65,10 10,48 120,48" fill="#c0392b"/>
+          <polygon points="65,15 15,48 115,48" fill="#d44a3a"/>
+          <!-- Chimney -->
+          <rect x="90" y="15" width="14" height="25" fill="#8b4513"/>
+          <ellipse cx="97" cy="12" rx="10" ry="4" fill="#888" opacity="0.4"/>
+          <!-- Workshop window (gear-shaped) -->
+          <circle cx="45" cy="68" r="12" fill="#ffeaa7" opacity="0.7"/>
+          <circle cx="45" cy="68" r="8" fill="#ffd700" opacity="0.3"/>
+          <!-- Door -->
+          <rect x="70" y="68" width="25" height="30" rx="3" fill="#6b3010"/>
+          <circle cx="90" cy="83" r="2" fill="#ffd700"/>
+          <!-- Gear symbol -->
+          <text x="45" y="73" text-anchor="middle" fill="#8b4513" font-size="16">&#x2699;</text>
+          <!-- Workbench outside -->
+          <rect x="0" y="90" width="30" height="5" rx="2" fill="#8b6914"/>
+          <rect x="3" y="88" width="8" height="5" fill="#aaa"/>
+          <rect x="18" y="86" width="6" height="7" fill="#888"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 4. Library of Riddles (north-east) -->
+    <div class="location" style="left: 1440px; top: 330px;" onclick="openLocation('library')" id="loc-library">
+      <div class="loc-label">Library of Riddles</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(150,100,255,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="140" height="120" viewBox="0 0 140 120">
+          <!-- Library building -->
+          <rect x="15" y="45" width="110" height="65" rx="3" fill="#3a3060"/>
+          <rect x="18" y="48" width="104" height="59" rx="2" fill="#4a4070"/>
+          <!-- Columns -->
+          <rect x="22" y="48" width="8" height="59" fill="#5a5080"/>
+          <rect x="110" y="48" width="8" height="59" fill="#5a5080"/>
+          <!-- Pediment / roof triangle -->
+          <polygon points="70,10 10,48 130,48" fill="#4a4070"/>
+          <polygon points="70,15 15,48 125,48" fill="#5a5090"/>
+          <!-- Dome -->
+          <ellipse cx="70" cy="20" rx="25" ry="18" fill="#5a50a0"/>
+          <ellipse cx="70" cy="18" rx="20" ry="14" fill="#6a60b0"/>
+          <circle cx="70" cy="10" r="4" fill="#ffd700"/>
+          <!-- Windows -->
+          <rect x="38" y="55" width="15" height="20" rx="7" fill="#e8d5f0" opacity="0.6"/>
+          <rect x="63" y="55" width="15" height="20" rx="7" fill="#e8d5f0" opacity="0.6"/>
+          <rect x="88" y="55" width="15" height="20" rx="7" fill="#e8d5f0" opacity="0.6"/>
+          <!-- Door -->
+          <rect x="55" y="82" width="30" height="28" rx="15" fill="#2a2050"/>
+          <rect x="58" y="85" width="24" height="22" rx="12" fill="#1a1040"/>
+          <!-- Book symbol -->
+          <text x="70" y="40" text-anchor="middle" fill="#ffd700" font-size="12" opacity="0.7">&#x1F4DA;</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5. Town Square (center-south) -->
+    <div class="location" style="left: 1060px; top: 880px;" onclick="openLocation('town')" id="loc-town">
+      <div class="loc-label">Town Square</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,200,100,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="150" height="100" viewBox="0 0 150 100">
+          <!-- Fountain base -->
+          <ellipse cx="75" cy="75" rx="55" ry="20" fill="#7a8da3"/>
+          <ellipse cx="75" cy="72" rx="50" ry="17" fill="#8a9db3"/>
+          <ellipse cx="75" cy="68" rx="45" ry="14" fill="#4a8ab5" opacity="0.6"/>
+          <!-- Fountain pillar -->
+          <rect x="70" y="35" width="10" height="35" fill="#9aa"/>
+          <!-- Fountain top bowl -->
+          <ellipse cx="75" cy="38" rx="20" ry="8" fill="#8a9db3"/>
+          <ellipse cx="75" cy="36" rx="17" ry="6" fill="#4a8ab5" opacity="0.5"/>
+          <!-- Water drops -->
+          <circle cx="60" cy="50" r="2" fill="#7ac5e8" opacity="0.6"/>
+          <circle cx="90" cy="48" r="2" fill="#7ac5e8" opacity="0.6"/>
+          <circle cx="75" cy="28" r="2" fill="#7ac5e8" opacity="0.7"/>
+          <!-- Benches -->
+          <rect x="5" y="78" width="25" height="5" rx="2" fill="#8b6914"/>
+          <rect x="120" y="78" width="25" height="5" rx="2" fill="#8b6914"/>
+          <!-- Lanterns -->
+          <rect x="25" y="55" width="3" height="25" fill="#555"/>
+          <circle cx="26" cy="53" r="4" fill="#ffeaa7" opacity="0.7"/>
+          <rect x="122" y="55" width="3" height="25" fill="#555"/>
+          <circle cx="123" cy="53" r="4" fill="#ffeaa7" opacity="0.7"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 6. Mystic Peak Observatory (north mountains) -->
+    <div class="location" style="left: 1100px; top: 180px;" onclick="openLocation('observatory')" id="loc-observatory">
+      <div class="loc-label">Mystic Peak</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(100,200,255,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="100" height="90" viewBox="0 0 100 90">
+          <!-- Observatory dome -->
+          <rect x="25" y="45" width="50" height="35" rx="3" fill="#5a6a8a"/>
+          <ellipse cx="50" cy="45" rx="30" ry="22" fill="#6a7a9a"/>
+          <!-- Dome slit -->
+          <path d="M48,25 L48,45 L52,45 L52,25" fill="#2a3a5a"/>
+          <!-- Telescope -->
+          <line x1="50" y1="35" x2="70" y2="20" stroke="#aaa" stroke-width="3"/>
+          <circle cx="72" cy="18" r="5" fill="#8a9ab0" stroke="#aaa" stroke-width="1"/>
+          <!-- Base -->
+          <rect x="20" y="75" width="60" height="10" rx="2" fill="#4a5a7a"/>
+          <!-- Stars around -->
+          <circle cx="15" cy="15" r="1.5" fill="#ffd700" opacity="0.6"/>
+          <circle cx="85" cy="10" r="1" fill="#ffd700" opacity="0.5"/>
+          <circle cx="90" cy="30" r="1.5" fill="#ffd700" opacity="0.4"/>
+          <circle cx="10" cy="40" r="1" fill="#ffd700" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 7. Enigma Forest (west) -->
+    <div class="location" style="left: 520px; top: 500px;" onclick="openLocation('forest')" id="loc-forest">
+      <div class="loc-label">Enigma Forest</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(50,200,100,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="120" height="110" viewBox="0 0 120 110">
+          <!-- Dense trees -->
+          <polygon points="30,90 40,40 50,90" fill="#1a5218"/>
+          <polygon points="28,85 38,30 48,85" fill="#2a6328"/>
+          <polygon points="55,95 65,35 75,95" fill="#1e5a1e"/>
+          <polygon points="53,88 63,25 73,88" fill="#2a7a2a"/>
+          <polygon points="80,90 90,45 100,90" fill="#1a5218"/>
+          <polygon points="78,85 88,35 98,85" fill="#267a26"/>
+          <!-- Tree trunks -->
+          <rect x="38" y="85" width="5" height="15" fill="#5a3a1a"/>
+          <rect x="62" y="88" width="5" height="15" fill="#5a3a1a"/>
+          <rect x="88" y="85" width="5" height="15" fill="#5a3a1a"/>
+          <!-- Mysterious glowing eyes -->
+          <circle cx="45" cy="65" r="2" fill="#7fff7f" opacity="0.7"/>
+          <circle cx="52" cy="64" r="2" fill="#7fff7f" opacity="0.7"/>
+          <!-- Mushrooms -->
+          <ellipse cx="20" cy="98" rx="6" ry="3" fill="#c0392b"/>
+          <rect x="19" y="95" width="3" height="6" fill="#eee"/>
+          <circle cx="22" cy="96" r="1" fill="#fff"/>
+          <ellipse cx="95" cy="100" rx="5" ry="2.5" fill="#e74c3c"/>
+          <rect x="94" y="97" width="3" height="5" fill="#eee"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 8. Cryptogram Cove (south-east beach) -->
+    <div class="location" style="left: 1650px; top: 900px;" onclick="openLocation('cove')" id="loc-cove">
+      <div class="loc-label">Cryptogram Cove</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,200,50,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="120" height="90" viewBox="0 0 120 90">
+          <!-- Sand -->
+          <ellipse cx="60" cy="75" rx="55" ry="15" fill="#e8d5a3"/>
+          <!-- Cave entrance -->
+          <path d="M25,75 Q25,30 60,25 Q95,30 95,75" fill="#4a3a2a"/>
+          <path d="M30,75 Q30,35 60,30 Q90,35 90,75" fill="#3a2a1a"/>
+          <!-- Torch left -->
+          <rect x="28" y="40" width="4" height="20" fill="#8b6914"/>
+          <ellipse cx="30" cy="38" rx="5" ry="7" fill="#ff8c00" opacity="0.8"/>
+          <ellipse cx="30" cy="36" rx="3" ry="5" fill="#ffd700" opacity="0.6"/>
+          <!-- Torch right -->
+          <rect x="88" y="40" width="4" height="20" fill="#8b6914"/>
+          <ellipse cx="90" cy="38" rx="5" ry="7" fill="#ff8c00" opacity="0.8"/>
+          <ellipse cx="90" cy="36" rx="3" ry="5" fill="#ffd700" opacity="0.6"/>
+          <!-- Mysterious symbols on cave wall -->
+          <text x="50" y="55" fill="#ffd700" font-size="10" opacity="0.5">?</text>
+          <text x="65" y="60" fill="#ffd700" font-size="8" opacity="0.4">&#x2625;</text>
+          <text x="55" y="68" fill="#ffd700" font-size="9" opacity="0.3">&#x2638;</text>
+          <!-- Treasure chest -->
+          <rect x="50" y="68" width="20" height="12" rx="2" fill="#8b6914"/>
+          <rect x="52" y="65" width="16" height="5" rx="2" fill="#a07d28"/>
+          <rect x="58" y="67" width="4" height="3" rx="1" fill="#ffd700"/>
+          <!-- Shells -->
+          <circle cx="15" cy="80" r="3" fill="#f5e6d0" opacity="0.6"/>
+          <circle cx="105" cy="78" r="2.5" fill="#f0d0b0" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 9. The Cryptic Cafe (north-west) -->
+    <div class="location" style="left: 780px; top: 370px;" onclick="openLocation('cafe')" id="loc-cafe">
+      <div class="loc-label">Cryptic Cafe</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(200,150,100,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="110" height="100" viewBox="0 0 110 100">
+          <!-- Building -->
+          <rect x="15" y="40" width="80" height="50" rx="4" fill="#a0522d"/>
+          <rect x="18" y="43" width="74" height="44" rx="3" fill="#b5633a"/>
+          <!-- Roof -->
+          <polygon points="55,10 10,42 100,42" fill="#c0392b"/>
+          <polygon points="55,15 15,42 95,42" fill="#d44a3a"/>
+          <!-- Sign -->
+          <rect x="30" y="22" width="50" height="16" rx="3" fill="#2c1810"/>
+          <text x="55" y="34" text-anchor="middle" fill="#ffd700" font-size="8" font-family="serif">CAFE</text>
+          <!-- Window -->
+          <rect x="25" y="52" width="18" height="15" rx="2" fill="#ffeaa7" opacity="0.7"/>
+          <line x1="34" y1="52" x2="34" y2="67" stroke="#8b4513" stroke-width="1.5"/>
+          <line x1="25" y1="59" x2="43" y2="59" stroke="#8b4513" stroke-width="1.5"/>
+          <!-- Door -->
+          <rect x="55" y="58" width="22" height="30" rx="2" fill="#6b3010"/>
+          <circle cx="73" cy="73" r="2" fill="#ffd700"/>
+          <!-- Coffee cup on windowsill -->
+          <rect x="28" y="49" width="6" height="5" rx="1" fill="#fff"/>
+          <path d="M34,51 Q37,51 37,53" fill="none" stroke="#fff" stroke-width="1.5"/>
+          <!-- Steam -->
+          <path d="M31,47 Q29,44 31,41" fill="none" stroke="#aaa" stroke-width="1" opacity="0.5"/>
+          <path d="M33,48 Q35,44 33,40" fill="none" stroke="#aaa" stroke-width="1" opacity="0.4"/>
+          <!-- Awning -->
+          <path d="M15,42 Q25,48 35,42 Q45,48 55,42 Q65,48 75,42 Q85,48 95,42" fill="none" stroke="#c0392b" stroke-width="3"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 10. Decoder Beach (north beach) -->
+    <div class="location" style="left: 850px; top: 240px;" onclick="openLocation('beach')" id="loc-beach">
+      <div class="loc-label">Decoder Beach</div>
+      <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,230,150,0.3), transparent);"></div>
+      <div class="loc-building">
+        <svg width="110" height="80" viewBox="0 0 110 80">
+          <!-- Sand area -->
+          <ellipse cx="55" cy="65" rx="50" ry="12" fill="#e8d5a3"/>
+          <!-- Umbrella -->
+          <rect x="40" y="25" width="3" height="40" fill="#8b6914"/>
+          <path d="M15,28 Q42,5 68,28" fill="#e74c3c"/>
+          <path d="M15,28 Q28,20 42,28" fill="#c0392b"/>
+          <path d="M42,28 Q55,20 68,28" fill="#e74c3c"/>
+          <!-- Beach chair -->
+          <path d="M50,45 L65,35 L70,55 L55,55 Z" fill="#2980b9"/>
+          <path d="M50,45 L55,55" stroke="#8b6914" stroke-width="2"/>
+          <path d="M65,35 L70,55" stroke="#8b6914" stroke-width="2"/>
+          <!-- Sand castle -->
+          <rect x="80" y="55" width="12" height="12" fill="#d4b87a"/>
+          <polygon points="86,48 80,55 92,55" fill="#d4b87a"/>
+          <rect x="84" y="45" width="4" height="5" fill="#d4b87a"/>
+          <!-- Flag on castle -->
+          <rect x="86" y="38" width="1.5" height="10" fill="#8b6914"/>
+          <polygon points="87,38 95,41 87,44" fill="#ffd700"/>
+          <!-- Waves -->
+          <path d="M5,58 Q15,53 25,58 Q35,63 45,58" fill="none" stroke="#7ac5e8" stroke-width="1.5" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+  </div><!-- /map-world -->
+</div>
+
+<!-- Minimap -->
+<div class="minimap" id="minimap">
+  <svg width="180" height="120" viewBox="0 0 2400 1600">
+    <ellipse cx="1200" cy="820" rx="900" ry="580" fill="#1a3a5a" opacity="0.5"/>
+    <path d="M380,700 Q350,500 450,380 Q550,280 700,250 Q850,220 950,200 Q1050,190 1200,210
+             Q1350,190 1500,240 Q1650,280 1780,350 Q1900,420 1980,550 Q2020,650 2000,780
+             Q1980,900 1900,1000 Q1800,1100 1650,1150 Q1500,1200 1350,1210
+             Q1200,1220 1050,1200 Q900,1180 750,1120 Q600,1060 480,950
+             Q400,860 380,700 Z"
+          fill="#2d5a27" opacity="0.7"/>
+  </svg>
+  <div class="minimap-dot" style="left: 35px; top: 68px;"></div>
+  <div class="minimap-dot" style="left: 78px; top: 40px;"></div>
+  <div class="minimap-dot" style="left: 113px; top: 41px;"></div>
+  <div class="minimap-dot" style="left: 108px; top: 25px;"></div>
+  <div class="minimap-dot" style="left: 80px; top: 67px;"></div>
+  <div class="minimap-dot" style="left: 60px; top: 30px;"></div>
+  <div class="minimap-dot" style="left: 40px; top: 38px;"></div>
+  <div class="minimap-dot" style="left: 125px; top: 68px;"></div>
+  <div class="minimap-dot" style="left: 59px; top: 28px;"></div>
+  <div class="minimap-dot" style="left: 65px; top: 18px;"></div>
+  <div class="minimap-viewport" id="minimap-vp"></div>
+</div>
+
+<!-- Bottom Toolbar -->
+<div class="toolbar">
+  <button class="toolbar-btn" onclick="openLocation('adventure')">
+    <span class="tooltip-text">Adventure</span>
+    &#x2694;
+  </button>
+  <button class="toolbar-btn" onclick="openLocation('workshop')">
+    <span class="tooltip-text">Puzzles</span>
+    &#x1F9E9;
+  </button>
+  <button class="toolbar-btn" onclick="openLocation('library')">
+    <span class="tooltip-text">Collection</span>
+    &#x1F4DA;
+  </button>
+  <button class="toolbar-btn" onclick="openLocation('cafe')">
+    <span class="tooltip-text">Cafe</span>
+    &#x2615;
+  </button>
+  <button class="toolbar-btn" onclick="openLocation('cove')">
+    <span class="tooltip-text">Secrets</span>
+    &#x1F5DD;
+  </button>
+  <button class="toolbar-btn" onclick="resetView()">
+    <span class="tooltip-text">Reset View</span>
+    &#x1F30D;
+  </button>
+</div>
+
+<!-- Detail Panel Overlay -->
+<div class="detail-overlay" id="detail-overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <button class="detail-close" onclick="closePanel()">&times;</button>
+  <div class="detail-header">
+    <div class="detail-icon" id="detail-icon"></div>
+    <div>
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-subtitle" id="detail-subtitle"></div>
+    </div>
+  </div>
+  <div class="detail-desc" id="detail-desc"></div>
+  <div class="detail-actions" id="detail-actions"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════
+//  LOCATION DATA
+// ═══════════════════════════════════
+const locations = {
+  adventure: {
+    title: 'Adventure Tower',
+    subtitle: 'The heart of Bit Cryptic',
+    icon: '&#x1F3F0;',
+    iconBg: 'linear-gradient(135deg, #6a5a8a, #4a3a6a)',
+    desc: 'The grand Adventure Tower rises above all. Within its walls, brave Cryptic Voyagers face word puzzles, battle strange foes, and ascend toward the ultimate cryptic challenge. Do you dare enter?',
+    actions: [
+      { label: 'Begin Adventure', href: '../Bit Cryptic Adventure/index.html', primary: true },
+      { label: 'How To Play', onclick: () => alert('Solve cryptic clues to build words, fight enemies, collect relics, and reach the final boss!') }
+    ]
+  },
+  workshop: {
+    title: 'Puzzle Workshop',
+    subtitle: 'Clues Mode Training Ground',
+    icon: '&#x1F9E9;',
+    iconBg: 'linear-gradient(135deg, #a0522d, #8b4513)',
+    desc: 'Sharpen your solving skills at the Puzzle Workshop! Practice cryptic clues at your own pace without the pressure of combat. The workshop keeper curates fresh puzzles daily.',
+    actions: [
+      { label: 'Enter Workshop', href: '../Bit Cryptic Adventure/index.html', primary: true },
+      { label: 'View Leaderboard', onclick: () => alert('Leaderboards coming soon!') }
+    ]
+  },
+  library: {
+    title: 'Library of Riddles',
+    subtitle: 'Archives & Collection',
+    icon: '&#x1F4DA;',
+    iconBg: 'linear-gradient(135deg, #6a60b0, #4a4070)',
+    desc: 'The Library of Riddles houses every clue, relic, and secret you\'ve discovered. Browse your collection, study the lore of Bit Cryptic World, and unlock hidden achievements.',
+    actions: [
+      { label: 'Browse Collection', href: '../Bit Cryptic Adventure/index.html', primary: true },
+      { label: 'Lore Archive', onclick: () => alert('The ancient clues speak of a world where words hold power...') }
+    ]
+  },
+  docks: {
+    title: 'Decoder Docks',
+    subtitle: 'Gateway to the World',
+    icon: '&#x26F5;',
+    iconBg: 'linear-gradient(135deg, #2a8ab5, #1a6a95)',
+    desc: 'The Decoder Docks connect Bit Cryptic World to distant lands. Ships arrive carrying new puzzles, visitors, and mysterious packages. Check the notice board for updates and community links.',
+    actions: [
+      { label: 'Notice Board', onclick: () => alert('Check back soon for community updates!') },
+      { label: 'Set Sail', onclick: () => alert('New destinations coming in future updates!') }
+    ]
+  },
+  town: {
+    title: 'Town Square',
+    subtitle: 'Community Hub',
+    icon: '&#x26F2;',
+    iconBg: 'linear-gradient(135deg, #8a9db3, #6a7d93)',
+    desc: 'The bustling Town Square is where Cryptic Voyagers gather. Share strategies at the fountain, check the bulletin board for events, and meet fellow puzzle solvers.',
+    actions: [
+      { label: 'Bulletin Board', onclick: () => alert('Community features coming soon!') },
+      { label: 'Events', onclick: () => alert('Seasonal events are being planned!') }
+    ]
+  },
+  observatory: {
+    title: 'Mystic Peak Observatory',
+    subtitle: 'Secrets of the Stars',
+    icon: '&#x1F52D;',
+    iconBg: 'linear-gradient(135deg, #6a7a9a, #4a5a7a)',
+    desc: 'Perched atop the highest mountain, the Observatory peers into the cosmos for hidden patterns. Astronomers here study the celestial wordplay that guides the island\'s deepest mysteries.',
+    actions: [
+      { label: 'Stargaze', onclick: () => alert('The stars whisper: "Not all that glitters is gold... some of it is a hidden definition."') },
+      { label: 'Star Charts', onclick: () => alert('Star chart puzzles coming in a future update!') }
+    ]
+  },
+  forest: {
+    title: 'Enigma Forest',
+    subtitle: 'Beware what lurks within',
+    icon: '&#x1F332;',
+    iconBg: 'linear-gradient(135deg, #2a7a2a, #1a5218)',
+    desc: 'The Enigma Forest is dense, dark, and full of riddles carved into ancient trees. Strange creatures guard forgotten wordplay. Only the bravest venture deep enough to find the Riddler\'s Hollow.',
+    actions: [
+      { label: 'Enter Forest', onclick: () => alert('You hear rustling in the trees... the forest will open in a future update!') },
+      { label: 'Forest Map', onclick: () => alert('The paths shift and change. No map can capture this forest.') }
+    ]
+  },
+  cove: {
+    title: 'Cryptogram Cove',
+    subtitle: 'Hidden Treasures Await',
+    icon: '&#x1F5DD;',
+    iconBg: 'linear-gradient(135deg, #c0a040, #8b6914)',
+    desc: 'A secret cove accessible only to those who know the passphrase. Ancient treasure chests line the cave walls, each locked with a unique cryptogram. Crack the code to claim your reward.',
+    actions: [
+      { label: 'Search for Treasure', onclick: () => alert('You found a chest! But it\'s locked with a cryptic clue... coming soon!') },
+      { label: 'Read the Walls', onclick: () => alert('The cave walls hold a cryptic clue: "Confused artist holds nothing back (7)" ... can you solve it?') }
+    ]
+  },
+  cafe: {
+    title: 'Cryptic Cafe',
+    subtitle: 'Rest, Refuel, Riddle',
+    icon: '&#x2615;',
+    iconBg: 'linear-gradient(135deg, #b5633a, #8b4513)',
+    desc: 'Take a break from adventuring at the cozy Cryptic Cafe. The barista serves puzzles alongside hot drinks. Regulars come here to swap stories, hints, and the occasional solved clue.',
+    actions: [
+      { label: 'Order a Puzzle', onclick: () => alert('The barista slides you a napkin: "What has keys but no locks?" Answer: A keyboard!') },
+      { label: 'Daily Special', onclick: () => alert('Today\'s special: Enigma Espresso with a side of Anagram Toast!') }
+    ]
+  },
+  beach: {
+    title: 'Decoder Beach',
+    subtitle: 'Where clues wash ashore',
+    icon: '&#x1F3D6;',
+    iconBg: 'linear-gradient(135deg, #e8d5a3, #c4a86c)',
+    desc: 'Relax on the sandy shores of Decoder Beach. Messages in bottles wash up with cryptic clues, and sand castles hold architectural puzzles. The perfect place to unwind between adventures.',
+    actions: [
+      { label: 'Beach Puzzles', onclick: () => alert('A bottle washes ashore... "SVOOL DLIOW" (Hint: try reversing the alphabet!)') },
+      { label: 'Build Sand Castle', onclick: () => alert('You build an impressive sand crossword grid! +10 creativity points') }
+    ]
+  }
+};
+
+// ═══════════════════════════════════
+//  MAP PAN & ZOOM
+// ═══════════════════════════════════
+const container = document.getElementById('map-container');
+const world = document.getElementById('map-world');
+
+let scale = 1;
+let panX = 0, panY = 0;
+let isDragging = false;
+let dragStartX, dragStartY, panStartX, panStartY;
+
+function updateTransform() {
+  world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  updateMinimap();
+}
+
+function clampPan() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const worldW = 2400 * scale;
+  const worldH = 1600 * scale;
+
+  const minX = vw - worldW;
+  const minY = vh - worldH;
+
+  panX = Math.min(0, Math.max(minX, panX));
+  panY = Math.min(0, Math.max(minY, panY));
+}
+
+function resetView() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  scale = Math.max(vw / 2400, vh / 1600);
+  panX = (vw - 2400 * scale) / 2;
+  panY = (vh - 1600 * scale) / 2;
+  updateTransform();
+}
+
+// Mouse drag
+container.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.location') || e.target.closest('.toolbar') || e.target.closest('.detail-panel')) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  panStartX = panX;
+  panStartY = panY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  panX = panStartX + (e.clientX - dragStartX);
+  panY = panStartY + (e.clientY - dragStartY);
+  clampPan();
+  updateTransform();
+});
+
+window.addEventListener('mouseup', () => { isDragging = false; });
+
+// Touch support
+let touchStartDist = 0;
+let touchStartScale = 1;
+
+container.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.location')) return;
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    panStartX = panX;
+    panStartY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    touchStartDist = Math.sqrt(dx * dx + dy * dy);
+    touchStartScale = scale;
+  }
+}, { passive: true });
+
+container.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 1 && isDragging) {
+    panX = panStartX + (e.touches[0].clientX - dragStartX);
+    panY = panStartY + (e.touches[0].clientY - dragStartY);
+    clampPan();
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    scale = Math.min(2, Math.max(0.4, touchStartScale * (dist / touchStartDist)));
+    clampPan();
+    updateTransform();
+  }
+}, { passive: true });
+
+container.addEventListener('touchend', () => { isDragging = false; });
+
+// Mouse wheel zoom
+container.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const zoomFactor = e.deltaY > 0 ? 0.92 : 1.08;
+  const newScale = Math.min(2, Math.max(0.4, scale * zoomFactor));
+
+  // Zoom toward cursor
+  const rect = container.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  const wx = (mx - panX) / scale;
+  const wy = (my - panY) / scale;
+
+  scale = newScale;
+  panX = mx - wx * scale;
+  panY = my - wy * scale;
+
+  clampPan();
+  updateTransform();
+}, { passive: false });
+
+// ═══════════════════════════════════
+//  MINIMAP
+// ═══════════════════════════════════
+function updateMinimap() {
+  const vp = document.getElementById('minimap-vp');
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const mmW = 180, mmH = 120;
+
+  const vpLeft = (-panX / (2400 * scale)) * mmW;
+  const vpTop = (-panY / (1600 * scale)) * mmH;
+  const vpWidth = (vw / (2400 * scale)) * mmW;
+  const vpHeight = (vh / (1600 * scale)) * mmH;
+
+  vp.style.left = Math.max(0, vpLeft) + 'px';
+  vp.style.top = Math.max(0, vpTop) + 'px';
+  vp.style.width = Math.min(mmW, vpWidth) + 'px';
+  vp.style.height = Math.min(mmH, vpHeight) + 'px';
+}
+
+// ═══════════════════════════════════
+//  DETAIL PANEL
+// ═══════════════════════════════════
+function openLocation(id) {
+  const loc = locations[id];
+  if (!loc) return;
+
+  document.getElementById('detail-icon').style.background = loc.iconBg;
+  document.getElementById('detail-icon').innerHTML = loc.icon;
+  document.getElementById('detail-title').textContent = loc.title;
+  document.getElementById('detail-subtitle').textContent = loc.subtitle;
+  document.getElementById('detail-desc').textContent = loc.desc;
+
+  const actionsEl = document.getElementById('detail-actions');
+  actionsEl.innerHTML = '';
+  loc.actions.forEach((a, i) => {
+    if (a.href) {
+      const link = document.createElement('a');
+      link.className = 'detail-action-btn' + (a.primary ? '' : ' secondary');
+      link.href = a.href;
+      link.textContent = a.label;
+      actionsEl.appendChild(link);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'detail-action-btn' + (a.primary ? '' : ' secondary');
+      btn.textContent = a.label;
+      btn.onclick = a.onclick;
+      actionsEl.appendChild(btn);
+    }
+  });
+
+  document.getElementById('detail-panel').classList.add('active');
+  document.getElementById('detail-overlay').classList.add('active');
+}
+
+function closePanel() {
+  document.getElementById('detail-panel').classList.remove('active');
+  document.getElementById('detail-overlay').classList.remove('active');
+}
+
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanel();
+});
+
+// ═══════════════════════════════════
+//  AMBIENT EFFECTS
+// ═══════════════════════════════════
+
+// Clouds
+function createClouds() {
+  for (let i = 0; i < 5; i++) {
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud';
+    cloud.style.top = (50 + Math.random() * 200) + 'px';
+    cloud.style.animationDuration = (40 + Math.random() * 30) + 's';
+    cloud.style.animationDelay = (-Math.random() * 60) + 's';
+    cloud.style.opacity = 0.3 + Math.random() * 0.3;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '200');
+    svg.setAttribute('height', '80');
+    svg.setAttribute('viewBox', '0 0 200 80');
+    const w = 100 + Math.random() * 100;
+    svg.style.width = w + 'px';
+
+    const ellipses = [
+      { cx: 70, cy: 50, rx: 60, ry: 25 },
+      { cx: 100, cy: 40, rx: 50, ry: 30 },
+      { cx: 130, cy: 50, rx: 55, ry: 22 },
+      { cx: 90, cy: 55, rx: 40, ry: 18 },
+    ];
+    ellipses.forEach(e => {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      el.setAttribute('cx', e.cx);
+      el.setAttribute('cy', e.cy);
+      el.setAttribute('rx', e.rx);
+      el.setAttribute('ry', e.ry);
+      el.setAttribute('fill', 'rgba(255,255,255,0.8)');
+      svg.appendChild(el);
+    });
+
+    cloud.appendChild(svg);
+    world.appendChild(cloud);
+  }
+}
+
+// Water ripples
+function createRipples() {
+  setInterval(() => {
+    const ripple = document.createElement('div');
+    ripple.className = 'water-ripple';
+    const x = Math.random() * 2400;
+    const y = Math.random() < 0.5 ? (Math.random() * 150) : (1300 + Math.random() * 300);
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.style.width = '20px';
+    ripple.style.height = '20px';
+    world.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 4000);
+  }, 2000);
+}
+
+// Fireflies in forest area
+function createFireflies() {
+  for (let i = 0; i < 12; i++) {
+    const ff = document.createElement('div');
+    ff.className = 'firefly';
+    ff.style.left = (450 + Math.random() * 200) + 'px';
+    ff.style.top = (450 + Math.random() * 150) + 'px';
+    world.appendChild(ff);
+    animateFirefly(ff);
+  }
+}
+
+function animateFirefly(el) {
+  const baseX = parseFloat(el.style.left);
+  const baseY = parseFloat(el.style.top);
+  function move() {
+    const x = baseX + (Math.random() - 0.5) * 80;
+    const y = baseY + (Math.random() - 0.5) * 60;
+    const dur = 2000 + Math.random() * 3000;
+    el.style.transition = `left ${dur}ms ease, top ${dur}ms ease, opacity ${dur}ms ease`;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.opacity = Math.random() > 0.3 ? (0.3 + Math.random() * 0.7) : 0;
+    setTimeout(move, dur);
+  }
+  setTimeout(move, Math.random() * 2000);
+}
+
+// Sparkles on Adventure Tower
+function createSparkles() {
+  setInterval(() => {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.style.left = (1080 + Math.random() * 60) + 'px';
+    sparkle.style.top = (520 + Math.random() * 80) + 'px';
+    sparkle.style.animationDuration = (1.5 + Math.random()) + 's';
+    world.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 3000);
+  }, 800);
+}
+
+// ═══════════════════════════════════
+//  LOADING & INIT
+// ═══════════════════════════════════
+function simulateLoading() {
+  const bar = document.getElementById('load-bar');
+  const text = document.getElementById('load-text');
+  const messages = [
+    'Decrypting the island...',
+    'Planting puzzle trees...',
+    'Filling the ocean...',
+    'Lighting the torches...',
+    'Brewing cafe coffee...',
+    'Releasing the fireflies...',
+    'Ready!'
+  ];
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 12 + Math.random() * 8;
+    if (progress > 100) progress = 100;
+    bar.style.width = progress + '%';
+    text.textContent = messages[Math.min(Math.floor(progress / 16), messages.length - 1)];
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('loading-screen').classList.add('hidden');
+        // Show welcome banner
+        setTimeout(() => {
+          const banner = document.getElementById('welcome-banner');
+          banner.classList.add('show');
+          setTimeout(() => banner.classList.remove('show'), 5000);
+        }, 500);
+      }, 400);
+    }
+  }, 250);
+}
+
+// Initialize
+window.addEventListener('load', () => {
+  resetView();
+  createClouds();
+  createRipples();
+  createFireflies();
+  createSparkles();
+  simulateLoading();
+});
+
+window.addEventListener('resize', () => {
+  resetView();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liam's Lair: Scene Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; gap: 40px; }
+h1 { font-family: 'Fredoka One', cursive; color: #ff4422; font-size: 1.6rem; text-shadow: 0 0 20px rgba(255,68,34,0.3); }
+.label { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+.scene-section { width: 560px; max-width: 95vw; background: linear-gradient(135deg, #1a1418 0%, #120a0a 100%); border: 2px solid rgba(255,68,34,0.3); border-radius: 20px; padding: 28px 32px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+.scene-frame { border-radius: 14px; overflow: hidden; margin-bottom: 14px; border: 2px solid rgba(255,68,34,0.15); }
+.story-text { color: rgba(255,255,255,0.9); font-size: 1rem; line-height: 1.8; margin: 12px 0 0; }
+.speaker { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: #ff4422; background: linear-gradient(135deg, rgba(255,68,34,0.15), rgba(255,68,34,0.05)); border: 1px solid rgba(255,68,34,0.3); border-radius: 12px; padding: 4px 14px; display: inline-block; margin-bottom: 8px; }
+.clue-display { color: #ffd700; font-family: 'Fredoka One', cursive; font-size: 1.1rem; margin-top: 10px; text-align: center; }
+.puzzle-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; }
+.puzzle-row input { flex: 1; max-width: 200px; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,68,34,0.3); border-radius: 12px; padding: 10px 16px; color: #fff; font-family: 'Nunito', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; text-align: center; outline: none; }
+.puzzle-row button { background: linear-gradient(135deg, #ff4422, #cc2200); border: none; border-radius: 12px; padding: 10px 20px; font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #fff; cursor: pointer; }
+.feedback { font-size: 0.85rem; margin-top: 8px; min-height: 1.4em; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>Liam's Lair</h1>
+
+<!-- Scene 0: The Descent -->
+<div class="scene-section">
+  <div class="label">Step 0: The Descent</div>
+  <div class="scene-frame">
+    <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lairBg0" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a0a08"/><stop offset="50%" stop-color="#2a1210"/><stop offset="100%" stop-color="#0a0404"/>
+        </linearGradient>
+        <radialGradient id="lavaGlow" cx="50%" cy="90%" r="50%">
+          <stop offset="0%" stop-color="#ff4422" stop-opacity="0.15"/><stop offset="100%" stop-color="#ff4422" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="fireGlow"><feGaussianBlur stdDeviation="3"/></filter>
+      </defs>
+      <rect width="500" height="260" fill="url(#lairBg0)"/>
+      <!-- Lava glow from below -->
+      <rect x="0" y="180" width="500" height="80" fill="url(#lavaGlow)"/>
+      <!-- Rough cave walls -->
+      <path d="M0,0 L0,260 L30,250 Q50,220 40,180 Q60,150 45,120 Q55,80 40,50 Q50,20 35,0 Z" fill="#2a1a14"/>
+      <path d="M500,0 L500,260 L470,250 Q450,220 460,180 Q440,150 455,120 Q445,80 460,50 Q450,20 465,0 Z" fill="#2a1a14"/>
+      <!-- Claw marks on walls -->
+      <g stroke="#3a2218" stroke-width="2" stroke-linecap="round" opacity="0.5">
+        <line x1="20" y1="60" x2="15" y2="100"/><line x1="25" y1="58" x2="20" y2="98"/><line x1="30" y1="62" x2="25" y2="102"/>
+        <line x1="475" y1="80" x2="480" y2="120"/><line x1="470" y1="78" x2="475" y2="118"/><line x1="465" y1="82" x2="470" y2="122"/>
+      </g>
+      <!-- Descending stone steps -->
+      <g fill="#3a2a20" stroke="#2a1a10" stroke-width="0.5">
+        <rect x="150" y="200" width="200" height="12" rx="2"/>
+        <rect x="160" y="215" width="180" height="12" rx="2"/>
+        <rect x="170" y="230" width="160" height="12" rx="2"/>
+        <rect x="180" y="245" width="140" height="15" rx="2"/>
+      </g>
+      <!-- Red glow from depth -->
+      <ellipse cx="250" cy="260" rx="100" ry="30" fill="#ff2200" opacity="0.08">
+        <animate attributeName="opacity" values="0.06;0.12;0.06" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Smoke/steam wisps -->
+      <g opacity="0.3">
+        <circle cx="200" cy="220" r="6" fill="#444">
+          <animate attributeName="cy" values="220;180;140" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0.15;0" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="300" cy="230" r="5" fill="#444">
+          <animate attributeName="cy" values="230;190;150" dur="5s" repeatCount="indefinite" begin="1s"/>
+          <animate attributeName="opacity" values="0.25;0.12;0" dur="5s" repeatCount="indefinite" begin="1s"/>
+        </circle>
+        <circle cx="250" cy="240" r="7" fill="#555">
+          <animate attributeName="cy" values="240;195;150" dur="7s" repeatCount="indefinite" begin="2s"/>
+          <animate attributeName="opacity" values="0.2;0.1;0" dur="7s" repeatCount="indefinite" begin="2s"/>
+        </circle>
+      </g>
+      <!-- Torch on wall (left) -->
+      <rect x="55" y="100" width="4" height="20" fill="#6a4a20"/>
+      <ellipse cx="57" cy="98" rx="6" ry="8" fill="#ff6622" opacity="0.7">
+        <animate attributeName="ry" values="8;10;7;9;8" dur="2s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="57" cy="95" rx="3" ry="5" fill="#ffaa44" opacity="0.5">
+        <animate attributeName="ry" values="5;7;4;6;5" dur="1.5s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Torch on wall (right) -->
+      <rect x="441" y="100" width="4" height="20" fill="#6a4a20"/>
+      <ellipse cx="443" cy="98" rx="6" ry="8" fill="#ff6622" opacity="0.7">
+        <animate attributeName="ry" values="7;9;8;10;7" dur="2.2s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="443" cy="95" rx="3" ry="5" fill="#ffaa44" opacity="0.5">
+        <animate attributeName="ry" values="4;6;5;7;4" dur="1.7s" repeatCount="indefinite"/>
+      </ellipse>
+    </svg>
+  </div>
+  <p class="story-text">The ground shakes as you descend into the passage beneath the cliffs. The air grows hot. Red light pulses from somewhere deep below, and the rock walls are scarred with claw marks the size of your arm.</p>
+</div>
+
+<!-- Scene 1: The Dragon's Chamber -->
+<div class="scene-section">
+  <div class="label">Step 1: The Dragon's Chamber</div>
+  <div class="scene-frame">
+    <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lairBg1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a0808"/><stop offset="40%" stop-color="#2a1010"/><stop offset="100%" stop-color="#0a0404"/>
+        </linearGradient>
+        <radialGradient id="dragonGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff2200" stop-opacity="0.1"/><stop offset="100%" stop-color="#ff2200" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="500" height="260" fill="url(#lairBg1)"/>
+      <!-- Cavern walls -->
+      <path d="M0,0 Q20,30 10,70 Q25,100 15,140 Q30,170 20,200 Q10,230 0,260 Z" fill="#2a1814"/>
+      <path d="M500,0 Q480,30 490,70 Q475,100 485,140 Q470,170 480,200 Q490,230 500,260 Z" fill="#2a1814"/>
+      <!-- Stalactites -->
+      <path d="M80,0 L85,30 L90,0" fill="#2a1814"/><path d="M180,0 L184,25 L188,0" fill="#2a1814"/>
+      <path d="M300,0 L305,35 L310,0" fill="#2a1814"/><path d="M420,0 L424,28 L428,0" fill="#2a1814"/>
+      <!-- Hoard: piles of scrolls and crossword grids -->
+      <g opacity="0.7">
+        <!-- Left pile -->
+        <ellipse cx="100" cy="235" rx="50" ry="18" fill="#3a2a18"/>
+        <rect x="70" y="220" width="14" height="20" rx="2" fill="#d4c090" opacity="0.6" transform="rotate(-15,77,230)"/>
+        <rect x="90" y="218" width="12" height="18" rx="2" fill="#c8b880" opacity="0.5" transform="rotate(10,96,227)"/>
+        <rect x="110" y="222" width="14" height="16" rx="2" fill="#d4c090" opacity="0.55" transform="rotate(-5,117,230)"/>
+        <rect x="130" y="224" width="10" height="14" rx="2" fill="#c8b880" opacity="0.5" transform="rotate(20,135,231)"/>
+        <!-- Right pile -->
+        <ellipse cx="400" cy="235" rx="45" ry="16" fill="#3a2a18"/>
+        <rect x="375" y="222" width="12" height="18" rx="2" fill="#d4c090" opacity="0.6" transform="rotate(12,381,231)"/>
+        <rect x="395" y="220" width="14" height="16" rx="2" fill="#c8b880" opacity="0.55" transform="rotate(-8,402,228)"/>
+        <rect x="415" y="224" width="10" height="14" rx="2" fill="#d4c090" opacity="0.5" transform="rotate(15,420,231)"/>
+      </g>
+      <!-- THE DRAGON (silhouette with glowing eyes) -->
+      <circle cx="250" cy="140" r="80" fill="url(#dragonGlow)"/>
+      <!-- Dragon body mass -->
+      <ellipse cx="250" cy="180" rx="70" ry="50" fill="#1a0808" opacity="0.9"/>
+      <!-- Dragon head -->
+      <ellipse cx="250" cy="120" rx="40" ry="30" fill="#1a0808" opacity="0.9"/>
+      <!-- Horns -->
+      <path d="M220,100 Q210,75 205,60" fill="none" stroke="#2a1212" stroke-width="6" stroke-linecap="round"/>
+      <path d="M280,100 Q290,75 295,60" fill="none" stroke="#2a1212" stroke-width="6" stroke-linecap="round"/>
+      <!-- Snout -->
+      <ellipse cx="250" cy="140" rx="25" ry="12" fill="#1a0808"/>
+      <!-- Glowing red eyes -->
+      <ellipse cx="235" cy="115" rx="8" ry="6" fill="#ff2200" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="265" cy="115" rx="8" ry="6" fill="#ff2200" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </ellipse>
+      <!-- Eye slit pupils -->
+      <ellipse cx="235" cy="115" rx="3" ry="6" fill="#ffaa00" opacity="0.6"/>
+      <ellipse cx="265" cy="115" rx="3" ry="6" fill="#ffaa00" opacity="0.6"/>
+      <!-- Nostrils with smoke -->
+      <circle cx="242" cy="138" r="3" fill="#ff2200" opacity="0.3"/>
+      <circle cx="258" cy="138" r="3" fill="#ff2200" opacity="0.3"/>
+      <circle cx="242" cy="130" r="3" fill="#444" opacity="0.2">
+        <animate attributeName="cy" values="130;115;100" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.2;0.1;0" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="258" cy="130" r="3" fill="#444" opacity="0.2">
+        <animate attributeName="cy" values="130;112;94" dur="3.5s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="opacity" values="0.2;0.1;0" dur="3.5s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <!-- Wings (folded, dark shapes behind) -->
+      <path d="M180,150 Q140,120 120,160 Q150,180 180,170" fill="#120808" opacity="0.7"/>
+      <path d="M320,150 Q360,120 380,160 Q350,180 320,170" fill="#120808" opacity="0.7"/>
+      <!-- Cryptic clue carvings on walls (glowing faintly) -->
+      <text x="30" y="50" fill="#ff4422" font-family="'Fredoka One',cursive" font-size="6" opacity="0.3" transform="rotate(-5,30,50)">8 down</text>
+      <text x="25" y="90" fill="#ff6644" font-family="'Fredoka One',cursive" font-size="5" opacity="0.25" transform="rotate(-8,25,90)">(5,4)</text>
+      <text x="35" y="160" fill="#ff4422" font-family="'Fredoka One',cursive" font-size="6" opacity="0.3" transform="rotate(3,35,160)">REV.</text>
+      <text x="455" y="55" fill="#ff4422" font-family="'Fredoka One',cursive" font-size="6" opacity="0.3" transform="rotate(5,455,55)">3 across</text>
+      <text x="460" y="100" fill="#ff6644" font-family="'Fredoka One',cursive" font-size="5" opacity="0.25" transform="rotate(8,460,100)">ANAG.</text>
+      <text x="450" y="170" fill="#ff4422" font-family="'Fredoka One',cursive" font-size="6" opacity="0.28" transform="rotate(-3,450,170)">HIDDEN</text>
+      <!-- Floor -->
+      <rect x="0" y="245" width="500" height="15" fill="#1a0a08"/>
+    </svg>
+  </div>
+  <div class="speaker">The Dragon</div>
+  <p class="story-text">"You found my lair. Impressive. But can you solve what I guard?" The dragon's voice rumbles through the cavern. "I am the keeper of the hardest clues on this island. Three you must solve to prove your worth."</p>
+</div>
+
+<!-- Scene 2: The Three Clues -->
+<div class="scene-section">
+  <div class="label">Step 2: The First Clue</div>
+  <div class="scene-frame">
+    <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="scrollBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a0808"/><stop offset="100%" stop-color="#0a0404"/>
+        </linearGradient>
+        <radialGradient id="scrollGlow" cx="50%" cy="50%" r="40%">
+          <stop offset="0%" stop-color="#ff4422" stop-opacity="0.08"/><stop offset="100%" stop-color="#ff4422" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="500" height="260" fill="url(#scrollBg)"/>
+      <rect x="0" y="0" width="500" height="260" fill="url(#scrollGlow)"/>
+      <!-- Scorched scroll unfurled -->
+      <rect x="80" y="40" width="340" height="180" rx="8" fill="#d4c090" opacity="0.9"/>
+      <rect x="85" y="45" width="330" height="170" rx="6" fill="#e8d8b0" opacity="0.85"/>
+      <!-- Burned edges -->
+      <path d="M80,40 Q85,45 82,55 Q88,65 84,75" fill="#8a6030" opacity="0.4"/>
+      <path d="M420,40 Q415,48 418,58 Q412,68 416,78" fill="#8a6030" opacity="0.4"/>
+      <path d="M80,220 Q86,215 83,205" fill="#8a6030" opacity="0.35"/>
+      <path d="M420,220 Q414,215 417,205" fill="#8a6030" opacity="0.35"/>
+      <!-- Scroll rollers -->
+      <rect x="72" y="38" width="8" height="186" rx="4" fill="#6a4a20"/>
+      <rect x="420" y="38" width="8" height="186" rx="4" fill="#6a4a20"/>
+      <!-- Clue text on scroll -->
+      <text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="'Fredoka One',cursive" font-size="10" opacity="0.6">THE DRAGON'S FIRST CLUE</text>
+      <line x1="140" y1="92" x2="360" y2="92" stroke="#2a1a10" stroke-width="0.5" opacity="0.3"/>
+      <text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="'Fredoka One',cursive" font-size="14">"Treasure hidden in</text>
+      <text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="'Fredoka One',cursive" font-size="14">each estimate (5)"</text>
+      <text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="'Nunito',sans-serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
+      <!-- Dragon eyes watching from darkness -->
+      <ellipse cx="60" cy="130" rx="4" ry="3" fill="#ff2200" opacity="0.4">
+        <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="440" cy="130" rx="4" ry="3" fill="#ff2200" opacity="0.4">
+        <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite" begin="1s"/>
+      </ellipse>
+    </svg>
+  </div>
+  <div class="speaker">The Dragon</div>
+  <p class="story-text">"First clue. Listen carefully." The dragon unfurls a scorched scroll.</p>
+  <p class="clue-display">"Treasure hidden in each estimate (5)"</p>
+  <div class="puzzle-row">
+    <input id="clue1" type="text" maxlength="5" placeholder="Answer..." />
+    <button onclick="checkClue1()">Solve</button>
+  </div>
+  <p id="fb1" class="feedback"></p>
+</div>
+
+<!-- HIDDEN: Scenes 3-5 appear after solving all clues -->
+<div id="clue2Section" style="display:none;">
+<div class="scene-section">
+  <div class="label">Step 3: The Second Clue</div>
+  <div class="speaker">The Dragon</div>
+  <p class="story-text">"Correct." Smoke curls from the dragon's nostrils. "A hidden word clue. Simple enough. But the next requires a different kind of thinking." The dragon scratches the second clue into the stone floor with one enormous claw.</p>
+  <p class="clue-display">"This beast makes proceedings drag on (6)"</p>
+  <div class="puzzle-row">
+    <input id="clue2" type="text" maxlength="6" placeholder="Answer..." />
+    <button onclick="checkClue2()">Solve</button>
+  </div>
+  <p id="fb2" class="feedback"></p>
+</div>
+</div>
+
+<div id="clue3Section" style="display:none;">
+<div class="scene-section">
+  <div class="label">Step 4: The Final Clue</div>
+  <div class="speaker">The Dragon</div>
+  <p class="story-text">"Two down." The dragon rises to its full height, wings scraping the cavern ceiling. "A double definition. You have sharp eyes. But the final clue is my finest. It requires you to rearrange." The dragon breathes a thin line of fire across the wall, searing the final clue into the rock.</p>
+  <p class="clue-display">"Fun race, oddly, leads to the source of heat (7)"</p>
+  <div class="puzzle-row">
+    <input id="clue3" type="text" maxlength="7" placeholder="Answer..." />
+    <button onclick="checkClue3()">Solve</button>
+  </div>
+  <p id="fb3" class="feedback"></p>
+</div>
+</div>
+
+<div id="victorySection" style="display:none;">
+<div class="scene-section">
+  <div class="label">Step 5: The Hoard is Yours</div>
+  <div class="scene-frame">
+    <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="victoryBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a0808"/><stop offset="50%" stop-color="#2a1410"/><stop offset="100%" stop-color="#1a0c08"/>
+        </linearGradient>
+        <radialGradient id="warmGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffd700" stop-opacity="0.12"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="500" height="260" fill="url(#victoryBg)"/>
+      <rect x="0" y="0" width="500" height="260" fill="url(#warmGlow)"/>
+      <!-- Cave walls -->
+      <path d="M0,0 Q15,40 8,80 Q20,120 12,160 Q25,200 15,240 L0,260 Z" fill="#2a1814"/>
+      <path d="M500,0 Q485,40 492,80 Q480,120 488,160 Q475,200 485,240 L500,260 Z" fill="#2a1814"/>
+      <!-- Hoard glowing warm -->
+      <ellipse cx="250" cy="210" rx="180" ry="40" fill="#3a2818"/>
+      <!-- Scrolls and grids scattered across the hoard -->
+      <g opacity="0.8">
+        <rect x="100" y="195" width="16" height="22" rx="2" fill="#d4c090" transform="rotate(-10,108,206)"/>
+        <rect x="140" y="192" width="14" height="20" rx="2" fill="#c8b880" transform="rotate(8,147,202)"/>
+        <rect x="180" y="198" width="16" height="18" rx="2" fill="#d4c090" transform="rotate(-5,188,207)"/>
+        <rect x="230" y="194" width="18" height="20" rx="2" fill="#e0d0a0" transform="rotate(12,239,204)"/>
+        <rect x="280" y="196" width="14" height="18" rx="2" fill="#c8b880" transform="rotate(-8,287,205)"/>
+        <rect x="320" y="192" width="16" height="22" rx="2" fill="#d4c090" transform="rotate(6,328,203)"/>
+        <rect x="360" y="198" width="14" height="18" rx="2" fill="#c8b880" transform="rotate(-12,367,207)"/>
+      </g>
+      <!-- Dragon settled, eyes warm -->
+      <ellipse cx="250" cy="130" rx="60" ry="40" fill="#1a0808" opacity="0.6"/>
+      <ellipse cx="235" cy="118" rx="5" ry="4" fill="#ffaa44" opacity="0.6">
+        <animate attributeName="opacity" values="0.4;0.7;0.4" dur="5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="265" cy="118" rx="5" ry="4" fill="#ffaa44" opacity="0.6">
+        <animate attributeName="opacity" values="0.4;0.7;0.4" dur="5s" repeatCount="indefinite" begin="0.5s"/>
+      </ellipse>
+      <!-- Golden particles floating -->
+      <circle cx="150" cy="100" r="2" fill="#ffd700" opacity="0.4">
+        <animate attributeName="cy" values="100;85;70" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0.6;0" dur="5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="250" cy="80" r="2.5" fill="#ffd700" opacity="0.3">
+        <animate attributeName="cy" values="80;60;40" dur="6s" repeatCount="indefinite" begin="1s"/>
+        <animate attributeName="opacity" values="0.3;0.5;0" dur="6s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <circle cx="350" cy="90" r="2" fill="#ffd700" opacity="0.35">
+        <animate attributeName="cy" values="90;72;54" dur="4.5s" repeatCount="indefinite" begin="2s"/>
+        <animate attributeName="opacity" values="0.35;0.55;0" dur="4.5s" repeatCount="indefinite" begin="2s"/>
+      </circle>
+      <!-- "LIAM'S LAIR" text glow -->
+      <text x="250" y="40" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" opacity="0.6">LIAM'S LAIR</text>
+    </svg>
+  </div>
+  <div class="speaker">The Dragon</div>
+  <p class="story-text">"Three for three. I have not seen that in a long time." The cavern glows with a warm light. "The hoard is yours to study. Return whenever you wish. I will have new clues waiting."</p>
+  <p class="story-text">Liam's Lair glows around you. The scrolls and grids contain some of the most elegant cryptic clues ever constructed. This place is yours now.</p>
+</div>
+</div>
+
+<script>
+function checkClue1() {
+  const input = document.getElementById('clue1');
+  const fb = document.getElementById('fb1');
+  const answer = input.value.trim().toUpperCase();
+  if (answer === 'CHEST') {
+    fb.style.color = 'rgba(100,255,150,0.8)';
+    fb.textContent = 'The dragon nods slowly. "Correct."';
+    input.disabled = true;
+    setTimeout(() => {
+      document.getElementById('clue2Section').style.display = '';
+      document.getElementById('clue2Section').scrollIntoView({ behavior: 'smooth' });
+    }, 1000);
+  } else if (answer.length >= 4) {
+    fb.style.color = 'rgba(255,100,100,0.7)';
+    fb.textContent = '"The answer is hiding inside the words of the clue itself. Look more carefully."';
+    input.value = '';
+    input.focus();
+  } else {
+    fb.style.color = 'rgba(255,180,100,0.6)';
+    fb.textContent = 'The answer is 5 letters.';
+  }
+}
+
+function checkClue2() {
+  const input = document.getElementById('clue2');
+  const fb = document.getElementById('fb2');
+  const answer = input.value.trim().toUpperCase();
+  if (answer === 'DRAGON') {
+    fb.style.color = 'rgba(100,255,150,0.8)';
+    fb.textContent = '"Two down." The dragon rises to its full height.';
+    input.disabled = true;
+    setTimeout(() => {
+      document.getElementById('clue3Section').style.display = '';
+      document.getElementById('clue3Section').scrollIntoView({ behavior: 'smooth' });
+    }, 1000);
+  } else if (answer.length >= 4) {
+    fb.style.color = 'rgba(255,100,100,0.7)';
+    fb.textContent = '"Two definitions in one clue. What beast am I? And what does \'drag on\' mean?"';
+    input.value = '';
+    input.focus();
+  } else {
+    fb.style.color = 'rgba(255,180,100,0.6)';
+    fb.textContent = 'The answer is 6 letters.';
+  }
+}
+
+function checkClue3() {
+  const input = document.getElementById('clue3');
+  const fb = document.getElementById('fb3');
+  const answer = input.value.trim().toUpperCase();
+  if (answer === 'FURNACE') {
+    fb.style.color = 'rgba(100,255,150,0.8)';
+    fb.textContent = 'The dragon lowers its head. "Three for three. Impressive."';
+    input.disabled = true;
+    setTimeout(() => {
+      document.getElementById('victorySection').style.display = '';
+      document.getElementById('victorySection').scrollIntoView({ behavior: 'smooth' });
+    }, 1200);
+  } else if (answer.length >= 5) {
+    fb.style.color = 'rgba(255,100,100,0.7)';
+    fb.textContent = '"Oddly is the anagram indicator. Rearrange the letters of FUN RACE."';
+    input.value = '';
+    input.focus();
+  } else {
+    fb.style.color = 'rgba(255,180,100,0.6)';
+    fb.textContent = 'The answer is 7 letters.';
+  }
+}
+
+document.querySelectorAll('.puzzle-row input').forEach(input => {
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') this.parentElement.querySelector('button').click();
+  });
+});
+</script>
+
+</body>
+</html>

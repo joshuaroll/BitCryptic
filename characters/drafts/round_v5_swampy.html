@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round V5 — Swampy Classic</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 520px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes breathe { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.06)} }
+    @keyframes tailSway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+    @keyframes waterRipple { 0%{transform:scaleX(1)} 50%{transform:scaleX(1.03)} 100%{transform:scaleX(1)} }
+    @keyframes lilyBob { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-2px) rotate(2deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Round Variant 5 of 5</div>
+  <h1>Swampy Classic — Half Submerged</h1>
+
+  <div class="card">
+    <svg width="380" height="420" viewBox="0 0 380 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#468e5a"/><stop offset="100%" stop-color="#24683c"/>
+        </radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#58b474"/><stop offset="100%" stop-color="#3a9050"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#d6eeb0"/><stop offset="100%" stop-color="#a6d068"/>
+        </radialGradient>
+        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a4a5a" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#0a2a3a" stop-opacity="0.9"/>
+        </linearGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <pattern id="sc" width="14" height="12" patternUnits="userSpaceOnUse">
+          <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.18)" stroke-width="0.8"/>
+        </pattern>
+        <!-- Water ripple pattern -->
+        <pattern id="rip" width="40" height="8" patternUnits="userSpaceOnUse">
+          <path d="M0,4 Q10,0 20,4 Q30,8 40,4" fill="none" stroke="rgba(100,180,200,0.2)" stroke-width="1"/>
+        </pattern>
+      </defs>
+
+      <!-- ===== WATER SURFACE ===== -->
+      <g style="animation:waterRipple 6s ease-in-out infinite">
+        <!-- Water body -->
+        <rect x="0" y="270" width="380" height="150" fill="url(#water)" rx="4"/>
+        <rect x="0" y="270" width="380" height="150" fill="url(#rip)"/>
+
+        <!-- Water surface highlights -->
+        <path d="M0,272 Q50,266 100,272 Q150,278 200,272 Q250,266 300,272 Q350,278 380,272" fill="none" stroke="rgba(100,200,220,0.25)" stroke-width="2">
+          <animate attributeName="d" values="M0,272 Q50,266 100,272 Q150,278 200,272 Q250,266 300,272 Q350,278 380,272;M0,274 Q50,268 100,274 Q150,280 200,274 Q250,268 300,274 Q350,280 380,274;M0,272 Q50,266 100,272 Q150,278 200,272 Q250,266 300,272 Q350,278 380,272" dur="4s" repeatCount="indefinite"/>
+        </path>
+        <path d="M0,278 Q60,272 120,278 Q180,284 240,278 Q300,272 380,278" fill="none" stroke="rgba(100,200,220,0.12)" stroke-width="1.5">
+          <animate attributeName="d" values="M0,278 Q60,272 120,278 Q180,284 240,278 Q300,272 380,278;M0,280 Q60,274 120,280 Q180,286 240,280 Q300,274 380,280;M0,278 Q60,272 120,278 Q180,284 240,278 Q300,272 380,278" dur="5s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Lily pad left -->
+      <g style="transform-origin:65px 285px; animation:lilyBob 5s ease-in-out infinite">
+        <ellipse cx="65" cy="285" rx="28" ry="10" fill="#2a6a38" opacity="0.6"/>
+        <path d="M65,275 L65,285" stroke="#1a4a28" stroke-width="1" opacity="0.4"/>
+        <!-- Lily flower -->
+        <ellipse cx="58" cy="278" rx="5" ry="3" fill="#ffa0b0" opacity="0.5"/>
+        <ellipse cx="62" cy="276" rx="4" ry="2.5" fill="#ffb0c0" opacity="0.5"/>
+      </g>
+
+      <!-- Lily pad right -->
+      <g style="transform-origin:320px 290px; animation:lilyBob 4.5s ease-in-out infinite 1s">
+        <ellipse cx="320" cy="290" rx="24" ry="9" fill="#2a6a38" opacity="0.5"/>
+        <path d="M320,281 L320,290" stroke="#1a4a28" stroke-width="1" opacity="0.4"/>
+      </g>
+
+      <g style="animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- BODY below water (visible through water, darker/muted) -->
+        <g opacity="0.4">
+          <ellipse cx="190" cy="330" rx="65" ry="60" fill="#2a5838"/>
+          <!-- Belly hint underwater -->
+          <ellipse cx="190" cy="340" rx="42" ry="40" fill="#4a7850" opacity="0.3"/>
+          <!-- Legs visible under water -->
+          <ellipse cx="155" cy="380" rx="20" ry="8" fill="#2a5838"/>
+          <ellipse cx="225" cy="380" rx="20" ry="8" fill="#2a5838"/>
+        </g>
+
+        <!-- TAIL sticking out behind at water level -->
+        <g style="transform-origin:100px 280px; animation:tailSway 5s ease-in-out infinite">
+          <path d="M100,280 Q55,270 30,255 Q12,242 18,228 Q22,218 30,222" fill="none" stroke="url(#bg)" stroke-width="20" stroke-linecap="round"/>
+          <!-- Tail ridges above water -->
+          <path d="M72,272 L66,258 L72,264 Z" fill="#24683c" opacity="0.6"/>
+          <path d="M50,262 L44,246 L52,252 Z" fill="#24683c" opacity="0.55"/>
+          <path d="M30,248 L24,232 L32,240 Z" fill="#24683c" opacity="0.5"/>
+        </g>
+
+        <!-- BACK + RIDGES emerging from water surface -->
+        <path d="M110,274 Q150,260 190,258 Q230,260 270,274" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="190" cy="268" rx="76" ry="16" fill="url(#bg)"/>
+        <ellipse cx="190" cy="268" rx="72" ry="14" fill="url(#sc)"/>
+        <!-- Scute plates on visible back -->
+        <ellipse cx="165" cy="262" rx="8" ry="5" fill="#24683c" opacity="0.45"/>
+        <ellipse cx="185" cy="260" rx="10" ry="6" fill="#24683c" opacity="0.5"/>
+        <ellipse cx="205" cy="262" rx="8" ry="5" fill="#24683c" opacity="0.45"/>
+        <!-- Dorsal ridges on back -->
+        <path d="M165,260 L162,248 L168,248 Z" fill="#24683c" opacity="0.55"/>
+        <path d="M185,258 L181,244 L189,244 Z" fill="#24683c" opacity="0.6"/>
+        <path d="M205,260 L202,248 L208,248 Z" fill="#24683c" opacity="0.55"/>
+
+        <!-- LEFT ARM resting on water surface -->
+        <path d="M120,270 Q95,268 82,262" fill="none" stroke="url(#bg)" stroke-width="14" stroke-linecap="round"/>
+        <ellipse cx="80" cy="262" rx="9" ry="7" fill="#389050"/>
+        <ellipse cx="72" cy="258" rx="5" ry="3" fill="#42a060" transform="rotate(-15,72,258)"/>
+        <ellipse cx="78" cy="255" rx="5" ry="3" fill="#42a060"/>
+        <ellipse cx="86" cy="257" rx="5" ry="3" fill="#42a060" transform="rotate(10,86,257)"/>
+        <circle cx="68" cy="256" r="1.8" fill="#c8b060"/><circle cx="74" cy="253" r="1.8" fill="#c8b060"/><circle cx="82" cy="255" r="1.8" fill="#c8b060"/>
+
+        <!-- RIGHT ARM — waving above water -->
+        <g style="transform-origin:256px 256px; animation:wave 5s ease-in-out infinite">
+          <path d="M256,268 Q278,252 284,224" fill="none" stroke="url(#bg)" stroke-width="14" stroke-linecap="round"/>
+          <ellipse cx="284" cy="220" rx="9" ry="7" fill="#389050"/>
+          <ellipse cx="276" cy="214" rx="5" ry="3" fill="#42a060" transform="rotate(-10,276,214)"/>
+          <ellipse cx="284" cy="212" rx="5" ry="3" fill="#42a060"/>
+          <ellipse cx="292" cy="214" rx="5" ry="3" fill="#42a060" transform="rotate(10,292,214)"/>
+          <circle cx="272" cy="212" r="1.8" fill="#c8b060"/><circle cx="280" cy="210" r="1.8" fill="#c8b060"/><circle cx="288" cy="212" r="1.8" fill="#c8b060"/>
+        </g>
+
+        <!-- ===== HEAD — the main event: floating just above water ===== -->
+        <!-- Classic croc pose: eyes and snout barely above water -->
+
+        <!-- Eye bumps protruding (THE croc look) -->
+        <ellipse cx="155" cy="215" rx="18" ry="18" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="225" cy="215" rx="18" ry="18" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- Head/skull between eyes -->
+        <ellipse cx="190" cy="230" rx="52" ry="28" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="190" cy="228" rx="48" ry="24" fill="url(#sc)"/>
+        <!-- Head scutes -->
+        <ellipse cx="175" cy="218" rx="8" ry="5" fill="#24683c" opacity="0.4"/>
+        <ellipse cx="190" cy="216" rx="10" ry="6" fill="#24683c" opacity="0.45"/>
+        <ellipse cx="205" cy="218" rx="8" ry="5" fill="#24683c" opacity="0.4"/>
+
+        <!-- SNOUT — long, wide, floating at water level -->
+        <path d="M140,244 Q148,234 190,230 Q232,234 240,244 Q232,256 190,260 Q148,256 140,244 Z" fill="url(#lt)"/>
+        <!-- Snout bumps/pitting -->
+        <circle cx="155" cy="240" r="2.5" fill="#42a060" opacity="0.3"/>
+        <circle cx="168" cy="237" r="2" fill="#42a060" opacity="0.25"/>
+        <circle cx="212" cy="237" r="2" fill="#42a060" opacity="0.25"/>
+        <circle cx="225" cy="240" r="2.5" fill="#42a060" opacity="0.3"/>
+
+        <!-- Nostrils at snout tip — prominent, above water -->
+        <ellipse cx="152" cy="242" rx="5" ry="4" fill="#1a4a2a"/>
+        <ellipse cx="228" cy="242" rx="5" ry="4" fill="#1a4a2a"/>
+        <!-- Nostril bump (crocs have raised nostrils) -->
+        <ellipse cx="152" cy="240" rx="6" ry="4" fill="url(#lt)" opacity="0.6"/>
+        <ellipse cx="228" cy="240" rx="6" ry="4" fill="url(#lt)" opacity="0.6"/>
+
+        <!-- Jaw line with interlocking teeth -->
+        <path d="M148,254 Q170,264 190,266 Q210,264 232,254" fill="#2a6840"/>
+        <!-- Teeth -->
+        <line x1="154" y1="254" x2="155" y2="248" stroke="#ede0c0" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="168" y1="256" x2="168" y2="249" stroke="#ede0c0" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="190" y1="258" x2="190" y2="250" stroke="#ede0c0" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="212" y1="256" x2="212" y2="249" stroke="#ede0c0" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="226" y1="254" x2="226" y2="248" stroke="#ede0c0" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Lower teeth up -->
+        <line x1="161" y1="256" x2="161" y2="262" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="178" y1="258" x2="178" y2="264" stroke="#ede0c0" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="202" y1="258" x2="202" y2="264" stroke="#ede0c0" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="220" y1="256" x2="220" y2="262" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+
+        <!-- Water lapping at jaw line -->
+        <path d="M135,260 Q160,256 190,258 Q220,260 245,256" fill="none" stroke="rgba(100,200,220,0.15)" stroke-width="1.5">
+          <animate attributeName="d" values="M135,260 Q160,256 190,258 Q220,260 245,256;M135,262 Q160,258 190,260 Q220,262 245,258;M135,260 Q160,256 190,258 Q220,260 245,256" dur="3s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- EYES — large, protruding above water, the iconic croc look -->
+        <g>
+          <!-- Left eye — raised dome -->
+          <circle cx="155" cy="212" r="14" fill="#fff"/>
+          <g style="transform-origin:155px 212px; animation:blink 5s ease-in-out infinite">
+            <circle cx="158" cy="213" r="9" fill="#6a8a20"/>
+            <ellipse cx="158" cy="213" rx="3.5" ry="9" fill="#1a2a08"/>
+            <circle cx="153" cy="208" r="3.5" fill="#fff" opacity="0.85"/>
+            <circle cx="162" cy="207" r="1.8" fill="#fff" opacity="0.5"/>
+          </g>
+          <!-- Eyelid ridge -->
+          <path d="M141,208 Q148,202 162,206 Q168,208 170,212" fill="url(#bg)" opacity="0.45"/>
+
+          <!-- Right eye -->
+          <circle cx="225" cy="212" r="14" fill="#fff"/>
+          <g style="transform-origin:225px 212px; animation:blink 5s ease-in-out infinite 0.4s">
+            <circle cx="222" cy="213" r="9" fill="#6a8a20"/>
+            <ellipse cx="222" cy="213" rx="3.5" ry="9" fill="#1a2a08"/>
+            <circle cx="218" cy="208" r="3.5" fill="#fff" opacity="0.85"/>
+            <circle cx="226" cy="207" r="1.8" fill="#fff" opacity="0.5"/>
+          </g>
+          <path d="M212,212 Q218,208 232,206 Q238,208 240,212" fill="url(#bg)" opacity="0.45"/>
+        </g>
+
+        <!-- Monocle on right eye -->
+        <circle cx="225" cy="212" r="18" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+        <path d="M243,212 Q252,226 250,244" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.35"/>
+
+        <!-- Cheek blush -->
+        <ellipse cx="140" cy="240" rx="8" ry="4" fill="#ff8a8a" opacity="0.1"/>
+        <ellipse cx="240" cy="240" rx="8" ry="4" fill="#ff8a8a" opacity="0.1"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Half Submerged</span>
+      <span class="trait">Protruding Eyes</span>
+      <span class="trait">Water Habitat</span>
+      <span class="trait">Ambush Pose</span>
+    </div>
+    <div class="desc">
+      The most iconic crocodile pose: just eyes, nostrils, and back ridges breaking the
+      water's surface. The round body is mostly underwater (visible as a murky silhouette).
+      Lily pads float nearby. This is unmistakably a croc in its natural habitat — but the
+      monocle, waving arm, and playful expression keep it friendly and approachable.
+    </div>
+    <div class="speech">"I like to lurk in the shallows of a tricky clue... then SNAP — the answer surfaces!"</div>
+  </div>
+</body>
+</html>

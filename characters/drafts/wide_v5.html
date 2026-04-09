@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wide V5 — Angular W</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 520px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    @keyframes breathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.01)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.06)} }
+    @keyframes tailSway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Wide Variant 5 of 5</div>
+  <h1>Angular W — Sharp Wiggles</h1>
+  <div class="card">
+    <svg width="400" height="380" viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="48%" cy="38%" r="55%">
+          <stop offset="0%" stop-color="#4db86e"/><stop offset="100%" stop-color="#2a7848"/>
+        </radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#62cc84"/><stop offset="100%" stop-color="#3ea85c"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#d8f0b0"/><stop offset="100%" stop-color="#aad870"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#000" flood-opacity="0.28"/></filter>
+        <pattern id="sc" width="16" height="14" patternUnits="userSpaceOnUse">
+          <path d="M0,7 Q4,1 8,7 Q12,1 16,7" fill="none" stroke="rgba(30,80,45,0.15)" stroke-width="0.8"/>
+        </pattern>
+      </defs>
+
+      <!-- Ground shadow -->
+      <ellipse cx="195" cy="362" rx="95" ry="14" fill="rgba(0,0,0,0.25)"/>
+
+      <g style="transform-origin:195px 362px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — wide base, solid, attached flush -->
+        <g style="transform-origin:100px 268px; animation:tailSway 5s ease-in-out infinite">
+          <path d="M102,248 Q75,244 52,232 Q32,218 18,200 Q8,184 10,172
+                   Q6,182 4,196 Q6,214 18,232 Q32,250 54,264 Q74,274 102,282 Z"
+                fill="url(#bg)"/>
+          <path d="M100,280 Q72,272 52,260 Q32,246 18,228 Q6,212 6,194"
+                fill="none" stroke="#a8d470" stroke-width="5" stroke-linecap="round" opacity="0.12"/>
+          <path d="M100,278 Q70,268 50,256 Q30,242 16,224 Q6,208 8,190"
+                fill="none" stroke="url(#sc)" stroke-width="16" opacity="0.4"/>
+          <!-- Dorsal scutes -->
+          <path d="M86,248 L80,234 L84,240 Z" fill="#2a7848" opacity="0.5"/>
+          <path d="M66,236 L60,222 L64,228 Z" fill="#2a7848" opacity="0.45"/>
+          <path d="M48,224 L42,208 L46,214 Z" fill="#2a7848" opacity="0.4"/>
+          <path d="M32,210 L26,194 L30,200 Z" fill="#2a7848" opacity="0.35"/>
+          <path d="M18,194 L14,180 L18,186 Z" fill="#2a7848" opacity="0.3"/>
+        </g>
+
+        <!-- FEET — short, wide, splayed -->
+        <g>
+          <ellipse cx="148" cy="350" rx="26" ry="11" fill="url(#bg)"/>
+          <ellipse cx="128" cy="347" rx="6" ry="4" fill="#3a9a58" transform="rotate(-12,128,347)"/>
+          <ellipse cx="140" cy="343" rx="6" ry="4" fill="#3a9a58" transform="rotate(-3,140,343)"/>
+          <ellipse cx="152" cy="342" rx="6" ry="4" fill="#3a9a58"/>
+          <ellipse cx="164" cy="344" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,164,344)"/>
+          <circle cx="122" cy="345" r="2" fill="#c8b060"/><circle cx="134" cy="341" r="2" fill="#c8b060"/>
+          <circle cx="146" cy="340" r="2" fill="#c8b060"/><circle cx="166" cy="342" r="2" fill="#c8b060"/>
+        </g>
+        <g>
+          <ellipse cx="242" cy="350" rx="26" ry="11" fill="url(#bg)"/>
+          <ellipse cx="226" cy="347" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,226,347)"/>
+          <ellipse cx="238" cy="343" rx="6" ry="4" fill="#3a9a58"/>
+          <ellipse cx="250" cy="342" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,250,342)"/>
+          <ellipse cx="262" cy="344" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(12,262,344)"/>
+          <circle cx="220" cy="345" r="2" fill="#c8b060"/><circle cx="232" cy="341" r="2" fill="#c8b060"/>
+          <circle cx="244" cy="340" r="2" fill="#c8b060"/><circle cx="264" cy="342" r="2" fill="#c8b060"/>
+        </g>
+
+        <!-- BODY — WIDE and squat (rx much bigger than ry) -->
+        <ellipse cx="195" cy="270" rx="95" ry="78" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="195" cy="270" rx="90" ry="74" fill="url(#sc)"/>
+        <!-- Wide belly -->
+        <ellipse cx="195" cy="280" rx="65" ry="56" fill="url(#belly)" opacity="0.45"/>
+        <!-- Belly banding -->
+        <g opacity="0.22">
+          <line x1="140" y1="248" x2="250" y2="248" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="136" y1="262" x2="254" y2="262" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="134" y1="276" x2="256" y2="276" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="134" y1="290" x2="256" y2="290" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="136" y1="304" x2="254" y2="304" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="142" y1="318" x2="248" y2="318" stroke="#8ab848" stroke-width="0.8"/>
+        </g>
+        <!-- Back scutes -->
+        <ellipse cx="180" cy="194" rx="10" ry="6" fill="#2a7848" opacity="0.4"/>
+        <ellipse cx="195" cy="190" rx="12" ry="7" fill="#2a7848" opacity="0.45"/>
+        <ellipse cx="210" cy="194" rx="10" ry="6" fill="#2a7848" opacity="0.4"/>
+
+        <!-- LEFT ARM — short stubby -->
+        <path d="M106,252 Q80,266 74,288" fill="none" stroke="url(#bg)" stroke-width="18" stroke-linecap="round"/>
+        <ellipse cx="72" cy="292" rx="10" ry="8" fill="#3a9a58"/>
+        <ellipse cx="64" cy="288" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-18,64,288)"/>
+        <ellipse cx="70" cy="284" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-4,70,284)"/>
+        <ellipse cx="78" cy="286" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(8,78,286)"/>
+        <circle cx="60" cy="286" r="1.5" fill="#c8b060"/><circle cx="66" cy="282" r="1.5" fill="#c8b060"/><circle cx="74" cy="284" r="1.5" fill="#c8b060"/>
+
+        <!-- RIGHT ARM — waving -->
+        <g style="transform-origin:280px 240px; animation:wave 5s ease-in-out infinite">
+          <path d="M284,252 Q310,234 314,204" fill="none" stroke="url(#bg)" stroke-width="18" stroke-linecap="round"/>
+          <ellipse cx="314" cy="200" rx="10" ry="8" fill="#3a9a58"/>
+          <ellipse cx="306" cy="194" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,306,194)"/>
+          <ellipse cx="314" cy="191" rx="5" ry="3.5" fill="#4aaa6a"/>
+          <ellipse cx="322" cy="194" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,322,194)"/>
+          <circle cx="302" cy="192" r="1.5" fill="#c8b060"/><circle cx="310" cy="189" r="1.5" fill="#c8b060"/><circle cx="318" cy="192" r="1.5" fill="#c8b060"/>
+        </g>
+
+        <!-- HEAD — VERY WIDE, squat, wider than tall -->
+        <ellipse cx="195" cy="162" rx="78" ry="48" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="195" cy="160" rx="74" ry="44" fill="url(#sc)"/>
+
+        <!-- Eye bump ridges -->
+        <ellipse cx="152" cy="142" rx="16" ry="10" fill="#3a9058" opacity="0.4"/>
+        <ellipse cx="238" cy="142" rx="16" ry="10" fill="#3a9058" opacity="0.4"/>
+
+        <!-- SNOUT — wide, flat, short -->
+        <ellipse cx="195" cy="182" rx="44" ry="16" fill="url(#lt)"/>
+        <ellipse cx="195" cy="180" rx="38" ry="12" fill="#5cc880" opacity="0.3"/>
+        <!-- Snout bumps -->
+        <circle cx="168" cy="178" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="180" cy="176" r="2" fill="#4aaa6a" opacity="0.25"/>
+        <circle cx="210" cy="176" r="2" fill="#4aaa6a" opacity="0.25"/>
+        <circle cx="222" cy="178" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+
+        <!-- Nostrils at tip -->
+        <ellipse cx="172" cy="182" rx="4" ry="3" fill="#1e5535"/>
+        <ellipse cx="218" cy="182" rx="4" ry="3" fill="#1e5535"/>
+
+        <!-- JAW — wide, low profile -->
+        <path d="M155,190 Q175,200 195,202 Q215,200 235,190" fill="#3a9058" opacity="0.7"/>
+        <!-- Bumpy lip ridge -->
+        <path d="M155,190 Q170,194 185,195 Q195,196 205,195 Q220,194 235,190" fill="none" stroke="#2a7040" stroke-width="1.8" stroke-linecap="round"/>
+
+        <!-- ★ ANGULAR W — sharper bends, crispier feel ★ -->
+        <path d="M176,194 L184,198 L188,193 L195,200 L202,193 L206,198 L214,194"
+              fill="none" stroke="#1e5535" stroke-width="2.2" stroke-linecap="round"/>
+
+        <!-- ★ BIG CHEEK BLUSHES — kawaii style ★ -->
+        <ellipse cx="138" cy="178" rx="16" ry="9" fill="#ff8a8a" opacity="0.12"/>
+        <ellipse cx="252" cy="178" rx="16" ry="9" fill="#ff8a8a" opacity="0.12"/>
+
+        <!-- EYES — wide set, on raised bumps, big and round -->
+        <g>
+          <!-- Left eye bump -->
+          <ellipse cx="152" cy="146" rx="22" ry="18" fill="url(#bg)"/>
+          <ellipse cx="152" cy="144" rx="17" ry="15" fill="#fff"/>
+          <g style="transform-origin:152px 144px; animation:blink 5s ease-in-out infinite">
+            <ellipse cx="155" cy="146" rx="9" ry="10" fill="#5a7a20"/>
+            <ellipse cx="155" cy="146" rx="3.8" ry="10" fill="#1a2a0a"/>
+            <circle cx="150" cy="140" r="3.5" fill="#fff" opacity="0.85"/>
+            <circle cx="159" cy="139" r="1.8" fill="#fff" opacity="0.5"/>
+          </g>
+
+          <!-- Right eye bump -->
+          <ellipse cx="238" cy="146" rx="22" ry="18" fill="url(#bg)"/>
+          <ellipse cx="238" cy="144" rx="17" ry="15" fill="#fff"/>
+          <g style="transform-origin:238px 144px; animation:blink 5s ease-in-out infinite 0.3s">
+            <ellipse cx="235" cy="146" rx="9" ry="10" fill="#5a7a20"/>
+            <ellipse cx="235" cy="146" rx="3.8" ry="10" fill="#1a2a0a"/>
+            <circle cx="231" cy="140" r="3.5" fill="#fff" opacity="0.85"/>
+            <circle cx="239" cy="139" r="1.8" fill="#fff" opacity="0.5"/>
+          </g>
+        </g>
+
+        <!-- Head scutes -->
+        <ellipse cx="180" cy="122" rx="9" ry="5" fill="#3a9058" opacity="0.38"/>
+        <ellipse cx="195" cy="118" rx="11" ry="6" fill="#3a9058" opacity="0.42"/>
+        <ellipse cx="210" cy="122" rx="9" ry="5" fill="#3a9058" opacity="0.38"/>
+
+        <!-- MONOCLE -->
+        <circle cx="238" cy="144" r="20" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+        <path d="M258,144 Q266,160 264,178" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.35"/>
+        <circle cx="264" cy="180" r="2.5" fill="rgba(255,215,0,0.25)"/>
+      </g>
+    </svg>
+    <div class="traits">
+      <span class="trait">Wide Ratio</span>
+      <span class="trait">Angular W</span>
+      <span class="trait">Crisp</span>
+    </div>
+    <div class="desc">Straight-line segments forming a crisp angular W. Slightly smaller blushes. The sharpest, most graphic version — would work great as a logo.</div>
+  </div>
+</body>
+</html>

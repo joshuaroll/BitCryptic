@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept 1 — Round & Roly-Poly</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center;
+      max-width: 480px;
+    }
+    .traits {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px;
+    }
+    .trait {
+      background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7);
+      font-family: 'Fredoka One', cursive;
+    }
+    .desc {
+      margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7;
+    }
+    .speech {
+      margin-top: 16px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03));
+      border: 1px solid rgba(255,215,0,0.25); border-radius: 14px;
+      padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6;
+      font-style: italic;
+    }
+    @keyframes breathe { 0%,100%{transform:scaleY(1) translateY(0)} 50%{transform:scaleY(1.015) translateY(-2px)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
+    @keyframes tailWag { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)} }
+    @keyframes bellyJiggle { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(1.02)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Concept 1 of 5</div>
+  <h1>Round & Roly-Poly Croc</h1>
+
+  <div class="card">
+    <svg width="300" height="380" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#5ec47e"/><stop offset="100%" stop-color="#2e8050"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#d4edb0"/><stop offset="100%" stop-color="#aad878"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity="0.3"/></filter>
+        <filter id="gl"><feGaussianBlur stdDeviation="2"/></filter>
+      </defs>
+
+      <!-- Ambient glow -->
+      <circle cx="150" cy="210" r="130" fill="rgba(94,196,126,0.04)"/>
+
+      <!-- Ground shadow -->
+      <ellipse cx="150" cy="358" rx="80" ry="14" fill="rgba(0,0,0,0.3)"/>
+
+      <g style="transform-origin:150px 358px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — short, fat, curly -->
+        <g style="transform-origin:72px 290px; animation:tailWag 5s ease-in-out infinite">
+          <path d="M72,290 Q38,275 22,252 Q10,235 18,220 Q24,210 32,214" fill="none" stroke="url(#bg)" stroke-width="22" stroke-linecap="round"/>
+          <!-- Tail tip rounded -->
+          <circle cx="30" cy="214" r="12" fill="#4aaa6a"/>
+          <!-- ridges -->
+          <path d="M52,276 L46,266" stroke="#3d9a5e" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M34,256 L28,246" stroke="#3d9a5e" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+        </g>
+
+        <!-- LEFT FOOT — stubby -->
+        <ellipse cx="118" cy="348" rx="22" ry="12" fill="url(#bg)"/>
+        <circle cx="100" cy="345" r="5.5" fill="#4aaa6a"/><circle cx="112" cy="341" r="5.5" fill="#4aaa6a"/><circle cx="124" cy="340" r="5.5" fill="#4aaa6a"/>
+
+        <!-- RIGHT FOOT -->
+        <ellipse cx="185" cy="348" rx="22" ry="12" fill="url(#bg)"/>
+        <circle cx="170" cy="345" r="5.5" fill="#4aaa6a"/><circle cx="182" cy="341" r="5.5" fill="#4aaa6a"/><circle cx="194" cy="340" r="5.5" fill="#4aaa6a"/>
+
+        <!-- BODY — very round, ball-shaped -->
+        <g style="transform-origin:150px 265px; animation:bellyJiggle 5s ease-in-out infinite">
+          <ellipse cx="150" cy="262" rx="78" ry="88" fill="url(#bg)" filter="url(#sh)"/>
+          <!-- BIG round belly -->
+          <ellipse cx="150" cy="275" rx="60" ry="68" fill="url(#belly)" opacity="0.5"/>
+        </g>
+
+        <!-- Belly crossword -->
+        <g transform="translate(126,258)" opacity="0.35">
+          <rect x="0" y="0" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <text x="6" y="10" text-anchor="middle" font-family="Fredoka One" font-size="7" fill="#2d6a3a" opacity="0.8">C</text>
+          <rect x="12" y="0" width="12" height="12" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="24" y="0" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <text x="30" y="10" text-anchor="middle" font-family="Fredoka One" font-size="7" fill="#2d6a3a" opacity="0.8">O</text>
+          <rect x="36" y="0" width="12" height="12" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="0" y="12" width="12" height="12" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="12" y="12" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="24" y="12" width="12" height="12" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="36" y="12" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+        </g>
+
+        <!-- LEFT ARM — short & stubby, resting on belly -->
+        <path d="M76,245 Q55,260 52,280 Q50,292 56,298" fill="none" stroke="url(#bg)" stroke-width="18" stroke-linecap="round"/>
+        <circle cx="58" cy="300" r="10" fill="#4aaa6a"/>
+        <circle cx="50" cy="296" r="4.5" fill="#5abb7a"/><circle cx="57" cy="293" r="4.5" fill="#5abb7a"/><circle cx="64" cy="296" r="4.5" fill="#5abb7a"/>
+
+        <!-- RIGHT ARM — waving -->
+        <g style="transform-origin:210px 230px; animation:wave 5s ease-in-out infinite">
+          <path d="M222,248 Q248,225 252,195 Q254,178 246,168" fill="none" stroke="url(#bg)" stroke-width="18" stroke-linecap="round"/>
+          <circle cx="244" cy="166" r="10" fill="#4aaa6a"/>
+          <circle cx="236" cy="158" r="4.5" fill="#5abb7a"/><circle cx="244" cy="155" r="4.5" fill="#5abb7a"/><circle cx="252" cy="158" r="4.5" fill="#5abb7a"/>
+        </g>
+
+        <!-- Spine bumps — rounded -->
+        <circle cx="150" cy="176" r="6" fill="#3d9a5e" opacity="0.5"/>
+        <circle cx="150" cy="192" r="5" fill="#3d9a5e" opacity="0.45"/>
+        <circle cx="150" cy="206" r="4.5" fill="#3d9a5e" opacity="0.4"/>
+
+        <!-- HEAD — very round, big, sits high on body -->
+        <circle cx="150" cy="152" r="58" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- SNOUT — short & wide, button-like -->
+        <ellipse cx="150" cy="185" rx="32" ry="16" fill="#4aaa6a"/>
+        <ellipse cx="150" cy="182" rx="26" ry="12" fill="#5abb7a" opacity="0.5"/>
+
+        <!-- Nostrils — round dots -->
+        <circle cx="139" cy="188" r="3.5" fill="#2d6a3a"/>
+        <circle cx="161" cy="188" r="3.5" fill="#2d6a3a"/>
+
+        <!-- Smile — big happy arc -->
+        <path d="M126,192 Q138,204 150,204 Q162,204 174,192" fill="none" stroke="#2d6a3a" stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- Cheek blush circles -->
+        <circle cx="112" cy="180" r="10" fill="#ff8a8a" opacity="0.12"/>
+        <circle cx="188" cy="180" r="10" fill="#ff8a8a" opacity="0.12"/>
+
+        <!-- EYES — very large, round, close together (cute!) -->
+        <g>
+          <circle cx="132" cy="142" r="20" fill="#fff"/>
+          <g style="transform-origin:132px 142px; animation:blink 4.5s ease-in-out infinite">
+            <circle cx="136" cy="145" r="11" fill="#1a3a2a"/>
+            <circle cx="131" cy="139" r="4.5" fill="#fff" opacity="0.85"/>
+            <circle cx="140" cy="137" r="2" fill="#fff" opacity="0.5"/>
+          </g>
+
+          <circle cx="168" cy="142" r="20" fill="#fff"/>
+          <g style="transform-origin:168px 142px; animation:blink 4.5s ease-in-out infinite 0.3s">
+            <circle cx="164" cy="145" r="11" fill="#1a3a2a"/>
+            <circle cx="160" cy="139" r="4.5" fill="#fff" opacity="0.85"/>
+            <circle cx="168" cy="137" r="2" fill="#fff" opacity="0.5"/>
+          </g>
+        </g>
+
+        <!-- Tiny brow bumps -->
+        <path d="M112,122 Q120,116 138,120" fill="none" stroke="#3d9a5e" stroke-width="3" stroke-linecap="round"/>
+        <path d="M162,120 Q180,116 188,122" fill="none" stroke="#3d9a5e" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Head bumps — round, bubbly -->
+        <circle cx="130" cy="97" r="7" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="150" cy="92" r="8" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="170" cy="97" r="7" fill="#4aaa6a" opacity="0.5"/>
+
+        <!-- Monocle -->
+        <circle cx="168" cy="142" r="24" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65"/>
+        <path d="M192,142 Q198,158 196,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <!-- Chain dangles -->
+        <circle cx="196" cy="174" r="3" fill="rgba(255,215,0,0.3)"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Cuddly</span>
+      <span class="trait">Cheerful</span>
+      <span class="trait">Bouncy</span>
+      <span class="trait">Approachable</span>
+    </div>
+    <div class="desc">
+      A roly-poly croc shaped like a friendly ball. Huge round head, stubby limbs, and a
+      big belly with a crossword pattern. His whole body jiggles when he gets excited.
+      Maximum cute, zero intimidation — the kind of mascot you want to squeeze.
+    </div>
+    <div class="speech">"Every cryptic clue is like a little hug for your brain!"</div>
+  </div>
+</body>
+</html>

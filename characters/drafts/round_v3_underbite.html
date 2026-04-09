@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round V3 — Underbite Champ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes breathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.012)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.06)} }
+    @keyframes tailWag { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+    @keyframes jawBob { 0%,80%,100%{transform:translateY(0)} 88%{transform:translateY(3px)} }
+  </style>
+</head>
+<body>
+  <div class="label">Round Variant 3 of 5</div>
+  <h1>Underbite Champ — Big Jaw Energy</h1>
+
+  <div class="card">
+    <svg width="320" height="420" viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#48a862"/><stop offset="100%" stop-color="#267040"/>
+        </radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#58ba76"/><stop offset="100%" stop-color="#3a9858"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#daf0b0"/><stop offset="100%" stop-color="#aad470"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <pattern id="sc" width="16" height="14" patternUnits="userSpaceOnUse">
+          <path d="M0,7 Q4,1 8,7 Q12,1 16,7" fill="none" stroke="rgba(30,80,45,0.15)" stroke-width="0.8"/>
+        </pattern>
+      </defs>
+
+      <ellipse cx="160" cy="398" rx="75" ry="13" fill="rgba(0,0,0,0.28)"/>
+
+      <g style="transform-origin:160px 398px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — thick, curved up slightly, ridged -->
+        <g style="transform-origin:75px 318px; animation:tailWag 5.5s ease-in-out infinite">
+          <path d="M75,318 Q32,304 10,272 Q-6,248 2,228 Q8,215 20,220" fill="none" stroke="url(#bg)" stroke-width="22" stroke-linecap="round"/>
+          <!-- Triangular dorsal ridges -->
+          <path d="M50,300 L44,286 L52,290 Z" fill="#267040" opacity="0.55"/>
+          <path d="M28,278 L22,262 L30,268 Z" fill="#267040" opacity="0.5"/>
+          <path d="M10,254 L4,238 L14,244 Z" fill="#267040" opacity="0.45"/>
+        </g>
+
+        <!-- FEET — four-toed, clawed, splayed -->
+        <g>
+          <ellipse cx="120" cy="380" rx="25" ry="11" fill="url(#bg)"/>
+          <ellipse cx="100" cy="377" rx="6" ry="4" fill="#3a9858" transform="rotate(-15,100,377)"/>
+          <ellipse cx="112" cy="373" rx="6" ry="4" fill="#3a9858" transform="rotate(-5,112,373)"/>
+          <ellipse cx="124" cy="372" rx="6" ry="4" fill="#3a9858"/>
+          <ellipse cx="136" cy="374" rx="5.5" ry="3.5" fill="#3a9858" transform="rotate(12,136,374)"/>
+          <circle cx="94" cy="375" r="2" fill="#c8b060"/><circle cx="106" cy="371" r="2" fill="#c8b060"/>
+          <circle cx="118" cy="370" r="2" fill="#c8b060"/><circle cx="138" cy="372" r="2" fill="#c8b060"/>
+        </g>
+        <g>
+          <ellipse cx="202" cy="380" rx="25" ry="11" fill="url(#bg)"/>
+          <ellipse cx="186" cy="377" rx="6" ry="4" fill="#3a9858" transform="rotate(-12,186,377)"/>
+          <ellipse cx="198" cy="373" rx="6" ry="4" fill="#3a9858"/>
+          <ellipse cx="210" cy="372" rx="6" ry="4" fill="#3a9858" transform="rotate(5,210,372)"/>
+          <ellipse cx="222" cy="374" rx="5.5" ry="3.5" fill="#3a9858" transform="rotate(15,222,374)"/>
+          <circle cx="180" cy="375" r="2" fill="#c8b060"/><circle cx="192" cy="371" r="2" fill="#c8b060"/>
+          <circle cx="204" cy="370" r="2" fill="#c8b060"/><circle cx="224" cy="372" r="2" fill="#c8b060"/>
+        </g>
+
+        <!-- BODY — round, with scale texture -->
+        <ellipse cx="160" cy="292" rx="72" ry="84" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="292" rx="68" ry="80" fill="url(#sc)"/>
+        <!-- Belly with horizontal croc banding -->
+        <ellipse cx="160" cy="306" rx="50" ry="58" fill="url(#belly)" opacity="0.48"/>
+        <line x1="118" y1="280" x2="202" y2="280" stroke="#96c060" stroke-width="0.8" opacity="0.3"/>
+        <line x1="114" y1="293" x2="206" y2="293" stroke="#96c060" stroke-width="0.8" opacity="0.3"/>
+        <line x1="112" y1="306" x2="208" y2="306" stroke="#96c060" stroke-width="0.8" opacity="0.3"/>
+        <line x1="116" y1="319" x2="204" y2="319" stroke="#96c060" stroke-width="0.8" opacity="0.3"/>
+
+        <!-- Back scutes -->
+        <ellipse cx="145" cy="212" rx="10" ry="6" fill="#267040" opacity="0.45"/>
+        <ellipse cx="160" cy="208" rx="12" ry="7" fill="#267040" opacity="0.5"/>
+        <ellipse cx="175" cy="212" rx="10" ry="6" fill="#267040" opacity="0.45"/>
+
+        <!-- Belly crossword -->
+        <g transform="translate(136,292)" opacity="0.28">
+          <rect x="0" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="11" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="22" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="33" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="0" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="11" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="22" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="33" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+        </g>
+
+        <!-- LEFT ARM -->
+        <path d="M92,272 Q65,290 58,314" fill="none" stroke="url(#bg)" stroke-width="15" stroke-linecap="round"/>
+        <ellipse cx="56" cy="318" rx="9" ry="7" fill="#3a9858"/>
+        <ellipse cx="48" cy="314" rx="5" ry="3" fill="#4aaa68" transform="rotate(-15,48,314)"/>
+        <ellipse cx="54" cy="310" rx="5" ry="3" fill="#4aaa68"/>
+        <ellipse cx="62" cy="312" rx="5" ry="3" fill="#4aaa68" transform="rotate(10,62,312)"/>
+        <circle cx="44" cy="312" r="1.8" fill="#c8b060"/><circle cx="50" cy="308" r="1.8" fill="#c8b060"/><circle cx="58" cy="310" r="1.8" fill="#c8b060"/>
+
+        <!-- RIGHT ARM — waving -->
+        <g style="transform-origin:228px 258px; animation:wave 5s ease-in-out infinite">
+          <path d="M228,272 Q256,250 260,218" fill="none" stroke="url(#bg)" stroke-width="15" stroke-linecap="round"/>
+          <ellipse cx="260" cy="214" rx="9" ry="7" fill="#3a9858"/>
+          <ellipse cx="252" cy="208" rx="5" ry="3" fill="#4aaa68" transform="rotate(-10,252,208)"/>
+          <ellipse cx="260" cy="206" rx="5" ry="3" fill="#4aaa68"/>
+          <ellipse cx="268" cy="208" rx="5" ry="3" fill="#4aaa68" transform="rotate(10,268,208)"/>
+          <circle cx="248" cy="206" r="1.8" fill="#c8b060"/><circle cx="256" cy="204" r="1.8" fill="#c8b060"/><circle cx="264" cy="206" r="1.8" fill="#c8b060"/>
+        </g>
+
+        <!-- HEAD — the star: prominent two-piece jaw structure -->
+
+        <!-- Eye bumps protruding upward (croc signature) -->
+        <ellipse cx="126" cy="152" rx="17" ry="16" fill="url(#bg)"/>
+        <ellipse cx="194" cy="152" rx="17" ry="16" fill="url(#bg)"/>
+
+        <!-- Upper head/skull — flatter, wider -->
+        <ellipse cx="160" cy="170" rx="52" ry="30" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- UPPER JAW — flat, wide -->
+        <path d="M108,180 Q115,172 160,168 Q205,172 212,180 Q205,190 160,194 Q115,190 108,180 Z" fill="url(#lt)"/>
+        <!-- Snout bumps -->
+        <circle cx="120" cy="178" r="2.5" fill="#4aaa68" opacity="0.3"/>
+        <circle cx="138" cy="174" r="2" fill="#4aaa68" opacity="0.25"/>
+        <circle cx="182" cy="174" r="2" fill="#4aaa68" opacity="0.25"/>
+        <circle cx="200" cy="178" r="2.5" fill="#4aaa68" opacity="0.3"/>
+        <!-- Nostrils -->
+        <ellipse cx="120" cy="177" rx="4.5" ry="3.5" fill="#1a5530"/>
+        <ellipse cx="200" cy="177" rx="4.5" ry="3.5" fill="#1a5530"/>
+
+        <!-- LOWER JAW — the BIG FEATURE: wide, prominent underbite -->
+        <g style="transform-origin:160px 192px; animation:jawBob 5s ease-in-out infinite">
+          <path d="M112,192 Q115,210 160,216 Q205,210 208,192" fill="#3a8a50"/>
+          <!-- Jaw underside lighter -->
+          <path d="M118,198 Q120,212 160,216 Q200,212 202,198" fill="url(#belly)" opacity="0.35"/>
+
+          <!-- BIG teeth sticking UP from lower jaw (croc trademark!) -->
+          <line x1="122" y1="194" x2="120" y2="182" stroke="#f0e8d0" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="136" y1="195" x2="135" y2="181" stroke="#f0e8d0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="160" y1="196" x2="160" y2="180" stroke="#f0e8d0" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="184" y1="195" x2="185" y2="181" stroke="#f0e8d0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="198" y1="194" x2="200" y2="182" stroke="#f0e8d0" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- Smaller teeth between -->
+          <line x1="129" y1="194" x2="128" y2="186" stroke="#ede0c8" stroke-width="2" stroke-linecap="round"/>
+          <line x1="148" y1="196" x2="148" y2="186" stroke="#ede0c8" stroke-width="2" stroke-linecap="round"/>
+          <line x1="172" y1="196" x2="172" y2="186" stroke="#ede0c8" stroke-width="2" stroke-linecap="round"/>
+          <line x1="191" y1="194" x2="192" y2="186" stroke="#ede0c8" stroke-width="2" stroke-linecap="round"/>
+        </g>
+
+        <!-- Head scutes -->
+        <rect x="138" y="144" width="12" height="8" rx="3" fill="#2e7a48" opacity="0.4"/>
+        <rect x="154" y="142" width="14" height="9" rx="3" fill="#2e7a48" opacity="0.45"/>
+        <rect x="172" y="144" width="12" height="8" rx="3" fill="#2e7a48" opacity="0.4"/>
+
+        <!-- EYES — on raised bumps, wide-set, looking at viewer -->
+        <g>
+          <ellipse cx="126" cy="150" rx="12" ry="12" fill="#fff"/>
+          <g style="transform-origin:126px 150px; animation:blink 5.5s ease-in-out infinite">
+            <circle cx="129" cy="151" r="7.5" fill="#6a8a28"/>
+            <ellipse cx="129" cy="151" rx="3.2" ry="7.5" fill="#1a2a0a"/>
+            <circle cx="125" cy="146" r="3" fill="#fff" opacity="0.85"/>
+            <circle cx="132" cy="145" r="1.5" fill="#fff" opacity="0.5"/>
+          </g>
+
+          <ellipse cx="194" cy="150" rx="12" ry="12" fill="#fff"/>
+          <g style="transform-origin:194px 150px; animation:blink 5.5s ease-in-out infinite 0.3s">
+            <circle cx="191" cy="151" r="7.5" fill="#6a8a28"/>
+            <ellipse cx="191" cy="151" rx="3.2" ry="7.5" fill="#1a2a0a"/>
+            <circle cx="187" cy="146" r="3" fill="#fff" opacity="0.85"/>
+            <circle cx="194" cy="145" r="1.5" fill="#fff" opacity="0.5"/>
+          </g>
+        </g>
+
+        <!-- Brow ridges — heavier, bony -->
+        <path d="M110,142 Q118,134 134,140" fill="url(#bg)" opacity="0.55"/>
+        <path d="M186,140 Q202,134 210,142" fill="url(#bg)" opacity="0.55"/>
+
+        <!-- Monocle -->
+        <circle cx="194" cy="150" r="16" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+        <path d="M210,150 Q217,164 215,180" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.35"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Big Underbite</span>
+      <span class="trait">Visible Fangs</span>
+      <span class="trait">Split Jaw</span>
+      <span class="trait">Eye Bumps</span>
+    </div>
+    <div class="desc">
+      The defining feature: a big friendly underbite with chunky teeth poking up over the
+      upper jaw. The two-part jaw is clearly visible and bobs gently. Raised eye bumps sit
+      wide apart on the flat skull. It's the "goofy but definitely a crocodile" look — you
+      can't mistake this for anything other than a croc.
+    </div>
+    <div class="speech">"Thehe teeth help me chew through tough clueth! ...thorry, bit of a lithp."</div>
+  </div>
+</body>
+</html>

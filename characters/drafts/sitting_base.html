@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — Sitting Body</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; gap: 20px; }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card { background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%); border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 520px; }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    @keyframes breathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.008)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
+    @keyframes tailSway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+    @keyframes waveR { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-12deg)} 20%{transform:rotate(8deg)} 30%{transform:rotate(-8deg)} 40%{transform:rotate(5deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Sitting Body — Same Face</div>
+  <h1>Cryptic Croc — Sitting Pose</h1>
+  <div class="card">
+    <svg width="400" height="420" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#4db06a"/><stop offset="100%" stop-color="#2a7848"/></radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#5ec47e"/><stop offset="100%" stop-color="#3a9a58"/></radialGradient>
+        <radialGradient id="belly" cx="50%" cy="48%" r="50%"><stop offset="0%" stop-color="#d8f0b0"/><stop offset="100%" stop-color="#aad870"/></radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#000" flood-opacity="0.3"/></filter>
+        <filter id="crownGlow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffd700" flood-opacity="0.4"/></filter>
+        <pattern id="sc" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.15)" stroke-width="0.8"/></pattern>
+        <linearGradient id="scarfGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ffb800"/><stop offset="50%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffb800"/></linearGradient>
+      </defs>
+
+      <!-- Ground shadow — wide, low -->
+      <ellipse cx="200" cy="395" rx="120" ry="16" fill="rgba(0,0,0,0.25)"/>
+
+      <g style="transform-origin:200px 390px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- ═══ TAIL — curves out to the left from sitting body ═══ -->
+        <g style="transform-origin:110px 320px; animation:tailSway 6s ease-in-out infinite">
+          <path d="M115,300 Q80,295 55,280 Q32,264 18,242 Q8,224 10,210
+                   Q6,220 4,236 Q8,256 22,274 Q38,292 60,305 Q80,315 115,325 Z"
+                fill="url(#bg)"/>
+          <path d="M113,322 Q78,312 56,300 Q36,286 20,268 Q8,252 6,234"
+                fill="none" stroke="#b8d888" stroke-width="5" stroke-linecap="round" opacity="0.12"/>
+          <path d="M112,320 Q76,310 54,296 Q34,282 18,264 Q8,248 8,230"
+                fill="none" stroke="url(#sc)" stroke-width="16" opacity="0.4"/>
+          <!-- Dorsal scutes -->
+          <path d="M94,298 L88,284 L92,290 Z" fill="#2a7848" opacity="0.5"/>
+          <path d="M70,284 L64,268 L68,274 Z" fill="#2a7848" opacity="0.45"/>
+          <path d="M48,268 L42,252 L46,258 Z" fill="#2a7848" opacity="0.4"/>
+          <path d="M30,250 L24,234 L28,240 Z" fill="#2a7848" opacity="0.35"/>
+          <path d="M16,234 L12,220 L16,226 Z" fill="#2a7848" opacity="0.3"/>
+        </g>
+
+        <!-- ═══ LEGS — splayed out to the sides, sitting ═══ -->
+        <!-- Left leg — sticks out to the bottom-left -->
+        <g>
+          <path d="M145,350 Q120,360 100,370" fill="none" stroke="url(#bg)" stroke-width="22" stroke-linecap="round"/>
+          <ellipse cx="94" cy="374" rx="22" ry="12" fill="url(#bg)" transform="rotate(-15,94,374)"/>
+          <!-- Toes -->
+          <ellipse cx="78" cy="372" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(-25,78,372)"/>
+          <ellipse cx="86" cy="368" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(-15,86,368)"/>
+          <ellipse cx="96" cy="366" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(-5,96,366)"/>
+          <ellipse cx="106" cy="368" rx="4.5" ry="3" fill="#3a9a58" transform="rotate(5,106,368)"/>
+          <circle cx="74" cy="370" r="1.8" fill="#c8b060"/><circle cx="82" cy="366" r="1.8" fill="#c8b060"/>
+          <circle cx="92" cy="364" r="1.8" fill="#c8b060"/><circle cx="108" cy="366" r="1.8" fill="#c8b060"/>
+        </g>
+        <!-- Right leg — sticks out to the bottom-right -->
+        <g>
+          <path d="M255,350 Q280,360 300,370" fill="none" stroke="url(#bg)" stroke-width="22" stroke-linecap="round"/>
+          <ellipse cx="306" cy="374" rx="22" ry="12" fill="url(#bg)" transform="rotate(15,306,374)"/>
+          <ellipse cx="294" cy="372" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(-5,294,372)"/>
+          <ellipse cx="304" cy="368" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(5,304,368)"/>
+          <ellipse cx="314" cy="366" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,314,366)"/>
+          <ellipse cx="322" cy="368" rx="4.5" ry="3" fill="#3a9a58" transform="rotate(25,322,368)"/>
+          <circle cx="290" cy="370" r="1.8" fill="#c8b060"/><circle cx="300" cy="366" r="1.8" fill="#c8b060"/>
+          <circle cx="310" cy="364" r="1.8" fill="#c8b060"/><circle cx="324" cy="366" r="1.8" fill="#c8b060"/>
+        </g>
+
+        <!-- ═══ BODY — wider, squatter, sitting blob ═══ -->
+        <ellipse cx="200" cy="300" rx="88" ry="78" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="200" cy="300" rx="84" ry="74" fill="url(#sc)"/>
+        <!-- Belly — wider, with thick horizontal stripes -->
+        <ellipse cx="200" cy="312" rx="58" ry="54" fill="url(#belly)" opacity="0.5"/>
+        <!-- Belly stripes (like reference cartoon) -->
+        <g opacity="0.35">
+          <line x1="152" y1="282" x2="248" y2="282" stroke="#d0e4a0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="148" y1="296" x2="252" y2="296" stroke="#d0e4a0" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="146" y1="310" x2="254" y2="310" stroke="#d0e4a0" stroke-width="5" stroke-linecap="round"/>
+          <line x1="148" y1="324" x2="252" y2="324" stroke="#d0e4a0" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="152" y1="338" x2="248" y2="338" stroke="#d0e4a0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="160" y1="352" x2="240" y2="352" stroke="#d0e4a0" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <!-- Back scutes -->
+        <ellipse cx="185" cy="224" rx="10" ry="6" fill="#2a7848" opacity="0.45"/>
+        <ellipse cx="200" cy="220" rx="12" ry="7" fill="#2a7848" opacity="0.5"/>
+        <ellipse cx="215" cy="224" rx="10" ry="6" fill="#2a7848" opacity="0.45"/>
+
+        <!-- ═══ ARMS — small, sticking out to sides ═══ -->
+        <!-- Left arm -->
+        <path d="M118,280 Q90,286 74,296" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+        <ellipse cx="70" cy="300" rx="10" ry="8" fill="#3a9a58"/>
+        <ellipse cx="62" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-18,62,296)"/>
+        <ellipse cx="68" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,68,292)"/>
+        <ellipse cx="76" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(8,76,294)"/>
+        <circle cx="58" cy="294" r="1.5" fill="#c8b060"/><circle cx="64" cy="290" r="1.5" fill="#c8b060"/><circle cx="72" cy="292" r="1.5" fill="#c8b060"/>
+
+        <!-- Right arm — small wave -->
+        <g style="transform-origin:286px 270px; animation:waveR 5s ease-in-out infinite">
+          <path d="M282,280 Q308,270 320,256" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+          <ellipse cx="324" cy="252" rx="10" ry="8" fill="#3a9a58"/>
+          <ellipse cx="316" cy="246" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,316,246)"/>
+          <ellipse cx="324" cy="244" rx="5" ry="3.5" fill="#4aaa6a"/>
+          <ellipse cx="332" cy="246" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,332,246)"/>
+          <circle cx="312" cy="244" r="1.5" fill="#c8b060"/><circle cx="320" cy="242" r="1.5" fill="#c8b060"/><circle cx="328" cy="244" r="1.5" fill="#c8b060"/>
+        </g>
+
+        <!-- ═══ SCARF — same style, repositioned for sitting body ═══ -->
+        <g>
+          <path d="M158,228 C165,226 180,226 200,227 C220,226 235,226 242,228
+                   L246,238 C236,242 218,244 200,245 C182,244 164,242 154,238 Z"
+                fill="#e6a800" opacity="0.7"/>
+          <path d="M154,234 C164,240 182,244 200,245 C218,244 236,240 246,234
+                   L242,228 C234,230 218,232 200,233 C182,232 166,230 158,228 Z"
+                fill="url(#scarfGrad)" opacity="0.92"/>
+          <path d="M160,229 C172,228 188,228 200,229 C212,228 228,228 240,229"
+                fill="none" stroke="#ffe066" stroke-width="1" opacity="0.45"/>
+          <path d="M156,237 C166,242 184,245 200,246 C216,245 234,242 244,237"
+                fill="none" stroke="#b87800" stroke-width="1" opacity="0.4"/>
+          <!-- Crossword squares on band -->
+          <rect x="181" y="233" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45"/>
+          <rect x="186" y="233" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.35"/>
+          <rect x="191" y="233" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45"/>
+          <rect x="196" y="233" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3"/>
+          <rect x="201" y="233" width="5" height="5" rx="0.5" fill="#fff" opacity="0.4"/>
+          <!-- Knot on left -->
+          <ellipse cx="156" cy="234" rx="7" ry="6" fill="#ffb800" opacity="0.75"/>
+          <ellipse cx="156" cy="234" rx="4" ry="3.5" fill="#ffd700" opacity="0.5"/>
+          <!-- Trailing end — left -->
+          <path d="M154,238 Q148,252 146,266 Q144,276 144,282"
+                fill="none" stroke="#ffd700" stroke-width="9" stroke-linecap="round" opacity="0.82"/>
+          <path d="M152,240 Q146,256 144,270 Q142,280 142,286"
+                fill="none" stroke="#e6a800" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+          <path d="M144,282 Q144,286 144,289" stroke="#ffd700" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.55"/>
+          <rect x="142" y="264" width="4" height="4" rx="0.5" fill="#fff" opacity="0.35"/>
+          <rect x="142" y="268" width="4" height="4" rx="0.5" fill="#1a2a0a" opacity="0.25"/>
+        </g>
+
+        <!-- ═══ HEAD — same as mouth_v2, repositioned ═══ -->
+        <ellipse cx="200" cy="192" rx="56" ry="42" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="200" cy="189" rx="52" ry="38" fill="url(#sc)"/>
+        <!-- Brow ridges -->
+        <ellipse cx="168" cy="172" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+        <ellipse cx="232" cy="172" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+
+        <!-- ═══ SNOUT + MOUTH — same W-smile, repositioned ═══ -->
+        <path d="M150,199 Q155,189 200,186 Q245,189 250,199
+               Q245,206 234,206 Q230,206 224,210 L216,206 L208,211 L200,205 L192,211 L184,206 L176,210 Q170,206 166,206 Q155,206 150,199 Z" fill="url(#lt)"/>
+        <!-- Snout bumps -->
+        <circle cx="175" cy="196" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="190" cy="193" r="2" fill="#4aaa6a" opacity="0.25"/>
+        <circle cx="210" cy="193" r="2" fill="#4aaa6a" opacity="0.25"/>
+        <circle cx="225" cy="196" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <!-- Chin -->
+        <path d="M166,204 Q168,206 176,210 L184,206 L192,211 L200,205 L208,211 L216,206 L224,210 Q232,206 234,204
+               Q226,220 200,222 Q174,220 166,204 Z" fill="#3a9058"/>
+        <!-- W smile -->
+        <path d="M164,202 Q168,206 176,210 L184,206 L192,211 L200,205 L208,211 L216,206 L224,210 Q232,206 236,202"
+              fill="none" stroke="#1a4a2a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Nostrils -->
+        <circle cx="180" cy="196" r="3.5" fill="#1e5535"/>
+        <circle cx="220" cy="196" r="3.5" fill="#1e5535"/>
+
+        <!-- CHEEK BLUSHES -->
+        <ellipse cx="152" cy="200" rx="14" ry="8" fill="#ff8a8a" opacity="0.12"/>
+        <ellipse cx="248" cy="200" rx="14" ry="8" fill="#ff8a8a" opacity="0.12"/>
+
+        <!-- ═══ EYES — same, repositioned ═══ -->
+        <g>
+          <ellipse cx="168" cy="166" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="168" cy="164" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:168px 164px; animation:blink 5s ease-in-out infinite">
+            <ellipse cx="171" cy="166" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="171" cy="166" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="167" cy="161" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+          <ellipse cx="232" cy="166" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="232" cy="164" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:232px 164px; animation:blink 5s ease-in-out infinite 0.3s">
+            <ellipse cx="229" cy="166" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="229" cy="166" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="225" cy="161" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+        </g>
+
+        <!-- ═══ CROWN — same, repositioned ═══ -->
+        <g filter="url(#crownGlow)">
+          <path d="M176,154 L224,154 L222,150 L178,150 Z" fill="#ffd700" opacity="0.6"/>
+          <path d="M178,150 L183,136 L190,150 Z" fill="#ffd700" opacity="0.8"/>
+          <path d="M193,150 L200,130 L207,150 Z" fill="#ffd700" opacity="0.85"/>
+          <path d="M210,150 L217,136 L222,150 Z" fill="#ffd700" opacity="0.8"/>
+          <circle cx="183" cy="137" r="1.5" fill="#fff" opacity="0.6"/>
+          <circle cx="200" cy="131" r="1.8" fill="#fff" opacity="0.7"/>
+          <circle cx="217" cy="137" r="1.5" fill="#fff" opacity="0.6"/>
+          <path d="M180,150 L183,138 L186,150" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5"/>
+          <path d="M197,150 L200,132 L203,150" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5"/>
+          <path d="M213,150 L217,138 L220,150" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5"/>
+        </g>
+
+        <!-- ═══ MONOCLE — same, repositioned ═══ -->
+        <circle cx="232" cy="164" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65"/>
+        <path d="M249,164 Q256,179 254,196" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="254" cy="198" r="2.5" fill="rgba(255,215,0,0.3)"/>
+      </g>
+    </svg>
+    <div class="traits"><span class="trait">Sitting Pose</span><span class="trait">Splayed Legs</span><span class="trait">Belly Stripes</span></div>
+    <div class="desc">Same face, scarf, crown, and monocle — new sitting body shape with splayed legs, thick belly stripes, and tail curving out to the side. Matching the reference cartoon pose.</div>
+  </div>
+</body>
+</html>

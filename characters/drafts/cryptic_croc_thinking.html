@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — Thinking Pose</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 24px;
+    }
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #ffd700;
+      font-size: 1.4rem;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+    .subtitle {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center;
+    }
+    .speech {
+      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03));
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+      position: relative;
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px; height: 14px;
+      background: rgba(255,215,0,0.08);
+      border-left: 1px solid rgba(255,215,0,0.25);
+      border-top: 1px solid rgba(255,215,0,0.25);
+    }
+    .speaker {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.8rem;
+      color: #ffd700;
+      margin-bottom: 6px;
+    }
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @keyframes thinkPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="subtitle">Character Sheet — Pose 1 of 5</div>
+  <h1>Cryptic Croc: The Thinking Pose</h1>
+
+  <div class="card">
+    <svg width="280" height="340" viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bodyGrad" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#5ab87a"/>
+          <stop offset="100%" stop-color="#2d7a4a"/>
+        </radialGradient>
+        <radialGradient id="bellyGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c8e6a0"/>
+          <stop offset="100%" stop-color="#a0d070"/>
+        </radialGradient>
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="softShadow">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+
+      <!-- Thinking bubbles -->
+      <circle cx="200" cy="55" r="22" fill="rgba(255,215,0,0.08)" stroke="rgba(255,215,0,0.25)" stroke-width="1.5">
+        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <text x="200" y="60" text-anchor="middle" font-family="Fredoka One" font-size="16" fill="#ffd700" opacity="0.7">?</text>
+      <circle cx="178" cy="85" r="10" fill="rgba(255,215,0,0.06)" stroke="rgba(255,215,0,0.2)" stroke-width="1">
+        <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <circle cx="165" cy="100" r="5" fill="rgba(255,215,0,0.05)" stroke="rgba(255,215,0,0.15)" stroke-width="1">
+        <animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+
+      <!-- Shadow on ground -->
+      <ellipse cx="140" cy="325" rx="65" ry="12" fill="rgba(0,0,0,0.3)"/>
+
+      <!-- Tail -->
+      <g style="transform-origin: 80px 280px; animation: tailWag 4s ease-in-out infinite;">
+        <path d="M80,280 Q40,270 25,240 Q15,220 30,210" fill="none" stroke="url(#bodyGrad)" stroke-width="18" stroke-linecap="round"/>
+        <!-- Tail ridges -->
+        <path d="M60,268 L55,260" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        <path d="M45,256 L40,248" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        <path d="M35,238 L32,230" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      </g>
+
+      <!-- Left leg -->
+      <ellipse cx="112" cy="310" rx="18" ry="10" fill="#3a8a55" filter="url(#softShadow)"/>
+      <ellipse cx="112" cy="308" rx="16" ry="9" fill="url(#bodyGrad)"/>
+      <!-- Toes -->
+      <circle cx="100" cy="306" r="4" fill="#4aaa6a"/>
+      <circle cx="108" cy="303" r="4" fill="#4aaa6a"/>
+      <circle cx="116" cy="302" r="4" fill="#4aaa6a"/>
+
+      <!-- Right leg -->
+      <ellipse cx="168" cy="310" rx="18" ry="10" fill="#3a8a55" filter="url(#softShadow)"/>
+      <ellipse cx="168" cy="308" rx="16" ry="9" fill="url(#bodyGrad)"/>
+      <circle cx="160" cy="306" r="4" fill="#4aaa6a"/>
+      <circle cx="168" cy="303" r="4" fill="#4aaa6a"/>
+      <circle cx="176" cy="302" r="4" fill="#4aaa6a"/>
+
+      <!-- Body -->
+      <ellipse cx="140" cy="240" rx="58" ry="72" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+      <!-- Belly patch -->
+      <ellipse cx="140" cy="252" rx="38" ry="48" fill="url(#bellyGrad)" opacity="0.5"/>
+
+      <!-- Body ridges (spine) -->
+      <path d="M140,168 L137,178 L143,178 Z" fill="#3a9a5a" opacity="0.6"/>
+      <path d="M140,180 L136,192 L144,192 Z" fill="#3a9a5a" opacity="0.55"/>
+      <path d="M140,194 L136,206 L144,206 Z" fill="#3a9a5a" opacity="0.5"/>
+
+      <!-- Left arm raised to chin (thinking!) -->
+      <g>
+        <path d="M90,220 Q70,200 72,175 Q73,160 85,155" fill="none" stroke="url(#bodyGrad)" stroke-width="16" stroke-linecap="round"/>
+        <!-- Hand on chin -->
+        <circle cx="85" cy="153" r="9" fill="#4aaa6a"/>
+        <circle cx="79" cy="148" r="4" fill="#5abb7a"/>
+        <circle cx="85" cy="145" r="4" fill="#5abb7a"/>
+        <circle cx="91" cy="148" r="4" fill="#5abb7a"/>
+      </g>
+
+      <!-- Right arm relaxed -->
+      <path d="M190,225 Q210,240 215,260 Q218,272 210,278" fill="none" stroke="url(#bodyGrad)" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="210" cy="280" r="8" fill="#4aaa6a"/>
+
+      <!-- Head -->
+      <ellipse cx="140" cy="140" rx="52" ry="44" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+      <!-- Snout -->
+      <ellipse cx="140" cy="168" rx="36" ry="18" fill="#4aaa6a"/>
+      <ellipse cx="140" cy="164" rx="30" ry="13" fill="#5abb7a" opacity="0.5"/>
+
+      <!-- Nostrils -->
+      <ellipse cx="130" cy="170" rx="3" ry="2.5" fill="#2d6a3a"/>
+      <ellipse cx="150" cy="170" rx="3" ry="2.5" fill="#2d6a3a"/>
+
+      <!-- Mouth - gentle smile -->
+      <path d="M118,175 Q130,184 140,184 Q150,184 162,175" fill="none" stroke="#2d6a3a" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Eyes -->
+      <g>
+        <!-- Left eye white -->
+        <ellipse cx="120" cy="130" rx="16" ry="18" fill="#fff"/>
+        <!-- Left pupil -->
+        <g style="transform-origin: 120px 130px; animation: blink 4s ease-in-out infinite;">
+          <ellipse cx="122" cy="132" rx="8" ry="10" fill="#1a3a2a"/>
+          <circle cx="118" cy="128" r="3" fill="#fff" opacity="0.8"/>
+        </g>
+        <!-- Right eye white -->
+        <ellipse cx="160" cy="130" rx="16" ry="18" fill="#fff"/>
+        <!-- Right pupil - looking up (thinking) -->
+        <g style="transform-origin: 160px 130px; animation: blink 4s ease-in-out infinite 0.2s;">
+          <ellipse cx="158" cy="126" rx="8" ry="10" fill="#1a3a2a"/>
+          <circle cx="154" cy="122" r="3" fill="#fff" opacity="0.8"/>
+        </g>
+      </g>
+
+      <!-- Eyebrow ridges -->
+      <path d="M104,112 Q112,106 128,110" fill="none" stroke="#3a8a55" stroke-width="3" stroke-linecap="round"/>
+      <path d="M152,110 Q168,106 176,112" fill="none" stroke="#3a8a55" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- Head bumps / scales -->
+      <circle cx="120" cy="100" r="5" fill="#4aaa6a" opacity="0.5"/>
+      <circle cx="140" cy="96" r="6" fill="#4aaa6a" opacity="0.5"/>
+      <circle cx="160" cy="100" r="5" fill="#4aaa6a" opacity="0.5"/>
+
+      <!-- Little monocle for the "cryptic" look -->
+      <circle cx="160" cy="130" r="20" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.7"/>
+      <line x1="180" y1="130" x2="195" y2="155" stroke="#ffd700" stroke-width="1" opacity="0.5"/>
+
+      <!-- Tiny crossword grid on belly -->
+      <g transform="translate(123, 240)" opacity="0.4">
+        <rect x="0" y="0" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+        <rect x="10" y="0" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+        <rect x="20" y="0" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+        <rect x="0" y="10" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+        <rect x="10" y="10" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+        <rect x="20" y="10" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+      </g>
+    </svg>
+
+    <div class="speech">
+      <div class="speaker">Cryptic Croc</div>
+      Hmm, let me think about this one... "Flower found in both banks?"
+      The answer flows right through it — it's a <b>RIVER</b>! A river flows,
+      and it has banks on both sides. See? That's a double-definition clue!
+    </div>
+  </div>
+</body>
+</html>

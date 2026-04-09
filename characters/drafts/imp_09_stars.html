@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — 9. Floating Puzzle Sparkles</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    @keyframes breathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.012)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
+    @keyframes tailWag { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)} }
+    @keyframes jawIdle { 0%,85%,100%{transform:translateY(0)} 90%{transform:translateY(1.5px)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+    @keyframes floatA { 0%,100%{transform:translateY(0); opacity:0.7} 50%{transform:translateY(-8px); opacity:1} }
+    @keyframes floatB { 0%,100%{transform:translateY(0); opacity:0.6} 50%{transform:translateY(-10px); opacity:0.9} }
+    @keyframes floatC { 0%,100%{transform:translateY(0); opacity:0.5} 50%{transform:translateY(-6px); opacity:0.85} }
+    @keyframes floatD { 0%,100%{transform:translateY(0); opacity:0.65} 50%{transform:translateY(-9px); opacity:0.95} }
+    @keyframes floatE { 0%,100%{transform:translateY(0); opacity:0.55} 50%{transform:translateY(-7px); opacity:0.8} }
+  </style>
+</head>
+<body>
+  <div class="label">Improvement 9 of 10</div>
+  <h1>9. Floating Puzzle Sparkles</h1>
+  <div class="card">
+    <svg width="320" height="400" viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#4db06a"/><stop offset="100%" stop-color="#2a7848"/></radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#5ec47e"/><stop offset="100%" stop-color="#3a9a58"/></radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d4edaa"/><stop offset="100%" stop-color="#a8d470"/></radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <pattern id="sc" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8"/></pattern>
+      </defs>
+      <ellipse cx="160" cy="378" rx="80" ry="14" fill="rgba(0,0,0,0.3)"/>
+      <g style="transform-origin:160px 378px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — wide base flush with body, tapers to point -->
+        <g style="transform-origin:92px 290px; animation:tailWag 5s ease-in-out infinite">
+          <!-- Single solid tail shape -->
+          <path d="M94,260 Q72,258 52,248 Q34,236 20,220 Q10,206 10,196
+                   Q8,204 6,216 Q8,232 20,250 Q34,268 52,280 Q68,290 92,306 Z"
+                fill="url(#bg)"/>
+          <!-- Belly colour on underside -->
+          <path d="M92,306 Q68,290 52,280 Q34,268 20,250 Q8,232 6,216"
+                fill="none" stroke="#b8d888" stroke-width="6" stroke-linecap="round" opacity="0.15"/>
+          <!-- Scale texture -->
+          <path d="M92,302 Q66,288 50,276 Q32,262 18,244 Q8,228 8,210"
+                fill="none" stroke="url(#sc)" stroke-width="18" opacity="0.45"/>
+          <!-- Dorsal scutes along top edge -->
+          <path d="M80,260 L74,246 L78,252 Z" fill="#2a7848" opacity="0.58"/>
+          <path d="M62,250 L56,234 L60,240 Z" fill="#2a7848" opacity="0.55"/>
+          <path d="M44,238 L38,222 L42,228 Z" fill="#2a7848" opacity="0.5"/>
+          <path d="M28,224 L22,208 L26,214 Z" fill="#2a7848" opacity="0.45"/>
+          <path d="M16,208 L12,194 L16,200 Z" fill="#2a7848" opacity="0.4"/>
+          <!-- Lateral keels -->
+          <path d="M74,272 L68,268 L72,266" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.28"/>
+          <path d="M56,260 L50,256 L54,254" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.24"/>
+          <path d="M38,246 L32,242 L36,240" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.2"/>
+        </g>
+
+        <!-- FEET -->
+        <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#bg)"/>
+        <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)"/>
+        <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)"/>
+        <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58"/>
+        <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)"/>
+        <circle cx="96" cy="360" r="2" fill="#c8b060"/><circle cx="108" cy="356" r="2" fill="#c8b060"/>
+        <circle cx="120" cy="354" r="2" fill="#c8b060"/><circle cx="134" cy="356" r="2" fill="#c8b060"/>
+        <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#bg)"/>
+        <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)"/>
+        <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58"/>
+        <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)"/>
+        <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)"/>
+        <circle cx="176" cy="360" r="2" fill="#c8b060"/><circle cx="188" cy="356" r="2" fill="#c8b060"/>
+        <circle cx="200" cy="354" r="2" fill="#c8b060"/><circle cx="214" cy="356" r="2" fill="#c8b060"/>
+
+        <!-- BODY -->
+        <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#sc)"/>
+        <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#belly)" opacity="0.5"/>
+        <g opacity="0.3">
+          <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8"/>
+        </g>
+        <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55"/>
+        <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5"/>
+        <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45"/>
+
+        <!-- ARMS -->
+        <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+        <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58"/>
+        <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)"/>
+        <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)"/>
+        <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)"/>
+        <circle cx="48" cy="294" r="1.5" fill="#c8b060"/><circle cx="54" cy="290" r="1.5" fill="#c8b060"/><circle cx="62" cy="292" r="1.5" fill="#c8b060"/>
+        <g style="transform-origin:228px 248px; animation:wave 5s ease-in-out infinite">
+          <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+          <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58"/>
+          <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)"/>
+          <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a"/>
+          <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)"/>
+          <circle cx="246" cy="198" r="1.5" fill="#c8b060"/><circle cx="254" cy="195" r="1.5" fill="#c8b060"/><circle cx="262" cy="198" r="1.5" fill="#c8b060"/>
+        </g>
+
+        <!-- HEAD -->
+        <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#sc)"/>
+        <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+        <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+
+        <!-- SNOUT -->
+        <path d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,185 160,188 Q115,185 110,175 Z" fill="url(#lt)"/>
+        <circle cx="125" cy="170" r="3" fill="#4aaa6a" opacity="0.35"/>
+        <circle cx="145" cy="167" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="175" cy="167" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="195" cy="170" r="3" fill="#4aaa6a" opacity="0.35"/>
+
+        <!-- JAW + W-SMILE -->
+        <g style="transform-origin:160px 185px; animation:jawIdle 6s ease-in-out infinite">
+          <path d="M118,185 Q120,195 160,198 Q200,195 202,185" fill="#3a9058"/>
+          <!-- Bumpy croc lip ridge -->
+          <path d="M118,186 Q130,190 145,191 Q160,192 175,191 Q190,190 202,186" fill="none" stroke="#2a7040" stroke-width="2" stroke-linecap="round"/>
+          <!-- ANGULAR W SMILE -->
+          <path d="M140,192 L148,196 L152,191 L160,198 L168,191 L172,196 L180,192"
+                fill="none" stroke="#1e5535" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+
+        <!-- CHEEK BLUSHES -->
+        <ellipse cx="112" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12"/>
+        <ellipse cx="208" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12"/>
+
+        <!-- NOSTRILS -->
+        <circle cx="123" cy="170" r="4" fill="#1e5535"/>
+        <circle cx="197" cy="170" r="4" fill="#1e5535"/>
+
+        <!-- EYES -->
+        <g>
+          <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="128" cy="140" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:128px 140px; animation:blink 5s ease-in-out infinite">
+            <ellipse cx="131" cy="142" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="131" cy="142" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="127" cy="137" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+          <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="192" cy="140" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:192px 140px; animation:blink 5s ease-in-out infinite 0.3s">
+            <ellipse cx="189" cy="142" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="189" cy="142" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="185" cy="137" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+        </g>
+        <ellipse cx="145" cy="130" rx="8" ry="5" fill="#3a9058" opacity="0.45"/>
+        <ellipse cx="160" cy="126" rx="10" ry="6" fill="#3a9058" opacity="0.5"/>
+        <ellipse cx="175" cy="130" rx="8" ry="5" fill="#3a9058" opacity="0.45"/>
+
+        <!-- MONOCLE -->
+        <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65"/>
+        <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)"/>
+
+        <!-- FLOATING PUZZLE SPARKLES -->
+        <!-- Tiny ? symbol — upper left -->
+        <text x="82" y="140" font-family="Fredoka One, cursive" font-size="14" fill="#ffd700" style="animation:floatA 3.2s ease-in-out infinite">?</text>
+
+        <!-- Tiny * symbol — upper right -->
+        <text x="242" y="128" font-family="Fredoka One, cursive" font-size="12" fill="#ffec80" style="animation:floatB 4.0s ease-in-out infinite 0.5s">*</text>
+
+        <!-- Small letter A — right of body -->
+        <text x="248" y="260" font-family="Fredoka One, cursive" font-size="11" fill="#ffd700" style="animation:floatC 3.8s ease-in-out infinite 1.2s">A</text>
+
+        <!-- 4-point sparkle star — upper left near head -->
+        <g style="animation:floatD 3.5s ease-in-out infinite 0.8s">
+          <path d="M72,170 L74,164 L76,170 L82,172 L76,174 L74,180 L72,174 L66,172 Z" fill="#ffd700" opacity="0.8"/>
+        </g>
+
+        <!-- Small sparkle — right side near arm -->
+        <g style="animation:floatE 4.2s ease-in-out infinite 1.8s">
+          <path d="M280,180 L281.5,175 L283,180 L288,181.5 L283,183 L281.5,188 L280,183 L275,181.5 Z" fill="#ffec80" opacity="0.7"/>
+        </g>
+      </g>
+    </svg>
+    <div class="traits">
+      <span class="trait">Puzzle Sparkles</span>
+      <span class="trait">Floating Symbols</span>
+      <span class="trait">Magic Aura</span>
+    </div>
+    <div class="desc">Tiny floating symbols orbit the character — a question mark, an asterisk, a letter "A", and a pair of sparkle stars. Each gently bobs up and down with different timing, giving the croc a magical puzzle-aura feel.</div>
+  </div>
+</body>
+</html>

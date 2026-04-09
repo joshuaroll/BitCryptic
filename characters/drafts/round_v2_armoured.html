@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round V2 — Armoured Cutie</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes breathe { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
+    @keyframes tailSwish { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-12deg)} 20%{transform:rotate(8deg)} 30%{transform:rotate(-8deg)} 40%{transform:rotate(5deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Round Variant 2 of 5</div>
+  <h1>Armoured Cutie — Scute Covered</h1>
+
+  <div class="card">
+    <svg width="320" height="420" viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#4aaa68"/><stop offset="100%" stop-color="#287848"/>
+        </radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#58be78"/><stop offset="100%" stop-color="#3a9a58"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#e0f0b8"/><stop offset="100%" stop-color="#b0da78"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+      </defs>
+
+      <ellipse cx="160" cy="396" rx="78" ry="13" fill="rgba(0,0,0,0.28)"/>
+
+      <g style="transform-origin:160px 396px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — heavy, armoured, dragging -->
+        <g style="transform-origin:75px 320px; animation:tailSwish 6s ease-in-out infinite">
+          <path d="M75,320 Q35,308 12,278 Q-5,255 2,235 Q8,220 18,224" fill="none" stroke="url(#bg)" stroke-width="24" stroke-linecap="round"/>
+          <!-- HEAVY dorsal tail scutes — rectangular armour plates -->
+          <rect x="48" y="296" width="14" height="9" rx="3" fill="#287848" opacity="0.55" transform="rotate(-25,55,300)"/>
+          <rect x="28" y="274" width="13" height="8" rx="3" fill="#287848" opacity="0.5" transform="rotate(-35,34,278)"/>
+          <rect x="10" y="252" width="12" height="8" rx="3" fill="#287848" opacity="0.45" transform="rotate(-50,16,256)"/>
+          <!-- Lateral tail scutes -->
+          <rect x="55" y="308" width="10" height="6" rx="2" fill="#3a9058" opacity="0.3" transform="rotate(-20,60,311)"/>
+          <rect x="35" y="288" width="9" height="6" rx="2" fill="#3a9058" opacity="0.28" transform="rotate(-30,40,291)"/>
+        </g>
+
+        <!-- FEET — wide, flat, webbed, clawed -->
+        <!-- Left foot -->
+        <g>
+          <ellipse cx="122" cy="382" rx="26" ry="12" fill="url(#bg)"/>
+          <!-- Webbed toes with claws -->
+          <path d="M100,380 L94,374" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M112,376 L108,368" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M124,374 L124,366" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M136,376 L140,370" stroke="url(#lt)" stroke-width="5" stroke-linecap="round"/>
+          <!-- Claws -->
+          <circle cx="92" cy="372" r="2.5" fill="#d4c080"/><circle cx="106" cy="366" r="2.5" fill="#d4c080"/>
+          <circle cx="124" cy="364" r="2.5" fill="#d4c080"/><circle cx="142" cy="368" r="2.5" fill="#d4c080"/>
+          <!-- Webbing hint -->
+          <path d="M100,378 Q106,372 112,376" fill="rgba(74,170,104,0.2)" stroke="none"/>
+          <path d="M112,376 Q118,370 124,374" fill="rgba(74,170,104,0.2)" stroke="none"/>
+        </g>
+        <!-- Right foot -->
+        <g>
+          <ellipse cx="200" cy="382" rx="26" ry="12" fill="url(#bg)"/>
+          <path d="M180,380 L176,374" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M192,376 L190,368" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M204,374 L204,366" stroke="url(#lt)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M216,376 L220,370" stroke="url(#lt)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="174" cy="372" r="2.5" fill="#d4c080"/><circle cx="188" cy="366" r="2.5" fill="#d4c080"/>
+          <circle cx="204" cy="364" r="2.5" fill="#d4c080"/><circle cx="222" cy="368" r="2.5" fill="#d4c080"/>
+          <path d="M180,378 Q186,372 192,376" fill="rgba(74,170,104,0.2)" stroke="none"/>
+          <path d="M192,376 Q198,370 204,374" fill="rgba(74,170,104,0.2)" stroke="none"/>
+        </g>
+
+        <!-- BODY — round but covered in visible scute armour rows -->
+        <ellipse cx="160" cy="290" rx="74" ry="85" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- SCUTE ARMOUR ROWS on back — the key visual difference -->
+        <!-- Row 1 (top) -->
+        <rect x="132" y="210" width="16" height="11" rx="4" fill="#287848" opacity="0.5"/>
+        <rect x="152" y="208" width="18" height="12" rx="4" fill="#287848" opacity="0.52"/>
+        <rect x="174" y="210" width="16" height="11" rx="4" fill="#287848" opacity="0.5"/>
+        <!-- Row 2 -->
+        <rect x="124" y="226" width="15" height="10" rx="4" fill="#2e8050" opacity="0.45"/>
+        <rect x="143" y="224" width="16" height="11" rx="4" fill="#2e8050" opacity="0.48"/>
+        <rect x="163" y="224" width="16" height="11" rx="4" fill="#2e8050" opacity="0.48"/>
+        <rect x="183" y="226" width="15" height="10" rx="4" fill="#2e8050" opacity="0.45"/>
+        <!-- Row 3 -->
+        <rect x="120" y="240" width="14" height="10" rx="3" fill="#328858" opacity="0.4"/>
+        <rect x="138" y="238" width="15" height="11" rx="3" fill="#328858" opacity="0.42"/>
+        <rect x="157" y="238" width="16" height="11" rx="3" fill="#328858" opacity="0.42"/>
+        <rect x="177" y="238" width="15" height="11" rx="3" fill="#328858" opacity="0.42"/>
+        <rect x="196" y="240" width="14" height="10" rx="3" fill="#328858" opacity="0.4"/>
+
+        <!-- Belly -->
+        <ellipse cx="160" cy="305" rx="52" ry="60" fill="url(#belly)" opacity="0.48"/>
+        <!-- Belly has horizontal banding (croc underbelly pattern) -->
+        <line x1="118" y1="275" x2="202" y2="275" stroke="#98c060" stroke-width="1" opacity="0.3"/>
+        <line x1="114" y1="288" x2="206" y2="288" stroke="#98c060" stroke-width="1" opacity="0.3"/>
+        <line x1="112" y1="301" x2="208" y2="301" stroke="#98c060" stroke-width="1" opacity="0.3"/>
+        <line x1="114" y1="314" x2="206" y2="314" stroke="#98c060" stroke-width="1" opacity="0.3"/>
+        <line x1="118" y1="327" x2="202" y2="327" stroke="#98c060" stroke-width="1" opacity="0.3"/>
+
+        <!-- Belly crossword pattern on top of banding -->
+        <g transform="translate(134,290)" opacity="0.3">
+          <rect x="0" y="0" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="12" y="0" width="12" height="12" fill="rgba(26,58,42,0.5)" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="24" y="0" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="36" y="0" width="12" height="12" fill="rgba(26,58,42,0.5)" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="0" y="12" width="12" height="12" fill="rgba(26,58,42,0.5)" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="12" y="12" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="24" y="12" width="12" height="12" fill="rgba(26,58,42,0.5)" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="36" y="12" width="12" height="12" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+        </g>
+
+        <!-- LEFT ARM — clawed -->
+        <path d="M90,272 Q64,288 58,312" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+        <ellipse cx="56" cy="316" rx="10" ry="8" fill="#3a9a58"/>
+        <path d="M48,312 L44,306" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M54,308 L52,302" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M62,310 L62,304" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="42" cy="304" r="2" fill="#d4c080"/><circle cx="50" cy="300" r="2" fill="#d4c080"/><circle cx="62" cy="302" r="2" fill="#d4c080"/>
+
+        <!-- RIGHT ARM — waving -->
+        <g style="transform-origin:230px 260px; animation:wave 5s ease-in-out infinite">
+          <path d="M230,272 Q256,248 260,218" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+          <ellipse cx="260" cy="214" rx="10" ry="8" fill="#3a9a58"/>
+          <path d="M252,208 L250,202" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M260" y1="206" x2="260" y2="198" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="260" y1="206" x2="260" y2="198" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="268" y1="208" x2="270" y2="202" stroke="url(#lt)" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="248" cy="200" r="2" fill="#d4c080"/><circle cx="260" cy="196" r="2" fill="#d4c080"/><circle cx="272" cy="200" r="2" fill="#d4c080"/>
+        </g>
+
+        <!-- HEAD — horizontally wide, flat-topped, croc proportions -->
+        <!-- Raised eye platforms first (behind head) -->
+        <ellipse cx="124" cy="154" rx="16" ry="14" fill="url(#bg)"/>
+        <ellipse cx="196" cy="154" rx="16" ry="14" fill="url(#bg)"/>
+        <!-- Main head -->
+        <ellipse cx="160" cy="170" rx="54" ry="36" fill="url(#bg)" filter="url(#sh)"/>
+        <!-- Head scutes -->
+        <rect x="138" y="140" width="14" height="9" rx="3" fill="#2e8050" opacity="0.45"/>
+        <rect x="156" y="138" width="16" height="10" rx="4" fill="#2e8050" opacity="0.48"/>
+        <rect x="176" y="140" width="14" height="9" rx="3" fill="#2e8050" opacity="0.45"/>
+
+        <!-- SNOUT — wide, flat, projects forward -->
+        <ellipse cx="160" cy="196" rx="40" ry="16" fill="url(#lt)"/>
+        <!-- Snout bumps/pitting (like real croc) -->
+        <circle cx="130" cy="192" r="2" fill="#4aaa6a" opacity="0.35"/>
+        <circle cx="140" cy="189" r="1.8" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="180" cy="189" r="1.8" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="190" cy="192" r="2" fill="#4aaa6a" opacity="0.35"/>
+
+        <!-- Nostrils at snout tip -->
+        <ellipse cx="132" cy="195" rx="4" ry="3" fill="#1e5535"/>
+        <ellipse cx="188" cy="195" rx="4" ry="3" fill="#1e5535"/>
+
+        <!-- Jaw line with interlocking teeth -->
+        <path d="M122,200 Q140,210 160,210 Q180,210 198,200" fill="#2e7848" opacity="0.7"/>
+        <!-- Teeth line -->
+        <line x1="128" y1="200" x2="130" y2="206" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="140" y1="202" x2="141" y2="208" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="153" y1="203" x2="153" y2="209" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="167" y1="203" x2="167" y2="209" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="180" y1="202" x2="180" y2="208" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="192" y1="200" x2="192" y2="206" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- Smile under teeth -->
+        <path d="M130,206 Q145,215 160,215 Q175,215 190,206" fill="none" stroke="#1e5535" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+        <!-- EYES — on raised bumps, wide apart, reptilian -->
+        <g>
+          <ellipse cx="124" cy="152" rx="12" ry="11" fill="#fff"/>
+          <g style="transform-origin:124px 152px; animation:blink 5s ease-in-out infinite">
+            <ellipse cx="126" cy="153" rx="7" ry="8" fill="#6a8a28"/>
+            <ellipse cx="126" cy="153" rx="3" ry="8" fill="#1a2a0a"/>
+            <circle cx="122" cy="148" r="2.5" fill="#fff" opacity="0.85"/>
+          </g>
+          <!-- Eyelid ridge -->
+          <path d="M112,147 Q118,142 130,145 Q136,147 136,150" fill="url(#bg)" opacity="0.5"/>
+
+          <ellipse cx="196" cy="152" rx="12" ry="11" fill="#fff"/>
+          <g style="transform-origin:196px 152px; animation:blink 5s ease-in-out infinite 0.4s">
+            <ellipse cx="194" cy="153" rx="7" ry="8" fill="#6a8a28"/>
+            <ellipse cx="194" cy="153" rx="3" ry="8" fill="#1a2a0a"/>
+            <circle cx="190" cy="148" r="2.5" fill="#fff" opacity="0.85"/>
+          </g>
+          <path d="M184,150 Q190,147 202,145 Q208,147 208,150" fill="url(#bg)" opacity="0.5"/>
+        </g>
+
+        <!-- Monocle -->
+        <circle cx="196" cy="152" r="15" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+        <path d="M211,152 Q218,165 216,180" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.35"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Heavy Scutes</span>
+      <span class="trait">Belly Banding</span>
+      <span class="trait">Webbed Feet</span>
+      <span class="trait">Clawed Digits</span>
+    </div>
+    <div class="desc">
+      Same roly-poly silhouette but absolutely covered in armour. Rows of rectangular
+      scutes march down the back, the belly has horizontal banding like real croc
+      underbelly, and the feet are webbed with tiny claws. Looks like a cute little tank.
+    </div>
+    <div class="speech">"Thick skin? Check. Sharp mind? Double check. Let's crack this clue!"</div>
+  </div>
+</body>
+</html>

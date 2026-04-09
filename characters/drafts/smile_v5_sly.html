@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smile V5 — Sly Side Grin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    @keyframes breathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.012)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
+    @keyframes tailWag { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)} }
+    @keyframes jawIdle { 0%,85%,100%{transform:translateY(0)} 90%{transform:translateY(2px)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Smile Variant 5 of 5</div>
+  <h1>Sly Side Grin — Half a Smile</h1>
+  <div class="card">
+    <svg width="320" height="400" viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#4db06a"/><stop offset="100%" stop-color="#2a7848"/></radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#5ec47e"/><stop offset="100%" stop-color="#3a9a58"/></radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d4edaa"/><stop offset="100%" stop-color="#a8d470"/></radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <pattern id="sc" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8"/></pattern>
+      </defs>
+      <ellipse cx="160" cy="378" rx="80" ry="14" fill="rgba(0,0,0,0.3)"/>
+      <g style="transform-origin:160px 378px; animation:breathe 4.5s ease-in-out infinite">
+        <!-- TAIL -->
+        <g style="transform-origin:90px 295px; animation:tailWag 5s ease-in-out infinite">
+          <path d="M92,272 Q70,270 50,258 Q32,244 18,225 Q8,210 10,200 L10,206 Q6,222 16,242 Q28,262 46,278 Q62,290 90,298 Z" fill="url(#bg)"/>
+          <path d="M90,298 Q62,290 46,278 Q28,262 16,242 Q6,222 10,206" fill="none" stroke="url(#belly)" stroke-width="8" stroke-linecap="round" opacity="0.2"/>
+          <path d="M90,296 Q62,288 46,276 Q28,260 16,240 Q6,220 10,202" fill="none" stroke="url(#sc)" stroke-width="16" opacity="0.5"/>
+          <path d="M78,272 L72,258 L76,264 Z" fill="#2a7848" opacity="0.6"/>
+          <path d="M60,260 L54,244 L58,250 Z" fill="#2a7848" opacity="0.58"/>
+          <path d="M44,246 L38,230 L42,236 Z" fill="#2a7848" opacity="0.55"/>
+          <path d="M30,232 L24,216 L28,222 Z" fill="#2a7848" opacity="0.5"/>
+          <path d="M18,218 L14,204 L18,210 Z" fill="#2a7848" opacity="0.45"/>
+          <path d="M72,282 L66,278 L70,276" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.3"/>
+          <path d="M54,268 L48,264 L52,262" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.25"/>
+          <path d="M38,252 L32,248 L36,246" stroke="#2a7848" stroke-width="1.5" fill="none" opacity="0.22"/>
+        </g>
+        <!-- FEET -->
+        <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#bg)"/>
+        <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)"/>
+        <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)"/>
+        <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58"/>
+        <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)"/>
+        <circle cx="96" cy="360" r="2" fill="#c8b060"/><circle cx="108" cy="356" r="2" fill="#c8b060"/>
+        <circle cx="120" cy="354" r="2" fill="#c8b060"/><circle cx="134" cy="356" r="2" fill="#c8b060"/>
+        <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#bg)"/>
+        <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)"/>
+        <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58"/>
+        <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)"/>
+        <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)"/>
+        <circle cx="176" cy="360" r="2" fill="#c8b060"/><circle cx="188" cy="356" r="2" fill="#c8b060"/>
+        <circle cx="200" cy="354" r="2" fill="#c8b060"/><circle cx="214" cy="356" r="2" fill="#c8b060"/>
+        <!-- BODY -->
+        <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#sc)"/>
+        <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#belly)" opacity="0.5"/>
+        <g opacity="0.3">
+          <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8"/>
+          <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8"/>
+        </g>
+        <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55"/>
+        <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5"/>
+        <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45"/>
+        <!-- ARMS -->
+        <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+        <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58"/>
+        <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)"/>
+        <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)"/>
+        <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)"/>
+        <circle cx="48" cy="294" r="1.5" fill="#c8b060"/><circle cx="54" cy="290" r="1.5" fill="#c8b060"/><circle cx="62" cy="292" r="1.5" fill="#c8b060"/>
+        <g style="transform-origin:228px 248px; animation:wave 5s ease-in-out infinite">
+          <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round"/>
+          <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58"/>
+          <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)"/>
+          <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a"/>
+          <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)"/>
+          <circle cx="246" cy="198" r="1.5" fill="#c8b060"/><circle cx="254" cy="195" r="1.5" fill="#c8b060"/><circle cx="262" cy="198" r="1.5" fill="#c8b060"/>
+        </g>
+        <!-- HEAD -->
+        <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#sc)"/>
+        <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+        <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5"/>
+        <!-- SNOUT -->
+        <path d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,185 160,188 Q115,185 110,175 Z" fill="url(#lt)"/>
+        <circle cx="125" cy="170" r="3" fill="#4aaa6a" opacity="0.35"/>
+        <circle cx="145" cy="167" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="175" cy="167" r="2.5" fill="#4aaa6a" opacity="0.3"/>
+        <circle cx="195" cy="170" r="3" fill="#4aaa6a" opacity="0.35"/>
+        <!-- JAW + SMILE — LOPSIDED SMIRK: left side flat, right side curls up -->
+        <g style="transform-origin:160px 185px; animation:jawIdle 6s ease-in-out infinite">
+          <path d="M118,185 Q120,195 160,198 Q200,195 202,185" fill="#3a9058"/>
+          <path d="M118,186 Q130,190 145,191 Q160,192 175,191 Q190,190 202,186" fill="none" stroke="#2a7040" stroke-width="2" stroke-linecap="round"/>
+          
+          <!-- Sly side grin — only visible on the right half, left is just a line -->
+          <path d="M122,194 L155,194 Q170,194 180,190 Q192,184 200,178" fill="none" stroke="#1e5535" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+        <!-- NOSTRILS -->
+        <circle cx="123" cy="170" r="4" fill="#1e5535"/>
+        <circle cx="197" cy="170" r="4" fill="#1e5535"/>
+        <!-- EYES -->
+        <g>
+          <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="128" cy="140" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:128px 140px; animation:blink 5s ease-in-out infinite">
+            <ellipse cx="131" cy="142" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="131" cy="142" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="127" cy="137" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+          <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#bg)"/>
+          <ellipse cx="192" cy="140" rx="14" ry="13" fill="#fff"/>
+          <g style="transform-origin:192px 140px; animation:blink 5s ease-in-out infinite 0.3s">
+            <ellipse cx="189" cy="142" rx="8" ry="9" fill="#5a7a20"/>
+            <ellipse cx="189" cy="142" rx="3.5" ry="9" fill="#1a2a0a"/>
+            <circle cx="185" cy="137" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+        </g>
+        <ellipse cx="145" cy="130" rx="8" ry="5" fill="#3a9058" opacity="0.45"/>
+        <ellipse cx="160" cy="126" rx="10" ry="6" fill="#3a9058" opacity="0.5"/>
+        <ellipse cx="175" cy="130" rx="8" ry="5" fill="#3a9058" opacity="0.45"/>
+        <!-- MONOCLE -->
+        <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65"/>
+        <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)"/>
+      </g>
+    </svg>
+    <div class="traits">
+      <span class="trait">Half Smile</span>
+      <span class="trait">Sly</span>
+      <span class="trait">Cryptic</span>
+    </div>
+    <div class="desc">Only the right half of the mouth curves up — the left is a dead-straight line. The most "cryptic" expression: reserved, knowing, like he already solved it.</div>
+  </div>
+</body>
+</html>

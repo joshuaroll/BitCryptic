@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept 2 — Tall & Lanky</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes sway { 0%,100%{transform:rotate(-1.5deg)} 50%{transform:rotate(1.5deg)} }
+    @keyframes blink { 0%,88%,100%{transform:scaleY(1)} 92%{transform:scaleY(0.08)} }
+    @keyframes tailCurl { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+    @keyframes tipTap { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  </style>
+</head>
+<body>
+  <div class="label">Concept 2 of 5</div>
+  <h1>Tall & Lanky Croc</h1>
+
+  <div class="card">
+    <svg width="260" height="440" viewBox="0 0 260 440" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#4db878"/><stop offset="100%" stop-color="#28704a"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#d0eaa8"/><stop offset="100%" stop-color="#a8d870"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+      </defs>
+
+      <!-- Ground shadow -->
+      <ellipse cx="130" cy="420" rx="60" ry="10" fill="rgba(0,0,0,0.25)"/>
+
+      <!-- Whole body gentle sway -->
+      <g style="transform-origin:130px 420px; animation:sway 6s ease-in-out infinite">
+
+        <!-- TAIL — long, thin, elegant curl -->
+        <g style="transform-origin:75px 350px; animation:tailCurl 7s ease-in-out infinite">
+          <path d="M75,350 Q30,330 10,290 Q-5,260 5,235 Q12,215 25,218 Q32,220 28,230" fill="none" stroke="url(#bg)" stroke-width="14" stroke-linecap="round"/>
+          <!-- Tail ridges -->
+          <path d="M48,328 L40,318" stroke="#368a52" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M22,296 L14,286" stroke="#368a52" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M8,262 L4,252" stroke="#368a52" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <!-- Curl tip -->
+          <circle cx="28" cy="228" r="5" fill="#4aaa6a" opacity="0.6"/>
+        </g>
+
+        <!-- LEFT LEG — long & thin -->
+        <path d="M108,375 L105,400" stroke="url(#bg)" stroke-width="12" stroke-linecap="round"/>
+        <ellipse cx="105" cy="410" rx="16" ry="8" fill="url(#bg)"/>
+        <circle cx="93" cy="408" r="3.5" fill="#4aaa6a"/><circle cx="101" cy="405" r="3.5" fill="#4aaa6a"/><circle cx="109" cy="404" r="3.5" fill="#4aaa6a"/>
+
+        <!-- RIGHT LEG -->
+        <g style="animation:tipTap 3s ease-in-out infinite">
+          <path d="M155,375 L158,400" stroke="url(#bg)" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="158" cy="410" rx="16" ry="8" fill="url(#bg)"/>
+          <circle cx="148" cy="408" r="3.5" fill="#4aaa6a"/><circle cx="156" cy="405" r="3.5" fill="#4aaa6a"/><circle cx="164" cy="404" r="3.5" fill="#4aaa6a"/>
+        </g>
+
+        <!-- BODY — tall, narrow, elongated oval -->
+        <ellipse cx="130" cy="290" rx="44" ry="90" fill="url(#bg)" filter="url(#sh)"/>
+        <!-- Narrow belly -->
+        <ellipse cx="130" cy="300" rx="28" ry="65" fill="url(#belly)" opacity="0.45"/>
+
+        <!-- Belly crossword — vertical strip -->
+        <g transform="translate(119,270)" opacity="0.35">
+          <rect x="0" y="0" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="10" y="0" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="0" y="10" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="10" y="10" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="0" y="20" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="10" y="20" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+        </g>
+
+        <!-- LEFT ARM — long, thin, hands behind back -->
+        <path d="M88,240 Q60,260 50,290 Q46,310 55,320" fill="none" stroke="url(#bg)" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="56" cy="322" r="7" fill="#4aaa6a"/>
+
+        <!-- RIGHT ARM — holding a tiny book/scroll -->
+        <path d="M172,238 Q195,252 202,275 Q206,290 200,300" fill="none" stroke="url(#bg)" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="199" cy="302" r="7" fill="#4aaa6a"/>
+        <!-- Tiny book -->
+        <rect x="190" y="306" width="18" height="14" rx="2" fill="#8a6a30" stroke="#ffd700" stroke-width="0.8" opacity="0.7"/>
+        <line x1="199" y1="307" x2="199" y2="319" stroke="#ffd700" stroke-width="0.5" opacity="0.5"/>
+        <rect x="192" y="309" width="5" height="1.5" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+        <rect x="192" y="312" width="5" height="1.5" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+        <rect x="201" y="309" width="5" height="1.5" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+
+        <!-- Spine ridges — delicate, spaced out -->
+        <path d="M130,200 L127,210 L133,210 Z" fill="#368a52" opacity="0.5"/>
+        <path d="M130,216 L127,226 L133,226 Z" fill="#368a52" opacity="0.45"/>
+        <path d="M130,232 L127,242 L133,242 Z" fill="#368a52" opacity="0.4"/>
+        <path d="M130,248 L127,258 L133,258 Z" fill="#368a52" opacity="0.35"/>
+
+        <!-- NECK — visible, elongated -->
+        <path d="M130,200 L130,170" stroke="url(#bg)" stroke-width="28" stroke-linecap="round"/>
+
+        <!-- HEAD — narrow, elongated, refined snout -->
+        <ellipse cx="130" cy="130" rx="40" ry="48" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- SNOUT — long, narrow, distinguished -->
+        <ellipse cx="130" cy="170" rx="22" ry="18" fill="#4aaa6a"/>
+        <ellipse cx="130" cy="166" rx="17" ry="13" fill="#5abb7a" opacity="0.4"/>
+        <!-- Snout tip extends further -->
+        <ellipse cx="130" cy="182" rx="14" ry="7" fill="#4aaa6a"/>
+
+        <!-- Nostrils — at tip -->
+        <ellipse cx="124" cy="184" rx="2.5" ry="2" fill="#2d6a3a"/>
+        <ellipse cx="136" cy="184" rx="2.5" ry="2" fill="#2d6a3a"/>
+
+        <!-- Smile — thin, knowing smirk -->
+        <path d="M115,178 Q122,184 130,183 Q140,182 148,176" fill="none" stroke="#2d6a3a" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- EYES — narrow, half-lidded, intelligent -->
+        <g>
+          <!-- Left eye — almond shaped -->
+          <ellipse cx="115" cy="120" rx="13" ry="11" fill="#fff"/>
+          <g style="transform-origin:115px 120px; animation:blink 6s ease-in-out infinite">
+            <ellipse cx="117" cy="121" rx="7" ry="8" fill="#1a3a2a"/>
+            <circle cx="113" cy="117" r="2.5" fill="#fff" opacity="0.85"/>
+          </g>
+          <!-- Droopy eyelid (gives smart/calm look) -->
+          <path d="M102,114 Q108,110 118,112 Q125,113 128,116" fill="url(#bg)" opacity="0.6"/>
+
+          <!-- Right eye -->
+          <ellipse cx="145" cy="120" rx="13" ry="11" fill="#fff"/>
+          <g style="transform-origin:145px 120px; animation:blink 6s ease-in-out infinite 0.4s">
+            <ellipse cx="143" cy="121" rx="7" ry="8" fill="#1a3a2a"/>
+            <circle cx="140" cy="117" r="2.5" fill="#fff" opacity="0.85"/>
+          </g>
+          <path d="M132,116 Q138,113 148,112 Q155,113 158,116" fill="url(#bg)" opacity="0.6"/>
+        </g>
+
+        <!-- Thin arched brows -->
+        <path d="M102,106 Q110,98 126,104" fill="none" stroke="#368a52" stroke-width="2" stroke-linecap="round"/>
+        <path d="M134,104 Q150,98 158,106" fill="none" stroke="#368a52" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- Head crests — pointed, refined -->
+        <path d="M115,84 L112,74 L118,78 Z" fill="#4aaa6a" opacity="0.6"/>
+        <path d="M130,80 L128,68 L132,72 Z" fill="#4aaa6a" opacity="0.6"/>
+        <path d="M145,84 L143,74 L148,78 Z" fill="#4aaa6a" opacity="0.6"/>
+
+        <!-- Monocle — with chain, larger, more prominent -->
+        <circle cx="145" cy="120" r="16" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.7"/>
+        <path d="M161,120 Q170,135 168,155 Q167,165 164,175" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4" stroke-dasharray="3,3"/>
+
+        <!-- Bow tie at neck -->
+        <polygon points="118,196 130,202 142,196 130,206" fill="#ffd700" opacity="0.6"/>
+        <circle cx="130" cy="201" r="3" fill="#ff8c00" opacity="0.7"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Scholarly</span>
+      <span class="trait">Elegant</span>
+      <span class="trait">Witty</span>
+      <span class="trait">Patient</span>
+    </div>
+    <div class="desc">
+      A tall, slender croc with a long refined snout and half-lidded intelligent eyes.
+      He sways gently like a pendulum, always holding a tiny cryptic crossword book.
+      Bow tie and monocle chain complete the look — a gentleman scholar of wordplay.
+    </div>
+    <div class="speech">"Ah, observe — the setter has concealed a rather elegant anagram here..."</div>
+  </div>
+</body>
+</html>

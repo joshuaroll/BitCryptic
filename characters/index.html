@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — Character & Expressions</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050a18;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      background: linear-gradient(180deg, rgba(10,22,40,0.95) 0%, rgba(10,22,40,0) 100%);
+      position: relative;
+      z-index: 10;
+    }
+    .topbar h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #ffd700;
+      font-size: 1.3rem;
+      text-shadow: 0 0 20px rgba(255,215,0,0.3);
+    }
+    .page-indicator { display: flex; align-items: center; gap: 10px; }
+    .page-num {
+      font-family: 'Fredoka One', cursive;
+      color: rgba(255,215,0,0.7);
+      font-size: 0.9rem;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .dots { display: flex; gap: 8px; justify-content: center; padding: 0 20px; }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,215,0,0.15);
+      border: 1.5px solid rgba(255,215,0,0.3);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .dot.active {
+      background: #ffd700; border-color: #ffd700;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+      transform: scale(1.2);
+    }
+    .dot.official {
+      width: 12px; height: 12px;
+      border-color: rgba(255,215,0,0.5);
+    }
+    .dot:hover:not(.active) { background: rgba(255,215,0,0.35); }
+
+    .nav-btn {
+      background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,215,0,0.04));
+      border: 1.5px solid rgba(255,215,0,0.3);
+      border-radius: 12px; color: #ffd700;
+      font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+      padding: 8px 18px; cursor: pointer;
+      transition: all 0.25s ease; user-select: none;
+    }
+    .nav-btn:hover {
+      background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1));
+      border-color: rgba(255,215,0,0.6);
+      box-shadow: 0 0 20px rgba(255,215,0,0.15);
+    }
+    .nav-btn:active { transform: scale(0.96); }
+
+    .viewer { flex: 1; position: relative; overflow: hidden; }
+    .slide {
+      position: absolute; inset: 0;
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease;
+      will-change: transform, opacity;
+    }
+    .slide iframe { width: 100%; height: 100%; border: none; background: #0a1628; }
+    .slide.current { transform: translateX(0); opacity: 1; }
+    .slide.left    { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+    .slide.right   { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+    .bottombar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px 18px;
+      background: linear-gradient(0deg, rgba(10,22,40,0.95) 0%, rgba(10,22,40,0) 100%);
+      position: relative; z-index: 10;
+    }
+    .pose-name {
+      font-family: 'Fredoka One', cursive;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem; text-align: center; flex: 1;
+    }
+    .pose-name span { color: #ffd700; }
+    .pose-name .tag {
+      display: inline-block;
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 8px; padding: 2px 10px;
+      font-size: 0.7rem; color: #ffd700;
+      margin-right: 8px; vertical-align: middle;
+    }
+
+    .key-hint {
+      position: fixed; bottom: 60px; right: 28px;
+      font-size: 0.7rem; color: rgba(255,255,255,0.2);
+      letter-spacing: 1px; z-index: 10;
+    }
+    kbd {
+      display: inline-block;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px; padding: 1px 6px;
+      font-family: 'Nunito', sans-serif; font-size: 0.65rem;
+    }
+
+    /* Auto-play indicator */
+    .auto-indicator {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      font-size: 0.7rem; color: rgba(255,215,0,0.4);
+      font-family: 'Nunito', sans-serif; z-index: 20;
+      transition: opacity 0.3s ease;
+    }
+    .auto-indicator.hidden { opacity: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>Cryptic Croc</h1>
+    <div class="page-indicator">
+      <div class="dots" id="dots"></div>
+      <div class="page-num" id="pageNum">1 / 7</div>
+    </div>
+  </div>
+
+  <div class="auto-indicator hidden" id="autoLabel">auto-playing</div>
+
+  <div class="viewer" id="viewer"></div>
+
+  <div class="bottombar">
+    <button class="nav-btn" id="prevBtn" onclick="go(-1)">Prev</button>
+    <div class="pose-name" id="poseName"></div>
+    <button class="nav-btn" id="nextBtn" onclick="go(1)">Next</button>
+  </div>
+
+  <div class="key-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> arrow keys &nbsp; <kbd>space</kbd> auto-play</div>
+
+  <script>
+    const pages = [
+      { file: 'cryptic_croc_official.html',  name: 'Cryptic Croc',              tag: 'OFFICIAL' },
+      { file: 'expressions/happy.html',      name: 'Happy — Default Greeting',  tag: null },
+      { file: 'expressions/thinking.html',   name: 'Thinking — Hand on Chin',   tag: null },
+      { file: 'expressions/excited.html',    name: 'Excited — Arms Up!',        tag: null },
+      { file: 'expressions/confused.html',   name: 'Confused — Puzzled',        tag: null },
+    ];
+
+    let current = 0;
+    let autoPlay = null;
+    const viewer = document.getElementById('viewer');
+    const dots = document.getElementById('dots');
+    const pageNum = document.getElementById('pageNum');
+    const poseName = document.getElementById('poseName');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const autoLabel = document.getElementById('autoLabel');
+
+    // Build slides
+    pages.forEach((p, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active official' : '');
+      if (i === 0) dot.classList.add('official');
+      dot.onclick = () => { stopAuto(); goTo(i); };
+      dots.appendChild(dot);
+
+      const slide = document.createElement('div');
+      slide.className = 'slide ' + (i === 0 ? 'current' : 'right');
+      slide.innerHTML = `<iframe src="${p.file}" loading="${i <= 1 ? 'eager' : 'lazy'}"></iframe>`;
+      viewer.appendChild(slide);
+    });
+
+    function update() {
+      const allDots = dots.querySelectorAll('.dot');
+      const allSlides = viewer.querySelectorAll('.slide');
+      allSlides.forEach((s, i) => {
+        s.className = 'slide ' + (i < current ? 'left' : i > current ? 'right' : 'current');
+      });
+      allDots.forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+      pageNum.textContent = `${current + 1} / ${pages.length}`;
+      const p = pages[current];
+      const tagHtml = p.tag ? `<span class="tag">${p.tag}</span>` : '';
+      poseName.innerHTML = `${tagHtml}<span>${p.name}</span>`;
+      // Loop — no disabled buttons
+      prevBtn.style.opacity = '1';
+      nextBtn.style.opacity = '1';
+    }
+
+    function goTo(i) {
+      if (i < 0) i = pages.length - 1;
+      if (i >= pages.length) i = 0;
+      if (i === current) return;
+      current = i;
+      update();
+    }
+
+    function go(dir) {
+      stopAuto();
+      goTo(current + dir);
+    }
+
+    function toggleAuto() {
+      if (autoPlay) {
+        stopAuto();
+      } else {
+        autoPlay = setInterval(() => goTo(current + 1), 3000);
+        autoLabel.classList.remove('hidden');
+      }
+    }
+
+    function stopAuto() {
+      if (autoPlay) { clearInterval(autoPlay); autoPlay = null; }
+      autoLabel.classList.add('hidden');
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft')  go(-1);
+      if (e.key === 'ArrowRight') go(1);
+      if (e.key === ' ') { e.preventDefault(); toggleAuto(); }
+    });
+
+    // Swipe
+    let touchX = null;
+    viewer.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; });
+    viewer.addEventListener('touchend', (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+      touchX = null;
+    });
+
+    update();
+  </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept 5 — Sleek & Slinky</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center; max-width: 520px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes slither { 0%,100%{transform:translateX(0) rotate(0deg)} 25%{transform:translateX(3px) rotate(0.5deg)} 75%{transform:translateX(-3px) rotate(-0.5deg)} }
+    @keyframes blink { 0%,88%,100%{transform:scaleY(1)} 92%{transform:scaleY(0.06)} }
+    @keyframes tailSnake { 0%,100%{d:path('M65,300 Q20,285 -10,250 Q-30,225 -22,200 Q-15,180 -5,182 Q8,185 2,198')} 50%{d:path('M65,300 Q25,290 0,260 Q-18,240 -15,215 Q-10,195 0,195 Q12,196 8,208')} }
+    @keyframes tongueFlick { 0%,85%,100%{opacity:0; transform:scaleX(0)} 90%{opacity:1; transform:scaleX(1)} 95%{opacity:1; transform:scaleX(1.1)} }
+    @keyframes eyeGlow { 0%,100%{filter:drop-shadow(0 0 0px transparent)} 50%{filter:drop-shadow(0 0 4px rgba(255,215,0,0.3))} }
+  </style>
+</head>
+<body>
+  <div class="label">Concept 5 of 5</div>
+  <h1>Sleek & Slinky Croc</h1>
+
+  <div class="card">
+    <svg width="380" height="400" viewBox="0 0 380 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#3daa68"/><stop offset="50%" stop-color="#2a8850"/><stop offset="100%" stop-color="#1e6a3a"/>
+        </linearGradient>
+        <linearGradient id="bgDark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2a8850"/><stop offset="100%" stop-color="#185530"/>
+        </linearGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#d8f0b8"/><stop offset="100%" stop-color="#a8d870"/>
+        </radialGradient>
+        <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffd700" stop-opacity="0.15"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <filter id="gl"><feGaussianBlur stdDeviation="2"/></filter>
+
+        <!-- Scale pattern -->
+        <pattern id="scales" x="0" y="0" width="16" height="14" patternUnits="userSpaceOnUse">
+          <path d="M0,7 Q4,0 8,7 Q12,0 16,7" fill="none" stroke="rgba(30,90,55,0.3)" stroke-width="1"/>
+        </pattern>
+      </defs>
+
+      <!-- Ground shadow — elongated -->
+      <ellipse cx="185" cy="382" rx="100" ry="12" fill="rgba(0,0,0,0.2)"/>
+
+      <!-- Whole body slinky sway -->
+      <g style="transform-origin:185px 382px; animation:slither 5s ease-in-out infinite">
+
+        <!-- TAIL — very long, S-curved, serpentine -->
+        <g>
+          <path d="M65,300 Q20,285 -10,250 Q-30,225 -22,200 Q-15,180 -5,182 Q8,185 2,198" fill="none" stroke="url(#bg)" stroke-width="16" stroke-linecap="round">
+            <animate attributeName="d"
+              values="M65,300 Q20,285 -10,250 Q-30,225 -22,200 Q-15,180 -5,182 Q8,185 2,198;
+                      M65,300 Q25,290 0,260 Q-18,240 -15,215 Q-10,195 0,195 Q12,196 8,208;
+                      M65,300 Q20,285 -10,250 Q-30,225 -22,200 Q-15,180 -5,182 Q8,185 2,198"
+              dur="6s" repeatCount="indefinite"/>
+          </path>
+          <!-- Tail ridges — fin-like -->
+          <path d="M38,288 L30,278 L36,280" fill="#2a7a48" opacity="0.5"/>
+          <path d="M8,260 L0,248 L6,252" fill="#2a7a48" opacity="0.45"/>
+          <path d="M-18,232 L-26,218 L-20,222" fill="#2a7a48" opacity="0.4"/>
+          <!-- Pointed tail tip -->
+          <path d="M2,198 L-6,190 L4,192" fill="#3a9a58" opacity="0.5"/>
+        </g>
+
+        <!-- LEFT LEG — slim, angled, dancer-like -->
+        <path d="M140,345 Q135,358 130,370" stroke="url(#bg)" stroke-width="10" stroke-linecap="round"/>
+        <ellipse cx="130" cy="375" rx="18" ry="7" fill="url(#bg)" transform="rotate(-5,130,375)"/>
+        <circle cx="116" cy="374" r="3" fill="#3a9a58"/><circle cx="124" cy="371" r="3" fill="#3a9a58"/><circle cx="132" cy="370" r="3" fill="#3a9a58"/><circle cx="140" cy="371" r="3" fill="#3a9a58"/>
+
+        <!-- RIGHT LEG — slightly forward, posed -->
+        <path d="M210,340 Q220,358 228,368" stroke="url(#bg)" stroke-width="10" stroke-linecap="round"/>
+        <ellipse cx="230" cy="373" rx="18" ry="7" fill="url(#bg)" transform="rotate(8,230,373)"/>
+        <circle cx="218" cy="374" r="3" fill="#3a9a58"/><circle cx="226" cy="371" r="3" fill="#3a9a58"/><circle cx="234" cy="369" r="3" fill="#3a9a58"/><circle cx="242" cy="371" r="3" fill="#3a9a58"/>
+
+        <!-- BODY — sleek, streamlined, S-curve posture -->
+        <!-- Lower body -->
+        <ellipse cx="170" cy="305" rx="52" ry="55" fill="url(#bg)" filter="url(#sh)"/>
+        <!-- Upper body / chest — shifted forward for S-pose -->
+        <ellipse cx="190" cy="240" rx="48" ry="52" fill="url(#bg)"/>
+        <!-- Connection/waist — narrower -->
+        <rect x="150" y="260" width="60" height="50" rx="25" fill="url(#bg)"/>
+
+        <!-- Scale texture overlay -->
+        <ellipse cx="180" cy="275" rx="50" ry="70" fill="url(#scales)" opacity="0.4"/>
+
+        <!-- Belly — slender strip -->
+        <ellipse cx="178" cy="285" rx="28" ry="55" fill="url(#belly)" opacity="0.4"/>
+
+        <!-- Belly crossword — diamond arrangement -->
+        <g transform="translate(162,268) rotate(5)" opacity="0.3">
+          <rect x="0" y="0" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="9" y="0" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="18" y="0" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="0" y="9" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="9" y="9" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="18" y="9" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+        </g>
+
+        <!-- LEFT ARM — one hand on hip, sassy pose -->
+        <path d="M145,245 Q118,255 105,275 Q98,288 102,298" fill="none" stroke="url(#bg)" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="103" cy="300" r="7" fill="#3a9a58"/>
+        <circle cx="96" cy="296" r="3" fill="#4aaa68"/><circle cx="102" cy="293" r="3" fill="#4aaa68"/><circle cx="108" cy="296" r="3" fill="#4aaa68"/>
+
+        <!-- RIGHT ARM — raised, snapping fingers -->
+        <path d="M236,230 Q262,215 272,195 Q278,180 272,168" fill="none" stroke="url(#bg)" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="270" cy="166" r="7" fill="#3a9a58"/>
+        <!-- Snapping fingers -->
+        <circle cx="264" cy="160" r="3" fill="#4aaa68"/>
+        <circle cx="270" cy="157" r="3" fill="#4aaa68"/>
+        <circle cx="276" cy="160" r="3" fill="#4aaa68"/>
+        <!-- Snap sparkle -->
+        <line x1="270" y1="148" x2="270" y2="140" stroke="#ffd700" stroke-width="1.5" opacity="0.5">
+          <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="260" y1="152" x2="254" y2="146" stroke="#ffd700" stroke-width="1" opacity="0.4">
+          <animate attributeName="opacity" values="0;0.6;0" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+        </line>
+        <line x1="280" y1="152" x2="286" y2="146" stroke="#ffd700" stroke-width="1" opacity="0.4">
+          <animate attributeName="opacity" values="0;0.6;0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+        </line>
+
+        <!-- PROMINENT DORSAL RIDGE — fin-like, dramatic -->
+        <path d="M185,188 L180,172 L190,172 Z" fill="#2a7a48" opacity="0.6"/>
+        <path d="M182,175 L176,155 L188,155 Z" fill="#2a7a48" opacity="0.55"/>
+        <path d="M180,158 L174,140 L186,140 Z" fill="#2a7a48" opacity="0.5"/>
+
+        <!-- NECK — curved, flowing into S-posture -->
+        <path d="M190,200 Q195,175 200,160" stroke="url(#bg)" stroke-width="30" stroke-linecap="round" fill="none"/>
+
+        <!-- HEAD — angular, triangular, pointed snout -->
+        <g style="animation:eyeGlow 4s ease-in-out infinite">
+          <!-- Main head — angular diamond shape -->
+          <path d="M160,145 Q175,98 210,95 Q245,98 260,145 Q250,168 210,175 Q170,168 160,145 Z" fill="url(#bg)" filter="url(#sh)"/>
+
+          <!-- Angular snout — pointed, V-shaped -->
+          <path d="M180,160 Q195,180 210,185 Q225,180 240,160 Q230,170 210,173 Q190,170 180,160 Z" fill="#3a9a58"/>
+          <path d="M185,158 Q198,175 210,178 Q222,175 235,158" fill="#4aaa68" opacity="0.4"/>
+
+          <!-- Narrow nostrils at tip -->
+          <ellipse cx="200" cy="174" rx="2.5" ry="2" fill="#1e5535"/>
+          <ellipse cx="220" cy="174" rx="2.5" ry="2" fill="#1e5535"/>
+
+          <!-- Sly smile — asymmetric -->
+          <path d="M192,176 Q205,182 210,182 Q220,181 238,172" fill="none" stroke="#1e5535" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Tongue flick! -->
+          <g style="transform-origin:210px 182px; animation:tongueFlick 6s ease-in-out infinite">
+            <path d="M210,182 Q215,192 210,200 M210,200 Q207,196 205,200 M210,200 Q213,196 215,200" fill="none" stroke="#ff6b8a" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          </g>
+
+          <!-- EYES — slanted, cat-like, glowing -->
+          <g>
+            <!-- Eye glow auras -->
+            <circle cx="192" cy="132" r="18" fill="url(#eyeGlow)"/>
+            <circle cx="228" cy="132" r="18" fill="url(#eyeGlow)"/>
+
+            <!-- Left eye — sharp almond -->
+            <path d="M178,132 Q185,120 198,122 Q206,124 208,132 Q206,140 198,142 Q185,144 178,132 Z" fill="#fff"/>
+            <g style="transform-origin:193px 132px; animation:blink 5s ease-in-out infinite">
+              <ellipse cx="195" cy="133" rx="7" ry="8.5" fill="#8a6a20"/>
+              <!-- Slit pupil -->
+              <ellipse cx="195" cy="133" rx="3" ry="8.5" fill="#1a1a0a"/>
+              <circle cx="191" cy="128" r="2.5" fill="#fff" opacity="0.8"/>
+            </g>
+
+            <!-- Right eye -->
+            <path d="M218,132 Q225,120 238,122 Q246,124 248,132 Q246,140 238,142 Q225,144 218,132 Z" fill="#fff"/>
+            <g style="transform-origin:233px 132px; animation:blink 5s ease-in-out infinite 0.4s">
+              <ellipse cx="231" cy="133" rx="7" ry="8.5" fill="#8a6a20"/>
+              <ellipse cx="231" cy="133" rx="3" ry="8.5" fill="#1a1a0a"/>
+              <circle cx="227" cy="128" r="2.5" fill="#fff" opacity="0.8"/>
+            </g>
+          </g>
+
+          <!-- Sharp angular brows -->
+          <path d="M175,120 L190,112 L200,118" fill="none" stroke="#2a7a48" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M226,118 L236,112 L252,120" fill="none" stroke="#2a7a48" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Head ridges — angular crests -->
+          <path d="M190,100 L186,88 L194,92 Z" fill="#3a9a58" opacity="0.6"/>
+          <path d="M210,96 L207,82 L213,86 Z" fill="#3a9a58" opacity="0.65"/>
+          <path d="M230,100 L227,88 L234,92 Z" fill="#3a9a58" opacity="0.6"/>
+
+          <!-- Monocle — sleek, thin gold frame -->
+          <path d="M216,132 Q216,118 228,118 Q240,118 240,132 Q240,146 228,146 Q216,146 216,132" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+          <!-- Thin chain curving elegantly -->
+          <path d="M240,138 Q252,150 255,168 Q256,180 250,192" fill="none" stroke="#ffd700" stroke-width="0.8" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- Fedora hat — tilted, stylish -->
+          <g transform="translate(210,92)">
+            <ellipse cx="0" cy="0" rx="50" ry="10" fill="#2a2a3e" transform="rotate(-5)"/>
+            <path d="M-45,-2 Q-38,-30 0,-35 Q38,-30 45,-2" fill="#333350" transform="rotate(-5)"/>
+            <!-- Hat band -->
+            <rect x="-42" y="-6" width="84" height="5" rx="2" fill="#ffd700" opacity="0.4" transform="rotate(-5)"/>
+            <!-- Hat dent -->
+            <path d="M-15,-28 Q0,-22 15,-28" fill="#2a2a3e" opacity="0.5" transform="rotate(-5)"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Suave</span>
+      <span class="trait">Mysterious</span>
+      <span class="trait">Quick-Witted</span>
+      <span class="trait">Stylish</span>
+    </div>
+    <div class="desc">
+      A sleek, serpentine croc with an angular face, cat-like slit pupils, and a dramatic
+      S-curve posture. Hand-on-hip, fingers-snapping cool. The fedora and scale patterns
+      give a noir detective vibe — like a reptilian Sherlock who already solved it
+      before you finished reading the clue.
+    </div>
+    <div class="speech">"The answer? Oh darling, I knew that three words in. But let's see if YOU can spot the container..."</div>
+  </div>
+</body>
+</html>

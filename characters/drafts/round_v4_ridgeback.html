@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round V4 — Ridgeback</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628; font-family: 'Nunito', sans-serif; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 20px; gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7); text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes breathe { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.06)} }
+    @keyframes tailSwing { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)} }
+    @keyframes wave { 0%,65%,100%{transform:rotate(0deg)} 10%{transform:rotate(-14deg)} 20%{transform:rotate(10deg)} 30%{transform:rotate(-10deg)} 40%{transform:rotate(6deg)} 55%{transform:rotate(-3deg)} }
+    @keyframes ridgePulse { 0%,100%{opacity:0.55} 50%{opacity:0.7} }
+  </style>
+</head>
+<body>
+  <div class="label">Round Variant 4 of 5</div>
+  <h1>Ridgeback — Dramatic Dorsal Spines</h1>
+
+  <div class="card">
+    <svg width="320" height="430" viewBox="0 0 320 430" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#42a060"/><stop offset="100%" stop-color="#246a3c"/>
+        </radialGradient>
+        <radialGradient id="lt" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#52b872"/><stop offset="100%" stop-color="#389050"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#d8f0b0"/><stop offset="100%" stop-color="#a4d068"/>
+        </radialGradient>
+        <linearGradient id="ridge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e6838"/><stop offset="100%" stop-color="#246a3c"/>
+        </linearGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/></filter>
+        <pattern id="sc" width="14" height="12" patternUnits="userSpaceOnUse">
+          <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.18)" stroke-width="0.8"/>
+        </pattern>
+      </defs>
+
+      <ellipse cx="160" cy="408" rx="78" ry="13" fill="rgba(0,0,0,0.28)"/>
+
+      <g style="transform-origin:160px 408px; animation:breathe 4.5s ease-in-out infinite">
+
+        <!-- TAIL — thick with dramatic ridge line continuing down -->
+        <g style="transform-origin:75px 328px; animation:tailSwing 5.5s ease-in-out infinite">
+          <path d="M75,328 Q35,312 14,280 Q-2,255 4,235 Q10,220 22,225" fill="none" stroke="url(#bg)" stroke-width="22" stroke-linecap="round"/>
+          <!-- Tail ridge spines (continuation of dorsal) -->
+          <path d="M55,306 L48,290 L54,296 Z" fill="url(#ridge)" opacity="0.6"/>
+          <path d="M34,284 L26,266 L34,274 Z" fill="url(#ridge)" opacity="0.55"/>
+          <path d="M16,260 L8,242 L18,250 Z" fill="url(#ridge)" opacity="0.5"/>
+          <path d="M6,242 L0,226 L10,234 Z" fill="url(#ridge)" opacity="0.45"/>
+        </g>
+
+        <!-- FEET — wide, clawed, webbed -->
+        <g>
+          <ellipse cx="122" cy="392" rx="24" ry="11" fill="url(#bg)"/>
+          <ellipse cx="104" cy="389" rx="6" ry="4" fill="#389050" transform="rotate(-12,104,389)"/>
+          <ellipse cx="116" cy="385" rx="6" ry="4" fill="#389050" transform="rotate(-3,116,385)"/>
+          <ellipse cx="128" cy="384" rx="6" ry="4" fill="#389050"/>
+          <ellipse cx="140" cy="386" rx="5" ry="3.5" fill="#389050" transform="rotate(10,140,386)"/>
+          <circle cx="98" cy="387" r="2" fill="#c8b060"/><circle cx="110" cy="383" r="2" fill="#c8b060"/>
+          <circle cx="122" cy="382" r="2" fill="#c8b060"/><circle cx="142" cy="384" r="2" fill="#c8b060"/>
+        </g>
+        <g>
+          <ellipse cx="200" cy="392" rx="24" ry="11" fill="url(#bg)"/>
+          <ellipse cx="184" cy="389" rx="6" ry="4" fill="#389050" transform="rotate(-10,184,389)"/>
+          <ellipse cx="196" cy="385" rx="6" ry="4" fill="#389050"/>
+          <ellipse cx="208" cy="384" rx="6" ry="4" fill="#389050" transform="rotate(5,208,384)"/>
+          <ellipse cx="220" cy="386" rx="5" ry="3.5" fill="#389050" transform="rotate(12,220,386)"/>
+          <circle cx="178" cy="387" r="2" fill="#c8b060"/><circle cx="190" cy="383" r="2" fill="#c8b060"/>
+          <circle cx="202" cy="382" r="2" fill="#c8b060"/><circle cx="222" cy="384" r="2" fill="#c8b060"/>
+        </g>
+
+        <!-- BODY — round -->
+        <ellipse cx="160" cy="302" rx="72" ry="84" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="302" rx="68" ry="80" fill="url(#sc)"/>
+        <ellipse cx="160" cy="316" rx="48" ry="56" fill="url(#belly)" opacity="0.48"/>
+        <!-- Belly banding -->
+        <line x1="120" y1="290" x2="200" y2="290" stroke="#98c060" stroke-width="0.8" opacity="0.25"/>
+        <line x1="116" y1="303" x2="204" y2="303" stroke="#98c060" stroke-width="0.8" opacity="0.25"/>
+        <line x1="114" y1="316" x2="206" y2="316" stroke="#98c060" stroke-width="0.8" opacity="0.25"/>
+        <line x1="118" y1="329" x2="202" y2="329" stroke="#98c060" stroke-width="0.8" opacity="0.25"/>
+
+        <!-- Crossword belly -->
+        <g transform="translate(136,300)" opacity="0.28">
+          <rect x="0" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="11" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="22" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="33" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="0" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="11" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="22" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+          <rect x="33" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.7" rx="1"/>
+        </g>
+
+        <!-- ★★★ THE BIG FEATURE: DRAMATIC DORSAL RIDGE running head to tail ★★★ -->
+        <!-- These are large, prominent, slightly translucent spines -->
+        <g style="animation:ridgePulse 4s ease-in-out infinite">
+          <!-- On head -->
+          <path d="M160,132 L155,116 L165,116 Z" fill="url(#ridge)" opacity="0.65"/>
+          <!-- Head to body transition -->
+          <path d="M160,150 L153,130 L167,130 Z" fill="url(#ridge)" opacity="0.68"/>
+          <!-- Down the back — getting larger -->
+          <path d="M160,180 L152,158 L168,158 Z" fill="url(#ridge)" opacity="0.7"/>
+          <path d="M160,202 L150,176 L170,176 Z" fill="url(#ridge)" opacity="0.7"/>
+          <path d="M160,226 L149,198 L171,198 Z" fill="url(#ridge)" opacity="0.68"/>
+          <!-- Largest at mid-back -->
+          <path d="M160,250 L148,218 L172,218 Z" fill="url(#ridge)" opacity="0.65"/>
+          <path d="M160,270 L149,240 L171,240 Z" fill="url(#ridge)" opacity="0.6"/>
+          <!-- Smaller towards tail -->
+          <path d="M160,288 L152,262 L168,262 Z" fill="url(#ridge)" opacity="0.55"/>
+          <path d="M160,304 L154,282 L166,282 Z" fill="url(#ridge)" opacity="0.5"/>
+        </g>
+
+        <!-- LEFT ARM -->
+        <path d="M92,282 Q66,298 60,322" fill="none" stroke="url(#bg)" stroke-width="15" stroke-linecap="round"/>
+        <ellipse cx="58" cy="326" rx="9" ry="7" fill="#389050"/>
+        <ellipse cx="50" cy="322" rx="5" ry="3" fill="#42a060" transform="rotate(-15,50,322)"/>
+        <ellipse cx="56" cy="318" rx="5" ry="3" fill="#42a060"/>
+        <ellipse cx="64" cy="320" rx="5" ry="3" fill="#42a060" transform="rotate(10,64,320)"/>
+        <circle cx="46" cy="320" r="1.8" fill="#c8b060"/><circle cx="52" cy="316" r="1.8" fill="#c8b060"/><circle cx="60" cy="318" r="1.8" fill="#c8b060"/>
+
+        <!-- RIGHT ARM — waving -->
+        <g style="transform-origin:228px 268px; animation:wave 5s ease-in-out infinite">
+          <path d="M228,282 Q256,258 262,226" fill="none" stroke="url(#bg)" stroke-width="15" stroke-linecap="round"/>
+          <ellipse cx="262" cy="222" rx="9" ry="7" fill="#389050"/>
+          <ellipse cx="254" cy="216" rx="5" ry="3" fill="#42a060" transform="rotate(-10,254,216)"/>
+          <ellipse cx="262" cy="214" rx="5" ry="3" fill="#42a060"/>
+          <ellipse cx="270" cy="216" rx="5" ry="3" fill="#42a060" transform="rotate(10,270,216)"/>
+          <circle cx="250" cy="214" r="1.8" fill="#c8b060"/><circle cx="258" cy="212" r="1.8" fill="#c8b060"/><circle cx="266" cy="214" r="1.8" fill="#c8b060"/>
+        </g>
+
+        <!-- HEAD — wide, flat, croc-shaped with ridges continuing onto it -->
+        <ellipse cx="126" cy="162" rx="16" ry="15" fill="url(#bg)"/>
+        <ellipse cx="194" cy="162" rx="16" ry="15" fill="url(#bg)"/>
+        <ellipse cx="160" cy="178" rx="52" ry="32" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="160" cy="176" rx="48" ry="28" fill="url(#sc)"/>
+
+        <!-- SNOUT — broad, flat, prominent -->
+        <path d="M110,190 Q115,180 160,176 Q205,180 210,190 Q205,200 160,204 Q115,200 110,190 Z" fill="url(#lt)"/>
+        <!-- Snout pitting -->
+        <circle cx="122" cy="186" r="2" fill="#42a060" opacity="0.3"/>
+        <circle cx="135" cy="183" r="1.8" fill="#42a060" opacity="0.25"/>
+        <circle cx="185" cy="183" r="1.8" fill="#42a060" opacity="0.25"/>
+        <circle cx="198" cy="186" r="2" fill="#42a060" opacity="0.3"/>
+
+        <!-- Nostrils -->
+        <ellipse cx="120" cy="188" rx="4" ry="3" fill="#1a5530"/>
+        <ellipse cx="200" cy="188" rx="4" ry="3" fill="#1a5530"/>
+
+        <!-- Jaw with visible teeth -->
+        <path d="M118,198 Q138,210 160,212 Q182,210 202,198" fill="#2e7844"/>
+        <!-- Upper teeth down -->
+        <line x1="126" y1="198" x2="127" y2="192" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="140" y1="200" x2="140" y2="193" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="160" y1="201" x2="160" y2="194" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="180" y1="200" x2="180" y2="193" stroke="#ede0c0" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="194" y1="198" x2="194" y2="192" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <!-- Lower teeth up -->
+        <line x1="133" y1="200" x2="133" y2="206" stroke="#ede0c0" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="150" y1="202" x2="150" y2="208" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="170" y1="202" x2="170" y2="208" stroke="#ede0c0" stroke-width="2" stroke-linecap="round"/>
+        <line x1="187" y1="200" x2="188" y2="206" stroke="#ede0c0" stroke-width="1.8" stroke-linecap="round"/>
+
+        <!-- EYES — raised, wide-set, slit pupils -->
+        <g>
+          <ellipse cx="126" cy="160" rx="12" ry="12" fill="#fff"/>
+          <g style="transform-origin:126px 160px; animation:blink 5s ease-in-out infinite">
+            <circle cx="129" cy="161" r="7.5" fill="#6a8820"/>
+            <ellipse cx="129" cy="161" rx="3.2" ry="7.5" fill="#1a2a08"/>
+            <circle cx="125" cy="156" r="3" fill="#fff" opacity="0.85"/>
+          </g>
+
+          <ellipse cx="194" cy="160" rx="12" ry="12" fill="#fff"/>
+          <g style="transform-origin:194px 160px; animation:blink 5s ease-in-out infinite 0.4s">
+            <circle cx="191" cy="161" r="7.5" fill="#6a8820"/>
+            <ellipse cx="191" cy="161" rx="3.2" ry="7.5" fill="#1a2a08"/>
+            <circle cx="187" cy="156" r="3" fill="#fff" opacity="0.85"/>
+          </g>
+        </g>
+
+        <!-- Heavy brow ridges -->
+        <path d="M112,154 Q118,146 134,152" fill="url(#bg)" opacity="0.5"/>
+        <path d="M186,152 Q202,146 208,154" fill="url(#bg)" opacity="0.5"/>
+
+        <!-- Monocle -->
+        <circle cx="194" cy="160" r="16" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.6"/>
+        <path d="M210,160 Q217,174 215,190" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.35"/>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Dramatic Spines</span>
+      <span class="trait">Head-to-Tail Ridge</span>
+      <span class="trait">Strong Silhouette</span>
+      <span class="trait">Prehistoric Feel</span>
+    </div>
+    <div class="desc">
+      The signature feature is a dramatic ridge of triangular spines running continuously
+      from the top of the head all the way down the back and along the tail. Makes the
+      round body feel distinctly dinosaur-reptile. The spines give a strong recognisable
+      silhouette even as a tiny icon — and they gently pulse with colour.
+    </div>
+    <div class="speech">"These ridges aren't just for show — they tingle when I sense a hidden word in the clue!"</div>
+  </div>
+</body>
+</html>

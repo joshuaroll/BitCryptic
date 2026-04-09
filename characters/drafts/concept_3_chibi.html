@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept 3 — Chibi / Baby Croc</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center; max-width: 480px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes hop { 0%,100%{transform:translateY(0)} 15%{transform:translateY(-18px)} 30%{transform:translateY(0)} 40%{transform:translateY(-8px)} 50%{transform:translateY(0)} }
+    @keyframes blink { 0%,85%,100%{transform:scaleY(1)} 90%{transform:scaleY(0.05)} }
+    @keyframes tailWiggle { 0%,100%{transform:rotate(-8deg)} 25%{transform:rotate(8deg)} 50%{transform:rotate(-6deg)} 75%{transform:rotate(6deg)} }
+    @keyframes starSpin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    @keyframes sparkle { 0%,100%{opacity:0} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+  <div class="label">Concept 3 of 5</div>
+  <h1>Chibi Baby Croc</h1>
+
+  <div class="card">
+    <svg width="300" height="360" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#6cd898"/><stop offset="100%" stop-color="#3aa862"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#e0f5c0"/><stop offset="100%" stop-color="#b8e888"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.25"/></filter>
+        <filter id="gl"><feGaussianBlur stdDeviation="3"/></filter>
+      </defs>
+
+      <!-- Sparkle particles around character -->
+      <g style="animation:sparkle 2.5s ease-in-out infinite">
+        <polygon points="60,80 62,86 68,86 63,90 65,96 60,92 55,96 57,90 52,86 58,86" fill="#ffd700" opacity="0.6" transform="scale(0.7)"/>
+      </g>
+      <g style="animation:sparkle 2.5s ease-in-out infinite 0.8s">
+        <polygon points="240,60 242,66 248,66 243,70 245,76 240,72 235,76 237,70 232,66 238,66" fill="#ffd700" opacity="0.5" transform="scale(0.6)"/>
+      </g>
+      <g style="animation:sparkle 2.5s ease-in-out infinite 1.6s">
+        <polygon points="75,140 77,146 83,146 78,150 80,156 75,152 70,156 72,150 67,146 73,146" fill="#4af5a0" opacity="0.4" transform="scale(0.5)"/>
+      </g>
+
+      <!-- Ground shadow — bounces with hop -->
+      <ellipse cx="150" cy="340" rx="55" ry="10" fill="rgba(0,0,0,0.2)"/>
+
+      <!-- Hopping body -->
+      <g style="transform-origin:150px 340px; animation:hop 3s ease-in-out infinite">
+
+        <!-- TAIL — tiny, stubby, wiggly -->
+        <g style="transform-origin:95px 280px; animation:tailWiggle 1s ease-in-out infinite">
+          <path d="M95,280 Q70,270 60,255 Q55,245 60,240" fill="none" stroke="url(#bg)" stroke-width="14" stroke-linecap="round"/>
+          <!-- Round tail tip -->
+          <circle cx="60" cy="238" r="8" fill="#4aaa6a"/>
+          <!-- Tiny ridge -->
+          <path d="M78,268 L74,260" stroke="#44b870" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+        </g>
+
+        <!-- TINY LEGS — very short, barely visible -->
+        <!-- Left -->
+        <ellipse cx="125" cy="318" rx="16" ry="10" fill="url(#bg)"/>
+        <circle cx="113" cy="316" r="4.5" fill="#5cc888"/><circle cx="121" cy="313" r="4.5" fill="#5cc888"/><circle cx="129" cy="312" r="4.5" fill="#5cc888"/>
+        <!-- Right -->
+        <ellipse cx="175" cy="318" rx="16" ry="10" fill="url(#bg)"/>
+        <circle cx="167" cy="316" r="4.5" fill="#5cc888"/><circle cx="175" cy="313" r="4.5" fill="#5cc888"/><circle cx="183" cy="312" r="4.5" fill="#5cc888"/>
+
+        <!-- BODY — very small compared to head (chibi ratio ~1:1) -->
+        <ellipse cx="150" cy="270" rx="46" ry="52" fill="url(#bg)" filter="url(#sh)"/>
+        <ellipse cx="150" cy="278" rx="32" ry="38" fill="url(#belly)" opacity="0.5"/>
+
+        <!-- Belly crossword tiny -->
+        <g transform="translate(137,268)" opacity="0.3">
+          <rect x="0" y="0" width="8" height="8" fill="#fff" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="8" y="0" width="8" height="8" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="0" y="8" width="8" height="8" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+          <rect x="8" y="8" width="8" height="8" fill="#fff" stroke="#2d6a3a" stroke-width="0.6" rx="1"/>
+        </g>
+
+        <!-- TINY ARMS — stubby little nubs -->
+        <!-- Left arm - raised in excitement -->
+        <path d="M106,255 Q85,240 80,222" fill="none" stroke="url(#bg)" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="79" cy="220" r="7.5" fill="#5cc888"/>
+        <circle cx="73" cy="216" r="3.5" fill="#6cd898"/><circle cx="79" cy="213" r="3.5" fill="#6cd898"/><circle cx="85" cy="216" r="3.5" fill="#6cd898"/>
+
+        <!-- Right arm - also raised -->
+        <path d="M194,255 Q215,240 220,222" fill="none" stroke="url(#bg)" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="221" cy="220" r="7.5" fill="#5cc888"/>
+        <circle cx="215" cy="216" r="3.5" fill="#6cd898"/><circle cx="221" cy="213" r="3.5" fill="#6cd898"/><circle cx="227" cy="216" r="3.5" fill="#6cd898"/>
+
+        <!-- Tiny spine bumps -->
+        <circle cx="150" cy="220" r="4" fill="#44b870" opacity="0.4"/>
+        <circle cx="150" cy="232" r="3.5" fill="#44b870" opacity="0.35"/>
+
+        <!-- HEAD — MASSIVE (chibi proportions: head ≈ body size) -->
+        <circle cx="150" cy="155" r="72" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- SNOUT — short, tiny, upturned & cute -->
+        <ellipse cx="150" cy="195" rx="24" ry="14" fill="#5cc888"/>
+        <ellipse cx="150" cy="192" rx="19" ry="10" fill="#6cd898" opacity="0.5"/>
+
+        <!-- Tiny button nostrils -->
+        <circle cx="142" cy="198" r="2.5" fill="#2d7a4a"/>
+        <circle cx="158" cy="198" r="2.5" fill="#2d7a4a"/>
+
+        <!-- Big toothy grin -->
+        <path d="M130,202 Q140,214 150,214 Q160,214 170,202" fill="none" stroke="#2d7a4a" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Tiny fangs peeking out -->
+        <path d="M136,202 L138,207" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M164,202 L162,207" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- HUGE cheek blush -->
+        <circle cx="105" cy="185" r="14" fill="#ff8a8a" opacity="0.15"/>
+        <circle cx="195" cy="185" r="14" fill="#ff8a8a" opacity="0.15"/>
+
+        <!-- EYES — absolutely enormous, sparkly (chibi style) -->
+        <g>
+          <!-- Left eye -->
+          <circle cx="122" cy="148" r="26" fill="#fff"/>
+          <g style="transform-origin:122px 148px; animation:blink 4s ease-in-out infinite">
+            <circle cx="128" cy="152" r="16" fill="#1a3a2a"/>
+            <!-- Huge double highlight -->
+            <circle cx="120" cy="142" r="7" fill="#fff" opacity="0.9"/>
+            <circle cx="134" cy="140" r="4" fill="#fff" opacity="0.6"/>
+            <!-- Color iris ring -->
+            <circle cx="128" cy="152" r="12" fill="none" stroke="#2a6a4a" stroke-width="2" opacity="0.4"/>
+          </g>
+
+          <!-- Right eye -->
+          <circle cx="178" cy="148" r="26" fill="#fff"/>
+          <g style="transform-origin:178px 148px; animation:blink 4s ease-in-out infinite 0.2s">
+            <circle cx="172" cy="152" r="16" fill="#1a3a2a"/>
+            <circle cx="165" cy="142" r="7" fill="#fff" opacity="0.9"/>
+            <circle cx="178" cy="140" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="172" cy="152" r="12" fill="none" stroke="#2a6a4a" stroke-width="2" opacity="0.4"/>
+          </g>
+        </g>
+
+        <!-- Tiny simple brows — just round arcs -->
+        <path d="M98,118 Q110,108 132,114" fill="none" stroke="#44b870" stroke-width="3" stroke-linecap="round"/>
+        <path d="M168,114 Q190,108 202,118" fill="none" stroke="#44b870" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Head bumps — round, bubble-like, larger relative to head -->
+        <circle cx="122" cy="88" r="9" fill="#5cc888" opacity="0.5"/>
+        <circle cx="150" cy="82" r="11" fill="#5cc888" opacity="0.5"/>
+        <circle cx="178" cy="88" r="9" fill="#5cc888" opacity="0.5"/>
+
+        <!-- Oversized monocle (comically big on tiny face) -->
+        <circle cx="178" cy="148" r="30" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.6"/>
+        <line x1="208" y1="148" x2="218" y2="175" stroke="#ffd700" stroke-width="1.5" opacity="0.4"/>
+
+        <!-- Tiny crown / cap askew on huge head -->
+        <g transform="translate(155,72) rotate(12)">
+          <path d="M-18,0 L-12,-18 L-3,-6 L6,-20 L14,-4 L22,-16 L28,0 Z" fill="#ffd700" opacity="0.7"/>
+          <rect x="-18" y="0" width="46" height="6" rx="2" fill="#ff8c00" opacity="0.6"/>
+          <!-- Tiny gems -->
+          <circle cx="-3" cy="-4" r="2.5" fill="#ff4444" opacity="0.6"/>
+          <circle cx="14" cy="-2" r="2.5" fill="#4488ff" opacity="0.6"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Adorable</span>
+      <span class="trait">Energetic</span>
+      <span class="trait">Mischievous</span>
+      <span class="trait">Excitable</span>
+    </div>
+    <div class="desc">
+      A tiny chibi croc with a head as big as the body. Enormous sparkly eyes, itty-bitty
+      limbs, and a lopsided crown. Hops around constantly, radiating pure excitement.
+      Everything about the proportions screams "adopt me." Sticker & merch goldmine.
+    </div>
+    <div class="speech">"Ooh ooh OOH! Is that an anagram?! I love anagrams! They're like word scrambles but FANCY!"</div>
+  </div>
+</body>
+</html>

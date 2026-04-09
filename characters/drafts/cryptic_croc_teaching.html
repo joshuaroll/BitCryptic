@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — Teaching / Hint Mode</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 24px;
+    }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .subtitle { color: rgba(255,255,255,0.5); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center;
+    }
+    .speech {
+      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03));
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+      position: relative;
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px; height: 14px;
+      background: rgba(255,215,0,0.08);
+      border-left: 1px solid rgba(255,215,0,0.25);
+      border-top: 1px solid rgba(255,215,0,0.25);
+    }
+    .speaker { font-family: 'Fredoka One', cursive; font-size: 0.8rem; color: #ffd700; margin-bottom: 6px; }
+    .tip-box {
+      margin-top: 12px;
+      background: rgba(74,245,160,0.08);
+      border: 1px solid rgba(74,245,160,0.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: rgba(74,245,160,0.9);
+      text-align: left;
+    }
+    .tip-box strong { color: #4af5a0; }
+    @keyframes pointBob {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(6px); }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    @keyframes boardGlow {
+      0%, 100% { stroke-opacity: 0.3; }
+      50% { stroke-opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="subtitle">Character Sheet — Pose 3 of 5</div>
+  <h1>Cryptic Croc: Professor Mode</h1>
+
+  <div class="card">
+    <svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bodyGrad" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#5ab87a"/>
+          <stop offset="100%" stop-color="#2d7a4a"/>
+        </radialGradient>
+        <radialGradient id="bellyGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c8e6a0"/>
+          <stop offset="100%" stop-color="#a0d070"/>
+        </radialGradient>
+        <filter id="softShadow">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+
+      <!-- CHALKBOARD / TEACHING BOARD -->
+      <g transform="translate(220, 20)">
+        <rect x="0" y="0" width="185" height="260" rx="8" fill="#1a3328" stroke="rgba(255,215,0,0.3)" stroke-width="2">
+          <animate attributeName="stroke-opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Board frame -->
+        <rect x="-4" y="-4" width="193" height="268" rx="10" fill="none" stroke="#8a6a30" stroke-width="3"/>
+
+        <!-- Board content - cryptic clue breakdown -->
+        <text x="92" y="30" text-anchor="middle" font-family="Fredoka One" font-size="11" fill="#ffd700" opacity="0.9">CRYPTIC CLUE ANATOMY</text>
+
+        <line x1="15" y1="40" x2="170" y2="40" stroke="rgba(255,215,0,0.2)" stroke-width="1"/>
+
+        <!-- Example clue -->
+        <text x="92" y="62" text-anchor="middle" font-family="Nunito" font-size="10" fill="rgba(255,255,255,0.7)">"Spoil a regal dance" (5)</text>
+
+        <!-- Breakdown arrows -->
+        <line x1="30" y1="72" x2="30" y2="92" stroke="#ff8c00" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="92" y1="72" x2="92" y2="92" stroke="#4af5a0" stroke-width="1.5"/>
+        <line x1="155" y1="72" x2="155" y2="92" stroke="#6bc5ff" stroke-width="1.5"/>
+
+        <rect x="5" y="95" width="75" height="22" rx="6" fill="rgba(255,140,0,0.15)" stroke="rgba(255,140,0,0.4)" stroke-width="1"/>
+        <text x="42" y="110" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ff8c00" font-weight="700">DEFINITION</text>
+
+        <rect x="90" y="95" width="85" height="22" rx="6" fill="rgba(74,245,160,0.1)" stroke="rgba(74,245,160,0.3)" stroke-width="1"/>
+        <text x="132" y="110" text-anchor="middle" font-family="Nunito" font-size="9" fill="#4af5a0" font-weight="700">WORDPLAY</text>
+
+        <line x1="15" y1="130" x2="170" y2="130" stroke="rgba(255,215,0,0.15)" stroke-width="1"/>
+
+        <!-- Answer reveal -->
+        <text x="92" y="150" text-anchor="middle" font-family="Nunito" font-size="9" fill="rgba(255,255,255,0.5)">Spoil = anagram indicator</text>
+        <text x="92" y="165" text-anchor="middle" font-family="Nunito" font-size="9" fill="rgba(255,255,255,0.5)">"a regal" rearranged =</text>
+
+        <rect x="45" y="175" width="95" height="30" rx="8" fill="rgba(255,215,0,0.12)" stroke="rgba(255,215,0,0.4)" stroke-width="1.5"/>
+        <text x="92" y="196" text-anchor="middle" font-family="Fredoka One" font-size="16" fill="#ffd700">GALERA</text>
+
+        <!-- Clue types list -->
+        <text x="15" y="225" font-family="Nunito" font-size="8" fill="rgba(255,255,255,0.4)">Common clue types:</text>
+        <text x="15" y="238" font-family="Nunito" font-size="8" fill="rgba(74,245,160,0.6)">Anagram  |  Hidden  |  Reversal</text>
+        <text x="15" y="250" font-family="Nunito" font-size="8" fill="rgba(74,245,160,0.6)">Double Def  |  Container  |  &amp;lit</text>
+      </g>
+
+      <!-- CRYPTIC CROC - standing beside board, pointing -->
+      <g>
+        <!-- Shadow -->
+        <ellipse cx="120" cy="305" rx="55" ry="10" fill="rgba(0,0,0,0.25)"/>
+
+        <!-- Tail -->
+        <path d="M65,265 Q30,255 15,230 Q8,215 20,205" fill="none" stroke="url(#bodyGrad)" stroke-width="16" stroke-linecap="round"/>
+        <path d="M48,252 L44,245" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        <path d="M30,238 L27,230" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+
+        <!-- Left leg -->
+        <ellipse cx="100" cy="295" rx="15" ry="8" fill="url(#bodyGrad)"/>
+        <circle cx="89" cy="293" r="3.5" fill="#4aaa6a"/>
+        <circle cx="96" cy="290" r="3.5" fill="#4aaa6a"/>
+        <circle cx="103" cy="289" r="3.5" fill="#4aaa6a"/>
+
+        <!-- Right leg -->
+        <ellipse cx="145" cy="295" rx="15" ry="8" fill="url(#bodyGrad)"/>
+        <circle cx="138" cy="293" r="3.5" fill="#4aaa6a"/>
+        <circle cx="145" cy="290" r="3.5" fill="#4aaa6a"/>
+        <circle cx="152" cy="289" r="3.5" fill="#4aaa6a"/>
+
+        <!-- Body -->
+        <ellipse cx="120" cy="230" rx="52" ry="65" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+        <ellipse cx="120" cy="240" rx="33" ry="42" fill="url(#bellyGrad)" opacity="0.5"/>
+
+        <!-- Left arm (relaxed at side) -->
+        <path d="M72,215 Q55,235 50,255 Q48,265 55,270" fill="none" stroke="url(#bodyGrad)" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="56" cy="272" r="7" fill="#4aaa6a"/>
+
+        <!-- Right arm (pointing at board!) -->
+        <g style="animation: pointBob 2s ease-in-out infinite;">
+          <path d="M170,210 Q195,195 215,185 Q225,180 230,175" fill="none" stroke="url(#bodyGrad)" stroke-width="13" stroke-linecap="round"/>
+          <circle cx="232" cy="173" r="7" fill="#4aaa6a"/>
+          <!-- Pointing finger -->
+          <ellipse cx="240" cy="168" rx="8" ry="3" fill="#5abb7a" transform="rotate(-20, 240, 168)"/>
+        </g>
+
+        <!-- Spine -->
+        <path d="M120,165 L117,175 L123,175 Z" fill="#3a9a5a" opacity="0.6"/>
+        <path d="M120,177 L117,188 L123,188 Z" fill="#3a9a5a" opacity="0.55"/>
+
+        <!-- Head -->
+        <ellipse cx="120" cy="135" rx="48" ry="40" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+        <!-- Snout -->
+        <ellipse cx="120" cy="160" rx="32" ry="15" fill="#4aaa6a"/>
+        <ellipse cx="120" cy="157" rx="26" ry="11" fill="#5abb7a" opacity="0.5"/>
+
+        <!-- Nostrils -->
+        <ellipse cx="111" cy="163" rx="2.5" ry="2" fill="#2d6a3a"/>
+        <ellipse cx="129" cy="163" rx="2.5" ry="2" fill="#2d6a3a"/>
+
+        <!-- Confident smile -->
+        <path d="M100,168 Q110,176 120,176 Q130,176 140,168" fill="none" stroke="#2d6a3a" stroke-width="2" stroke-linecap="round"/>
+        <!-- Single cute fang -->
+        <path d="M108,168 L110,173" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Eyes - warm, kind, wise -->
+        <g>
+          <ellipse cx="102" cy="125" rx="14" ry="15" fill="#fff"/>
+          <g style="transform-origin: 102px 125px; animation: blink 5s ease-in-out infinite;">
+            <ellipse cx="105" cy="127" rx="7" ry="9" fill="#1a3a2a"/>
+            <circle cx="101" cy="123" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+          <ellipse cx="138" cy="125" rx="14" ry="15" fill="#fff"/>
+          <g style="transform-origin: 138px 125px; animation: blink 5s ease-in-out infinite 0.4s;">
+            <ellipse cx="141" cy="127" rx="7" ry="9" fill="#1a3a2a"/>
+            <circle cx="137" cy="123" r="3" fill="#fff" opacity="0.8"/>
+          </g>
+        </g>
+
+        <!-- Gentle brows -->
+        <path d="M88,108 Q96,102 112,106" fill="none" stroke="#3a8a55" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M128,106 Q144,102 152,108" fill="none" stroke="#3a8a55" stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- Head bumps -->
+        <circle cx="102" cy="96" r="4.5" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="120" cy="92" r="5.5" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="138" cy="96" r="4.5" fill="#4aaa6a" opacity="0.5"/>
+
+        <!-- Monocle -->
+        <circle cx="138" cy="125" r="18" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.7"/>
+        <line x1="156" y1="125" x2="170" y2="148" stroke="#ffd700" stroke-width="1" opacity="0.5"/>
+
+        <!-- Tiny mortarboard hat! -->
+        <rect x="97" y="85" width="46" height="4" rx="1" fill="#1a1a2e"/>
+        <rect x="110" y="72" width="20" height="14" rx="2" fill="#1a1a2e"/>
+        <line x1="120" y1="72" x2="120" y2="65" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="120" cy="64" r="3" fill="#ffd700"/>
+
+        <!-- Crossword belly -->
+        <g transform="translate(104, 228)" opacity="0.35">
+          <rect x="0" y="0" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.7"/>
+          <rect x="9" y="0" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7"/>
+          <rect x="18" y="0" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.7"/>
+          <rect x="0" y="9" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7"/>
+          <rect x="9" y="9" width="9" height="9" fill="#fff" stroke="#2d6a3a" stroke-width="0.7"/>
+          <rect x="18" y="9" width="9" height="9" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.7"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="speech">
+      <div class="speaker">Cryptic Croc</div>
+      Time for a lesson! Every cryptic clue is really <b>two clues in one</b>. There's
+      always a straight definition hiding at the beginning or end, plus wordplay
+      that builds the answer a different way. Find both, and you've cracked it!
+    </div>
+    <div class="tip-box">
+      <strong>Croc's Tip:</strong> Watch for "indicator words" — they tell you what
+      type of wordplay is happening. Words like <em>broken, crazy, wild</em> signal
+      an anagram. Words like <em>back, returning, up</em> signal a reversal!
+    </div>
+  </div>
+</body>
+</html>

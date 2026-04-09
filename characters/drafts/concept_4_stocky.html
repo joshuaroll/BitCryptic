@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept 4 — Stocky & Sturdy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+    .label { color: rgba(255,255,255,0.35); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    h1 { font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 1.4rem; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center; max-width: 500px;
+    }
+    .traits { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .trait { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: rgba(255,215,0,0.7); font-family: 'Fredoka One', cursive; }
+    .desc { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; }
+    .speech { margin-top: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 12px 18px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-style: italic; }
+    @keyframes breathe { 0%,100%{transform:scaleX(1) scaleY(1)} 50%{transform:scaleX(1.01) scaleY(1.008)} }
+    @keyframes blink { 0%,92%,100%{transform:scaleY(1)} 95%{transform:scaleY(0.1)} }
+    @keyframes armCross { 0%,100%{transform:translateX(0)} 50%{transform:translateX(2px)} }
+    @keyframes tailSlow { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+  </style>
+</head>
+<body>
+  <div class="label">Concept 4 of 5</div>
+  <h1>Stocky & Sturdy Croc</h1>
+
+  <div class="card">
+    <svg width="340" height="400" viewBox="0 0 340 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#4aA868"/><stop offset="100%" stop-color="#266842"/>
+        </radialGradient>
+        <radialGradient id="belly" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#c8e0a0"/><stop offset="100%" stop-color="#98c868"/>
+        </radialGradient>
+        <radialGradient id="darkBg" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#3a9058"/><stop offset="100%" stop-color="#1e5535"/>
+        </radialGradient>
+        <filter id="sh"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#000" flood-opacity="0.35"/></filter>
+      </defs>
+
+      <!-- Ground shadow — wide -->
+      <ellipse cx="170" cy="382" rx="90" ry="14" fill="rgba(0,0,0,0.3)"/>
+
+      <g style="transform-origin:170px 382px; animation:breathe 5s ease-in-out infinite">
+
+        <!-- TAIL — thick, powerful, low -->
+        <g style="transform-origin:70px 310px; animation:tailSlow 7s ease-in-out infinite">
+          <path d="M70,310 Q20,298 -5,270 Q-20,248 -12,228 Q-6,215 5,218" fill="none" stroke="url(#bg)" stroke-width="26" stroke-linecap="round"/>
+          <!-- Thick ridges -->
+          <path d="M42,300 L34,288" stroke="#2e7a48" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M14,276 L6,264" stroke="#2e7a48" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+          <path d="M-4,250 L-10,238" stroke="#2e7a48" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+        </g>
+
+        <!-- LEFT LEG — thick, planted -->
+        <rect x="108" y="345" width="30" height="20" rx="12" fill="url(#bg)"/>
+        <ellipse cx="123" cy="370" rx="24" ry="12" fill="url(#bg)"/>
+        <circle cx="105" cy="368" r="5.5" fill="#3a9a58"/><circle cx="117" cy="364" r="5.5" fill="#3a9a58"/><circle cx="129" cy="362" r="5.5" fill="#3a9a58"/><circle cx="140" cy="365" r="5" fill="#3a9a58"/>
+
+        <!-- RIGHT LEG -->
+        <rect x="198" y="345" width="30" height="20" rx="12" fill="url(#bg)"/>
+        <ellipse cx="213" cy="370" rx="24" ry="12" fill="url(#bg)"/>
+        <circle cx="197" cy="368" r="5.5" fill="#3a9a58"/><circle cx="209" cy="364" r="5.5" fill="#3a9a58"/><circle cx="221" cy="362" r="5.5" fill="#3a9a58"/><circle cx="232" cy="365" r="5" fill="#3a9a58"/>
+
+        <!-- BODY — wide rectangle/barrel shape, broad shoulders -->
+        <rect x="80" y="190" width="180" height="165" rx="55" fill="url(#bg)" filter="url(#sh)"/>
+
+        <!-- Broad belly — wide patch -->
+        <rect x="108" y="210" width="124" height="125" rx="40" fill="url(#belly)" opacity="0.45"/>
+
+        <!-- Belly crossword — wider grid -->
+        <g transform="translate(132,265)" opacity="0.35">
+          <rect x="0" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <text x="5.5" y="9" text-anchor="middle" font-family="Fredoka One" font-size="7" fill="#2d6a3a" opacity="0.7">S</text>
+          <rect x="11" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="22" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <text x="27.5" y="9" text-anchor="middle" font-family="Fredoka One" font-size="7" fill="#2d6a3a" opacity="0.7">N</text>
+          <rect x="33" y="0" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="44" y="0" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <text x="49.5" y="9" text-anchor="middle" font-family="Fredoka One" font-size="7" fill="#2d6a3a" opacity="0.7">P</text>
+          <rect x="0" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="11" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="22" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="33" y="11" width="11" height="11" fill="#fff" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+          <rect x="44" y="11" width="11" height="11" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8" rx="1"/>
+        </g>
+
+        <!-- ARMS — thick, crossed confidently -->
+        <g style="animation:armCross 6s ease-in-out infinite">
+          <!-- Left arm crosses to right -->
+          <path d="M85,225 Q100,250 140,260 Q165,266 185,255" fill="none" stroke="url(#darkBg)" stroke-width="20" stroke-linecap="round"/>
+          <circle cx="187" cy="254" r="11" fill="#3a9a58"/>
+          <circle cx="180" cy="248" r="5" fill="#4aaa68"/><circle cx="188" cy="246" r="5" fill="#4aaa68"/><circle cx="196" cy="250" r="5" fill="#4aaa68"/>
+
+          <!-- Right arm crosses to left -->
+          <path d="M255,225 Q240,250 200,258 Q175,262 155,252" fill="none" stroke="url(#bg)" stroke-width="20" stroke-linecap="round"/>
+          <circle cx="153" cy="250" r="11" fill="#4aaa68"/>
+          <circle cx="145" cy="244" r="5" fill="#5abb78"/><circle cx="153" cy="242" r="5" fill="#5abb78"/><circle cx="161" cy="245" r="5" fill="#5abb78"/>
+        </g>
+
+        <!-- PROMINENT SPINE — large triangular ridges -->
+        <path d="M170,184 L165,170 L175,170 Z" fill="#2e7a48" opacity="0.6"/>
+        <path d="M170,172 L164,156 L176,156 Z" fill="#2e7a48" opacity="0.55"/>
+        <path d="M170,158 L165,144 L175,144 Z" fill="#2e7a48" opacity="0.5"/>
+
+        <!-- NECK — thick, almost no neck (head sits right on shoulders) -->
+
+        <!-- HEAD — wide, square-jawed, flat-topped -->
+        <g>
+          <!-- Main head — wider than tall, flat on top -->
+          <rect x="105" y="106" width="130" height="96" rx="38" fill="url(#bg)" filter="url(#sh)"/>
+
+          <!-- SNOUT — broad, square, powerful jaw -->
+          <rect x="118" y="164" width="104" height="38" rx="18" fill="#3a9a58"/>
+          <rect x="126" y="162" width="88" height="30" rx="14" fill="#4aaa68" opacity="0.5"/>
+
+          <!-- Wide nostrils -->
+          <ellipse cx="152" cy="178" rx="4" ry="3" fill="#1e5535"/>
+          <ellipse cx="188" cy="178" rx="4" ry="3" fill="#1e5535"/>
+
+          <!-- Confident smirk — one side up -->
+          <path d="M142,188 Q158,196 170,196 Q185,195 202,186" fill="none" stroke="#1e5535" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Single fang showing -->
+          <path d="M198,186 L196,193" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- EYES — smaller relative to head, confident squint -->
+          <g>
+            <!-- Left eye -->
+            <ellipse cx="140" cy="138" rx="16" ry="14" fill="#fff"/>
+            <g style="transform-origin:140px 138px; animation:blink 6s ease-in-out infinite">
+              <ellipse cx="143" cy="140" rx="8" ry="9" fill="#1a3a2a"/>
+              <circle cx="139" cy="136" r="3" fill="#fff" opacity="0.8"/>
+            </g>
+            <!-- Heavy brow ridge -->
+            <path d="M122,126 Q132,118 152,124" fill="url(#darkBg)" opacity="0.7"/>
+
+            <!-- Right eye -->
+            <ellipse cx="200" cy="138" rx="16" ry="14" fill="#fff"/>
+            <g style="transform-origin:200px 138px; animation:blink 6s ease-in-out infinite 0.3s">
+              <ellipse cx="197" cy="140" rx="8" ry="9" fill="#1a3a2a"/>
+              <circle cx="194" cy="136" r="3" fill="#fff" opacity="0.8"/>
+            </g>
+            <path d="M188,124 Q208,118 218,126" fill="url(#darkBg)" opacity="0.7"/>
+          </g>
+
+          <!-- Flat-top head bumps — angular, like armour plates -->
+          <rect x="130" y="100" width="18" height="10" rx="4" fill="#3a9a58" opacity="0.5"/>
+          <rect x="155" y="96" width="20" height="12" rx="5" fill="#3a9a58" opacity="0.5"/>
+          <rect x="182" y="100" width="18" height="10" rx="4" fill="#3a9a58" opacity="0.5"/>
+
+          <!-- Scars / texture marks (tough but friendly) -->
+          <path d="M122,150 L128,146" stroke="#2e7a48" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+          <path d="M210,148 L216,152" stroke="#2e7a48" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+
+          <!-- Monocle — looks comically small on this big head -->
+          <circle cx="200" cy="138" r="18" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.65"/>
+          <line x1="218" y1="138" x2="228" y2="158" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+
+          <!-- Flat cap / newsboy hat -->
+          <ellipse cx="170" cy="106" rx="58" ry="8" fill="#2a2a44"/>
+          <path d="M112,106 Q120,82 170,78 Q220,82 228,106" fill="#2a2a44"/>
+          <ellipse cx="170" cy="106" rx="62" ry="10" fill="#333355" opacity="0.6"/>
+          <!-- Hat brim -->
+          <path d="M108,108 Q104,104 106,98 Q108,92 115,90" fill="#2a2a44"/>
+          <!-- Hat button -->
+          <circle cx="170" cy="84" r="3" fill="rgba(255,215,0,0.4)"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="traits">
+      <span class="trait">Confident</span>
+      <span class="trait">Reliable</span>
+      <span class="trait">Tough-but-Kind</span>
+      <span class="trait">No-Nonsense</span>
+    </div>
+    <div class="desc">
+      A broad, barrel-chested croc built like a bouncer. Wide square jaw, arms folded,
+      heavy brow ridges over small confident eyes. The flat cap says "East London
+      crossword veteran." Sturdy and grounded — makes you feel like every puzzle
+      is crackable with the right mate beside you.
+    </div>
+    <div class="speech">"Right then. This clue's got a hidden word. I can see it a mile off. Let me show ya."</div>
+  </div>
+</body>
+</html>

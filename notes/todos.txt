@@ -1,0 +1,59 @@
+
+Needs a fishing minigame
+Needs romance options, with gifts you can gain by climbing the cryptic tower
+Needs a cozy home decorator with cryptic clues answered in all modes as money
+
+Real cryptic clues for Liam's Lair
+Real cryptic clues for Simon's Skyship
+Real cryptic clues for The Mark on The Moon
+
+In the library there should be walkthrough guides on how to unlock the terminal codes through puzzles
+
+Add more variability to the clouds so it doesn't look so static with the stacked clouds
+
+
+Fix road from puzzle workshop to your house
+fix the fishing pond hitbox for location
+refine the decoder docks coastline.
+Add more buildings and landmarks to the island
+
+Add kait easter egg
+
+Add more achievements and easter eggs
+Add more decoration and fix the location locks to make sense for all the items.
+
+Unlock different house backgrounds
+Unlock pets for the house
+Unlock new rooms for the house
+Unlock new furniture for the house
+Unlock new outside for the house
+
+Add more fish to catch
+Add more items to catch
+
+Have an all in one store:
+Have a furniture store.
+Have a pet store.
+Have a plant store.
+
+Visuals:
+1. Fix the wave effects
+2. Fix the cloud effects
+3. Fix the lighting effects
+4. Fix the shadow effects
+5. Fix the fog effects
+6. Fix the particle effects
+7. Fix the animation effects
+8. Fix the transition effects
+9. Fix the camera effects
+10. Fix the sound effects
+11. Fix the music effects
+12. Fix the UI effects
+13. Fix the cursor effects
+14. Fix the input effects
+15. Fix the output effects
+16. Fix the error effects
+17. Fix the success effects
+18. Fix the loading effects
+19. Fix the saving effects
+20. Fix the quitting effects

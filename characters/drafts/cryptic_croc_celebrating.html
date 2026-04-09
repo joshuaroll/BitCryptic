@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptic Croc — Celebrating</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 24px;
+    }
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #ffd700;
+      font-size: 1.4rem;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+    .subtitle { color: rgba(255,255,255,0.5); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
+    .card {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.05);
+      text-align: center;
+    }
+    .speech {
+      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03));
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+      position: relative;
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px; height: 14px;
+      background: rgba(255,215,0,0.08);
+      border-left: 1px solid rgba(255,215,0,0.25);
+      border-top: 1px solid rgba(255,215,0,0.25);
+    }
+    .speaker { font-family: 'Fredoka One', cursive; font-size: 0.8rem; color: #ffd700; margin-bottom: 6px; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-20px); }
+      50% { transform: translateY(-5px); }
+      70% { transform: translateY(-12px); }
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(350px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes starPop {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="subtitle">Character Sheet — Pose 2 of 5</div>
+  <h1>Cryptic Croc: You Got It!</h1>
+
+  <div class="card">
+    <svg width="280" height="360" viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bodyGrad" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#5ab87a"/>
+          <stop offset="100%" stop-color="#2d7a4a"/>
+        </radialGradient>
+        <radialGradient id="bellyGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c8e6a0"/>
+          <stop offset="100%" stop-color="#a0d070"/>
+        </radialGradient>
+        <filter id="softShadow">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+        </filter>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+
+      <!-- Confetti particles -->
+      <rect x="40" y="0" width="6" height="6" rx="1" fill="#ff6b6b" opacity="0.9">
+        <animate attributeName="y" values="-10;360" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="x" values="40;55" dur="3s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" values="0;720" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="90" y="0" width="5" height="8" rx="1" fill="#ffd700" opacity="0.8">
+        <animate attributeName="y" values="-30;360" dur="2.5s" repeatCount="indefinite" begin="0.3s"/>
+        <animate attributeName="x" values="90;80" dur="2.5s" repeatCount="indefinite" begin="0.3s"/>
+      </rect>
+      <rect x="150" y="0" width="6" height="5" rx="1" fill="#4af5a0" opacity="0.85">
+        <animate attributeName="y" values="-20;360" dur="2.8s" repeatCount="indefinite" begin="0.6s"/>
+        <animate attributeName="x" values="150;165" dur="2.8s" repeatCount="indefinite" begin="0.6s"/>
+      </rect>
+      <rect x="200" y="0" width="5" height="7" rx="1" fill="#ff8c00" opacity="0.8">
+        <animate attributeName="y" values="-15;360" dur="3.2s" repeatCount="indefinite" begin="0.9s"/>
+        <animate attributeName="x" values="200;190" dur="3.2s" repeatCount="indefinite" begin="0.9s"/>
+      </rect>
+      <rect x="240" y="0" width="7" height="5" rx="1" fill="#6bc5ff" opacity="0.85">
+        <animate attributeName="y" values="-25;360" dur="2.6s" repeatCount="indefinite" begin="1.2s"/>
+        <animate attributeName="x" values="240;250" dur="2.6s" repeatCount="indefinite" begin="1.2s"/>
+      </rect>
+      <circle cx="60" cy="0" r="3" fill="#ff6bff" opacity="0.7">
+        <animate attributeName="cy" values="-10;360" dur="3.5s" repeatCount="indefinite" begin="0.4s"/>
+      </circle>
+      <circle cx="220" cy="0" r="3" fill="#ffd700" opacity="0.7">
+        <animate attributeName="cy" values="-20;360" dur="2.9s" repeatCount="indefinite" begin="0.8s"/>
+      </circle>
+
+      <!-- Star bursts around head -->
+      <g filter="url(#glow)">
+        <polygon points="60,80 63,90 73,90 65,96 68,106 60,100 52,106 55,96 47,90 57,90" fill="#ffd700" opacity="0">
+          <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="220,70 222,77 229,77 224,82 226,89 220,85 214,89 216,82 211,77 218,77" fill="#ffd700" opacity="0">
+          <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" begin="0.7s"/>
+        </polygon>
+        <polygon points="140,40 142,47 149,47 144,51 146,58 140,54 134,58 136,51 131,47 138,47" fill="#ffd700" opacity="0">
+          <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" begin="1.3s"/>
+        </polygon>
+      </g>
+
+      <!-- Whole croc bouncing -->
+      <g style="animation: bounce 1.5s ease-in-out infinite;">
+        <!-- Shadow -->
+        <ellipse cx="140" cy="340" rx="60" ry="10" fill="rgba(0,0,0,0.25)">
+          <animate attributeName="rx" values="60;50;60" dur="1.5s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- Tail wagging fast -->
+        <g style="transform-origin: 80px 280px; animation: tailWag 0.5s ease-in-out infinite;">
+          <path d="M80,275 Q45,260 30,235 Q20,215 35,208" fill="none" stroke="url(#bodyGrad)" stroke-width="18" stroke-linecap="round"/>
+          <path d="M60,263 L55,255" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+          <path d="M45,248 L40,240" stroke="#3a9a5a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        </g>
+
+        <!-- Left leg -->
+        <ellipse cx="115" cy="310" rx="16" ry="9" fill="url(#bodyGrad)"/>
+        <circle cx="103" cy="308" r="4" fill="#4aaa6a"/>
+        <circle cx="111" cy="305" r="4" fill="#4aaa6a"/>
+        <circle cx="119" cy="304" r="4" fill="#4aaa6a"/>
+
+        <!-- Right leg -->
+        <ellipse cx="165" cy="310" rx="16" ry="9" fill="url(#bodyGrad)"/>
+        <circle cx="157" cy="308" r="4" fill="#4aaa6a"/>
+        <circle cx="165" cy="305" r="4" fill="#4aaa6a"/>
+        <circle cx="173" cy="304" r="4" fill="#4aaa6a"/>
+
+        <!-- Body -->
+        <ellipse cx="140" cy="240" rx="56" ry="70" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+        <ellipse cx="140" cy="250" rx="36" ry="46" fill="url(#bellyGrad)" opacity="0.5"/>
+
+        <!-- Arms raised in celebration! -->
+        <g>
+          <!-- Left arm up -->
+          <path d="M88,215 Q60,175 55,140 Q52,120 60,110" fill="none" stroke="url(#bodyGrad)" stroke-width="15" stroke-linecap="round"/>
+          <circle cx="58" cy="108" r="9" fill="#4aaa6a"/>
+          <circle cx="50" cy="104" r="4" fill="#5abb7a"/>
+          <circle cx="58" cy="100" r="4" fill="#5abb7a"/>
+          <circle cx="66" cy="104" r="4" fill="#5abb7a"/>
+        </g>
+        <g>
+          <!-- Right arm up -->
+          <path d="M192,215 Q220,175 225,140 Q228,120 220,110" fill="none" stroke="url(#bodyGrad)" stroke-width="15" stroke-linecap="round"/>
+          <circle cx="222" cy="108" r="9" fill="#4aaa6a"/>
+          <circle cx="214" cy="104" r="4" fill="#5abb7a"/>
+          <circle cx="222" cy="100" r="4" fill="#5abb7a"/>
+          <circle cx="230" cy="104" r="4" fill="#5abb7a"/>
+        </g>
+
+        <!-- Spine ridges -->
+        <path d="M140,170 L137,180 L143,180 Z" fill="#3a9a5a" opacity="0.6"/>
+        <path d="M140,182 L136,194 L144,194 Z" fill="#3a9a5a" opacity="0.55"/>
+
+        <!-- Head -->
+        <ellipse cx="140" cy="140" rx="50" ry="42" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+        <!-- Snout -->
+        <ellipse cx="140" cy="165" rx="34" ry="17" fill="#4aaa6a"/>
+        <ellipse cx="140" cy="162" rx="28" ry="12" fill="#5abb7a" opacity="0.5"/>
+
+        <!-- Nostrils -->
+        <ellipse cx="130" cy="168" rx="3" ry="2.5" fill="#2d6a3a"/>
+        <ellipse cx="150" cy="168" rx="3" ry="2.5" fill="#2d6a3a"/>
+
+        <!-- Big happy open mouth -->
+        <path d="M115,172 Q128,190 140,190 Q152,190 165,172" fill="#cc3344" stroke="#2d6a3a" stroke-width="1.5"/>
+        <!-- Teeth -->
+        <path d="M120,172 L124,178 L128,172" fill="#fff" opacity="0.9"/>
+        <path d="M132,172 L136,179 L140,172" fill="#fff" opacity="0.9"/>
+        <path d="M140,172 L144,179 L148,172" fill="#fff" opacity="0.9"/>
+        <path d="M152,172 L156,178 L160,172" fill="#fff" opacity="0.9"/>
+        <!-- Tongue -->
+        <ellipse cx="140" cy="185" rx="10" ry="5" fill="#ff6b8a" opacity="0.8"/>
+
+        <!-- Eyes - happy squints -->
+        <g>
+          <!-- Left eye - happy arc -->
+          <ellipse cx="120" cy="128" rx="15" ry="16" fill="#fff"/>
+          <g style="transform-origin: 120px 128px; animation: blink 5s ease-in-out infinite;">
+            <ellipse cx="122" cy="130" rx="8" ry="9" fill="#1a3a2a"/>
+            <circle cx="118" cy="126" r="3" fill="#fff" opacity="0.8"/>
+            <!-- Sparkle in eye -->
+            <circle cx="126" cy="124" r="2" fill="#ffd700" opacity="0.6"/>
+          </g>
+          <!-- Right eye -->
+          <ellipse cx="160" cy="128" rx="15" ry="16" fill="#fff"/>
+          <g style="transform-origin: 160px 128px; animation: blink 5s ease-in-out infinite 0.3s;">
+            <ellipse cx="158" cy="130" rx="8" ry="9" fill="#1a3a2a"/>
+            <circle cx="154" cy="126" r="3" fill="#fff" opacity="0.8"/>
+            <circle cx="162" cy="124" r="2" fill="#ffd700" opacity="0.6"/>
+          </g>
+        </g>
+
+        <!-- Raised happy brows -->
+        <path d="M104,108 Q112,100 130,105" fill="none" stroke="#3a8a55" stroke-width="3" stroke-linecap="round"/>
+        <path d="M150,105 Q168,100 176,108" fill="none" stroke="#3a8a55" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Head bumps -->
+        <circle cx="120" cy="98" r="5" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="140" cy="94" r="6" fill="#4aaa6a" opacity="0.5"/>
+        <circle cx="160" cy="98" r="5" fill="#4aaa6a" opacity="0.5"/>
+
+        <!-- Monocle -->
+        <circle cx="160" cy="128" r="19" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.7"/>
+        <line x1="179" y1="128" x2="194" y2="153" stroke="#ffd700" stroke-width="1" opacity="0.5"/>
+
+        <!-- Crossword belly pattern -->
+        <g transform="translate(123, 238)" opacity="0.35">
+          <rect x="0" y="0" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+          <rect x="10" y="0" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+          <rect x="20" y="0" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+          <rect x="0" y="10" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+          <rect x="10" y="10" width="10" height="10" fill="#fff" stroke="#2d6a3a" stroke-width="0.8"/>
+          <rect x="20" y="10" width="10" height="10" fill="#1a3a2a" stroke="#2d6a3a" stroke-width="0.8"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="speech">
+      <div class="speaker">Cryptic Croc</div>
+      SNAP-tastic! You cracked it! Every cryptic clue has a <b>definition</b>
+      and some <b>wordplay</b> — you just found both! My tail's wagging
+      so hard I might take off!
+    </div>
+  </div>
+</body>
+</html>

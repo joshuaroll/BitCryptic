@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Workshop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a1628;
+      font-family: 'Nunito', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      gap: 40px;
+    }
+
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #ffd700;
+      font-size: 1.6rem;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .scene-section {
+      width: 560px;
+      max-width: 95vw;
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 28px 32px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .scene-frame {
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .story-text {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin: 12px 0 0;
+    }
+
+    .speaker {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.85rem;
+      color: #ffd700;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 12px;
+      padding: 4px 14px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Puzzle Workshop</h1>
+
+  <!-- Scene 0 — Step 0 -->
+  <div class="scene-section">
+    <div class="label">Step 0: Workshop Interior</div>
+    <div class="scene-frame">
+      <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wsBg0" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a2210" />
+            <stop offset="50%" stop-color="#4a2a14" />
+            <stop offset="100%" stop-color="#2a1a0c" />
+          </linearGradient>
+          <linearGradient id="wsBrass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d4a017" />
+            <stop offset="100%" stop-color="#c8a855" />
+          </linearGradient>
+          <radialGradient id="wsLampGlow" cx="50%" cy="30%" r="50%">
+            <stop offset="0%" stop-color="#ffd700" stop-opacity="0.15" />
+            <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
+          </radialGradient>
+          <filter id="wsGlow">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <rect width="500" height="260" fill="url(#wsBg0)" />
+        <!-- Warm lamp glow -->
+        <circle cx="250" cy="40" r="140" fill="url(#wsLampGlow)" />
+        <!-- Back wall & shelves -->
+        <rect x="0" y="0" width="500" height="130" fill="#3a2210" opacity="0.5" />
+        <line x1="0" y1="130" x2="500" y2="130" stroke="#5a3a1a" stroke-width="2" />
+        <!-- Shelf 1 -->
+        <rect x="20" y="50" width="180" height="4" fill="#6b4e0a" />
+        <!-- Shelf 2 -->
+        <rect x="300" y="50" width="180" height="4" fill="#6b4e0a" />
+        <!-- Shelf 3 (lower) -->
+        <rect x="60" y="95" width="160" height="4" fill="#6b4e0a" />
+        <rect x="300" y="95" width="140" height="4" fill="#6b4e0a" />
+        <!-- Puzzle boxes on shelves -->
+        <rect x="30" y="32" width="18" height="18" rx="2" fill="#a0522d" stroke="#c8a855" stroke-width="0.5" />
+        <rect x="55" y="36" width="14" height="14" rx="2" fill="#8b4513" stroke="#d4a017" stroke-width="0.5" />
+        <rect x="80" y="30" width="20" height="20" rx="2" fill="#b05530" stroke="#c8a855" stroke-width="0.5" />
+        <rect x="310" y="34" width="16" height="16" rx="2" fill="#8b4513" stroke="#d4a017" stroke-width="0.5" />
+        <rect x="340" y="30" width="22" height="20" rx="2" fill="#a0522d" stroke="#c8a855" stroke-width="0.5" />
+        <rect x="380" y="36" width="14" height="14" rx="2" fill="#7a3a10" stroke="#d4a017" stroke-width="0.5" />
+        <!-- Crossword grids on shelves -->
+        <g transform="translate(120,30)">
+          <rect width="28" height="20" fill="#f5f0e0" rx="1" />
+          <line x1="7" y1="0" x2="7" y2="20" stroke="#aaa" stroke-width="0.3" />
+          <line x1="14" y1="0" x2="14" y2="20" stroke="#aaa" stroke-width="0.3" />
+          <line x1="21" y1="0" x2="21" y2="20" stroke="#aaa" stroke-width="0.3" />
+          <line x1="0" y1="5" x2="28" y2="5" stroke="#aaa" stroke-width="0.3" />
+          <line x1="0" y1="10" x2="28" y2="10" stroke="#aaa" stroke-width="0.3" />
+          <line x1="0" y1="15" x2="28" y2="15" stroke="#aaa" stroke-width="0.3" />
+          <rect x="0" y="0" width="7" height="5" fill="#333" />
+          <rect x="14" y="10" width="7" height="5" fill="#333" />
+          <rect x="21" y="15" width="7" height="5" fill="#333" />
+        </g>
+        <g transform="translate(440,32)">
+          <rect width="24" height="18" fill="#f5f0e0" rx="1" />
+          <line x1="6" y1="0" x2="6" y2="18" stroke="#aaa" stroke-width="0.3" />
+          <line x1="12" y1="0" x2="12" y2="18" stroke="#aaa" stroke-width="0.3" />
+          <line x1="18" y1="0" x2="18" y2="18" stroke="#aaa" stroke-width="0.3" />
+          <line x1="0" y1="6" x2="24" y2="6" stroke="#aaa" stroke-width="0.3" />
+          <line x1="0" y1="12" x2="24" y2="12" stroke="#aaa" stroke-width="0.3" />
+          <rect x="6" y="0" width="6" height="6" fill="#333" />
+          <rect x="12" y="12" width="6" height="6" fill="#333" />
+        </g>
+        <!-- Clue cards in velvet trays on lower shelf -->
+        <rect x="70" y="78" width="50" height="16" rx="2" fill="#6a1a2a" />
+        <rect x="74" y="80" width="12" height="10" rx="1" fill="#f5f0d0" transform="rotate(-5,80,85)" />
+        <rect x="88" y="81" width="12" height="10" rx="1" fill="#f0ead0" transform="rotate(3,94,86)" />
+        <rect x="102" y="80" width="12" height="10" rx="1" fill="#f5f0d0" transform="rotate(-2,108,85)" />
+        <rect x="310" y="78" width="44" height="16" rx="2" fill="#6a1a2a" />
+        <rect x="314" y="81" width="10" height="9" rx="1" fill="#f0ead0" transform="rotate(4,319,85)" />
+        <rect x="328" y="80" width="10" height="9" rx="1" fill="#f5f0d0" transform="rotate(-3,333,84)" />
+        <!-- Floor -->
+        <rect x="0" y="200" width="500" height="60" fill="#2a1a0c" />
+        <rect x="0" y="196" width="500" height="6" fill="#5a3a1a" />
+        <!-- Large gear (animated) -->
+        <g transform="translate(100,170)" filter="url(#wsGlow)">
+          <circle cx="0" cy="0" r="28" fill="none" stroke="#888" stroke-width="3" opacity="0.4">
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="12s"
+              repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="10" fill="#666" opacity="0.5" />
+          <g opacity="0.4">
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="12s"
+              repeatCount="indefinite" />
+            <rect x="-3" y="-30" width="6" height="8" rx="1" fill="#888" />
+            <rect x="-3" y="22" width="6" height="8" rx="1" fill="#888" />
+            <rect x="-30" y="-3" width="8" height="6" rx="1" fill="#888" />
+            <rect x="22" y="-3" width="8" height="6" rx="1" fill="#888" />
+            <rect x="17" y="-22" width="6" height="8" rx="1" fill="#888" transform="rotate(45,20,-18)" />
+            <rect x="-23" y="14" width="6" height="8" rx="1" fill="#888" transform="rotate(45,-20,18)" />
+            <rect x="14" y="17" width="6" height="8" rx="1" fill="#888" transform="rotate(-45,17,21)" />
+            <rect x="-20" y="-23" width="6" height="8" rx="1" fill="#888" transform="rotate(-45,-17,-19)" />
+          </g>
+        </g>
+        <!-- Smaller gear (counter-rotating) -->
+        <g transform="translate(140,155)" opacity="0.35">
+          <circle cx="0" cy="0" r="16" fill="none" stroke="#999" stroke-width="2">
+            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="8s"
+              repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="6" fill="#777" />
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="8s"
+              repeatCount="indefinite" />
+            <rect x="-2" y="-18" width="4" height="5" rx="1" fill="#999" />
+            <rect x="-2" y="13" width="4" height="5" rx="1" fill="#999" />
+            <rect x="-18" y="-2" width="5" height="4" rx="1" fill="#999" />
+            <rect x="13" y="-2" width="5" height="4" rx="1" fill="#999" />
+          </g>
+        </g>
+        <!-- Workbench -->
+        <rect x="180" y="175" width="260" height="8" rx="2" fill="#6b4e0a" />
+        <rect x="190" y="183" width="8" height="55" fill="#5a3a1a" />
+        <rect x="420" y="183" width="8" height="55" fill="#5a3a1a" />
+        <!-- Spinning crossword grid on workbench (animated) -->
+        <g transform="translate(310,155)">
+          <animateTransform attributeName="transform" type="rotate" values="0,310,155;360,310,155" dur="20s"
+            repeatCount="indefinite" />
+          <rect x="-18" y="-14" width="36" height="28" fill="#f5f0e0" rx="1" opacity="0.7" />
+          <line x1="-9" y1="-14" x2="-9" y2="14" stroke="#aaa" stroke-width="0.4" />
+          <line x1="0" y1="-14" x2="0" y2="14" stroke="#aaa" stroke-width="0.4" />
+          <line x1="9" y1="-14" x2="9" y2="14" stroke="#aaa" stroke-width="0.4" />
+          <line x1="-18" y1="-7" x2="18" y2="-7" stroke="#aaa" stroke-width="0.4" />
+          <line x1="-18" y1="0" x2="18" y2="0" stroke="#aaa" stroke-width="0.4" />
+          <line x1="-18" y1="7" x2="18" y2="7" stroke="#aaa" stroke-width="0.4" />
+        </g>
+        <!-- Hanging lamp -->
+        <line x1="250" y1="0" x2="250" y2="18" stroke="#888" stroke-width="1" />
+        <polygon points="240,18 260,18 265,28 235,28" fill="#c8a855" opacity="0.7" />
+        <ellipse cx="250" cy="30" rx="16" ry="4" fill="#ffd700" opacity="0.2">
+          <animate attributeName="opacity" values="0.15;0.25;0.15" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+      </svg>
+    </div>
+    <p class="story-text">The Puzzle Workshop hums with life. Crossword grids line the shelves, puzzle boxes gleam in
+      brass lamplight, and gears turn slowly in the warm gloom.</p>
+  </div>
+
+  <!-- Scene 1 — Step 1 (Cryptic Croc) -->
+  <div class="scene-section">
+    <div class="label">Step 1: Cryptic Croc at Workbench</div>
+    <div class="scene-frame">
+      <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wsBg1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a2210" />
+            <stop offset="50%" stop-color="#4a2a14" />
+            <stop offset="100%" stop-color="#2a1a0c" />
+          </linearGradient>
+          <radialGradient id="wsWarm" cx="35%" cy="50%" r="45%">
+            <stop offset="0%" stop-color="#ffd700" stop-opacity="0.08" />
+            <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
+          </radialGradient>
+          <filter id="wsGlow1">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <!-- Cryptic Croc official character defs -->
+          <radialGradient id="cc_bg1" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#4db06a" />
+            <stop offset="100%" stop-color="#2a7848" />
+          </radialGradient>
+          <radialGradient id="cc_lt1" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#5ec47e" />
+            <stop offset="100%" stop-color="#3a9a58" />
+          </radialGradient>
+          <radialGradient id="cc_belly1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4edaa" />
+            <stop offset="100%" stop-color="#a8d470" />
+          </radialGradient>
+          <filter id="cc_sh1">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3" />
+          </filter>
+          <filter id="cc_crownGlow1">
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffd700" flood-opacity="0.4" />
+          </filter>
+          <pattern id="cc_sc1" width="14" height="12" patternUnits="userSpaceOnUse">
+            <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8" />
+          </pattern>
+          <linearGradient id="cc_scarfGrad1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffb800" />
+            <stop offset="50%" stop-color="#ffd700" />
+            <stop offset="100%" stop-color="#ffb800" />
+          </linearGradient>
+        </defs>
+        <rect width="500" height="260" fill="url(#wsBg1)" />
+        <circle cx="200" cy="150" r="180" fill="url(#wsWarm)" />
+        <!-- Back wall -->
+        <rect x="0" y="0" width="500" height="130" fill="#3a2210" opacity="0.5" />
+        <line x1="0" y1="130" x2="500" y2="130" stroke="#5a3a1a" stroke-width="2" />
+        <!-- Shelf with puzzle boxes -->
+        <rect x="340" y="50" width="150" height="4" fill="#6b4e0a" />
+        <rect x="350" y="32" width="18" height="18" rx="2" fill="#a0522d" stroke="#c8a855" stroke-width="0.5" />
+        <rect x="380" y="36" width="14" height="14" rx="2" fill="#8b4513" stroke="#d4a017" stroke-width="0.5" />
+        <rect x="410" y="30" width="20" height="20" rx="2" fill="#b05530" stroke="#c8a855" stroke-width="0.5" />
+        <rect x="450" y="34" width="16" height="16" rx="2" fill="#8b4513" stroke="#d4a017" stroke-width="0.5" />
+        <!-- Floor -->
+        <rect x="0" y="200" width="500" height="60" fill="#2a1a0c" />
+        <rect x="0" y="196" width="500" height="6" fill="#5a3a1a" />
+        <!-- Cryptic Croc — Official character, Scene 1: Happy/welcoming — BEHIND workbench -->
+        <g transform="translate(86, 82) scale(0.4)">
+          <!-- TAIL -->
+          <g>
+            <path
+              d="M94,260 Q72,258 52,248 Q34,236 20,220 Q10,206 10,196 Q8,204 6,216 Q8,232 20,250 Q34,268 52,280 Q68,290 92,306 Z"
+              fill="url(#cc_bg1)" />
+            <path d="M92,306 Q68,290 52,280 Q34,268 20,250 Q8,232 6,216" fill="none" stroke="#b8d888" stroke-width="6"
+              stroke-linecap="round" opacity="0.15" />
+            <path d="M92,302 Q66,288 50,276 Q32,262 18,244 Q8,228 8,210" fill="none" stroke="url(#cc_sc1)"
+              stroke-width="18" opacity="0.45" />
+            <path d="M80,260 L74,246 L78,252 Z" fill="#2a7848" opacity="0.58" />
+            <path d="M62,250 L56,234 L60,240 Z" fill="#2a7848" opacity="0.55" />
+            <path d="M44,238 L38,222 L42,228 Z" fill="#2a7848" opacity="0.5" />
+            <path d="M28,224 L22,208 L26,214 Z" fill="#2a7848" opacity="0.45" />
+            <path d="M16,208 L12,194 L16,200 Z" fill="#2a7848" opacity="0.4" />
+          </g>
+          <!-- FEET -->
+          <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#cc_bg1)" />
+          <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)" />
+          <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)" />
+          <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58" />
+          <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)" />
+          <circle cx="96" cy="360" r="2" fill="#c8b060" />
+          <circle cx="108" cy="356" r="2" fill="#c8b060" />
+          <circle cx="120" cy="354" r="2" fill="#c8b060" />
+          <circle cx="134" cy="356" r="2" fill="#c8b060" />
+          <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#cc_bg1)" />
+          <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)" />
+          <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58" />
+          <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)" />
+          <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)" />
+          <circle cx="176" cy="360" r="2" fill="#c8b060" />
+          <circle cx="188" cy="356" r="2" fill="#c8b060" />
+          <circle cx="200" cy="354" r="2" fill="#c8b060" />
+          <circle cx="214" cy="356" r="2" fill="#c8b060" />
+          <!-- BODY -->
+          <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#cc_bg1)" filter="url(#cc_sh1)" />
+          <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#cc_sc1)" />
+          <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#cc_belly1)" opacity="0.5" />
+          <g opacity="0.3">
+            <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8" />
+          </g>
+          <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55" />
+          <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5" />
+          <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45" />
+          <!-- SCARF -->
+          <g>
+            <path
+              d="M118,198 C125,196 140,196 160,197 C180,196 195,196 202,198 L206,208 C196,212 178,214 160,215 C142,214 124,212 114,208 Z"
+              fill="#e6a800" opacity="0.7" />
+            <path
+              d="M114,204 C124,210 142,214 160,215 C178,214 196,210 206,204 L202,198 C194,200 178,202 160,203 C142,202 126,200 118,198 Z"
+              fill="url(#cc_scarfGrad1)" opacity="0.92" />
+            <path d="M120,199 C132,198 148,198 160,199 C172,198 188,198 200,199" fill="none" stroke="#ffe066"
+              stroke-width="1" opacity="0.5" />
+            <path d="M116,207 C126,212 144,215 160,216 C176,215 194,212 204,207" fill="none" stroke="#b87800"
+              stroke-width="1" opacity="0.45" />
+            <path d="M120,202 C134,206 150,208 160,209 C170,208 186,206 200,202" fill="none" stroke="#e6a800"
+              stroke-width="0.8" opacity="0.35" />
+            <rect x="141" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+            <rect x="146" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.35" />
+            <rect x="151" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+            <rect x="156" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+            <rect x="161" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.4" />
+            <rect x="166" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+            <ellipse cx="116" cy="204" rx="7" ry="6" fill="#ffb800" opacity="0.75" />
+            <ellipse cx="116" cy="204" rx="4" ry="3.5" fill="#ffd700" opacity="0.5" />
+            <path d="M114,208 Q110,220 108,232 Q106,240 106,248" fill="none" stroke="#ffd700" stroke-width="9"
+              stroke-linecap="round" opacity="0.82" />
+            <path d="M112,210 Q107,224 105,236 Q103,246 104,254" fill="none" stroke="#e6a800" stroke-width="6"
+              stroke-linecap="round" opacity="0.5" />
+            <path d="M106,248 Q106,252 106,255" stroke="#ffd700" stroke-width="6" stroke-linecap="round" fill="none"
+              opacity="0.6" />
+            <path d="M104,254 Q104,258 104,260" stroke="#e6a800" stroke-width="3.5" stroke-linecap="round" fill="none"
+              opacity="0.35" />
+            <rect x="104" y="228" width="4" height="4" rx="0.5" fill="#fff" opacity="0.35" />
+            <rect x="104" y="232" width="4" height="4" rx="0.5" fill="#1a2a0a" opacity="0.25" />
+            <rect x="102" y="242" width="4" height="4" rx="0.5" fill="#fff" opacity="0.3" />
+          </g>
+          <!-- ARMS -->
+          <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#cc_bg1)" stroke-width="16" stroke-linecap="round" />
+          <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58" />
+          <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)" />
+          <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)" />
+          <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)" />
+          <circle cx="48" cy="294" r="1.5" fill="#c8b060" />
+          <circle cx="54" cy="290" r="1.5" fill="#c8b060" />
+          <circle cx="62" cy="292" r="1.5" fill="#c8b060" />
+          <g>
+            <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#cc_bg1)" stroke-width="16"
+              stroke-linecap="round" />
+            <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58" />
+            <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)" />
+            <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a" />
+            <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)" />
+            <circle cx="246" cy="198" r="1.5" fill="#c8b060" />
+            <circle cx="254" cy="195" r="1.5" fill="#c8b060" />
+            <circle cx="262" cy="198" r="1.5" fill="#c8b060" />
+          </g>
+          <!-- HEAD -->
+          <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#cc_bg1)" filter="url(#cc_sh1)" />
+          <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#cc_sc1)" />
+          <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+          <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+          <!-- Snout -->
+          <path
+            d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,182 194,182 Q190,182 184,186 L176,182 L168,187 L160,181 L152,187 L144,182 L136,186 Q130,182 126,182 Q115,182 110,175 Z"
+            fill="url(#cc_lt1)" />
+          <circle cx="135" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+          <circle cx="150" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+          <circle cx="170" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+          <circle cx="185" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+          <!-- Chin -->
+          <path
+            d="M126,180 Q128,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q192,182 194,180 Q186,196 160,198 Q134,196 126,180 Z"
+            fill="#3a9058" />
+          <!-- W smile (standard happy) -->
+          <path d="M124,178 Q128,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q192,182 196,178"
+            fill="none" stroke="#1a4a2a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="140" cy="172" r="3.5" fill="#1e5535" />
+          <circle cx="180" cy="172" r="3.5" fill="#1e5535" />
+          <!-- CHEEK BLUSHES -->
+          <ellipse cx="112" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+          <ellipse cx="208" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+          <!-- EYES (standard) -->
+          <g>
+            <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#cc_bg1)" />
+            <ellipse cx="128" cy="140" rx="14" ry="13" fill="#fff" />
+            <g>
+              <ellipse cx="131" cy="142" rx="8" ry="9" fill="#5a7a20" />
+              <ellipse cx="131" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+              <circle cx="127" cy="137" r="3" fill="#fff" opacity="0.8" />
+            </g>
+            <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#cc_bg1)" />
+            <ellipse cx="192" cy="140" rx="14" ry="13" fill="#fff" />
+            <g>
+              <ellipse cx="189" cy="142" rx="8" ry="9" fill="#5a7a20" />
+              <ellipse cx="189" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+              <circle cx="185" cy="137" r="3" fill="#fff" opacity="0.8" />
+            </g>
+          </g>
+          <!-- CROWN -->
+          <g filter="url(#cc_crownGlow1)">
+            <path d="M136,130 L184,130 L182,126 L138,126 Z" fill="#ffd700" opacity="0.6" />
+            <path d="M138,126 L143,112 L150,126 Z" fill="#ffd700" opacity="0.8" />
+            <path d="M153,126 L160,106 L167,126 Z" fill="#ffd700" opacity="0.85" />
+            <path d="M170,126 L177,112 L182,126 Z" fill="#ffd700" opacity="0.8" />
+            <circle cx="143" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+            <circle cx="160" cy="107" r="1.8" fill="#fff" opacity="0.7" />
+            <circle cx="177" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+            <path d="M140,126 L143,114 L146,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            <path d="M157,126 L160,108 L163,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            <path d="M173,126 L177,114 L180,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+          </g>
+          <!-- MONOCLE -->
+          <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65" />
+          <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4" />
+          <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)" />
+        </g>
+        <!-- Workbench — drawn ON TOP of croc to hide lower body -->
+        <rect x="30" y="170" width="240" height="8" rx="2" fill="#6b4e0a" />
+        <rect x="40" y="178" width="8" height="60" fill="#5a3a1a" />
+        <rect x="250" y="178" width="8" height="60" fill="#5a3a1a" />
+        <!-- Screwdriver on bench — left side -->
+        <line x1="38" y1="168" x2="75" y2="165" stroke="#888" stroke-width="3" stroke-linecap="round" />
+        <line x1="75" y1="165" x2="88" y2="164" stroke="#d4a017" stroke-width="2" stroke-linecap="round" />
+        <!-- Brass machine outline on bench — right side, clear of croc -->
+        <rect x="200" y="140" width="60" height="30" rx="4" fill="#c8a855" opacity="0.3" />
+        <rect x="205" y="145" width="50" height="20" rx="2" fill="#b09840" opacity="0.25" />
+        <!-- Hanging lamp -->
+        <line x1="150" y1="0" x2="150" y2="18" stroke="#888" stroke-width="1" />
+        <polygon points="140,18 160,18 165,28 135,28" fill="#c8a855" opacity="0.6" />
+        <ellipse cx="150" cy="30" rx="14" ry="3" fill="#ffd700" opacity="0.15">
+          <animate attributeName="opacity" values="0.1;0.2;0.1" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+      </svg>
+    </div>
+    <div class="speaker">Cryptic Croc</div>
+    <p class="story-text">"Welcome to the Puzzle Workshop! I've been tinkering with something special for you." A
+      crocodile wearing a golden crown and scarf stands behind the workbench, one clawed hand resting near a brass
+      contraption.</p>
+  </div>
+
+  <!-- Scene 2 — Step 2 (Cryptic Croc / Puzzle) -->
+  <div class="scene-section">
+    <div class="label">Step 2: Anagram Engine (Puzzle)</div>
+    <div class="scene-frame">
+      <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wsBg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a2210" />
+            <stop offset="50%" stop-color="#4a2a14" />
+            <stop offset="100%" stop-color="#2a1a0c" />
+          </linearGradient>
+          <linearGradient id="wsBrass2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d4a017" />
+            <stop offset="50%" stop-color="#c8a855" />
+            <stop offset="100%" stop-color="#b08a30" />
+          </linearGradient>
+          <radialGradient id="wsMachGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffd700" stop-opacity="0.12" />
+            <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
+          </radialGradient>
+          <filter id="wsPlateGlow">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <!-- Cryptic Croc official character defs -->
+          <radialGradient id="cc_bg2" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#4db06a" />
+            <stop offset="100%" stop-color="#2a7848" />
+          </radialGradient>
+          <radialGradient id="cc_lt2" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#5ec47e" />
+            <stop offset="100%" stop-color="#3a9a58" />
+          </radialGradient>
+          <radialGradient id="cc_belly2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4edaa" />
+            <stop offset="100%" stop-color="#a8d470" />
+          </radialGradient>
+          <filter id="cc_sh2">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3" />
+          </filter>
+          <filter id="cc_crownGlow2">
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffd700" flood-opacity="0.4" />
+          </filter>
+          <pattern id="cc_sc2" width="14" height="12" patternUnits="userSpaceOnUse">
+            <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8" />
+          </pattern>
+          <linearGradient id="cc_scarfGrad2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffb800" />
+            <stop offset="50%" stop-color="#ffd700" />
+            <stop offset="100%" stop-color="#ffb800" />
+          </linearGradient>
+        </defs>
+        <rect width="500" height="260" fill="url(#wsBg2)" />
+        <!-- Back wall -->
+        <rect x="0" y="0" width="500" height="130" fill="#3a2210" opacity="0.5" />
+        <line x1="0" y1="130" x2="500" y2="130" stroke="#5a3a1a" stroke-width="2" />
+        <!-- Floor -->
+        <rect x="0" y="200" width="500" height="60" fill="#2a1a0c" />
+        <rect x="0" y="196" width="500" height="6" fill="#5a3a1a" />
+        <!-- Workbench -->
+        <rect x="60" y="168" width="380" height="8" rx="2" fill="#6b4e0a" />
+        <rect x="70" y="176" width="8" height="60" fill="#5a3a1a" />
+        <rect x="420" y="176" width="8" height="60" fill="#5a3a1a" />
+        <!-- Anagram Engine — large brass machine -->
+        <rect x="130" y="95" width="240" height="73" rx="6" fill="url(#wsBrass2)" />
+        <rect x="135" y="100" width="230" height="63" rx="4" fill="#b09840" opacity="0.6" />
+        <!-- Machine rivets -->
+        <circle cx="140" cy="105" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+        <circle cx="360" cy="105" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+        <circle cx="140" cy="155" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+        <circle cx="360" cy="155" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+        <!-- Letter wheels (5 wheels) cycling A-Z at different speeds -->
+        <g transform="translate(170,118)">
+          <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#c8a855" stroke-width="1" />
+          <clipPath id="wh1">
+            <rect x="-12" y="-12" width="24" height="24" />
+          </clipPath>
+          <g clip-path="url(#wh1)">
+            <text x="0" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16" font-weight="bold">
+              <tspan x="0" dy="0">A</tspan>
+              <tspan x="0" dy="18">B</tspan>
+              <tspan x="0" dy="18">C</tspan>
+              <tspan x="0" dy="18">D</tspan>
+              <tspan x="0" dy="18">E</tspan>
+              <tspan x="0" dy="18">F</tspan>
+              <tspan x="0" dy="18">G</tspan>
+              <tspan x="0" dy="18">H</tspan>
+              <tspan x="0" dy="18">I</tspan>
+              <tspan x="0" dy="18">J</tspan>
+              <tspan x="0" dy="18">K</tspan>
+              <tspan x="0" dy="18">L</tspan>
+              <tspan x="0" dy="18">M</tspan>
+              <tspan x="0" dy="18">N</tspan>
+              <tspan x="0" dy="18">O</tspan>
+              <tspan x="0" dy="18">P</tspan>
+              <tspan x="0" dy="18">Q</tspan>
+              <tspan x="0" dy="18">R</tspan>
+              <tspan x="0" dy="18">S</tspan>
+              <tspan x="0" dy="18">T</tspan>
+              <tspan x="0" dy="18">U</tspan>
+              <tspan x="0" dy="18">V</tspan>
+              <tspan x="0" dy="18">W</tspan>
+              <tspan x="0" dy="18">X</tspan>
+              <tspan x="0" dy="18">Y</tspan>
+              <tspan x="0" dy="18">Z</tspan>
+              <animateTransform attributeName="transform" type="translate" values="0,5;0,-463" dur="12s"
+                repeatCount="indefinite" />
+            </text>
+          </g>
+        </g>
+        <g transform="translate(210,118)">
+          <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#c8a855" stroke-width="1" />
+          <clipPath id="wh2">
+            <rect x="-12" y="-12" width="24" height="24" />
+          </clipPath>
+          <g clip-path="url(#wh2)">
+            <text x="0" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16" font-weight="bold">
+              <tspan x="0" dy="0">A</tspan>
+              <tspan x="0" dy="18">B</tspan>
+              <tspan x="0" dy="18">C</tspan>
+              <tspan x="0" dy="18">D</tspan>
+              <tspan x="0" dy="18">E</tspan>
+              <tspan x="0" dy="18">F</tspan>
+              <tspan x="0" dy="18">G</tspan>
+              <tspan x="0" dy="18">H</tspan>
+              <tspan x="0" dy="18">I</tspan>
+              <tspan x="0" dy="18">J</tspan>
+              <tspan x="0" dy="18">K</tspan>
+              <tspan x="0" dy="18">L</tspan>
+              <tspan x="0" dy="18">M</tspan>
+              <tspan x="0" dy="18">N</tspan>
+              <tspan x="0" dy="18">O</tspan>
+              <tspan x="0" dy="18">P</tspan>
+              <tspan x="0" dy="18">Q</tspan>
+              <tspan x="0" dy="18">R</tspan>
+              <tspan x="0" dy="18">S</tspan>
+              <tspan x="0" dy="18">T</tspan>
+              <tspan x="0" dy="18">U</tspan>
+              <tspan x="0" dy="18">V</tspan>
+              <tspan x="0" dy="18">W</tspan>
+              <tspan x="0" dy="18">X</tspan>
+              <tspan x="0" dy="18">Y</tspan>
+              <tspan x="0" dy="18">Z</tspan>
+              <animateTransform attributeName="transform" type="translate" values="0,5;0,-463" dur="14s"
+                repeatCount="indefinite" />
+            </text>
+          </g>
+        </g>
+        <g transform="translate(250,118)">
+          <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#c8a855" stroke-width="1" />
+          <clipPath id="wh3">
+            <rect x="-12" y="-12" width="24" height="24" />
+          </clipPath>
+          <g clip-path="url(#wh3)">
+            <text x="0" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16" font-weight="bold">
+              <tspan x="0" dy="0">A</tspan>
+              <tspan x="0" dy="18">B</tspan>
+              <tspan x="0" dy="18">C</tspan>
+              <tspan x="0" dy="18">D</tspan>
+              <tspan x="0" dy="18">E</tspan>
+              <tspan x="0" dy="18">F</tspan>
+              <tspan x="0" dy="18">G</tspan>
+              <tspan x="0" dy="18">H</tspan>
+              <tspan x="0" dy="18">I</tspan>
+              <tspan x="0" dy="18">J</tspan>
+              <tspan x="0" dy="18">K</tspan>
+              <tspan x="0" dy="18">L</tspan>
+              <tspan x="0" dy="18">M</tspan>
+              <tspan x="0" dy="18">N</tspan>
+              <tspan x="0" dy="18">O</tspan>
+              <tspan x="0" dy="18">P</tspan>
+              <tspan x="0" dy="18">Q</tspan>
+              <tspan x="0" dy="18">R</tspan>
+              <tspan x="0" dy="18">S</tspan>
+              <tspan x="0" dy="18">T</tspan>
+              <tspan x="0" dy="18">U</tspan>
+              <tspan x="0" dy="18">V</tspan>
+              <tspan x="0" dy="18">W</tspan>
+              <tspan x="0" dy="18">X</tspan>
+              <tspan x="0" dy="18">Y</tspan>
+              <tspan x="0" dy="18">Z</tspan>
+              <animateTransform attributeName="transform" type="translate" values="0,5;0,-463" dur="16s"
+                repeatCount="indefinite" />
+            </text>
+          </g>
+        </g>
+        <g transform="translate(290,118)">
+          <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#c8a855" stroke-width="1" />
+          <clipPath id="wh4">
+            <rect x="-12" y="-12" width="24" height="24" />
+          </clipPath>
+          <g clip-path="url(#wh4)">
+            <text x="0" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16" font-weight="bold">
+              <tspan x="0" dy="0">A</tspan>
+              <tspan x="0" dy="18">B</tspan>
+              <tspan x="0" dy="18">C</tspan>
+              <tspan x="0" dy="18">D</tspan>
+              <tspan x="0" dy="18">E</tspan>
+              <tspan x="0" dy="18">F</tspan>
+              <tspan x="0" dy="18">G</tspan>
+              <tspan x="0" dy="18">H</tspan>
+              <tspan x="0" dy="18">I</tspan>
+              <tspan x="0" dy="18">J</tspan>
+              <tspan x="0" dy="18">K</tspan>
+              <tspan x="0" dy="18">L</tspan>
+              <tspan x="0" dy="18">M</tspan>
+              <tspan x="0" dy="18">N</tspan>
+              <tspan x="0" dy="18">O</tspan>
+              <tspan x="0" dy="18">P</tspan>
+              <tspan x="0" dy="18">Q</tspan>
+              <tspan x="0" dy="18">R</tspan>
+              <tspan x="0" dy="18">S</tspan>
+              <tspan x="0" dy="18">T</tspan>
+              <tspan x="0" dy="18">U</tspan>
+              <tspan x="0" dy="18">V</tspan>
+              <tspan x="0" dy="18">W</tspan>
+              <tspan x="0" dy="18">X</tspan>
+              <tspan x="0" dy="18">Y</tspan>
+              <tspan x="0" dy="18">Z</tspan>
+              <animateTransform attributeName="transform" type="translate" values="0,5;0,-463" dur="10s"
+                repeatCount="indefinite" />
+            </text>
+          </g>
+        </g>
+        <g transform="translate(330,118)">
+          <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#c8a855" stroke-width="1" />
+          <clipPath id="wh5">
+            <rect x="-12" y="-12" width="24" height="24" />
+          </clipPath>
+          <g clip-path="url(#wh5)">
+            <text x="0" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16" font-weight="bold">
+              <tspan x="0" dy="0">A</tspan>
+              <tspan x="0" dy="18">B</tspan>
+              <tspan x="0" dy="18">C</tspan>
+              <tspan x="0" dy="18">D</tspan>
+              <tspan x="0" dy="18">E</tspan>
+              <tspan x="0" dy="18">F</tspan>
+              <tspan x="0" dy="18">G</tspan>
+              <tspan x="0" dy="18">H</tspan>
+              <tspan x="0" dy="18">I</tspan>
+              <tspan x="0" dy="18">J</tspan>
+              <tspan x="0" dy="18">K</tspan>
+              <tspan x="0" dy="18">L</tspan>
+              <tspan x="0" dy="18">M</tspan>
+              <tspan x="0" dy="18">N</tspan>
+              <tspan x="0" dy="18">O</tspan>
+              <tspan x="0" dy="18">P</tspan>
+              <tspan x="0" dy="18">Q</tspan>
+              <tspan x="0" dy="18">R</tspan>
+              <tspan x="0" dy="18">S</tspan>
+              <tspan x="0" dy="18">T</tspan>
+              <tspan x="0" dy="18">U</tspan>
+              <tspan x="0" dy="18">V</tspan>
+              <tspan x="0" dy="18">W</tspan>
+              <tspan x="0" dy="18">X</tspan>
+              <tspan x="0" dy="18">Y</tspan>
+              <tspan x="0" dy="18">Z</tspan>
+              <animateTransform attributeName="transform" type="translate" values="0,5;0,-463" dur="18s"
+                repeatCount="indefinite" />
+            </text>
+          </g>
+        </g>
+        <!-- Brass clue plate below wheels -->
+        <rect x="160" y="150" width="180" height="24" rx="3" fill="#c8a855" stroke="#d4a017" stroke-width="1" />
+        <rect x="165" y="153" width="170" height="18" rx="2" fill="#b09840" opacity="0.5" />
+        <g filter="url(#wsPlateGlow)">
+          <text x="250" y="166" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="8"
+            letter-spacing="0.3">CLUE: Rearrange letters</text>
+        </g>
+        <!-- Machine gears (left side, animated) -->
+        <g transform="translate(118,130)">
+          <circle cx="0" cy="0" r="14" fill="none" stroke="#888" stroke-width="2" opacity="0.5">
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s"
+              repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="5" fill="#777" opacity="0.5" />
+          <g opacity="0.5">
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s"
+              repeatCount="indefinite" />
+            <rect x="-2" y="-16" width="4" height="5" rx="1" fill="#888" />
+            <rect x="-2" y="11" width="4" height="5" rx="1" fill="#888" />
+            <rect x="-16" y="-2" width="5" height="4" rx="1" fill="#888" />
+            <rect x="11" y="-2" width="5" height="4" rx="1" fill="#888" />
+          </g>
+        </g>
+        <!-- Machine gears (right side, counter-rotate) -->
+        <g transform="translate(382,130)">
+          <circle cx="0" cy="0" r="14" fill="none" stroke="#888" stroke-width="2" opacity="0.5">
+            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="6s"
+              repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="5" fill="#777" opacity="0.5" />
+          <g opacity="0.5">
+            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="6s"
+              repeatCount="indefinite" />
+            <rect x="-2" y="-16" width="4" height="5" rx="1" fill="#888" />
+            <rect x="-2" y="11" width="4" height="5" rx="1" fill="#888" />
+            <rect x="-16" y="-2" width="5" height="4" rx="1" fill="#888" />
+            <rect x="11" y="-2" width="5" height="4" rx="1" fill="#888" />
+          </g>
+        </g>
+        <!-- Machine glow -->
+        <ellipse cx="250" cy="130" rx="130" ry="50" fill="url(#wsMachGlow)" />
+        <!-- Cryptic Croc — Official character, Scene 2: Thinking -->
+        <g transform="translate(-9, 92) scale(0.4)">
+          <!-- TAIL -->
+          <g>
+            <path
+              d="M94,260 Q72,258 52,248 Q34,236 20,220 Q10,206 10,196 Q8,204 6,216 Q8,232 20,250 Q34,268 52,280 Q68,290 92,306 Z"
+              fill="url(#cc_bg2)" />
+            <path d="M92,306 Q68,290 52,280 Q34,268 20,250 Q8,232 6,216" fill="none" stroke="#b8d888" stroke-width="6"
+              stroke-linecap="round" opacity="0.15" />
+            <path d="M92,302 Q66,288 50,276 Q32,262 18,244 Q8,228 8,210" fill="none" stroke="url(#cc_sc2)"
+              stroke-width="18" opacity="0.45" />
+            <path d="M80,260 L74,246 L78,252 Z" fill="#2a7848" opacity="0.58" />
+            <path d="M62,250 L56,234 L60,240 Z" fill="#2a7848" opacity="0.55" />
+            <path d="M44,238 L38,222 L42,228 Z" fill="#2a7848" opacity="0.5" />
+            <path d="M28,224 L22,208 L26,214 Z" fill="#2a7848" opacity="0.45" />
+            <path d="M16,208 L12,194 L16,200 Z" fill="#2a7848" opacity="0.4" />
+          </g>
+          <!-- FEET -->
+          <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#cc_bg2)" />
+          <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)" />
+          <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)" />
+          <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58" />
+          <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)" />
+          <circle cx="96" cy="360" r="2" fill="#c8b060" />
+          <circle cx="108" cy="356" r="2" fill="#c8b060" />
+          <circle cx="120" cy="354" r="2" fill="#c8b060" />
+          <circle cx="134" cy="356" r="2" fill="#c8b060" />
+          <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#cc_bg2)" />
+          <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)" />
+          <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58" />
+          <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)" />
+          <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)" />
+          <circle cx="176" cy="360" r="2" fill="#c8b060" />
+          <circle cx="188" cy="356" r="2" fill="#c8b060" />
+          <circle cx="200" cy="354" r="2" fill="#c8b060" />
+          <circle cx="214" cy="356" r="2" fill="#c8b060" />
+          <!-- BODY -->
+          <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#cc_bg2)" filter="url(#cc_sh2)" />
+          <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#cc_sc2)" />
+          <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#cc_belly2)" opacity="0.5" />
+          <g opacity="0.3">
+            <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8" />
+            <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8" />
+          </g>
+          <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55" />
+          <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5" />
+          <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45" />
+          <!-- SCARF -->
+          <g>
+            <path
+              d="M118,198 C125,196 140,196 160,197 C180,196 195,196 202,198 L206,208 C196,212 178,214 160,215 C142,214 124,212 114,208 Z"
+              fill="#e6a800" opacity="0.7" />
+            <path
+              d="M114,204 C124,210 142,214 160,215 C178,214 196,210 206,204 L202,198 C194,200 178,202 160,203 C142,202 126,200 118,198 Z"
+              fill="url(#cc_scarfGrad2)" opacity="0.92" />
+            <path d="M120,199 C132,198 148,198 160,199 C172,198 188,198 200,199" fill="none" stroke="#ffe066"
+              stroke-width="1" opacity="0.5" />
+            <path d="M116,207 C126,212 144,215 160,216 C176,215 194,212 204,207" fill="none" stroke="#b87800"
+              stroke-width="1" opacity="0.45" />
+            <path d="M120,202 C134,206 150,208 160,209 C170,208 186,206 200,202" fill="none" stroke="#e6a800"
+              stroke-width="0.8" opacity="0.35" />
+            <rect x="141" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+            <rect x="146" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.35" />
+            <rect x="151" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+            <rect x="156" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+            <rect x="161" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.4" />
+            <rect x="166" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+            <ellipse cx="116" cy="204" rx="7" ry="6" fill="#ffb800" opacity="0.75" />
+            <ellipse cx="116" cy="204" rx="4" ry="3.5" fill="#ffd700" opacity="0.5" />
+            <path d="M114,208 Q110,220 108,232 Q106,240 106,248" fill="none" stroke="#ffd700" stroke-width="9"
+              stroke-linecap="round" opacity="0.82" />
+            <path d="M112,210 Q107,224 105,236 Q103,246 104,254" fill="none" stroke="#e6a800" stroke-width="6"
+              stroke-linecap="round" opacity="0.5" />
+            <path d="M106,248 Q106,252 106,255" stroke="#ffd700" stroke-width="6" stroke-linecap="round" fill="none"
+              opacity="0.6" />
+            <path d="M104,254 Q104,258 104,260" stroke="#e6a800" stroke-width="3.5" stroke-linecap="round" fill="none"
+              opacity="0.35" />
+            <rect x="104" y="228" width="4" height="4" rx="0.5" fill="#fff" opacity="0.35" />
+            <rect x="104" y="232" width="4" height="4" rx="0.5" fill="#1a2a0a" opacity="0.25" />
+            <rect x="102" y="242" width="4" height="4" rx="0.5" fill="#fff" opacity="0.3" />
+          </g>
+          <!-- ARMS -->
+          <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#cc_bg2)" stroke-width="16" stroke-linecap="round" />
+          <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58" />
+          <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)" />
+          <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)" />
+          <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)" />
+          <circle cx="48" cy="294" r="1.5" fill="#c8b060" />
+          <circle cx="54" cy="290" r="1.5" fill="#c8b060" />
+          <circle cx="62" cy="292" r="1.5" fill="#c8b060" />
+          <g>
+            <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#cc_bg2)" stroke-width="16"
+              stroke-linecap="round" />
+            <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58" />
+            <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)" />
+            <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a" />
+            <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)" />
+            <circle cx="246" cy="198" r="1.5" fill="#c8b060" />
+            <circle cx="254" cy="195" r="1.5" fill="#c8b060" />
+            <circle cx="262" cy="198" r="1.5" fill="#c8b060" />
+          </g>
+          <!-- HEAD -->
+          <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#cc_bg2)" filter="url(#cc_sh2)" />
+          <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#cc_sc2)" />
+          <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+          <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+          <!-- Snout -->
+          <path
+            d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,182 194,182 Q190,182 184,186 L176,182 L168,187 L160,181 L152,187 L144,182 L136,186 Q130,182 126,182 Q115,182 110,175 Z"
+            fill="url(#cc_lt2)" />
+          <circle cx="135" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+          <circle cx="150" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+          <circle cx="170" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+          <circle cx="185" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+          <!-- Chin -->
+          <path
+            d="M126,180 Q128,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q192,182 194,180 Q186,196 160,198 Q134,196 126,180 Z"
+            fill="#3a9058" />
+          <!-- W smile (thinking — slightly narrower) -->
+          <path d="M124,178 Q128,182 140,186 L148,182 L154,187 L160,181 L166,187 L172,182 L180,186 Q192,182 196,178"
+            fill="none" stroke="#1a4a2a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="140" cy="172" r="3.5" fill="#1e5535" />
+          <circle cx="180" cy="172" r="3.5" fill="#1e5535" />
+          <!-- CHEEK BLUSHES -->
+          <ellipse cx="112" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+          <ellipse cx="208" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+          <!-- EYES (thinking — pupils shifted up-right: cx-2, cy-4) -->
+          <g>
+            <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#cc_bg2)" />
+            <ellipse cx="128" cy="140" rx="14" ry="13" fill="#fff" />
+            <g>
+              <ellipse cx="129" cy="138" rx="8" ry="9" fill="#5a7a20" />
+              <ellipse cx="129" cy="138" rx="3.5" ry="9" fill="#1a2a0a" />
+              <circle cx="125" cy="133" r="3" fill="#fff" opacity="0.8" />
+            </g>
+            <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#cc_bg2)" />
+            <ellipse cx="192" cy="140" rx="14" ry="13" fill="#fff" />
+            <g>
+              <ellipse cx="187" cy="138" rx="8" ry="9" fill="#5a7a20" />
+              <ellipse cx="187" cy="138" rx="3.5" ry="9" fill="#1a2a0a" />
+              <circle cx="183" cy="133" r="3" fill="#fff" opacity="0.8" />
+            </g>
+          </g>
+          <!-- CROWN -->
+          <g filter="url(#cc_crownGlow2)">
+            <path d="M136,130 L184,130 L182,126 L138,126 Z" fill="#ffd700" opacity="0.6" />
+            <path d="M138,126 L143,112 L150,126 Z" fill="#ffd700" opacity="0.8" />
+            <path d="M153,126 L160,106 L167,126 Z" fill="#ffd700" opacity="0.85" />
+            <path d="M170,126 L177,112 L182,126 Z" fill="#ffd700" opacity="0.8" />
+            <circle cx="143" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+            <circle cx="160" cy="107" r="1.8" fill="#fff" opacity="0.7" />
+            <circle cx="177" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+            <path d="M140,126 L143,114 L146,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            <path d="M157,126 L160,108 L163,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            <path d="M173,126 L177,114 L180,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+          </g>
+          <!-- MONOCLE -->
+          <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65" />
+          <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4" />
+          <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)" />
+        </g>
+      </svg>
+    </div>
+    <div class="speaker">Cryptic Croc</div>
+    <p class="story-text">"This is the Anagram Engine! The letter wheels are spinning. Rearrange them to spell the
+      answer. Here's your clue:"</p>
+    <p class="story-text" style="color:#ffd700; font-family:'Fredoka One',cursive; font-size:1.1rem; margin-top:8px;">
+      "Ache badly after beginning of boating, on the shore" (5)</p>
+    <div style="display:flex; gap:8px; margin-top:14px; justify-content:center;">
+      <input id="puzzleInput" type="text" maxlength="5" placeholder="Type answer..."
+        style="flex:1; max-width:200px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,215,0,0.3); border-radius:12px; padding:10px 16px; color:#fff; font-family:'Nunito',sans-serif; font-size:1rem; text-transform:uppercase; letter-spacing:4px; text-align:center; outline:none;" />
+      <button id="solveBtn" onclick="checkAnswer()"
+        style="background:linear-gradient(135deg,#ffd700,#ff8c00); border:none; border-radius:12px; padding:10px 20px; font-family:'Fredoka One',cursive; font-size:0.9rem; color:#1a1a2e; cursor:pointer;">Solve</button>
+    </div>
+    <p id="puzzleFeedback" style="color:rgba(255,100,100,0.7); font-size:0.85rem; margin-top:8px; min-height:1.2em;">
+    </p>
+  </div>
+
+  <!-- Scenes 3 & 4 — HIDDEN until puzzle solved -->
+  <div id="solvedScenes" style="display:none;">
+
+    <!-- Scene 3 — Step 3 (Cryptic Croc) -->
+    <div class="scene-section">
+      <div class="label">Step 3: Machine Solved, Coordinates Slide Out</div>
+      <div class="scene-frame">
+        <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wsBg3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3a2210" />
+              <stop offset="50%" stop-color="#4a2a14" />
+              <stop offset="100%" stop-color="#2a1a0c" />
+            </linearGradient>
+            <linearGradient id="wsBrass3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d4a017" />
+              <stop offset="50%" stop-color="#c8a855" />
+              <stop offset="100%" stop-color="#b08a30" />
+            </linearGradient>
+            <radialGradient id="wsSolveGlow" cx="50%" cy="60%" r="40%">
+              <stop offset="0%" stop-color="#ffd700" stop-opacity="0.2" />
+              <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
+            </radialGradient>
+            <filter id="wsGoldGlow">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <!-- Cryptic Croc official character defs -->
+            <radialGradient id="cc_bg3" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#4db06a" />
+              <stop offset="100%" stop-color="#2a7848" />
+            </radialGradient>
+            <radialGradient id="cc_lt3" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#5ec47e" />
+              <stop offset="100%" stop-color="#3a9a58" />
+            </radialGradient>
+            <radialGradient id="cc_belly3" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d4edaa" />
+              <stop offset="100%" stop-color="#a8d470" />
+            </radialGradient>
+            <filter id="cc_sh3">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3" />
+            </filter>
+            <filter id="cc_crownGlow3">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffd700" flood-opacity="0.4" />
+            </filter>
+            <pattern id="cc_sc3" width="14" height="12" patternUnits="userSpaceOnUse">
+              <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8" />
+            </pattern>
+            <linearGradient id="cc_scarfGrad3" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ffb800" />
+              <stop offset="50%" stop-color="#ffd700" />
+              <stop offset="100%" stop-color="#ffb800" />
+            </linearGradient>
+          </defs>
+          <rect width="500" height="260" fill="url(#wsBg3)" />
+          <circle cx="250" cy="160" r="160" fill="url(#wsSolveGlow)" />
+          <!-- Back wall -->
+          <rect x="0" y="0" width="500" height="130" fill="#3a2210" opacity="0.5" />
+          <line x1="0" y1="130" x2="500" y2="130" stroke="#5a3a1a" stroke-width="2" />
+          <!-- Floor -->
+          <rect x="0" y="200" width="500" height="60" fill="#2a1a0c" />
+          <rect x="0" y="196" width="500" height="6" fill="#5a3a1a" />
+          <!-- Workbench -->
+          <rect x="60" y="168" width="380" height="8" rx="2" fill="#6b4e0a" />
+          <rect x="70" y="176" width="8" height="60" fill="#5a3a1a" />
+          <rect x="420" y="176" width="8" height="60" fill="#5a3a1a" />
+          <!-- Anagram Engine — solved, letters locked -->
+          <rect x="130" y="95" width="240" height="73" rx="6" fill="url(#wsBrass3)" />
+          <rect x="135" y="100" width="230" height="63" rx="4" fill="#b09840" opacity="0.6" />
+          <!-- Rivets -->
+          <circle cx="140" cy="105" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+          <circle cx="360" cy="105" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+          <circle cx="140" cy="155" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+          <circle cx="360" cy="155" r="2" fill="#a08830" stroke="#8a7020" stroke-width="0.5" />
+          <!-- Letter wheels — locked on BEACH -->
+          <g transform="translate(170,118)">
+            <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#ffd700" stroke-width="1.5" />
+            <text x="0" y="5" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16"
+              font-weight="bold">B</text>
+          </g>
+          <g transform="translate(210,118)">
+            <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#ffd700" stroke-width="1.5" />
+            <text x="0" y="5" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16"
+              font-weight="bold">E</text>
+          </g>
+          <g transform="translate(250,118)">
+            <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#ffd700" stroke-width="1.5" />
+            <text x="0" y="5" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16"
+              font-weight="bold">A</text>
+          </g>
+          <g transform="translate(290,118)">
+            <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#ffd700" stroke-width="1.5" />
+            <text x="0" y="5" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16"
+              font-weight="bold">C</text>
+          </g>
+          <g transform="translate(330,118)">
+            <rect x="-12" y="-15" width="24" height="30" rx="3" fill="#8a7020" stroke="#ffd700" stroke-width="1.5" />
+            <text x="0" y="5" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="16"
+              font-weight="bold">H</text>
+          </g>
+          <!-- Gears turning (both sides, animated) -->
+          <g transform="translate(118,130)">
+            <circle cx="0" cy="0" r="14" fill="none" stroke="#999" stroke-width="2" opacity="0.5">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s"
+                repeatCount="indefinite" />
+            </circle>
+            <circle cx="0" cy="0" r="5" fill="#888" opacity="0.5" />
+            <g opacity="0.5">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s"
+                repeatCount="indefinite" />
+              <rect x="-2" y="-16" width="4" height="5" rx="1" fill="#999" />
+              <rect x="-2" y="11" width="4" height="5" rx="1" fill="#999" />
+              <rect x="-16" y="-2" width="5" height="4" rx="1" fill="#999" />
+              <rect x="11" y="-2" width="5" height="4" rx="1" fill="#999" />
+            </g>
+          </g>
+          <g transform="translate(382,130)">
+            <circle cx="0" cy="0" r="14" fill="none" stroke="#999" stroke-width="2" opacity="0.5">
+              <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="4s"
+                repeatCount="indefinite" />
+            </circle>
+            <circle cx="0" cy="0" r="5" fill="#888" opacity="0.5" />
+            <g opacity="0.5">
+              <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="4s"
+                repeatCount="indefinite" />
+              <rect x="-2" y="-16" width="4" height="5" rx="1" fill="#999" />
+              <rect x="-2" y="11" width="4" height="5" rx="1" fill="#999" />
+              <rect x="-16" y="-2" width="5" height="4" rx="1" fill="#999" />
+              <rect x="11" y="-2" width="5" height="4" rx="1" fill="#999" />
+            </g>
+          </g>
+          <!-- Brass coordinates plate sliding out (animated) -->
+          <g filter="url(#wsGoldGlow)">
+            <rect x="190" y="168" width="120" height="22" rx="3" fill="#c8a855" stroke="#d4a017" stroke-width="1">
+              <animate attributeName="y" values="155;168" dur="1.5s" fill="freeze" />
+              <animate attributeName="opacity" values="0;1" dur="1s" fill="freeze" />
+            </rect>
+            <text x="250" y="183" text-anchor="middle" fill="#3a2210" font-family="monospace" font-size="9"
+              font-weight="bold" letter-spacing="0.5">
+              COORDINATES: SOUTH
+              <animate attributeName="opacity" values="0;1" dur="1.5s" fill="freeze" />
+            </text>
+          </g>
+          <!-- Cryptic Croc — Official character, Scene 3: Excited -->
+          <g transform="translate(366, 92) scale(0.4)">
+            <!-- TAIL -->
+            <g>
+              <path
+                d="M94,260 Q72,258 52,248 Q34,236 20,220 Q10,206 10,196 Q8,204 6,216 Q8,232 20,250 Q34,268 52,280 Q68,290 92,306 Z"
+                fill="url(#cc_bg3)" />
+              <path d="M92,306 Q68,290 52,280 Q34,268 20,250 Q8,232 6,216" fill="none" stroke="#b8d888" stroke-width="6"
+                stroke-linecap="round" opacity="0.15" />
+              <path d="M92,302 Q66,288 50,276 Q32,262 18,244 Q8,228 8,210" fill="none" stroke="url(#cc_sc3)"
+                stroke-width="18" opacity="0.45" />
+              <path d="M80,260 L74,246 L78,252 Z" fill="#2a7848" opacity="0.58" />
+              <path d="M62,250 L56,234 L60,240 Z" fill="#2a7848" opacity="0.55" />
+              <path d="M44,238 L38,222 L42,228 Z" fill="#2a7848" opacity="0.5" />
+              <path d="M28,224 L22,208 L26,214 Z" fill="#2a7848" opacity="0.45" />
+              <path d="M16,208 L12,194 L16,200 Z" fill="#2a7848" opacity="0.4" />
+            </g>
+            <!-- FEET -->
+            <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#cc_bg3)" />
+            <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)" />
+            <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)" />
+            <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58" />
+            <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)" />
+            <circle cx="96" cy="360" r="2" fill="#c8b060" />
+            <circle cx="108" cy="356" r="2" fill="#c8b060" />
+            <circle cx="120" cy="354" r="2" fill="#c8b060" />
+            <circle cx="134" cy="356" r="2" fill="#c8b060" />
+            <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#cc_bg3)" />
+            <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)" />
+            <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58" />
+            <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)" />
+            <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)" />
+            <circle cx="176" cy="360" r="2" fill="#c8b060" />
+            <circle cx="188" cy="356" r="2" fill="#c8b060" />
+            <circle cx="200" cy="354" r="2" fill="#c8b060" />
+            <circle cx="214" cy="356" r="2" fill="#c8b060" />
+            <!-- BODY -->
+            <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#cc_bg3)" filter="url(#cc_sh3)" />
+            <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#cc_sc3)" />
+            <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#cc_belly3)" opacity="0.5" />
+            <g opacity="0.3">
+              <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8" />
+            </g>
+            <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55" />
+            <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5" />
+            <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45" />
+            <!-- SCARF -->
+            <g>
+              <path
+                d="M118,198 C125,196 140,196 160,197 C180,196 195,196 202,198 L206,208 C196,212 178,214 160,215 C142,214 124,212 114,208 Z"
+                fill="#e6a800" opacity="0.7" />
+              <path
+                d="M114,204 C124,210 142,214 160,215 C178,214 196,210 206,204 L202,198 C194,200 178,202 160,203 C142,202 126,200 118,198 Z"
+                fill="url(#cc_scarfGrad3)" opacity="0.92" />
+              <path d="M120,199 C132,198 148,198 160,199 C172,198 188,198 200,199" fill="none" stroke="#ffe066"
+                stroke-width="1" opacity="0.5" />
+              <path d="M116,207 C126,212 144,215 160,216 C176,215 194,212 204,207" fill="none" stroke="#b87800"
+                stroke-width="1" opacity="0.45" />
+              <path d="M120,202 C134,206 150,208 160,209 C170,208 186,206 200,202" fill="none" stroke="#e6a800"
+                stroke-width="0.8" opacity="0.35" />
+              <rect x="141" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+              <rect x="146" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.35" />
+              <rect x="151" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+              <rect x="156" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+              <rect x="161" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.4" />
+              <rect x="166" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+              <ellipse cx="116" cy="204" rx="7" ry="6" fill="#ffb800" opacity="0.75" />
+              <ellipse cx="116" cy="204" rx="4" ry="3.5" fill="#ffd700" opacity="0.5" />
+              <path d="M114,208 Q110,220 108,232 Q106,240 106,248" fill="none" stroke="#ffd700" stroke-width="9"
+                stroke-linecap="round" opacity="0.82" />
+              <path d="M112,210 Q107,224 105,236 Q103,246 104,254" fill="none" stroke="#e6a800" stroke-width="6"
+                stroke-linecap="round" opacity="0.5" />
+              <path d="M106,248 Q106,252 106,255" stroke="#ffd700" stroke-width="6" stroke-linecap="round" fill="none"
+                opacity="0.6" />
+              <path d="M104,254 Q104,258 104,260" stroke="#e6a800" stroke-width="3.5" stroke-linecap="round" fill="none"
+                opacity="0.35" />
+              <rect x="104" y="228" width="4" height="4" rx="0.5" fill="#fff" opacity="0.35" />
+              <rect x="104" y="232" width="4" height="4" rx="0.5" fill="#1a2a0a" opacity="0.25" />
+              <rect x="102" y="242" width="4" height="4" rx="0.5" fill="#fff" opacity="0.3" />
+            </g>
+            <!-- ARMS -->
+            <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#cc_bg3)" stroke-width="16"
+              stroke-linecap="round" />
+            <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58" />
+            <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)" />
+            <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)" />
+            <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)" />
+            <circle cx="48" cy="294" r="1.5" fill="#c8b060" />
+            <circle cx="54" cy="290" r="1.5" fill="#c8b060" />
+            <circle cx="62" cy="292" r="1.5" fill="#c8b060" />
+            <g>
+              <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#cc_bg3)" stroke-width="16"
+                stroke-linecap="round" />
+              <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58" />
+              <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)" />
+              <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a" />
+              <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)" />
+              <circle cx="246" cy="198" r="1.5" fill="#c8b060" />
+              <circle cx="254" cy="195" r="1.5" fill="#c8b060" />
+              <circle cx="262" cy="198" r="1.5" fill="#c8b060" />
+            </g>
+            <!-- HEAD -->
+            <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#cc_bg3)" filter="url(#cc_sh3)" />
+            <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#cc_sc3)" />
+            <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+            <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+            <!-- Snout -->
+            <path
+              d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,182 194,182 Q190,182 184,186 L176,182 L168,187 L160,181 L152,187 L144,182 L136,186 Q130,182 126,182 Q115,182 110,175 Z"
+              fill="url(#cc_lt3)" />
+            <circle cx="135" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+            <circle cx="150" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+            <circle cx="170" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+            <circle cx="185" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+            <!-- Chin -->
+            <path
+              d="M126,180 Q128,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q192,182 194,180 Q186,196 160,198 Q134,196 126,180 Z"
+              fill="#3a9058" />
+            <!-- W smile (excited — wider, outer points shifted outward by 4px) -->
+            <path d="M120,178 Q124,182 132,186 L144,182 L152,187 L160,181 L168,187 L176,182 L188,186 Q196,182 200,178"
+              fill="none" stroke="#1a4a2a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="140" cy="172" r="3.5" fill="#1e5535" />
+            <circle cx="180" cy="172" r="3.5" fill="#1e5535" />
+            <!-- CHEEK BLUSHES -->
+            <ellipse cx="112" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+            <ellipse cx="208" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+            <!-- EYES (excited — slightly bigger whites: rx+1, ry+1) -->
+            <g>
+              <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#cc_bg3)" />
+              <ellipse cx="128" cy="140" rx="15" ry="14" fill="#fff" />
+              <g>
+                <ellipse cx="131" cy="142" rx="8" ry="9" fill="#5a7a20" />
+                <ellipse cx="131" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+                <circle cx="127" cy="137" r="3" fill="#fff" opacity="0.8" />
+              </g>
+              <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#cc_bg3)" />
+              <ellipse cx="192" cy="140" rx="15" ry="14" fill="#fff" />
+              <g>
+                <ellipse cx="189" cy="142" rx="8" ry="9" fill="#5a7a20" />
+                <ellipse cx="189" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+                <circle cx="185" cy="137" r="3" fill="#fff" opacity="0.8" />
+              </g>
+            </g>
+            <!-- CROWN -->
+            <g filter="url(#cc_crownGlow3)">
+              <path d="M136,130 L184,130 L182,126 L138,126 Z" fill="#ffd700" opacity="0.6" />
+              <path d="M138,126 L143,112 L150,126 Z" fill="#ffd700" opacity="0.8" />
+              <path d="M153,126 L160,106 L167,126 Z" fill="#ffd700" opacity="0.85" />
+              <path d="M170,126 L177,112 L182,126 Z" fill="#ffd700" opacity="0.8" />
+              <circle cx="143" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+              <circle cx="160" cy="107" r="1.8" fill="#fff" opacity="0.7" />
+              <circle cx="177" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+              <path d="M140,126 L143,114 L146,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+              <path d="M157,126 L160,108 L163,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+              <path d="M173,126 L177,114 L180,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            </g>
+            <!-- MONOCLE -->
+            <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65" />
+            <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4" />
+            <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)" />
+          </g>
+          <!-- Spark particles from machine -->
+          <circle cx="200" cy="95" r="1.5" fill="#ffd700" opacity="0.6">
+            <animate attributeName="cy" values="95;80;65" dur="1.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;0.9;0" dur="1.5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="250" cy="92" r="1" fill="#ffa040" opacity="0.5">
+            <animate attributeName="cy" values="92;75;58" dur="2s" repeatCount="indefinite" begin="0.3s" />
+            <animate attributeName="opacity" values="0.5;0.8;0" dur="2s" repeatCount="indefinite" begin="0.3s" />
+          </circle>
+          <circle cx="300" cy="94" r="1.5" fill="#ffd700" opacity="0.4">
+            <animate attributeName="cy" values="94;78;62" dur="1.8s" repeatCount="indefinite" begin="0.7s" />
+            <animate attributeName="opacity" values="0.4;0.7;0" dur="1.8s" repeatCount="indefinite" begin="0.7s" />
+          </circle>
+        </svg>
+      </div>
+      <div class="speaker">Cryptic Croc</div>
+      <p class="story-text">"SNAP-tastic! You cracked it!" The machine clicks into motion. Gears whir faster, sparks fly
+        upward, and a brass plate slides out bearing coordinates pointing south.</p>
+    </div>
+
+    <!-- Scene 4 — Step 4 -->
+    <div class="scene-section">
+      <div class="label">Step 4: Golden Beam to Coastline</div>
+      <div class="scene-frame">
+        <svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wsBg4" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2a1a0c" />
+              <stop offset="40%" stop-color="#3a2210" />
+              <stop offset="100%" stop-color="#1a1208" />
+            </linearGradient>
+            <linearGradient id="wsBeam" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffd700" stop-opacity="0.6" />
+              <stop offset="50%" stop-color="#ffa040" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#ffd700" stop-opacity="0.1" />
+            </linearGradient>
+            <radialGradient id="wsBeamSource" cx="30%" cy="50%" r="30%">
+              <stop offset="0%" stop-color="#ffd700" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="wsCoast" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3a8ab5" />
+              <stop offset="100%" stop-color="#2a6a95" />
+            </linearGradient>
+            <filter id="wsBeamGlow">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <!-- Cryptic Croc official character defs -->
+            <radialGradient id="cc_bg4" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#4db06a" />
+              <stop offset="100%" stop-color="#2a7848" />
+            </radialGradient>
+            <radialGradient id="cc_lt4" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#5ec47e" />
+              <stop offset="100%" stop-color="#3a9a58" />
+            </radialGradient>
+            <radialGradient id="cc_belly4" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d4edaa" />
+              <stop offset="100%" stop-color="#a8d470" />
+            </radialGradient>
+            <filter id="cc_sh4">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3" />
+            </filter>
+            <filter id="cc_crownGlow4">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffd700" flood-opacity="0.4" />
+            </filter>
+            <pattern id="cc_sc4" width="14" height="12" patternUnits="userSpaceOnUse">
+              <path d="M0,6 Q3.5,0 7,6 Q10.5,0 14,6" fill="none" stroke="rgba(30,80,45,0.2)" stroke-width="0.8" />
+            </pattern>
+            <linearGradient id="cc_scarfGrad4" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ffb800" />
+              <stop offset="50%" stop-color="#ffd700" />
+              <stop offset="100%" stop-color="#ffb800" />
+            </linearGradient>
+          </defs>
+          <rect width="500" height="260" fill="url(#wsBg4)" />
+          <!-- Machine glow source -->
+          <circle cx="120" cy="130" r="100" fill="url(#wsBeamSource)" />
+          <!-- Back wall fading to vista -->
+          <rect x="0" y="0" width="200" height="130" fill="#3a2210" opacity="0.5" />
+          <path d="M200,0 L200,130 L500,130 L500,0 Z" fill="#1a2a3a" opacity="0.3" />
+          <line x1="0" y1="130" x2="200" y2="130" stroke="#5a3a1a" stroke-width="2" />
+          <!-- Floor -->
+          <rect x="0" y="200" width="250" height="60" fill="#2a1a0c" />
+          <rect x="0" y="196" width="250" height="6" fill="#5a3a1a" />
+          <!-- Distant coastline (right side, through window/opening) -->
+          <rect x="250" y="180" width="250" height="80" fill="url(#wsCoast)" opacity="0.4" />
+          <path d="M250,200 Q300,192 350,195 Q400,190 450,198 Q475,195 500,200 L500,260 L250,260 Z" fill="#c8b870"
+            opacity="0.3" />
+          <path d="M350,200 Q380,196 420,198 Q460,194 500,200 L500,210 Q460,204 420,208 Q380,206 350,210 Z"
+            fill="#e0d090" opacity="0.2" />
+          <!-- Simplified machine (left side) -->
+          <rect x="40" y="100" width="140" height="65" rx="5" fill="#c8a855" opacity="0.8" />
+          <rect x="45" y="105" width="130" height="55" rx="3" fill="#b09840" opacity="0.5" />
+          <!-- Letter wheels showing BEACH -->
+          <g transform="translate(65,128)">
+            <rect x="-8" y="-10" width="16" height="20" rx="2" fill="#8a7020" stroke="#ffd700" stroke-width="1" />
+            <text x="0" y="4" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="11"
+              font-weight="bold">B</text>
+          </g>
+          <g transform="translate(85,128)">
+            <rect x="-8" y="-10" width="16" height="20" rx="2" fill="#8a7020" stroke="#ffd700" stroke-width="1" />
+            <text x="0" y="4" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="11"
+              font-weight="bold">E</text>
+          </g>
+          <g transform="translate(105,128)">
+            <rect x="-8" y="-10" width="16" height="20" rx="2" fill="#8a7020" stroke="#ffd700" stroke-width="1" />
+            <text x="0" y="4" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="11"
+              font-weight="bold">A</text>
+          </g>
+          <g transform="translate(125,128)">
+            <rect x="-8" y="-10" width="16" height="20" rx="2" fill="#8a7020" stroke="#ffd700" stroke-width="1" />
+            <text x="0" y="4" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="11"
+              font-weight="bold">C</text>
+          </g>
+          <g transform="translate(145,128)">
+            <rect x="-8" y="-10" width="16" height="20" rx="2" fill="#8a7020" stroke="#ffd700" stroke-width="1" />
+            <text x="0" y="4" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="11"
+              font-weight="bold">H</text>
+          </g>
+          <!-- Machine gear spinning fast -->
+          <g transform="translate(28,130)">
+            <circle cx="0" cy="0" r="12" fill="none" stroke="#999" stroke-width="2" opacity="0.4">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s"
+                repeatCount="indefinite" />
+            </circle>
+            <circle cx="0" cy="0" r="4" fill="#888" opacity="0.4" />
+            <g opacity="0.4">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s"
+                repeatCount="indefinite" />
+              <rect x="-2" y="-14" width="4" height="4" rx="1" fill="#999" />
+              <rect x="-2" y="10" width="4" height="4" rx="1" fill="#999" />
+              <rect x="-14" y="-2" width="4" height="4" rx="1" fill="#999" />
+              <rect x="10" y="-2" width="4" height="4" rx="1" fill="#999" />
+            </g>
+          </g>
+          <!-- Golden beam projecting southward from machine to coastline -->
+          <g filter="url(#wsBeamGlow)">
+            <path d="M180,128 Q250,145 350,180 Q420,200 500,220" fill="none" stroke="url(#wsBeam)" stroke-width="8"
+              stroke-linecap="round" opacity="0.7">
+              <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite" />
+            </path>
+            <path d="M180,128 Q260,150 360,185 Q430,205 500,225" fill="none" stroke="#ffd700" stroke-width="2"
+              stroke-linecap="round" opacity="0.4">
+              <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite" begin="0.3s" />
+            </path>
+          </g>
+          <!-- Beam particles traveling along path -->
+          <circle cx="220" cy="138" r="2" fill="#ffd700" opacity="0.7">
+            <animate attributeName="cx" values="180;350;500" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="cy" values="128;180;220" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.8;0.5;0" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="260" cy="150" r="1.5" fill="#ffa040" opacity="0.5">
+            <animate attributeName="cx" values="180;350;500" dur="3s" repeatCount="indefinite" begin="1s" />
+            <animate attributeName="cy" values="128;180;220" dur="3s" repeatCount="indefinite" begin="1s" />
+            <animate attributeName="opacity" values="0.6;0.4;0" dur="3s" repeatCount="indefinite" begin="1s" />
+          </circle>
+          <circle cx="300" cy="165" r="2" fill="#ffd700" opacity="0.4">
+            <animate attributeName="cx" values="180;350;500" dur="3s" repeatCount="indefinite" begin="2s" />
+            <animate attributeName="cy" values="128;180;220" dur="3s" repeatCount="indefinite" begin="2s" />
+            <animate attributeName="opacity" values="0.7;0.3;0" dur="3s" repeatCount="indefinite" begin="2s" />
+          </circle>
+          <!-- Cryptic Croc — Official character, Scene 4: Proud/confident -->
+          <g transform="translate(156, 92) scale(0.4)">
+            <!-- TAIL -->
+            <g>
+              <path
+                d="M94,260 Q72,258 52,248 Q34,236 20,220 Q10,206 10,196 Q8,204 6,216 Q8,232 20,250 Q34,268 52,280 Q68,290 92,306 Z"
+                fill="url(#cc_bg4)" />
+              <path d="M92,306 Q68,290 52,280 Q34,268 20,250 Q8,232 6,216" fill="none" stroke="#b8d888" stroke-width="6"
+                stroke-linecap="round" opacity="0.15" />
+              <path d="M92,302 Q66,288 50,276 Q32,262 18,244 Q8,228 8,210" fill="none" stroke="url(#cc_sc4)"
+                stroke-width="18" opacity="0.45" />
+              <path d="M80,260 L74,246 L78,252 Z" fill="#2a7848" opacity="0.58" />
+              <path d="M62,250 L56,234 L60,240 Z" fill="#2a7848" opacity="0.55" />
+              <path d="M44,238 L38,222 L42,228 Z" fill="#2a7848" opacity="0.5" />
+              <path d="M28,224 L22,208 L26,214 Z" fill="#2a7848" opacity="0.45" />
+              <path d="M16,208 L12,194 L16,200 Z" fill="#2a7848" opacity="0.4" />
+            </g>
+            <!-- FEET -->
+            <ellipse cx="122" cy="365" rx="24" ry="11" fill="url(#cc_bg4)" />
+            <ellipse cx="102" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-15,102,362)" />
+            <ellipse cx="114" cy="358" rx="6" ry="4" fill="#3a9a58" transform="rotate(-5,114,358)" />
+            <ellipse cx="126" cy="356" rx="6" ry="4" fill="#3a9a58" />
+            <ellipse cx="138" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(10,138,358)" />
+            <circle cx="96" cy="360" r="2" fill="#c8b060" />
+            <circle cx="108" cy="356" r="2" fill="#c8b060" />
+            <circle cx="120" cy="354" r="2" fill="#c8b060" />
+            <circle cx="134" cy="356" r="2" fill="#c8b060" />
+            <ellipse cx="200" cy="365" rx="24" ry="11" fill="url(#cc_bg4)" />
+            <ellipse cx="182" cy="362" rx="6" ry="4" fill="#3a9a58" transform="rotate(-10,182,362)" />
+            <ellipse cx="194" cy="358" rx="6" ry="4" fill="#3a9a58" />
+            <ellipse cx="206" cy="356" rx="6" ry="4" fill="#3a9a58" transform="rotate(5,206,356)" />
+            <ellipse cx="218" cy="358" rx="5" ry="3.5" fill="#3a9a58" transform="rotate(15,218,358)" />
+            <circle cx="176" cy="360" r="2" fill="#c8b060" />
+            <circle cx="188" cy="356" r="2" fill="#c8b060" />
+            <circle cx="200" cy="354" r="2" fill="#c8b060" />
+            <circle cx="214" cy="356" r="2" fill="#c8b060" />
+            <!-- BODY -->
+            <ellipse cx="160" cy="278" rx="72" ry="82" fill="url(#cc_bg4)" filter="url(#cc_sh4)" />
+            <ellipse cx="160" cy="278" rx="68" ry="78" fill="url(#cc_sc4)" />
+            <ellipse cx="160" cy="292" rx="50" ry="58" fill="url(#cc_belly4)" opacity="0.5" />
+            <g opacity="0.3">
+              <line x1="118" y1="262" x2="202" y2="262" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="114" y1="274" x2="206" y2="274" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="112" y1="286" x2="208" y2="286" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="112" y1="298" x2="208" y2="298" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="114" y1="310" x2="206" y2="310" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="118" y1="322" x2="202" y2="322" stroke="#8ab848" stroke-width="0.8" />
+              <line x1="124" y1="334" x2="196" y2="334" stroke="#8ab848" stroke-width="0.8" />
+            </g>
+            <ellipse cx="160" cy="198" rx="10" ry="7" fill="#2a7848" opacity="0.55" />
+            <ellipse cx="160" cy="214" rx="12" ry="8" fill="#2a7848" opacity="0.5" />
+            <ellipse cx="160" cy="232" rx="11" ry="7" fill="#2a7848" opacity="0.45" />
+            <!-- SCARF -->
+            <g>
+              <path
+                d="M118,198 C125,196 140,196 160,197 C180,196 195,196 202,198 L206,208 C196,212 178,214 160,215 C142,214 124,212 114,208 Z"
+                fill="#e6a800" opacity="0.7" />
+              <path
+                d="M114,204 C124,210 142,214 160,215 C178,214 196,210 206,204 L202,198 C194,200 178,202 160,203 C142,202 126,200 118,198 Z"
+                fill="url(#cc_scarfGrad4)" opacity="0.92" />
+              <path d="M120,199 C132,198 148,198 160,199 C172,198 188,198 200,199" fill="none" stroke="#ffe066"
+                stroke-width="1" opacity="0.5" />
+              <path d="M116,207 C126,212 144,215 160,216 C176,215 194,212 204,207" fill="none" stroke="#b87800"
+                stroke-width="1" opacity="0.45" />
+              <path d="M120,202 C134,206 150,208 160,209 C170,208 186,206 200,202" fill="none" stroke="#e6a800"
+                stroke-width="0.8" opacity="0.35" />
+              <rect x="141" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+              <rect x="146" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.35" />
+              <rect x="151" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.45" />
+              <rect x="156" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+              <rect x="161" y="204" width="5" height="5" rx="0.5" fill="#fff" opacity="0.4" />
+              <rect x="166" y="204" width="5" height="5" rx="0.5" fill="#1a2a0a" opacity="0.3" />
+              <ellipse cx="116" cy="204" rx="7" ry="6" fill="#ffb800" opacity="0.75" />
+              <ellipse cx="116" cy="204" rx="4" ry="3.5" fill="#ffd700" opacity="0.5" />
+              <path d="M114,208 Q110,220 108,232 Q106,240 106,248" fill="none" stroke="#ffd700" stroke-width="9"
+                stroke-linecap="round" opacity="0.82" />
+              <path d="M112,210 Q107,224 105,236 Q103,246 104,254" fill="none" stroke="#e6a800" stroke-width="6"
+                stroke-linecap="round" opacity="0.5" />
+              <path d="M106,248 Q106,252 106,255" stroke="#ffd700" stroke-width="6" stroke-linecap="round" fill="none"
+                opacity="0.6" />
+              <path d="M104,254 Q104,258 104,260" stroke="#e6a800" stroke-width="3.5" stroke-linecap="round" fill="none"
+                opacity="0.35" />
+              <rect x="104" y="228" width="4" height="4" rx="0.5" fill="#fff" opacity="0.35" />
+              <rect x="104" y="232" width="4" height="4" rx="0.5" fill="#1a2a0a" opacity="0.25" />
+              <rect x="102" y="242" width="4" height="4" rx="0.5" fill="#fff" opacity="0.3" />
+            </g>
+            <!-- ARMS -->
+            <path d="M92,260 Q68,274 62,296" fill="none" stroke="url(#cc_bg4)" stroke-width="16"
+              stroke-linecap="round" />
+            <ellipse cx="60" cy="300" rx="10" ry="8" fill="#3a9a58" />
+            <ellipse cx="52" cy="296" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-20,52,296)" />
+            <ellipse cx="58" cy="292" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-5,58,292)" />
+            <ellipse cx="66" cy="294" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,66,294)" />
+            <circle cx="48" cy="294" r="1.5" fill="#c8b060" />
+            <circle cx="54" cy="290" r="1.5" fill="#c8b060" />
+            <circle cx="62" cy="292" r="1.5" fill="#c8b060" />
+            <g>
+              <path d="M228,260 Q254,240 258,210" fill="none" stroke="url(#cc_bg4)" stroke-width="16"
+                stroke-linecap="round" />
+              <ellipse cx="258" cy="206" rx="10" ry="8" fill="#3a9a58" />
+              <ellipse cx="250" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(-10,250,200)" />
+              <ellipse cx="258" cy="197" rx="5" ry="3.5" fill="#4aaa6a" />
+              <ellipse cx="266" cy="200" rx="5" ry="3.5" fill="#4aaa6a" transform="rotate(10,266,200)" />
+              <circle cx="246" cy="198" r="1.5" fill="#c8b060" />
+              <circle cx="254" cy="195" r="1.5" fill="#c8b060" />
+              <circle cx="262" cy="198" r="1.5" fill="#c8b060" />
+            </g>
+            <!-- HEAD -->
+            <ellipse cx="160" cy="168" rx="56" ry="42" fill="url(#cc_bg4)" filter="url(#cc_sh4)" />
+            <ellipse cx="160" cy="165" rx="52" ry="38" fill="url(#cc_sc4)" />
+            <ellipse cx="128" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+            <ellipse cx="192" cy="148" rx="14" ry="8" fill="#3a9058" opacity="0.5" />
+            <!-- Snout -->
+            <path
+              d="M110,175 Q115,165 160,162 Q205,165 210,175 Q205,182 194,182 Q190,182 184,186 L176,182 L168,187 L160,181 L152,187 L144,182 L136,186 Q130,182 126,182 Q115,182 110,175 Z"
+              fill="url(#cc_lt4)" />
+            <circle cx="135" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+            <circle cx="150" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+            <circle cx="170" cy="167" r="2" fill="#4aaa6a" opacity="0.25" />
+            <circle cx="185" cy="170" r="2.5" fill="#4aaa6a" opacity="0.3" />
+            <!-- Chin -->
+            <path
+              d="M126,180 Q128,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q192,182 194,180 Q186,196 160,198 Q134,196 126,180 Z"
+              fill="#3a9058" />
+            <!-- W smile (proud — asymmetric wider, left side wider than right) -->
+            <path d="M120,178 Q126,182 136,186 L144,182 L152,187 L160,181 L168,187 L176,182 L184,186 Q194,182 200,180"
+              fill="none" stroke="#1a4a2a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="140" cy="172" r="3.5" fill="#1e5535" />
+            <circle cx="180" cy="172" r="3.5" fill="#1e5535" />
+            <!-- CHEEK BLUSHES -->
+            <ellipse cx="112" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+            <ellipse cx="208" cy="176" rx="14" ry="8" fill="#ff8a8a" opacity="0.12" />
+            <!-- EYES (proud — standard size with half-lidded eyelids) -->
+            <g>
+              <ellipse cx="128" cy="142" rx="18" ry="16" fill="url(#cc_bg4)" />
+              <ellipse cx="128" cy="140" rx="14" ry="13" fill="#fff" />
+              <g>
+                <ellipse cx="131" cy="142" rx="8" ry="9" fill="#5a7a20" />
+                <ellipse cx="131" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+                <circle cx="127" cy="137" r="3" fill="#fff" opacity="0.8" />
+              </g>
+              <!-- Half-lidded eyelid (left eye) -->
+              <path d="M114,136 A14,13 0 0,1 142,136 L142,132 A14,13 0 0,0 114,132 Z" fill="#3a8a3a" opacity="0.5" />
+              <ellipse cx="192" cy="142" rx="18" ry="16" fill="url(#cc_bg4)" />
+              <ellipse cx="192" cy="140" rx="14" ry="13" fill="#fff" />
+              <g>
+                <ellipse cx="189" cy="142" rx="8" ry="9" fill="#5a7a20" />
+                <ellipse cx="189" cy="142" rx="3.5" ry="9" fill="#1a2a0a" />
+                <circle cx="185" cy="137" r="3" fill="#fff" opacity="0.8" />
+              </g>
+              <!-- Half-lidded eyelid (right eye) -->
+              <path d="M178,136 A14,13 0 0,1 206,136 L206,132 A14,13 0 0,0 178,132 Z" fill="#3a8a3a" opacity="0.5" />
+            </g>
+            <!-- CROWN -->
+            <g filter="url(#cc_crownGlow4)">
+              <path d="M136,130 L184,130 L182,126 L138,126 Z" fill="#ffd700" opacity="0.6" />
+              <path d="M138,126 L143,112 L150,126 Z" fill="#ffd700" opacity="0.8" />
+              <path d="M153,126 L160,106 L167,126 Z" fill="#ffd700" opacity="0.85" />
+              <path d="M170,126 L177,112 L182,126 Z" fill="#ffd700" opacity="0.8" />
+              <circle cx="143" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+              <circle cx="160" cy="107" r="1.8" fill="#fff" opacity="0.7" />
+              <circle cx="177" cy="113" r="1.5" fill="#fff" opacity="0.6" />
+              <path d="M140,126 L143,114 L146,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+              <path d="M157,126 L160,108 L163,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+              <path d="M173,126 L177,114 L180,126" fill="none" stroke="#cc9900" stroke-width="0.6" opacity="0.5" />
+            </g>
+            <!-- MONOCLE -->
+            <circle cx="192" cy="140" r="17" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.65" />
+            <path d="M209,140 Q216,155 214,172" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4" />
+            <circle cx="214" cy="174" r="2.5" fill="rgba(255,215,0,0.3)" />
+          </g>
+          <!-- Warm sparks around machine -->
+          <circle cx="160" cy="90" r="1.5" fill="#ffd700" opacity="0.5">
+            <animate attributeName="cy" values="90;75;60" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.8;0" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="100" cy="88" r="1" fill="#ffa040" opacity="0.4">
+            <animate attributeName="cy" values="88;70;52" dur="2.5s" repeatCount="indefinite" begin="0.5s" />
+            <animate attributeName="opacity" values="0.4;0.7;0" dur="2.5s" repeatCount="indefinite" begin="0.5s" />
+          </circle>
+        </svg>
+      </div>
+      <div class="speaker">Cryptic Croc</div>
+      <p class="story-text">"See that beam? It's pointing toward the coast. Your next adventure awaits!" The Anagram
+        Engine projects a golden beam southward, particles of light streaming through the workshop opening toward the
+        distant coastline.</p>
+    </div>
+
+  </div><!-- /solvedScenes -->
+
+  <script>
+    function checkAnswer() {
+      const input = document.getElementById('puzzleInput');
+      const feedback = document.getElementById('puzzleFeedback');
+      const answer = input.value.trim().toUpperCase();
+      if (answer === 'BEACH') {
+        feedback.style.color = 'rgba(100,255,150,0.8)';
+        feedback.textContent = 'Correct! The wheels lock into place...';
+        document.getElementById('solveBtn').disabled = true;
+        input.disabled = true;
+        input.style.borderColor = 'rgba(100,255,150,0.5)';
+        setTimeout(() => {
+          const solved = document.getElementById('solvedScenes');
+          solved.style.display = '';
+          solved.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1200);
+      } else if (answer.length === 5) {
+        feedback.style.color = 'rgba(255,100,100,0.7)';
+        feedback.textContent = 'Not quite. Try rearranging the letters!';
+        input.value = '';
+        input.focus();
+      } else {
+        feedback.style.color = 'rgba(255,200,100,0.6)';
+        feedback.textContent = 'The answer is 5 letters...';
+      }
+    }
+    document.getElementById('puzzleInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+  </script>
+
+</body>
+
+</html>

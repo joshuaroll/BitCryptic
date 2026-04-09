@@ -1,0 +1,10 @@
+1. Town Square should be the center of the world.
+2. Cryptic Cave should be to the right of the Town Square.
+3. Enigma Forest should be to the left of the Town Square.
+4. The Adventure Tower should be above the Town Square.
+5. The Library of Riddles should be to the right of the Adventure Tower.
+6. The Puzzle Workshop should be to the right of the Library of Riddles.
+7. The Decoder Docks should be to the left of the Town Square.
+8. The Beach should be to the right of the Decoder Docks.
+9. The Mountain trail to Mystic Peak should be above the Adventure Tower.
+10. The Mystic Peak should be above the Mountain trail to Mystic Peak.

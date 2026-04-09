@@ -1,0 +1,228 @@
+// Cafe story scenes — "Cryptic Cafe"
+// Keys: cafe_0 through cafe_4
+// DRAFT — for review only
+
+// Scene 0: Push open the door — cafe interior, warm lamplight, mismatched tables, framed puzzles
+STORY_SCENES['cafe_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="cafeBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3a2210"/><stop offset="60%" stop-color="#2a1a0c"/><stop offset="100%" stop-color="#1a1008"/>
+  </linearGradient>
+  <radialGradient id="lampGlow" cx="50%" cy="20%" r="50%">
+    <stop offset="0%" stop-color="#ffa040" stop-opacity="0.25"/><stop offset="100%" stop-color="#ffa040" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="lampGlow2" cx="25%" cy="15%" r="30%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.18"/><stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="warmGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#cafeBg)"/>
+<!-- Warm light overlay -->
+<circle cx="250" cy="40" r="200" fill="url(#lampGlow)"/>
+<circle cx="130" cy="30" r="140" fill="url(#lampGlow2)"/>
+<!-- Back wall — cream -->
+<rect x="0" y="0" width="500" height="170" fill="#e8d8c0" opacity="0.12"/>
+<!-- Wainscoting -->
+<rect x="0" y="130" width="500" height="40" fill="#5a3a1a" opacity="0.35"/>
+<line x1="0" y1="130" x2="500" y2="130" stroke="#6b4a20" stroke-width="2" opacity="0.3"/>
+<line x1="0" y1="168" x2="500" y2="168" stroke="#6b4a20" stroke-width="1" opacity="0.2"/>
+<!-- Framed puzzles on wall -->
+<rect x="60" y="50" width="40" height="50" rx="2" fill="#4a3018" opacity="0.7"/>
+<rect x="64" y="54" width="32" height="42" rx="1" fill="#f5e8d0" opacity="0.2"/>
+<text x="80" y="72" text-anchor="middle" fill="#8b6840" font-family="serif" font-size="5" opacity="0.6">A ? B</text>
+<text x="80" y="82" text-anchor="middle" fill="#8b6840" font-family="serif" font-size="5" opacity="0.6">C ? D</text>
+<rect x="200" y="40" width="44" height="55" rx="2" fill="#3a2810" opacity="0.7"/>
+<rect x="204" y="44" width="36" height="47" rx="1" fill="#f5e8d0" opacity="0.2"/>
+<text x="222" y="64" text-anchor="middle" fill="#8b6840" font-family="serif" font-size="5" opacity="0.6">ACROSS</text>
+<text x="222" y="74" text-anchor="middle" fill="#8b6840" font-family="serif" font-size="4" opacity="0.5">1. ????</text>
+<rect x="380" y="48" width="38" height="48" rx="2" fill="#4a3018" opacity="0.7"/>
+<rect x="384" y="52" width="30" height="40" rx="1" fill="#f5e8d0" opacity="0.2"/>
+<text x="399" y="70" text-anchor="middle" fill="#8b6840" font-family="serif" font-size="5" opacity="0.6">15 = ?</text>
+<!-- Floor -->
+<rect x="0" y="170" width="500" height="90" fill="#3a2210" opacity="0.6"/>
+<line x1="0" y1="170" x2="500" y2="170" stroke="#2a1808" stroke-width="1" opacity="0.4"/>
+<!-- Floorboard lines -->
+<line x1="0" y1="200" x2="500" y2="200" stroke="#2a1808" stroke-width="0.5" opacity="0.15"/>
+<line x1="0" y1="230" x2="500" y2="230" stroke="#2a1808" stroke-width="0.5" opacity="0.1"/>
+<!-- Table left (mismatched - round) -->
+<ellipse cx="120" cy="195" rx="45" ry="8" fill="#8b4513" opacity="0.7"/>
+<rect x="116" y="195" width="8" height="50" fill="#6b3a10" opacity="0.5"/>
+<!-- Cup on left table -->
+<ellipse cx="135" cy="190" rx="8" ry="3" fill="#e8d8c0" opacity="0.5"/>
+<rect x="128" y="183" width="14" height="8" rx="2" fill="#e8d8c0" opacity="0.45"/>
+<!-- Steam from left cup -->
+<path d="M133,182 Q131,174 134,168" fill="none" stroke="#fff" stroke-width="1" opacity="0.15"><animate attributeName="opacity" values="0.08;0.2;0.08" dur="3s" repeatCount="indefinite"/><animate attributeName="d" values="M133,182 Q131,174 134,168;M133,182 Q136,174 133,168;M133,182 Q131,174 134,168" dur="4s" repeatCount="indefinite"/></path>
+<path d="M138,181 Q140,172 137,165" fill="none" stroke="#fff" stroke-width="1" opacity="0.12"><animate attributeName="opacity" values="0.06;0.18;0.06" dur="3.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="d" values="M138,181 Q140,172 137,165;M138,181 Q136,172 139,165;M138,181 Q140,172 137,165" dur="4.5s" repeatCount="indefinite" begin="0.5s"/></path>
+<!-- Table right (mismatched - square) -->
+<rect x="310" y="190" width="80" height="8" rx="1" fill="#a0522d" opacity="0.7"/>
+<rect x="316" y="198" width="6" height="45" fill="#6b3a10" opacity="0.4"/>
+<rect x="378" y="198" width="6" height="45" fill="#6b3a10" opacity="0.4"/>
+<!-- Chair (simple) -->
+<rect x="295" y="200" width="20" height="3" rx="1" fill="#5a3a18" opacity="0.4"/>
+<rect x="297" y="203" width="3" height="25" fill="#5a3a18" opacity="0.3"/>
+<rect x="310" y="203" width="3" height="25" fill="#5a3a18" opacity="0.3"/>
+<rect x="295" y="182" width="20" height="3" rx="1" fill="#5a3a18" opacity="0.35"/>
+<rect x="296" y="182" width="3" height="21" fill="#5a3a18" opacity="0.3"/>
+<rect x="312" y="182" width="3" height="21" fill="#5a3a18" opacity="0.3"/>
+<!-- Hanging lamp (center) -->
+<line x1="250" y1="0" x2="250" y2="20" stroke="#4a3a18" stroke-width="1.5" opacity="0.5"/>
+<polygon points="240,20 260,20 265,30 235,30" fill="#8b6840" opacity="0.6"/>
+<ellipse cx="250" cy="32" rx="12" ry="4" fill="#ffeaa7" opacity="0.5"><animate attributeName="opacity" values="0.4;0.6;0.4" dur="2s" repeatCount="indefinite"/></ellipse>
+<circle cx="250" cy="28" r="3" fill="#ffa040" opacity="0.7" filter="url(#warmGlow)"><animate attributeName="opacity" values="0.6;0.85;0.6" dur="2s" repeatCount="indefinite"/></circle>
+<!-- Hanging lamp (left) -->
+<line x1="130" y1="0" x2="130" y2="15" stroke="#4a3a18" stroke-width="1" opacity="0.4"/>
+<polygon points="122,15 138,15 142,24 118,24" fill="#8b6840" opacity="0.5"/>
+<circle cx="130" cy="20" r="2.5" fill="#ffa040" opacity="0.6" filter="url(#warmGlow)"><animate attributeName="opacity" values="0.5;0.75;0.5" dur="2.5s" repeatCount="indefinite" begin="0.3s"/></circle>
+<!-- Door (ajar, left side) -->
+<rect x="0" y="60" width="35" height="110" fill="#4a2a10" opacity="0.5"/>
+<rect x="3" y="65" width="28" height="100" fill="#3a2010" opacity="0.4"/>
+<circle cx="28" cy="115" r="2" fill="#b5933a" opacity="0.5"/>
+<!-- Warm light spill from door -->
+<polygon points="35,60 35,170 80,170 60,60" fill="#ffa040" opacity="0.04"/>
+</svg>`;
+
+// Scene 1: Barista with ink-stained fingers — same cafe interior, reuse scene 0
+STORY_SCENES['cafe_1'] = STORY_SCENES['cafe_0'];
+
+// Golden text on cup
+// Scene 2: Close-up of cup with cryptic clue — golden text, steam rising
+STORY_SCENES['cafe_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="cupBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2a1a0c"/><stop offset="100%" stop-color="#1a1008"/>
+  </linearGradient>
+  <radialGradient id="cupLight" cx="50%" cy="40%" r="45%">
+    <stop offset="0%" stop-color="#ffa040" stop-opacity="0.2"/><stop offset="100%" stop-color="#ffa040" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="textGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.15"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="goldGlow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#cupBg)"/>
+<circle cx="250" cy="130" r="180" fill="url(#cupLight)"/>
+<!-- Table surface close-up -->
+<rect x="0" y="175" width="500" height="85" fill="#8b4513" opacity="0.6"/>
+<rect x="0" y="175" width="500" height="3" fill="#a0522d" opacity="0.3"/>
+<!-- Wood grain -->
+<line x1="0" y1="195" x2="500" y2="195" stroke="#6b3a10" stroke-width="0.5" opacity="0.15"/>
+<line x1="0" y1="215" x2="500" y2="215" stroke="#6b3a10" stroke-width="0.5" opacity="0.1"/>
+<!-- Scaling group for the big, classic mug -->
+<!-- LOOK FOR: scale(2.3) <--- Adjust this number to control the mug size -->
+<g transform="translate(250, 130) scale(2.3) translate(-250, -130)">
+  <!-- Saucer -->
+  <ellipse cx="250" cy="188" rx="85" ry="12" fill="#d4c4a0" opacity="1"/>
+  <ellipse cx="250" cy="186" rx="80" ry="10" fill="#e8d8c0" opacity="1"/>
+  <!-- Mug Base (Taller Foot) -->
+  <path d="M225,170 L215,185 Q250,192 285,185 L275,170 Z" fill="#d4c4a0" opacity="1"/>
+  <!-- Mug body (U-shaped, Opaque) -->
+  <path d="M175,100 Q180,175 250,175 Q320,175 325,100 Q250,88 175,100 Z" fill="#e8d8c0" opacity="1"/>
+  <!-- Mug inner shadow for depth -->
+  <path d="M185,105 Q190,170 250,170 Q310,170 315,105 Q250,95 185,105 Z" fill="#000" opacity="0.08"/>
+  <!-- Mug rim -->
+  <ellipse cx="250" cy="100" rx="75" ry="12" fill="#f0e4d0" opacity="1"/>
+  <ellipse cx="250" cy="100" rx="68" ry="9" fill="#6b4020" opacity="0.4"/>
+  <!-- Coffee surface -->
+  <ellipse cx="250" cy="102" rx="66" ry="8" fill="#3a1a08" opacity="1"/>
+  <!-- Mug handle (Deep seamless connection) -->
+  <path d="M318,115 Q355,115 358,140 Q358,165 285,160" fill="none" stroke="#e8d8c0" stroke-width="8" opacity="1"/>
+  <path d="M318,118 Q351,120 354,140 Q354,162 285,158" fill="none" stroke="#d4c4a0" stroke-width="3" opacity="0.6"/>
+  <!-- Golden text on cup (Sharp and clear) -->
+  <g>
+    <text x="250" y="138" text-anchor="middle" fill="#ffd700" stroke="#000" stroke-width="0.15" font-family="'Fredoka One',cursive" font-size="6.5" opacity="1" letter-spacing="0.2">Something instantly perky,</text>
+    <text x="250" y="148" text-anchor="middle" fill="#ffd700" stroke="#000" stroke-width="0.15" font-family="'Fredoka One',cursive" font-size="6.5" opacity="1" letter-spacing="0.2">starts a mouthful (3)</text>
+  </g>
+  <!-- Steam wisps (Originating from coffee surface at y=102) -->
+  <path d="M235,98 Q230,80 236,65" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.12"><animate attributeName="opacity" values="0.06;0.18;0.06" dur="3s" repeatCount="indefinite"/><animate attributeName="d" values="M235,98 Q230,80 236,65;M235,98 Q240,80 234,65;M235,98 Q230,80 236,65" dur="5s" repeatCount="indefinite"/></path>
+  <path d="M250,96 Q248,75 252,57" fill="none" stroke="#fff" stroke-width="1.8" opacity="0.14"><animate attributeName="opacity" values="0.08;0.2;0.08" dur="3.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="d" values="M250,96 Q248,75 252,57;M250,96 Q254,75 248,57;M250,96 Q248,75 252,57" dur="4.5s" repeatCount="indefinite" begin="0.5s"/></path>
+  <path d="M265,97 Q268,78 263,61" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="4s" repeatCount="indefinite" begin="1s"/><animate attributeName="d" values="M265,97 Q268,78 263,61;M265,97 Q262,78 267,61;M265,97 Q268,78 263,61" dur="5.5s" repeatCount="indefinite" begin="1s"/></path>
+</g>
+<path d="M243,98 Q238,85 242,72" fill="none" stroke="#fff" stroke-width="1" opacity="0.08"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="3.2s" repeatCount="indefinite" begin="1.5s"/></path>
+<path d="M258,97 Q262,83 258,69" fill="none" stroke="#fff" stroke-width="1" opacity="0.09"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="3.8s" repeatCount="indefinite" begin="0.8s"/></path>
+<!-- Barista hand hint (ink-stained fingers at edge) -->
+<path d="M410,175 Q415,165 420,168 Q425,165 430,170 Q435,167 440,172 L442,180 L408,180 Z" fill="#c4956a" opacity="0.25"/>
+<circle cx="420" cy="170" r="1" fill="#2a2a4a" opacity="0.15"/>
+<circle cx="432" cy="170" r="1" fill="#2a2a4a" opacity="0.12"/>
+<!-- Ambient warm particles -->
+<circle cx="180" cy="70" r="1.5" fill="#ffa040" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite"/></circle>
+<circle cx="320" cy="50" r="1" fill="#ffeaa7" opacity="0.15"><animate attributeName="opacity" values="0.08;0.25;0.08" dur="3.5s" repeatCount="indefinite" begin="1s"/></circle>
+<circle cx="150" cy="100" r="1" fill="#ffeaa7" opacity="0.12"><animate attributeName="opacity" values="0.06;0.2;0.06" dur="5s" repeatCount="indefinite" begin="2s"/></circle>
+</svg>`;
+
+// Scene 3: Wall slides open revealing cobblestone path
+STORY_SCENES['cafe_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="wallBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2a1a0c"/><stop offset="100%" stop-color="#1a1008"/>
+  </linearGradient>
+  <radialGradient id="passageGlow" cx="55%" cy="50%" r="35%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.2"/><stop offset="60%" stop-color="#ffa040" stop-opacity="0.1"/><stop offset="100%" stop-color="#ffa040" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="cobbleLight" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#8a7a60" stop-opacity="0.6"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0.2"/>
+  </linearGradient>
+  <filter id="passageBlur"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#wallBg)"/>
+<!-- Cafe wall (cream with wainscoting) -->
+<rect x="0" y="0" width="500" height="170" fill="#e8d8c0" opacity="0.12"/>
+<rect x="0" y="130" width="200" height="40" fill="#5a3a1a" opacity="0.35"/>
+<rect x="370" y="130" width="130" height="40" fill="#5a3a1a" opacity="0.35"/>
+<!-- Floor -->
+<rect x="0" y="170" width="500" height="90" fill="#3a2210" opacity="0.6"/>
+<!-- Opening in wall — passage -->
+<rect x="200" y="30" width="170" height="200" fill="#1a1a2a" opacity="0.7"/>
+<!-- Wall edges (thick dark wood frame of the sliding panel) -->
+<rect x="195" y="25" width="8" height="210" fill="#3a2210" opacity="0.7"/>
+<rect x="367" y="25" width="8" height="210" fill="#3a2210" opacity="0.7"/>
+<rect x="195" y="25" width="180" height="8" fill="#3a2210" opacity="0.6"/>
+<!-- Sliding wall panel (partially open, to the left) -->
+<rect x="140" y="30" width="62" height="200" fill="#5a3a1a" opacity="0.5"/>
+<rect x="145" y="35" width="52" height="190" fill="#4a2a10" opacity="0.3"/>
+<line x1="160" y1="35" x2="160" y2="225" stroke="#3a2008" stroke-width="0.5" opacity="0.3"/>
+<line x1="175" y1="35" x2="175" y2="225" stroke="#3a2008" stroke-width="0.5" opacity="0.3"/>
+<!-- Golden light from passage -->
+<circle cx="285" cy="130" r="130" fill="url(#passageGlow)"/>
+<!-- Cobblestone path visible through opening -->
+<rect x="208" y="180" width="155" height="50" fill="#6a5a40" opacity="0.3"/>
+<!-- Cobblestones -->
+<ellipse cx="225" cy="195" rx="10" ry="6" fill="#8a7a60" opacity="0.4" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="248" cy="192" rx="11" ry="6" fill="#7a6a50" opacity="0.35" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="272" cy="194" rx="9" ry="5.5" fill="#8a7a60" opacity="0.4" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="296" cy="190" rx="10" ry="6" fill="#7a6a50" opacity="0.35" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="320" cy="193" rx="11" ry="5.5" fill="#8a7a60" opacity="0.3" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="236" cy="208" rx="11" ry="5.5" fill="#7a6a50" opacity="0.35" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="260" cy="206" rx="10" ry="6" fill="#8a7a60" opacity="0.4" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="285" cy="208" rx="11" ry="5.5" fill="#7a6a50" opacity="0.35" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="310" cy="205" rx="10" ry="6" fill="#8a7a60" opacity="0.3" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="248" cy="222" rx="10" ry="5.5" fill="#8a7a60" opacity="0.3" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="272" cy="220" rx="11" ry="6" fill="#7a6a50" opacity="0.3" stroke="#5a4a30" stroke-width="0.5"/>
+<ellipse cx="298" cy="222" rx="10" ry="5.5" fill="#8a7a60" opacity="0.25" stroke="#5a4a30" stroke-width="0.5"/>
+<!-- Distant golden glow (town square beyond) -->
+<ellipse cx="330" cy="120" rx="40" ry="60" fill="#ffd700" opacity="0.06" filter="url(#passageBlur)"/>
+<ellipse cx="340" cy="140" rx="25" ry="40" fill="#ffa040" opacity="0.08"/>
+<!-- Distant arch hint -->
+<path d="M300,60 Q320,35 345,60" fill="none" stroke="#b5933a" stroke-width="1.5" opacity="0.15"/>
+<!-- Golden light rays from passage -->
+<polygon points="285,80 370,30 375,50" fill="#ffd700" opacity="0.03"/>
+<polygon points="285,100 375,70 375,90" fill="#ffd700" opacity="0.025"/>
+<polygon points="285,120 375,110 375,130" fill="#ffa040" opacity="0.02"/>
+<!-- Remaining cafe elements — lamp on left -->
+<line x1="80" y1="0" x2="80" y2="15" stroke="#4a3a18" stroke-width="1" opacity="0.4"/>
+<polygon points="72,15 88,15 92,24 68,24" fill="#8b6840" opacity="0.5"/>
+<circle cx="80" cy="20" r="2.5" fill="#ffa040" opacity="0.5" filter="url(#passageBlur)"><animate attributeName="opacity" values="0.4;0.65;0.4" dur="2.5s" repeatCount="indefinite"/></circle>
+<!-- Table in foreground left -->
+<ellipse cx="80" cy="200" rx="40" ry="7" fill="#8b4513" opacity="0.5"/>
+<rect x="76" y="200" width="8" height="45" fill="#6b3a10" opacity="0.4"/>
+<!-- Puzzle frame still on wall (left side) -->
+<rect x="40" y="55" width="35" height="45" rx="2" fill="#4a3018" opacity="0.5"/>
+<rect x="43" y="58" width="29" height="39" rx="1" fill="#f5e8d0" opacity="0.15"/>
+<!-- Warm dust particles in light beam -->
+<circle cx="260" cy="80" r="1" fill="#ffeaa7" opacity="0.3"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite"/><animate attributeName="cy" values="80;70;60" dur="6s" repeatCount="indefinite"/></circle>
+<circle cx="290" cy="100" r="1.5" fill="#ffd700" opacity="0.2"><animate attributeName="opacity" values="0.1;0.35;0.1" dur="4s" repeatCount="indefinite" begin="1s"/><animate attributeName="cy" values="100;85;70" dur="7s" repeatCount="indefinite" begin="1s"/></circle>
+<circle cx="240" cy="110" r="1" fill="#ffeaa7" opacity="0.15"><animate attributeName="opacity" values="0.08;0.25;0.08" dur="3.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="cy" values="110;95;80" dur="5.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle cx="310" cy="70" r="1" fill="#ffa040" opacity="0.18"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4.5s" repeatCount="indefinite" begin="2s"/></circle>
+</svg>`;
+
+// Scene 4 (complete): Glimpse of bustling square through passage — reuse scene 3
+STORY_SCENES['cafe_4'] = STORY_SCENES['cafe_3'];

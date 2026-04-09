@@ -1,0 +1,380 @@
+// Library story scenes — "Library of Riddles"
+// Keys: library_0 through library_5
+// DRAFT — for review only
+
+// Scene 0: Towering bookshelves, brass ladder, floating lanterns
+STORY_SCENES['library_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="libBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1a1030"/><stop offset="50%" stop-color="#3a3060"/><stop offset="100%" stop-color="#4a4070"/>
+  </linearGradient>
+  <radialGradient id="lanternGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.7"/><stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="candleFlicker"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <linearGradient id="shelfWood" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#5a3a20"/><stop offset="100%" stop-color="#3a2210"/>
+  </linearGradient>
+</defs>
+<rect width="500" height="260" fill="url(#libBg)"/>
+<!-- Floor -->
+<rect x="0" y="230" width="500" height="30" fill="#2a1a30" opacity="0.6"/>
+<rect x="0" y="228" width="500" height="4" fill="#4a3a50" opacity="0.4"/>
+<!-- Left bookshelf — towering into darkness -->
+<rect x="10" y="0" width="80" height="230" fill="url(#shelfWood)" opacity="0.9"/>
+<rect x="12" y="8" width="76" height="2" fill="#6a4a28"/>
+<rect x="12" y="50" width="76" height="2" fill="#6a4a28"/>
+<rect x="12" y="92" width="76" height="2" fill="#6a4a28"/>
+<rect x="12" y="134" width="76" height="2" fill="#6a4a28"/>
+<rect x="12" y="176" width="76" height="2" fill="#6a4a28"/>
+<rect x="12" y="218" width="76" height="2" fill="#6a4a28"/>
+<!-- Books on left shelf -->
+<rect x="16" y="12" width="7" height="36" rx="1" fill="#8a3040" opacity="0.8"/>
+<rect x="25" y="16" width="6" height="32" rx="1" fill="#4a6080" opacity="0.8"/>
+<rect x="33" y="10" width="8" height="38" rx="1" fill="#3a7050" opacity="0.7"/>
+<rect x="43" y="14" width="5" height="34" rx="1" fill="#9a7030" opacity="0.8"/>
+<rect x="50" y="11" width="9" height="37" rx="1" fill="#5a4080" opacity="0.7"/>
+<rect x="61" y="15" width="6" height="33" rx="1" fill="#8a5040" opacity="0.75"/>
+<rect x="69" y="12" width="7" height="36" rx="1" fill="#3a5a8a" opacity="0.8"/>
+<rect x="78" y="17" width="6" height="31" rx="1" fill="#7a3060" opacity="0.7"/>
+<rect x="16" y="54" width="8" height="36" rx="1" fill="#5a7040" opacity="0.75"/>
+<rect x="26" y="56" width="6" height="34" rx="1" fill="#9a4050" opacity="0.8"/>
+<rect x="34" y="52" width="7" height="38" rx="1" fill="#4a5090" opacity="0.7"/>
+<rect x="43" y="55" width="9" height="35" rx="1" fill="#7a6030" opacity="0.8"/>
+<rect x="54" y="53" width="5" height="37" rx="1" fill="#3a8060" opacity="0.7"/>
+<rect x="61" y="57" width="7" height="33" rx="1" fill="#8a4070" opacity="0.75"/>
+<rect x="70" y="54" width="8" height="36" rx="1" fill="#5a3a80" opacity="0.7"/>
+<rect x="16" y="96" width="6" height="36" rx="1" fill="#7a5050" opacity="0.7"/>
+<rect x="24" y="98" width="8" height="34" rx="1" fill="#3a6070" opacity="0.8"/>
+<rect x="34" y="95" width="5" height="37" rx="1" fill="#9a6040" opacity="0.7"/>
+<rect x="41" y="97" width="7" height="35" rx="1" fill="#5a4060" opacity="0.75"/>
+<rect x="50" y="96" width="9" height="36" rx="1" fill="#4a7040" opacity="0.7"/>
+<rect x="61" y="99" width="6" height="33" rx="1" fill="#8a3080" opacity="0.7"/>
+<rect x="69" y="96" width="8" height="36" rx="1" fill="#6a5050" opacity="0.75"/>
+<rect x="16" y="138" width="7" height="36" rx="1" fill="#4a8050" opacity="0.7"/>
+<rect x="25" y="140" width="6" height="34" rx="1" fill="#8a4060" opacity="0.75"/>
+<rect x="33" y="137" width="8" height="37" rx="1" fill="#5a5090" opacity="0.7"/>
+<rect x="43" y="139" width="6" height="35" rx="1" fill="#9a5040" opacity="0.8"/>
+<rect x="51" y="136" width="7" height="38" rx="1" fill="#3a6080" opacity="0.7"/>
+<rect x="16" y="180" width="8" height="36" rx="1" fill="#7a4070" opacity="0.7"/>
+<rect x="26" y="182" width="6" height="34" rx="1" fill="#5a7050" opacity="0.75"/>
+<rect x="34" y="179" width="7" height="37" rx="1" fill="#8a5060" opacity="0.7"/>
+<rect x="43" y="181" width="9" height="35" rx="1" fill="#4a4080" opacity="0.75"/>
+<!-- Right bookshelf — towering into darkness -->
+<rect x="410" y="0" width="80" height="230" fill="url(#shelfWood)" opacity="0.9"/>
+<rect x="412" y="8" width="76" height="2" fill="#6a4a28"/>
+<rect x="412" y="50" width="76" height="2" fill="#6a4a28"/>
+<rect x="412" y="92" width="76" height="2" fill="#6a4a28"/>
+<rect x="412" y="134" width="76" height="2" fill="#6a4a28"/>
+<rect x="412" y="176" width="76" height="2" fill="#6a4a28"/>
+<rect x="412" y="218" width="76" height="2" fill="#6a4a28"/>
+<!-- Books on right shelf -->
+<rect x="416" y="12" width="7" height="36" rx="1" fill="#5a4080" opacity="0.8"/>
+<rect x="425" y="15" width="6" height="33" rx="1" fill="#8a5040" opacity="0.75"/>
+<rect x="433" y="10" width="8" height="38" rx="1" fill="#3a7060" opacity="0.7"/>
+<rect x="443" y="14" width="5" height="34" rx="1" fill="#9a3050" opacity="0.8"/>
+<rect x="450" y="11" width="9" height="37" rx="1" fill="#4a6070" opacity="0.7"/>
+<rect x="461" y="16" width="6" height="32" rx="1" fill="#7a4060" opacity="0.75"/>
+<rect x="469" y="13" width="7" height="35" rx="1" fill="#5a8040" opacity="0.7"/>
+<rect x="478" y="15" width="6" height="33" rx="1" fill="#8a3070" opacity="0.8"/>
+<rect x="416" y="54" width="8" height="36" rx="1" fill="#6a5050" opacity="0.7"/>
+<rect x="426" y="56" width="6" height="34" rx="1" fill="#4a7080" opacity="0.8"/>
+<rect x="434" y="52" width="7" height="38" rx="1" fill="#9a4040" opacity="0.7"/>
+<rect x="443" y="55" width="9" height="35" rx="1" fill="#3a6060" opacity="0.75"/>
+<rect x="454" y="53" width="5" height="37" rx="1" fill="#8a6030" opacity="0.7"/>
+<rect x="461" y="57" width="7" height="33" rx="1" fill="#5a3090" opacity="0.75"/>
+<rect x="470" y="54" width="8" height="36" rx="1" fill="#7a5040" opacity="0.7"/>
+<rect x="416" y="96" width="6" height="36" rx="1" fill="#4a5070" opacity="0.75"/>
+<rect x="424" y="98" width="8" height="34" rx="1" fill="#8a4050" opacity="0.7"/>
+<rect x="434" y="95" width="5" height="37" rx="1" fill="#6a7040" opacity="0.7"/>
+<rect x="441" y="97" width="7" height="35" rx="1" fill="#3a4080" opacity="0.8"/>
+<rect x="450" y="96" width="9" height="36" rx="1" fill="#9a5060" opacity="0.7"/>
+<rect x="416" y="138" width="7" height="36" rx="1" fill="#5a6050" opacity="0.7"/>
+<rect x="425" y="140" width="6" height="34" rx="1" fill="#8a3060" opacity="0.75"/>
+<rect x="433" y="137" width="8" height="37" rx="1" fill="#4a7060" opacity="0.7"/>
+<rect x="416" y="180" width="8" height="36" rx="1" fill="#7a5070" opacity="0.7"/>
+<rect x="426" y="182" width="6" height="34" rx="1" fill="#5a4050" opacity="0.75"/>
+<rect x="434" y="179" width="7" height="37" rx="1" fill="#8a6040" opacity="0.7"/>
+<!-- Center back shelf (distant, darker) -->
+<rect x="150" y="30" width="200" height="200" fill="#2a1a30" opacity="0.5"/>
+<rect x="152" y="60" width="196" height="2" fill="#4a3a50" opacity="0.3"/>
+<rect x="152" y="100" width="196" height="2" fill="#4a3a50" opacity="0.3"/>
+<rect x="152" y="140" width="196" height="2" fill="#4a3a50" opacity="0.3"/>
+<rect x="152" y="180" width="196" height="2" fill="#4a3a50" opacity="0.3"/>
+<!-- Distant books (smaller, dimmer) -->
+<rect x="158" y="63" width="5" height="35" rx="1" fill="#6a3050" opacity="0.4"/>
+<rect x="165" y="66" width="4" height="32" rx="1" fill="#3a5070" opacity="0.4"/>
+<rect x="171" y="64" width="6" height="34" rx="1" fill="#5a6040" opacity="0.35"/>
+<rect x="179" y="67" width="4" height="31" rx="1" fill="#8a4060" opacity="0.3"/>
+<rect x="250" y="63" width="5" height="35" rx="1" fill="#4a7050" opacity="0.35"/>
+<rect x="257" y="65" width="6" height="33" rx="1" fill="#7a3070" opacity="0.4"/>
+<rect x="300" y="64" width="5" height="34" rx="1" fill="#5a5080" opacity="0.35"/>
+<rect x="307" y="66" width="4" height="32" rx="1" fill="#9a4040" opacity="0.3"/>
+<rect x="320" y="63" width="6" height="35" rx="1" fill="#3a6060" opacity="0.35"/>
+<!-- Brass ladder on rail -->
+<line x1="120" y1="0" x2="120" y2="230" stroke="#b8960a" stroke-width="1.5" opacity="0.3"/>
+<rect x="110" y="40" width="3" height="190" fill="#c8a020" opacity="0.7"/>
+<rect x="125" y="40" width="3" height="190" fill="#c8a020" opacity="0.7"/>
+<rect x="110" y="60" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="80" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="100" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="120" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="140" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="160" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="180" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="200" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<rect x="110" y="220" width="18" height="2" fill="#dab030" opacity="0.8"/>
+<!-- Floating lanterns -->
+<g filter="url(#candleFlicker)">
+  <rect x="168" y="55" width="14" height="18" rx="3" fill="#ffeaa7" opacity="0.15"/>
+  <rect x="170" y="57" width="10" height="14" rx="2" fill="none" stroke="#c8a020" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="175" cy="64" r="3" fill="#ffeaa7" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.5;0.9;0.6" dur="2s" repeatCount="indefinite"/></circle>
+  <circle cx="175" cy="64" r="8" fill="url(#lanternGlow)" opacity="0.5"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/></circle>
+  <animate attributeName="transform" type="translate" values="0,0;2,3;-1,5;1,2;0,0" dur="8s" repeatCount="indefinite"/>
+</g>
+<g filter="url(#candleFlicker)">
+  <rect x="288" y="80" width="14" height="18" rx="3" fill="#ffeaa7" opacity="0.15"/>
+  <rect x="290" y="82" width="10" height="14" rx="2" fill="none" stroke="#c8a020" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="295" cy="89" r="3" fill="#ffeaa7" opacity="0.8"><animate attributeName="opacity" values="0.5;0.9;0.6;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+  <circle cx="295" cy="89" r="8" fill="url(#lanternGlow)" opacity="0.5"><animate attributeName="opacity" values="0.3;0.5;0.3" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+  <animate attributeName="transform" type="translate" values="0,0;-2,4;1,6;-1,3;0,0" dur="9s" repeatCount="indefinite" begin="1s"/>
+</g>
+<g filter="url(#candleFlicker)">
+  <rect x="378" y="40" width="14" height="18" rx="3" fill="#ffeaa7" opacity="0.15"/>
+  <rect x="380" y="42" width="10" height="14" rx="2" fill="none" stroke="#c8a020" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="385" cy="49" r="3" fill="#ffeaa7" opacity="0.8"><animate attributeName="opacity" values="0.7;1;0.6;0.8;0.7" dur="1.8s" repeatCount="indefinite" begin="0.3s"/></circle>
+  <circle cx="385" cy="49" r="8" fill="url(#lanternGlow)" opacity="0.5"><animate attributeName="opacity" values="0.4;0.6;0.4" dur="1.8s" repeatCount="indefinite" begin="0.3s"/></circle>
+  <animate attributeName="transform" type="translate" values="0,0;1,5;-2,3;2,6;0,0" dur="10s" repeatCount="indefinite" begin="2s"/>
+</g>
+<g filter="url(#candleFlicker)">
+  <rect x="218" y="25" width="14" height="18" rx="3" fill="#ffeaa7" opacity="0.15"/>
+  <rect x="220" y="27" width="10" height="14" rx="2" fill="none" stroke="#c8a020" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="225" cy="34" r="3" fill="#ffeaa7" opacity="0.8"><animate attributeName="opacity" values="0.6;0.9;0.5;1;0.6" dur="2.2s" repeatCount="indefinite" begin="1.2s"/></circle>
+  <circle cx="225" cy="34" r="8" fill="url(#lanternGlow)" opacity="0.5"><animate attributeName="opacity" values="0.3;0.55;0.3" dur="2.2s" repeatCount="indefinite" begin="1.2s"/></circle>
+  <animate attributeName="transform" type="translate" values="0,0;-1,4;2,2;-2,5;0,0" dur="7s" repeatCount="indefinite" begin="0.8s"/>
+</g>
+<!-- Ambient dust motes -->
+<circle cx="200" cy="150" r="1" fill="#e8d5f0" opacity="0.15"><animate attributeName="cy" values="150;130;110" dur="12s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.1;0.25;0.05" dur="12s" repeatCount="indefinite"/></circle>
+<circle cx="320" cy="180" r="0.8" fill="#e8d5f0" opacity="0.1"><animate attributeName="cy" values="180;155;130" dur="15s" repeatCount="indefinite" begin="3s"/><animate attributeName="opacity" values="0.05;0.2;0.05" dur="15s" repeatCount="indefinite" begin="3s"/></circle>
+<circle cx="260" cy="200" r="1" fill="#e8d5f0" opacity="0.12"><animate attributeName="cy" values="200;170;140" dur="14s" repeatCount="indefinite" begin="5s"/></circle>
+<!-- Ambient warm light from above (parchment warmth) -->
+<ellipse cx="250" cy="100" rx="120" ry="60" fill="#e8d5f0" opacity="0.03"/>
+</svg>`;
+
+// Scene 1: Head Librarian behind mountain of scrolls — reuse scene 0 (same library interior)
+STORY_SCENES['library_1'] = STORY_SCENES['library_0'];
+
+// Scene 2/3: Forbidden Shelf — locked shelf with golden lock, ornate frame
+STORY_SCENES['library_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="libBg2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1a1030"/><stop offset="50%" stop-color="#3a3060"/><stop offset="100%" stop-color="#4a4070"/>
+  </linearGradient>
+  <radialGradient id="lanternGlow2" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.7"/><stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="lockGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="candleFlicker2"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <filter id="lockShine"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#libBg2)"/>
+<!-- Floor -->
+<rect x="0" y="230" width="500" height="30" fill="#2a1a30" opacity="0.6"/>
+<rect x="0" y="228" width="500" height="4" fill="#4a3a50" opacity="0.4"/>
+<!-- Side shelves (dimmer, flanking) -->
+<rect x="0" y="0" width="60" height="230" fill="#3a2210" opacity="0.6"/>
+<rect x="440" y="0" width="60" height="230" fill="#3a2210" opacity="0.6"/>
+<!-- Dim side books -->
+<rect x="6" y="30" width="5" height="30" rx="1" fill="#6a3050" opacity="0.3"/>
+<rect x="13" y="33" width="4" height="27" rx="1" fill="#3a5070" opacity="0.3"/>
+<rect x="19" y="31" width="6" height="29" rx="1" fill="#5a6040" opacity="0.25"/>
+<rect x="446" y="30" width="5" height="30" rx="1" fill="#5a4060" opacity="0.3"/>
+<rect x="453" y="32" width="6" height="28" rx="1" fill="#7a5040" opacity="0.3"/>
+<rect x="461" y="31" width="4" height="29" rx="1" fill="#4a7050" opacity="0.25"/>
+<!-- FORBIDDEN SHELF — center focus -->
+<!-- Ornate frame -->
+<rect x="130" y="30" width="240" height="195" rx="4" fill="#5a3a20" opacity="0.9"/>
+<!-- Frame decorative border -->
+<rect x="133" y="33" width="234" height="189" rx="3" fill="none" stroke="#c8a020" stroke-width="2" opacity="0.6"/>
+<rect x="137" y="37" width="226" height="181" rx="2" fill="none" stroke="#c8a020" stroke-width="0.8" opacity="0.35"/>
+<!-- Frame corner ornaments -->
+<circle cx="140" cy="40" r="4" fill="#c8a020" opacity="0.4"/>
+<circle cx="360" cy="40" r="4" fill="#c8a020" opacity="0.4"/>
+<circle cx="140" cy="215" r="4" fill="#c8a020" opacity="0.4"/>
+<circle cx="360" cy="215" r="4" fill="#c8a020" opacity="0.4"/>
+<!-- Shelf back (dark) -->
+<rect x="140" y="40" width="220" height="175" fill="#1a0a20" opacity="0.8"/>
+<!-- Shelf dividers -->
+<rect x="140" y="85" width="220" height="2" fill="#5a3a20" opacity="0.7"/>
+<rect x="140" y="130" width="220" height="2" fill="#5a3a20" opacity="0.7"/>
+<rect x="140" y="175" width="220" height="2" fill="#5a3a20" opacity="0.7"/>
+<!-- Forbidden tomes (mysterious, darker) -->
+<rect x="148" y="44" width="8" height="39" rx="1" fill="#2a0a30" opacity="0.8"/>
+<rect x="158" y="47" width="7" height="36" rx="1" fill="#3a0a1a" opacity="0.7"/>
+<rect x="167" y="43" width="9" height="40" rx="1" fill="#1a1a40" opacity="0.75"/>
+<rect x="178" y="46" width="6" height="37" rx="1" fill="#4a0a20" opacity="0.7"/>
+<rect x="186" y="44" width="8" height="39" rx="1" fill="#0a1a30" opacity="0.8"/>
+<rect x="280" y="45" width="7" height="38" rx="1" fill="#3a0a30" opacity="0.7"/>
+<rect x="289" y="43" width="9" height="40" rx="1" fill="#1a0a20" opacity="0.8"/>
+<rect x="300" y="47" width="6" height="36" rx="1" fill="#2a1a40" opacity="0.7"/>
+<rect x="148" y="89" width="7" height="39" rx="1" fill="#1a0a30" opacity="0.75"/>
+<rect x="157" y="91" width="8" height="37" rx="1" fill="#3a1a20" opacity="0.7"/>
+<rect x="167" y="88" width="6" height="40" rx="1" fill="#2a0a40" opacity="0.8"/>
+<rect x="280" y="90" width="8" height="38" rx="1" fill="#4a0a30" opacity="0.7"/>
+<rect x="290" y="88" width="7" height="40" rx="1" fill="#1a1a30" opacity="0.75"/>
+<rect x="148" y="134" width="9" height="39" rx="1" fill="#2a0a20" opacity="0.7"/>
+<rect x="159" y="136" width="6" height="37" rx="1" fill="#3a1a40" opacity="0.75"/>
+<rect x="280" y="135" width="7" height="38" rx="1" fill="#1a0a30" opacity="0.7"/>
+<rect x="289" y="133" width="8" height="40" rx="1" fill="#4a0a20" opacity="0.8"/>
+<!-- GOLDEN LOCK — center of shelf -->
+<circle cx="250" cy="127" r="22" fill="url(#lockGlow)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/></circle>
+<circle cx="250" cy="127" r="14" fill="#c8a020" opacity="0.8" filter="url(#lockShine)"/>
+<circle cx="250" cy="127" r="11" fill="#dab030" opacity="0.9"/>
+<circle cx="250" cy="127" r="7" fill="#1a0a20" opacity="0.7"/>
+<circle cx="250" cy="127" r="4.5" fill="#c8a020" opacity="0.6"/>
+<rect x="245" y="137" width="10" height="16" rx="2" fill="#c8a020" opacity="0.85"/>
+<rect x="247" y="139" width="6" height="12" rx="1" fill="#dab030" opacity="0.9"/>
+<rect x="249" y="144" width="2" height="5" rx="0.5" fill="#1a0a20" opacity="0.6"/>
+<!-- Lock shimmer -->
+<ellipse cx="246" cy="123" rx="2" ry="1" fill="#fff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="2s" repeatCount="indefinite"/></ellipse>
+<!-- Chains across shelf -->
+<path d="M140,120 Q170,115 200,118 Q225,122 250,120 Q275,118 300,115 Q330,112 360,118" fill="none" stroke="#8a7030" stroke-width="2" opacity="0.5" stroke-dasharray="4,3"/>
+<path d="M140,135 Q180,140 220,137 Q250,134 280,138 Q320,142 360,138" fill="none" stroke="#8a7030" stroke-width="2" opacity="0.4" stroke-dasharray="4,3"/>
+<!-- Floating lanterns (dimmer, scene is more ominous) -->
+<g filter="url(#candleFlicker2)">
+  <rect x="88" y="70" width="12" height="16" rx="3" fill="#ffeaa7" opacity="0.12"/>
+  <circle cx="94" cy="78" r="2.5" fill="#ffeaa7" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.2s" repeatCount="indefinite"/></circle>
+  <circle cx="94" cy="78" r="6" fill="url(#lanternGlow2)" opacity="0.35"/>
+  <animate attributeName="transform" type="translate" values="0,0;1,3;-1,5;0,0" dur="9s" repeatCount="indefinite"/>
+</g>
+<g filter="url(#candleFlicker2)">
+  <rect x="398" y="60" width="12" height="16" rx="3" fill="#ffeaa7" opacity="0.12"/>
+  <circle cx="404" cy="68" r="2.5" fill="#ffeaa7" opacity="0.6"><animate attributeName="opacity" values="0.5;0.9;0.5" dur="2s" repeatCount="indefinite" begin="0.8s"/></circle>
+  <circle cx="404" cy="68" r="6" fill="url(#lanternGlow2)" opacity="0.35"/>
+  <animate attributeName="transform" type="translate" values="0,0;-1,4;2,2;0,0" dur="8s" repeatCount="indefinite" begin="1s"/>
+</g>
+<!-- Dust motes -->
+<circle cx="200" cy="100" r="0.8" fill="#e8d5f0" opacity="0.15"><animate attributeName="cy" values="100;80;60" dur="14s" repeatCount="indefinite"/></circle>
+<circle cx="310" cy="160" r="1" fill="#e8d5f0" opacity="0.1"><animate attributeName="cy" values="160;135;110" dur="12s" repeatCount="indefinite" begin="4s"/></circle>
+</svg>`;
+
+// Scene 3: Puzzle scene — reuse Forbidden Shelf visual
+STORY_SCENES['library_3'] = STORY_SCENES['library_2'];
+
+// Scene 4: Forbidden Shelf swings open — golden light spills out, ancient tomes revealed
+STORY_SCENES['library_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="libBg4" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1a1030"/><stop offset="50%" stop-color="#3a3060"/><stop offset="100%" stop-color="#4a4070"/>
+  </linearGradient>
+  <radialGradient id="revealGlow" cx="50%" cy="45%" r="45%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.35"/><stop offset="40%" stop-color="#ffd700" stop-opacity="0.15"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="tomeAura" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.5"/><stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="goldGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <filter id="candleFlicker4"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="260" fill="url(#libBg4)"/>
+<!-- Golden light flooding the scene -->
+<ellipse cx="250" cy="130" rx="180" ry="120" fill="url(#revealGlow)"><animate attributeName="opacity" values="0.7;1;0.7" dur="4s" repeatCount="indefinite"/></ellipse>
+<!-- Floor -->
+<rect x="0" y="230" width="500" height="30" fill="#2a1a30" opacity="0.6"/>
+<rect x="0" y="228" width="500" height="4" fill="#4a3a50" opacity="0.4"/>
+<!-- Floor light reflection -->
+<ellipse cx="250" cy="240" rx="120" ry="15" fill="#ffeaa7" opacity="0.06"/>
+<!-- Side shelves -->
+<rect x="0" y="0" width="60" height="230" fill="#3a2210" opacity="0.6"/>
+<rect x="440" y="0" width="60" height="230" fill="#3a2210" opacity="0.6"/>
+<!-- Ornate frame — now open -->
+<!-- Left door (swung open, perspective) -->
+<path d="M130,30 L100,45 L100,210 L130,225" fill="#5a3a20" opacity="0.85"/>
+<rect x="100" y="45" width="30" height="165" fill="none" stroke="#c8a020" stroke-width="1.5" opacity="0.5"/>
+<!-- Right door (swung open, perspective) -->
+<path d="M370,30 L400,45 L400,210 L370,225" fill="#5a3a20" opacity="0.85"/>
+<rect x="370" y="45" width="30" height="165" fill="none" stroke="#c8a020" stroke-width="1.5" opacity="0.5"/>
+<!-- Inner chamber (revealed) -->
+<rect x="130" y="30" width="240" height="195" rx="2" fill="#1a0a10" opacity="0.7"/>
+<!-- Golden light from within -->
+<rect x="132" y="32" width="236" height="191" fill="#ffeaa7" opacity="0.08"/>
+<ellipse cx="250" cy="125" rx="100" ry="80" fill="#ffd700" opacity="0.06"><animate attributeName="opacity" values="0.04;0.08;0.04" dur="3s" repeatCount="indefinite"/></ellipse>
+<!-- Ancient shelf inside -->
+<rect x="140" y="85" width="220" height="2" fill="#6a4a28" opacity="0.5"/>
+<rect x="140" y="130" width="220" height="2" fill="#6a4a28" opacity="0.5"/>
+<rect x="140" y="175" width="220" height="2" fill="#6a4a28" opacity="0.5"/>
+<!-- Ancient tomes — larger, more ornate, glowing -->
+<g filter="url(#goldGlow)">
+  <rect x="155" y="42" width="12" height="41" rx="2" fill="#6a2020" opacity="0.9"/>
+  <rect x="157" y="44" width="8" height="37" rx="1" fill="#8a3030" opacity="0.6"/>
+  <circle cx="161" cy="62" r="3" fill="url(#tomeAura)" opacity="0.4"/>
+</g>
+<g filter="url(#goldGlow)">
+  <rect x="172" y="40" width="14" height="43" rx="2" fill="#2a2a60" opacity="0.9"/>
+  <rect x="174" y="42" width="10" height="39" rx="1" fill="#3a3a80" opacity="0.6"/>
+  <circle cx="179" cy="60" r="3" fill="url(#tomeAura)" opacity="0.35"/>
+</g>
+<g filter="url(#goldGlow)">
+  <rect x="191" y="43" width="11" height="40" rx="2" fill="#3a5020" opacity="0.9"/>
+  <rect x="193" y="45" width="7" height="36" rx="1" fill="#4a6a30" opacity="0.6"/>
+  <circle cx="197" cy="63" r="3" fill="url(#tomeAura)" opacity="0.3"/>
+</g>
+<g filter="url(#goldGlow)">
+  <rect x="280" y="41" width="13" height="42" rx="2" fill="#5a1a40" opacity="0.9"/>
+  <rect x="282" y="43" width="9" height="38" rx="1" fill="#7a2a60" opacity="0.6"/>
+  <circle cx="287" cy="61" r="3" fill="url(#tomeAura)" opacity="0.4"/>
+</g>
+<g filter="url(#goldGlow)">
+  <rect x="298" y="39" width="12" height="44" rx="2" fill="#2a4050" opacity="0.9"/>
+  <rect x="300" y="41" width="8" height="40" rx="1" fill="#3a5a70" opacity="0.6"/>
+  <circle cx="304" cy="60" r="3" fill="url(#tomeAura)" opacity="0.35"/>
+</g>
+<g filter="url(#goldGlow)">
+  <rect x="315" y="42" width="10" height="41" rx="2" fill="#6a3a10" opacity="0.9"/>
+  <rect x="317" y="44" width="6" height="37" rx="1" fill="#8a5a20" opacity="0.6"/>
+  <circle cx="320" cy="62" r="3" fill="url(#tomeAura)" opacity="0.3"/>
+</g>
+<!-- More tomes on lower shelves -->
+<rect x="155" y="89" width="11" height="39" rx="2" fill="#4a1a30" opacity="0.8"/>
+<rect x="170" y="87" width="13" height="41" rx="2" fill="#1a3a50" opacity="0.8"/>
+<rect x="188" y="90" width="10" height="38" rx="2" fill="#5a4a10" opacity="0.75"/>
+<rect x="280" y="88" width="12" height="40" rx="2" fill="#3a1a40" opacity="0.8"/>
+<rect x="296" y="90" width="10" height="38" rx="2" fill="#1a4a30" opacity="0.75"/>
+<rect x="155" y="134" width="12" height="39" rx="2" fill="#2a2a50" opacity="0.75"/>
+<rect x="171" y="136" width="10" height="37" rx="2" fill="#5a2a20" opacity="0.7"/>
+<rect x="280" y="135" width="11" height="38" rx="2" fill="#4a3a20" opacity="0.75"/>
+<rect x="295" y="133" width="13" height="40" rx="2" fill="#2a4a40" opacity="0.7"/>
+<!-- Broken lock on floor -->
+<ellipse cx="250" cy="235" rx="8" ry="3" fill="#000" opacity="0.15"/>
+<circle cx="248" cy="232" r="5" fill="#8a7020" opacity="0.5"/>
+<circle cx="248" cy="232" r="3" fill="#a08020" opacity="0.4"/>
+<rect x="251" y="232" width="5" height="6" rx="1" fill="#8a7020" opacity="0.4" transform="rotate(25,253,235)"/>
+<!-- Broken chain pieces -->
+<path d="M200,228 Q210,225 215,228" fill="none" stroke="#6a5020" stroke-width="1.5" opacity="0.3"/>
+<path d="M290,230 Q298,227 305,230" fill="none" stroke="#6a5020" stroke-width="1.5" opacity="0.3"/>
+<!-- Golden particles rising from tomes -->
+<circle cx="180" cy="50" r="1.5" fill="#ffd700" opacity="0.6"><animate attributeName="cy" values="50;30;10" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0.9;0" dur="4s" repeatCount="indefinite"/></circle>
+<circle cx="220" cy="60" r="1" fill="#ffeaa7" opacity="0.5"><animate attributeName="cy" values="60;35;10" dur="5s" repeatCount="indefinite" begin="0.8s"/><animate attributeName="opacity" values="0.5;0.8;0" dur="5s" repeatCount="indefinite" begin="0.8s"/></circle>
+<circle cx="300" cy="55" r="1.5" fill="#ffd700" opacity="0.5"><animate attributeName="cy" values="55;30;5" dur="4.5s" repeatCount="indefinite" begin="1.5s"/><animate attributeName="opacity" values="0.5;0.85;0" dur="4.5s" repeatCount="indefinite" begin="1.5s"/></circle>
+<circle cx="260" cy="45" r="1" fill="#ffeaa7" opacity="0.4"><animate attributeName="cy" values="45;20;0" dur="3.5s" repeatCount="indefinite" begin="2s"/><animate attributeName="opacity" values="0.4;0.7;0" dur="3.5s" repeatCount="indefinite" begin="2s"/></circle>
+<circle cx="330" cy="65" r="1.2" fill="#ffd700" opacity="0.45"><animate attributeName="cy" values="65;40;15" dur="4.2s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.45;0.75;0" dur="4.2s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle cx="160" cy="70" r="1" fill="#ffeaa7" opacity="0.35"><animate attributeName="cy" values="70;45;20" dur="5.5s" repeatCount="indefinite" begin="3s"/><animate attributeName="opacity" values="0.35;0.6;0" dur="5.5s" repeatCount="indefinite" begin="3s"/></circle>
+<!-- Floating lanterns -->
+<g filter="url(#candleFlicker4)">
+  <rect x="68" y="50" width="12" height="16" rx="3" fill="#ffeaa7" opacity="0.12"/>
+  <circle cx="74" cy="58" r="2.5" fill="#ffeaa7" opacity="0.7"><animate attributeName="opacity" values="0.5;0.9;0.5" dur="2s" repeatCount="indefinite"/></circle>
+  <circle cx="74" cy="58" r="6" fill="url(#tomeAura)" opacity="0.3"/>
+  <animate attributeName="transform" type="translate" values="0,0;1,3;-1,5;0,0" dur="8s" repeatCount="indefinite"/>
+</g>
+<g filter="url(#candleFlicker4)">
+  <rect x="418" y="55" width="12" height="16" rx="3" fill="#ffeaa7" opacity="0.12"/>
+  <circle cx="424" cy="63" r="2.5" fill="#ffeaa7" opacity="0.7"><animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite" begin="0.5s"/></circle>
+  <circle cx="424" cy="63" r="6" fill="url(#tomeAura)" opacity="0.3"/>
+  <animate attributeName="transform" type="translate" values="0,0;-2,4;1,2;0,0" dur="9s" repeatCount="indefinite" begin="1s"/>
+</g>
+</svg>`;
+
+// Scene 5 (complete): Same as scene 4 — the library revealed
+STORY_SCENES['library_5'] = STORY_SCENES['library_4'];
