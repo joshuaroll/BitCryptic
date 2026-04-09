@@ -28,3 +28,9 @@ yarn-error.log*
 
 # vercel
 .vercel/
+.vercel
+
+# backups (local only)
+backups/
+
+.vercel

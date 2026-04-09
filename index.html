@@ -3,7 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Bit Cryptic World - An interactive puzzle adventure island. Explore locations, solve cryptic clues, and unlock secrets." />
+  <meta name="theme-color" content="#050a18" />
+  <meta property="og:title" content="Bit Cryptic World" />
+  <meta property="og:description" content="An interactive puzzle adventure island. Explore, solve cryptic clues, and unlock secrets!" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bit-cryptic-world.vercel.app" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="js/enhancements.css" />
   <title>Bit Cryptic World</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
@@ -1882,19 +1890,22 @@
 <body>
 
   <!-- Loading Screen -->
-  <div id="loading-screen">
+  <div id="loading-screen" role="progressbar" aria-label="Loading Bit Cryptic World" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
     <div class="loading-logo">BIT CRYPTIC WORLD</div>
     <div class="loading-bar-track">
       <div class="loading-bar-fill" id="load-bar"></div>
     </div>
     <div class="loading-text" id="load-text">Decrypting the island...</div>
+    <div class="loading-substatus" id="load-substatus">Loading assets...</div>
   </div>
 
   <!-- HUD Top Bar -->
   <div class="hud-top">
-    <div class="hud-title">BIT CRYPTIC WORLD <span>v1.0</span></div>
+    <div class="hud-title">BIT CRYPTIC WORLD <span>v2.0</span></div>
     <div class="hud-controls">
-      <button class="hud-btn" onclick="resetView()">Reset View</button>
+      <button class="hud-btn" onclick="resetView()" aria-label="Reset map view">Reset View</button>
+      <button class="hud-btn" onclick="BCWSharing.shareProgress()" aria-label="Share progress">Share</button>
+      <button class="hud-btn" onclick="BCWSettings.open()" aria-label="Open settings">&#x2699; Settings</button>
     </div>
   </div>
 
@@ -3260,7 +3271,7 @@
         desc: 'Cryptic Croc runs the Puzzle Workshop with patience and care. Practice cryptic clues at your own pace, learn the art of anagrams, hidden words, and reversals. Fresh puzzles daily.',
         actions: [
           { label: 'Enter Workshop', href: '../Bit Cryptic Adventure/index.html', primary: true },
-          { label: 'View Leaderboard', onclick: () => alert('Leaderboards coming soon!') }
+          { label: 'View Leaderboard', onclick: () => { if (typeof BCWSharing !== 'undefined') BCWSharing.shareProgress(); else alert('Leaderboards coming soon!'); } }
         ]
       },
       library: {
@@ -3271,7 +3282,7 @@
         desc: 'The Library of Riddles houses every clue, relic, and secret you\'ve discovered. Browse your collection, study the lore of Bit Cryptic World, and unlock hidden achievements.',
         actions: [
           { label: 'Browse Collection', href: '../Bit Cryptic Adventure/index.html', primary: true },
-          { label: 'Lore Archive', onclick: () => alert('The ancient clues speak of a world where words hold power...') }
+          { label: 'Lore Archive', onclick: () => showLoreArchive() }
         ]
       },
       docks: {
@@ -3314,7 +3325,7 @@
         iconBg: 'linear-gradient(135deg, #2a7a2a, #1a5218)',
         desc: 'The Enigma Forest is dense, dark, and full of riddles carved into ancient trees. Strange creatures guard forgotten wordplay. Only the bravest venture deep enough to find the Riddler\'s Hollow.',
         actions: [
-          { label: 'Enter Forest', onclick: () => alert('You hear rustling in the trees... the forest will open in a future update!') },
+          { label: 'Enter Forest', onclick: () => { if (STORIES['forest'] && !isStoryComplete('forest')) { closePanel(); startStory('forest'); } else { alert('The rustling has quieted. The forest path remembers your footsteps.'); } }, primary: !isStoryComplete('forest') },
           { label: 'Forest Map', onclick: () => alert('The paths shift and change. No map can capture this forest.') }
         ]
       },
@@ -3462,14 +3473,27 @@
         const raw = localStorage.getItem(PROGRESS_KEY);
         if (raw) {
           const p = JSON.parse(raw);
-          if (p && p.version) return p;
+          if (p && p.version) {
+            // Ensure arrays exist (corruption recovery)
+            if (!Array.isArray(p.unlockedLocations)) p.unlockedLocations = [];
+            if (!Array.isArray(p.completedStories)) p.completedStories = [];
+            return p;
+          }
         }
-      } catch (e) { }
+      } catch (e) {
+        console.warn('Progress data corrupted, resetting:', e);
+        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'getProgress');
+      }
       return getDefaultProgress();
     }
 
     function saveProgress(state) {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
+      try {
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn('Failed to save progress:', e);
+        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'saveProgress');
+      }
     }
 
     function isUnlocked(id) {
@@ -3494,6 +3518,8 @@
         state.completedStories.push(id);
         saveProgress(state);
       }
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackStoryComplete(id);
+      if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkStoryComplete(state.completedStories);
       // Trigger chain unlocks
       const chain = UNLOCK_CHAIN[id];
       if (chain && chain.reveals.length > 0) {
@@ -4191,6 +4217,61 @@
     };
 
     // ═══════════════════════════════════
+    //  LORE ARCHIVE
+    // ═══════════════════════════════════
+    function showLoreArchive() {
+      closePanel();
+      const state = getProgress();
+      const loreEntries = [];
+
+      if (state.completedStories.includes('docks')) {
+        loreEntries.push({ title: 'The Dock Keeper\'s Welcome', text: 'You arrived on a tattered boat, washed ashore with no memory. The Dock Keeper gave you shelter and a compass etched with strange symbols. His first lesson: read backwards. "WELCOME HOME."' });
+      }
+      if (state.completedStories.includes('forest')) {
+        loreEntries.push({ title: 'The Letter Fox', text: 'Deep in the Enigma Forest, a fox made of shimmering letters guided you to the Cryptic Cafe. Its fur shifted between alphabets as it solved the stone slab puzzle: "Face remodelled into a place for coffee."' });
+      }
+      if (state.completedStories.includes('cafe')) {
+        loreEntries.push({ title: 'The Barista\'s Secret', text: 'At the Cryptic Cafe, the barista serves more than coffee. Each cup comes with a riddle. The regulars speak in cryptic clues, and the menu itself is an anagram.' });
+      }
+      if (state.completedStories.includes('town')) {
+        loreEntries.push({ title: 'The Town Terminal', text: 'The Town Square terminal hums with ancient code. Those who enter the right words can unlock hidden corners of the island that most visitors never see.' });
+      }
+
+      if (loreEntries.length === 0) {
+        loreEntries.push({ title: 'The Lore Awaits...', text: 'Complete stories across the island to fill the Lore Archive. Each location holds secrets and history waiting to be discovered.' });
+      }
+
+      // Build and show lore panel
+      const overlay = document.createElement('div');
+      overlay.className = 'detail-overlay active';
+      overlay.onclick = () => { overlay.remove(); panel.remove(); };
+
+      const panel = document.createElement('div');
+      panel.className = 'detail-panel active';
+      panel.style.maxHeight = '80vh';
+      panel.style.overflowY = 'auto';
+      panel.innerHTML = `
+        <button class="detail-close" onclick="this.closest('.detail-panel').previousElementSibling.click()">&times;</button>
+        <div class="detail-header">
+          <div class="detail-icon" style="background: linear-gradient(135deg, #6a60b0, #4a4070);">&#x1F4DC;</div>
+          <div>
+            <div class="detail-title">Lore Archive</div>
+            <div class="detail-subtitle">${loreEntries.length} entries discovered</div>
+          </div>
+        </div>
+        ${loreEntries.map(e => `
+          <div style="margin-bottom: 16px;">
+            <div style="font-family: 'Fredoka One', cursive; color: #ffd700; font-size: 0.95rem; margin-bottom: 4px;">${e.title}</div>
+            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem; line-height: 1.6;">${e.text}</div>
+          </div>
+        `).join('')}
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+    }
+
+    // ═══════════════════════════════════
     //  STORY ENGINE
     // ═══════════════════════════════════
     let currentStoryId = null;
@@ -4206,6 +4287,8 @@
       document.getElementById('story-overlay').classList.add('active');
       document.getElementById('story-panel').classList.add('active');
       document.getElementById('story-title').textContent = story.title;
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackStoryStart(storyId);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
       showStoryStep();
     }
 
@@ -4240,6 +4323,7 @@
 
       // Typewriter effect
       typewriterDone = false;
+      let isTransitioning = false; // Guard against rapid clicks
       let charIndex = 0;
       const fullText = step.text;
 
@@ -4249,6 +4333,7 @@
         if (charIndex < fullText.length) {
           textEl.innerHTML = fullText.substring(0, charIndex + 1) + '<span class="typewriter-cursor"></span>';
           charIndex++;
+          if (typeof BCWAudio !== 'undefined' && charIndex % 3 === 0) BCWAudio.playTypewriter();
         } else {
           clearInterval(typewriterInterval);
           typewriterInterval = null;
@@ -4258,29 +4343,44 @@
         }
       }, 25);
 
-      // Click to skip typewriter
-      const skipHandler = () => {
-        if (!typewriterDone && typewriterInterval) {
+      // Click to skip typewriter - uses a single handler on the panel
+      // that only fires for the text area, NOT for choices/inputs/buttons
+      function skipTypewriter(e) {
+        // Ignore clicks on interactive elements (buttons, inputs, choices)
+        if (e.target.closest('.story-choices') ||
+            e.target.closest('.story-continue') ||
+            e.target.closest('.story-complete-btn') ||
+            e.target.closest('.story-puzzle-input-wrap') ||
+            e.target.closest('.hint-btn') ||
+            e.target.tagName === 'BUTTON' ||
+            e.target.tagName === 'INPUT') {
+          return;
+        }
+
+        if (!typewriterDone && typewriterInterval && !isTransitioning) {
+          isTransitioning = true;
           clearInterval(typewriterInterval);
           typewriterInterval = null;
           typewriterDone = true;
           textEl.innerHTML = fullText;
           showStoryControls(step);
+          // Brief cooldown to prevent double-advance
+          setTimeout(() => { isTransitioning = false; }, 300);
         }
-        textEl.removeEventListener('click', skipHandler);
-      };
-      textEl.addEventListener('click', skipHandler);
-      document.getElementById('story-panel').onclick = (e) => {
-        if (e.target === document.getElementById('story-panel') || e.target === textEl) {
-          if (!typewriterDone && typewriterInterval) {
-            clearInterval(typewriterInterval);
-            typewriterInterval = null;
-            typewriterDone = true;
-            textEl.innerHTML = fullText;
-            showStoryControls(step);
-          }
-        }
-      };
+      }
+
+      // Remove previous handler, add new one
+      const panel = document.getElementById('story-panel');
+      if (panel._skipHandler) {
+        panel.removeEventListener('click', panel._skipHandler);
+      }
+      panel._skipHandler = skipTypewriter;
+      panel.addEventListener('click', skipTypewriter);
+
+      // Track story step
+      if (typeof BCWAnalytics !== 'undefined') {
+        BCWAnalytics.trackStoryStep(currentStoryId, currentStepIndex, step.type);
+      }
     }
 
     function showStoryControls(step) {
@@ -4290,7 +4390,11 @@
 
       if (step.type === 'narrative') {
         continueBtn.classList.add('visible');
-        continueBtn.onclick = () => { currentStepIndex++; showStoryStep(); };
+        continueBtn.onclick = () => {
+          if (typeof BCWAudio !== 'undefined') BCWAudio.playStoryAdvance();
+          currentStepIndex++;
+          showStoryStep();
+        };
       } else if (step.type === 'choice') {
         step.choices.forEach((choice, idx) => {
           const btn = document.createElement('button');
@@ -4341,15 +4445,22 @@
         let wrongCount = 0;
 
         function checkAnswer() {
-          const val = input.value.trim().toUpperCase();
-          const answers = Array.isArray(step.answer) ? step.answer.map(a => a.toUpperCase()) : [step.answer.toUpperCase()];
+          // Improved validation: case-insensitive, whitespace-trimmed, punctuation-tolerant
+          const val = input.value.trim().toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ');
+          const answers = Array.isArray(step.answer) ? step.answer.map(a => a.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ')) : [step.answer.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ')];
           if (answers.includes(val)) {
+            if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+            if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackPuzzleAttempt(currentStoryId, currentStepIndex, true, val);
+            if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkPuzzleSolved(wrongCount === 0);
+            if (typeof BCWHints !== 'undefined') BCWHints.clearHintTimer(currentStoryId + '_' + currentStepIndex);
             currentStepIndex = step.next;
             showStoryStep();
           } else {
+            if (typeof BCWAudio !== 'undefined') BCWAudio.playWrong();
+            if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackPuzzleAttempt(currentStoryId, currentStepIndex, false, val);
+            if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkPuzzleFailed();
             input.classList.add('wrong');
             setTimeout(() => input.classList.remove('wrong'), 500);
-            // Show wrong reaction
             const oldReaction = choicesEl.querySelector('.story-wrong-reaction');
             if (oldReaction) oldReaction.remove();
             const reactions = step.wrongReactions || ['That\'s not right. Try again.'];
@@ -4362,6 +4473,11 @@
             input.value = '';
             input.focus();
           }
+        }
+
+        // Add progressive hint button
+        if (typeof BCWHints !== 'undefined' && step.wrongReactions) {
+          BCWHints.createHintButton(step.wrongReactions, choicesEl);
         }
 
         submitBtn.onclick = checkAnswer;
@@ -4389,7 +4505,7 @@
           choicesEl.appendChild(hintEl);
         }
 
-        const allAnswers = step.answers.map(a => a.toUpperCase());
+        const allAnswers = step.answers.map(a => a.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' '));
         const solved = [];
         let wrongCount = 0;
 
@@ -4401,7 +4517,7 @@
         choicesEl.appendChild(progressEl);
 
         function checkMultiAnswer() {
-          const val = input.value.trim().toUpperCase();
+          const val = input.value.trim().toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ');
           if (allAnswers.includes(val) && !solved.includes(val)) {
             solved.push(val);
             input.value = '';
@@ -4449,6 +4565,25 @@
       } else if (step.type === 'complete') {
         completeBtn.textContent = step.btnText || 'Continue';
         completeBtn.classList.add('visible');
+
+        // Add share button for completed stories
+        if (currentStoryId !== '_intro') {
+          const shareBtn = document.createElement('button');
+          shareBtn.className = 'story-choice-btn';
+          shareBtn.style.borderColor = 'rgba(100,200,255,0.4)';
+          shareBtn.style.color = 'rgba(100,200,255,0.9)';
+          shareBtn.textContent = 'Share This Story';
+          shareBtn.onclick = (e) => {
+            e.stopPropagation();
+            const story = STORIES[currentStoryId];
+            if (typeof BCWSharing !== 'undefined' && story) {
+              BCWSharing.shareStoryComplete(story.title);
+              if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkShare();
+            }
+          };
+          choicesEl.appendChild(shareBtn);
+        }
+
         completeBtn.onclick = () => {
           const storyId = currentStoryId;
           closeStory();
@@ -4456,6 +4591,7 @@
             const state = getProgress();
             state.introComplete = true;
             saveProgress(state);
+            if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkIntroComplete();
           }
           // Unlock revealed locations
           if (step.unlocks && step.unlocks.length > 0) {
@@ -4476,8 +4612,15 @@
 
     function closeStory() {
       if (typewriterInterval) { clearInterval(typewriterInterval); typewriterInterval = null; }
+      if (typeof BCWHints !== 'undefined') BCWHints.clearAllTimers();
       document.getElementById('story-overlay').classList.remove('active');
       document.getElementById('story-panel').classList.remove('active');
+      // Clean up click handler
+      const panel = document.getElementById('story-panel');
+      if (panel._skipHandler) {
+        panel.removeEventListener('click', panel._skipHandler);
+        panel._skipHandler = null;
+      }
       currentStoryId = null;
     }
 
@@ -4617,6 +4760,8 @@
       const banner = document.getElementById('unlock-banner');
       banner.textContent = 'Unlocked: ' + locationName + '!';
       banner.classList.add('show');
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playUnlock();
+      if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.announce('New location unlocked: ' + locationName);
       setTimeout(() => banner.classList.remove('show'), 4000);
     }
 
@@ -4801,6 +4946,19 @@
       vp.style.top = Math.max(0, vpTop) + 'px';
       vp.style.width = Math.min(mmW, vpWidth) + 'px';
       vp.style.height = Math.min(mmH, vpHeight) + 'px';
+
+      // Update minimap dots to show visited/completed state
+      const state = getProgress();
+      document.querySelectorAll('.minimap-dot').forEach(dot => {
+        const locId = dot.getAttribute('data-location');
+        if (state.completedStories.includes(locId)) {
+          dot.style.background = '#27c93f'; // Green for completed
+          dot.style.boxShadow = '0 0 4px rgba(39,201,63,0.5)';
+        } else if (state.unlockedLocations.includes(locId)) {
+          dot.style.background = '#ffd700'; // Gold for unlocked
+          dot.style.boxShadow = '0 0 4px rgba(255,215,0,0.5)';
+        }
+      });
     }
 
     // ═══════════════════════════════════
@@ -4809,6 +4967,8 @@
     function openLocation(id) {
       const loc = locations[id];
       if (!loc) return;
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackLocationVisit(id);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
 
       // Don't open locked locations (except secrets like moon/airship)
       const chain = UNLOCK_CHAIN[id];
@@ -4860,6 +5020,7 @@
     function closePanel() {
       document.getElementById('detail-panel').classList.remove('active');
       document.getElementById('detail-overlay').classList.remove('active');
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuClose();
     }
 
     // Close on Escape / open debug menu
@@ -5017,6 +5178,9 @@
 
       saveUnlockedCode(normalized);
       addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackTerminalCode(normalized, true);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+      if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkTerminalCodes(getUnlockedCodes().length);
 
       // Special code rewards
       if (normalized === 'FLOAT') {
@@ -6809,6 +6973,19 @@
 
     // Initialize
     window.addEventListener('load', () => {
+      // Initialize enhancement modules
+      try {
+        if (typeof BCWSave !== 'undefined') BCWSave.validateSave();
+        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.init();
+        if (typeof BCWAudio !== 'undefined') BCWAudio.init();
+        if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.init();
+        if (typeof BCWAchievements !== 'undefined') BCWAchievements.init();
+        if (typeof BCWSettings !== 'undefined') BCWSettings.init();
+        if (typeof BCWTutorial !== 'undefined') BCWTutorial.init();
+      } catch (e) {
+        console.warn('Enhancement module init error:', e);
+      }
+
       initGameState();
       resetView();
       createClouds();
@@ -6822,6 +6999,15 @@
       checkMoonOnLoad();
       checkPondOnLoad();
       simulateLoading();
+
+      // Check achievements for existing progress
+      try {
+        const state = getProgress();
+        if (typeof BCWAchievements !== 'undefined') {
+          BCWAchievements.checkExploration(state.unlockedLocations);
+          BCWAchievements.checkStoryComplete(state.completedStories);
+        }
+      } catch (e) {}
     });
 
     window.addEventListener('resize', () => {
@@ -7604,6 +7790,17 @@
   <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:16px;">Cryptic Cheese Collection</div>
   <div id="fridge-contents" style="width:500px;max-width:95vw;"></div>
 </div>
+
+<!-- Enhancement Modules -->
+<script src="js/analytics.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/save.js"></script>
+<script src="js/accessibility.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/hints.js"></script>
+<script src="js/sharing.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/tutorial.js"></script>
 
 </body>
 
