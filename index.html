@@ -1515,9 +1515,11 @@
     .story-scene {
       border-radius: 14px;
       overflow: hidden;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       border: 2px solid rgba(255, 255, 255, 0.08);
       display: none;
+      flex-shrink: 0;
+      background: #050a18;
     }
 
     .story-scene.visible {
@@ -1528,26 +1530,30 @@
       display: block;
       width: 100%;
       height: auto;
+      max-height: 80vh;
+      object-fit: contain;
     }
 
     .story-panel {
       position: fixed;
-      bottom: 8%;
+      top: 15vh;
       left: 50%;
-      transform: translateX(-50%) translateY(30px);
-      width: 520px;
-      max-width: 92vw;
-      max-height: 80vh;
+      transform: translateX(-50%) translateY(20px);
+      width: 700px;
+      max-width: 94vw;
+      max-height: 92vh;
       overflow-y: auto;
       background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
       border: 2px solid rgba(255, 215, 0, 0.5);
       border-radius: 20px;
-      padding: 28px 32px 24px;
+      padding: 24px 28px 20px;
       z-index: 250;
       opacity: 0;
       visibility: hidden;
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.05);
+      display: flex;
+      flex-direction: column;
     }
 
     .story-panel.active {
@@ -3287,6 +3293,7 @@
 
   <div class="story-overlay" id="story-overlay"></div>
   <div class="story-panel" id="story-panel">
+    <button class="detail-close" id="story-close-btn" onclick="closeStory()" aria-label="Close story">&times;</button>
     <div class="story-title" id="story-title"></div>
     <div class="story-scene" id="story-scene"></div>
     <div class="story-speaker" id="story-speaker"></div>
@@ -3302,6 +3309,17 @@
   <!-- Story scene visual data -->
   <script>var STORY_SCENES = {};</script>
   <script src="scenes/forest.js"></script>
+  <script src="scenes/adventure.js"></script>
+  <script src="scenes/beach.js"></script>
+  <script src="scenes/cafe.js"></script>
+  <script src="scenes/cove.js"></script>
+  <script src="scenes/docks.js"></script>
+  <script src="scenes/library.js"></script>
+  <script src="scenes/observatory.js"></script>
+  <script src="scenes/town.js"></script>
+  <script src="scenes/workshop.js"></script>
+  <script src="scenes/lair.js"></script>
+  <script src="scenes/moon.js"></script>
 
   <script>
     // ═══════════════════════════════════
@@ -3810,7 +3828,7 @@
           {
             type: 'multi_puzzle',
             speaker: 'Town Crier',
-            text: 'She gestures to the fountain where three cryptic clues are shimmering in the water of its basin. "Three clues. Three destinations. Solve all three to open the paths." The shimmering text reads:\n1. "Wrote, mangled, a tall building (5)"\n2. "Quiet place where books live (7)"\n3. "Hop works, scrambled, a place to build (8)"',
+            text: 'She gestures to the fountain where three cryptic clues are shimmering in the water of its basin. "Three clues. Three destinations. Solve all three to open the paths."<br>1. "Wrote, mangled, a tall building (5)"<br>2. "Quiet place where books live (7)"<br>3. "Hop works, scrambled, a place to build (8)"',
             answers: ['TOWER', 'LIBRARY', 'WORKSHOP'],
             placeholder: 'Solve one clue at a time...',
             hint: 'Each clue describes a place on this island. Look for anagram indicators like "mangled" and "scrambled."',
@@ -4252,6 +4270,139 @@
             btnText: 'Continue Exploring'
           }
         ]
+      },
+      house: {
+        title: 'A Place to Call Home',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'A winding path through wildflowers leads to a small stone cottage nestled against a hillside. Ivy climbs the walls and smoke curls lazily from the chimney, though no one seems to be inside. The front door stands slightly ajar, as if expecting you.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'You push the door open. Inside, a cozy room with a stone hearth, a writing desk, and a window overlooking the valley. On the desk sits a handwritten note pinned under a brass key.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The note reads: "This cottage belongs to whoever can claim it. The key is right here, but the lock won\'t turn until you prove you belong. Solve what\'s written below and the house is yours."'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'Beneath the welcome message, in careful handwriting: "Head of household? Ring me, I live here! (4)"',
+            answer: 'HOME',
+            placeholder: 'Solve the cryptic clue...',
+            hint: '"Head of" means take the first letter. "Ring" is a common crossword word for a round shape.',
+            wrongReactions: [
+              '"Head of household" gives you the letter H. What shape is a ring?',
+              'H, then O (a ring), then ME. Put them together.',
+              'H-O-M-E. The head of Household, a ring (O), and ME.'
+            ],
+            next: 4
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The brass key turns smoothly in the lock and the whole cottage seems to sigh with contentment. Warm light fills the room, the hearth crackles to life, and the writing desk drawer slides open to reveal blank blueprints and a set of colored pencils.'
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'The cottage is yours. A place to rest, to plan, and to make your own. The blueprints in the desk invite you to redesign the rooms however you like. Welcome home, Voyager.',
+            unlocks: [],
+            btnText: 'Continue Exploring'
+          }
+        ]
+      },
+      airship: {
+        title: 'The Sky Captain\'s Collection',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'A rope ladder dangles from a magnificent skyship tethered to a tall mooring post. The hull is polished mahogany with brass fittings, and a pennant reading "S.S. Lexicon" snaps in the wind. You climb aboard.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Simon',
+            text: 'A man in a long aviator coat and flight goggles pushed up on his forehead looks up from a leather-bound logbook. "Well now! A visitor." He grins and extends a gloved hand. "Captain Simon, at your service. Welcome aboard the Lexicon. Finest puzzle-hunting vessel in the sky."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Simon',
+            text: '"I collect cryptic clues from every port we visit. Got a logbook full of them." He flips to a bookmarked page. "Here\'s one from the floating markets of Cirrus Bay. It\'s a hidden word clue. The answer is tucked inside the words themselves, hiding across the gap between two words. See if you can spot it."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Simon',
+            text: 'He holds the logbook open for you to read: "Savoy agent conceals a journey (6)." He taps the page and waits.',
+            answer: 'VOYAGE',
+            placeholder: 'Find the hidden word...',
+            hint: 'The answer hides inside the surrounding words, spanning across the gap. Look at where "savoy" ends and "agent" begins.',
+            wrongReactions: [
+              '"Not quite. Read the letters across the two words slowly: S-A-V-O-Y-A-G-E-N-T. See a journey hiding in there?"',
+              '"Start from the \'V\' in \'savoy\' and read six letters forward: V-O-Y-A-G-E."',
+              '"saVOYAGEnt. Six letters, right there in the middle. A journey."'
+            ],
+            next: 4
+          },
+          {
+            type: 'narrative',
+            speaker: 'Simon',
+            text: '"Ha! Sharp eyes." Simon snaps the logbook shut with a satisfied grin. "You\'ve got the makings of a proper puzzle hunter." He pulls a brass spyglass from his coat and offers it to you. "Keep it. And come back anytime. I\'ve got a whole logbook of these, and the skies always have more to share."'
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'The skyship hums beneath your feet, engines idling, ready for its next voyage. Simon tips his goggles in salute. The spyglass in your hand catches the light. From up here, the whole island stretches out below, full of secrets waiting to be found.',
+            unlocks: [],
+            btnText: 'Continue Exploring'
+          }
+        ]
+      },
+      pond: {
+        title: 'The Quiet Catch',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'A narrow trail through tall reeds opens onto a still, glassy pond ringed by willows. Dragonflies skim the surface and lily pads drift in slow circles. An old wooden bench sits at the water\'s edge, a fishing rod propped against it.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'Carved into the armrest of the bench, worn smooth by weather and time, is a message: "The fish here only bite for those who think. Solve the clue and cast your line." Below it, letters have been carefully etched into the wood.'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'The carving on the bench reads: "Stagger on a fishing spool (4)."',
+            answer: 'REEL',
+            placeholder: 'Solve the cryptic clue...',
+            hint: 'Think of a word that means both "to stagger" and "a spool used for fishing line."',
+            wrongReactions: [
+              '"Two definitions, one answer. What do you call it when someone staggers or sways?"',
+              '"Think about what holds the fishing line. A spool that you wind. It also means to stumble."',
+              '"R-E-E-L. You reel in a fish, and you reel from a shock. Four letters."'
+            ],
+            next: 3
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'As soon as you speak the word, the pond ripples and a silver fish leaps from the water, catching the sunlight before splashing back down. The fishing rod beside the bench begins to glow faintly. It\'s yours now.'
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'The fishing pond is open. Cast your line whenever you need a quiet moment and a gentle challenge. The fish here carry clues on their scales, and patience is always rewarded.',
+            unlocks: [],
+            btnText: 'Continue Exploring'
+          }
+        ]
       }
     };
 
@@ -4432,13 +4583,19 @@
         }
       }
 
-      // Remove previous handler, add new one
+      // Remove previous handlers, add new ones on both panel and overlay
       const panel = document.getElementById('story-panel');
+      const overlay = document.getElementById('story-overlay');
       if (panel._skipHandler) {
         panel.removeEventListener('click', panel._skipHandler);
       }
+      if (overlay._skipHandler) {
+        overlay.removeEventListener('click', overlay._skipHandler);
+      }
       panel._skipHandler = skipTypewriter;
+      overlay._skipHandler = skipTypewriter;
       panel.addEventListener('click', skipTypewriter);
+      overlay.addEventListener('click', skipTypewriter);
 
       // Track story step
       if (typeof BCWAnalytics !== 'undefined') {
@@ -4629,11 +4786,11 @@
         completeBtn.textContent = step.btnText || 'Continue';
         completeBtn.classList.add('visible');
 
-        // Add share button after cafe is complete (not for early game)
-        if (currentStoryId !== '_intro' && isStoryComplete('cafe')) {
+        // Add share button below complete button (only after town square solved)
+        if (currentStoryId === 'town') {
           const shareBtn = document.createElement('button');
-          shareBtn.className = 'story-choice-btn';
-          shareBtn.style.cssText = 'border-color:rgba(100,200,255,0.3);color:rgba(100,200,255,0.7);font-size:0.75rem;padding:8px 14px;flex:0 1 auto;min-width:auto;';
+          shareBtn.className = 'story-complete-btn visible';
+          shareBtn.style.cssText = 'border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);margin-top:10px;';
           shareBtn.textContent = 'Share';
           shareBtn.onclick = (e) => {
             e.stopPropagation();
@@ -4643,7 +4800,8 @@
               if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkShare();
             }
           };
-          choicesEl.appendChild(shareBtn);
+          // Insert after the complete button
+          completeBtn.parentNode.insertBefore(shareBtn, completeBtn.nextSibling);
         }
 
         completeBtn.onclick = () => {
@@ -4675,12 +4833,19 @@
       if (typeof BCWHints !== 'undefined') BCWHints.clearAllTimers();
       document.getElementById('story-overlay').classList.remove('active');
       document.getElementById('story-panel').classList.remove('active');
-      // Clean up click handler
+      // Clean up click handlers on both panel and overlay
       const panel = document.getElementById('story-panel');
+      const overlay = document.getElementById('story-overlay');
       if (panel._skipHandler) {
         panel.removeEventListener('click', panel._skipHandler);
         panel._skipHandler = null;
       }
+      if (overlay._skipHandler) {
+        overlay.removeEventListener('click', overlay._skipHandler);
+        overlay._skipHandler = null;
+      }
+      // Remove any dynamically added share buttons
+      panel.querySelectorAll('.story-complete-btn:not(#story-complete-btn)').forEach(el => el.remove());
       currentStoryId = null;
     }
 

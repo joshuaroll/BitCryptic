@@ -64,6 +64,96 @@ STORY_SCENES['forest_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <ellipse cx="150" cy="190" rx="120" ry="20" fill="#fff" opacity="0.03"/>
 </svg>`;
 
+// Scene 1: The Carved Oak — giant pine with cryptic clues etched into trunk (from mockup Scene 2)
+STORY_SCENES['forest_1'] = `<svg width="100%" viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="oakBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0a1a10"/><stop offset="100%" stop-color="#152a1a"/>
+  </linearGradient>
+  <radialGradient id="oakGlow" cx="50%" cy="40%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.08"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="bioGlow1" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#4af5a0" stop-opacity="0.6"/><stop offset="100%" stop-color="#4af5a0" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="carveGlow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+</defs>
+<rect width="500" height="280" fill="url(#oakBg)"/>
+<!-- Ambient glow around tree -->
+<circle cx="250" cy="160" r="150" fill="url(#oakGlow)"/>
+<!-- Side trees (dark, framing) -->
+<polygon points="0,200 25,50 50,200" fill="#0c1c10" opacity="0.6"/>
+<polygon points="450,200 475,60 500,200" fill="#0c1c10" opacity="0.6"/>
+<!-- GIANT PINE TREE trunk -->
+<rect x="185" y="0" width="130" height="280" fill="#4a3418"/>
+<rect x="192" y="5" width="116" height="272" fill="#5a4020"/>
+<!-- Bark texture -->
+<path d="M210,10 Q208,100 211,190 Q210,240 210,275" fill="none" stroke="#3a2a12" stroke-width="2" opacity="0.4"/>
+<path d="M235,8 Q233,95 236,185 Q235,240 235,275" fill="none" stroke="#3a2a12" stroke-width="1.5" opacity="0.3"/>
+<path d="M250,5 Q248,90 251,180 Q250,240 250,275" fill="none" stroke="#3a2a12" stroke-width="2" opacity="0.35"/>
+<path d="M265,8 Q267,95 264,185 Q265,240 265,275" fill="none" stroke="#3a2a12" stroke-width="1.5" opacity="0.3"/>
+<path d="M290,10 Q292,105 289,195 Q290,245 290,275" fill="none" stroke="#3a2a12" stroke-width="2" opacity="0.4"/>
+<!-- Knots -->
+<ellipse cx="220" cy="240" rx="7" ry="9" fill="#3a2a12" opacity="0.4"/>
+<ellipse cx="220" cy="240" rx="5" ry="6" fill="#4a3418" opacity="0.5"/>
+<ellipse cx="280" cy="115" rx="5" ry="6" fill="#3a2a12" opacity="0.3"/>
+<ellipse cx="280" cy="115" rx="3" ry="4" fill="#4a3418" opacity="0.4"/>
+<!-- Roots -->
+<path d="M185,270 Q160,265 140,272 L140,280 L190,280 Z" fill="#3a2a12"/>
+<path d="M315,270 Q340,265 360,272 L360,280 L310,280 Z" fill="#3a2a12"/>
+<path d="M190,275 Q170,270 150,275 L150,280 L195,280 Z" fill="#2a1a0a" opacity="0.6"/>
+<path d="M310,275 Q330,270 350,275 L350,280 L305,280 Z" fill="#2a1a0a" opacity="0.6"/>
+<!-- Pine boughs pushed up high so trunk exposed for clues -->
+<polygon points="250,-10 50,100 450,100" fill="#1a5218" opacity="0.85"/>
+<polygon points="250,-2 68,97 432,97" fill="#2a6328" opacity="0.7"/>
+<polygon points="250,-60 100,45 400,45" fill="#1a5218" opacity="0.85"/>
+<polygon points="250,-52 115,43 385,43" fill="#236828" opacity="0.7"/>
+<polygon points="250,-120 140,-15 360,-15" fill="#1a5218" opacity="0.85"/>
+<polygon points="250,-112 152,-17 348,-17" fill="#2a7a2a" opacity="0.65"/>
+<polygon points="250,-180 185,-70 315,-70" fill="#1a5218" opacity="0.8"/>
+<!-- Frost highlights on bough tips -->
+<line x1="65" y1="97" x2="90" y2="94" stroke="#ffffff" stroke-width="1.5" opacity="0.06" stroke-linecap="round"/>
+<line x1="410" y1="97" x2="435" y2="94" stroke="#ffffff" stroke-width="1.5" opacity="0.06" stroke-linecap="round"/>
+<line x1="118" y1="43" x2="143" y2="40" stroke="#ffffff" stroke-width="1" opacity="0.05" stroke-linecap="round"/>
+<line x1="362" y1="43" x2="387" y2="40" stroke="#ffffff" stroke-width="1" opacity="0.05" stroke-linecap="round"/>
+<!-- CARVED CRYPTIC CLUES on trunk -->
+<g filter="url(#carveGlow)">
+  <text x="250" y="135" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.7" font-weight="700" letter-spacing="0.5">Dog's cry from</text>
+  <text x="250" y="150" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.65" font-weight="700" letter-spacing="0.5">tree's exterior (4)</text>
+  <text x="232" y="167" fill="#ffd700" font-size="8" opacity="0.3">~</text>
+  <text x="268" y="167" fill="#ffd700" font-size="8" opacity="0.3">~</text>
+  <text x="250" y="185" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.6" font-weight="700" letter-spacing="0.5">Flea dancing</text>
+  <text x="250" y="200" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.55" font-weight="700" letter-spacing="0.5">through a page (4)</text>
+  <text x="232" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
+  <text x="268" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
+  <text x="250" y="235" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.35" font-weight="700" letter-spacing="0.5">Long for an</text>
+  <text x="250" y="249" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.25" font-weight="700" letter-spacing="0.5">evergreen (4)</text>
+</g>
+<!-- Warm glow from carvings -->
+<ellipse cx="250" cy="190" rx="50" ry="70" fill="#ffd700" opacity="0.03"/>
+<!-- Moss on trunk -->
+<ellipse cx="187" cy="240" rx="8" ry="18" fill="#2a6a28" opacity="0.35"/>
+<ellipse cx="313" cy="220" rx="7" ry="15" fill="#2a6a28" opacity="0.3"/>
+<!-- Forest floor mushrooms -->
+<rect x="140" y="262" width="3" height="8" fill="#ddd" opacity="0.5"/>
+<ellipse cx="141" cy="262" rx="6" ry="3" fill="#4af5a0" opacity="0.4"/>
+<circle cx="141" cy="262" r="8" fill="url(#bioGlow1)" opacity="0.3"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></circle>
+<rect x="355" y="265" width="3" height="7" fill="#ddd" opacity="0.5"/>
+<ellipse cx="356" cy="265" rx="5" ry="2.5" fill="#4af5a0" opacity="0.35"/>
+<circle cx="356" cy="265" r="7" fill="url(#bioGlow1)" opacity="0.25"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="3.5s" repeatCount="indefinite" begin="1s"/></circle>
+<!-- Leaf litter -->
+<ellipse cx="160" cy="272" rx="5" ry="2" fill="#5a4a18" opacity="0.35" transform="rotate(25,160,272)"/>
+<ellipse cx="340" cy="270" rx="4" ry="2" fill="#4a3a10" opacity="0.3" transform="rotate(-15,340,270)"/>
+<ellipse cx="220" cy="275" rx="4" ry="1.5" fill="#6a5a20" opacity="0.25" transform="rotate(40,220,275)"/>
+<ellipse cx="280" cy="274" rx="3" ry="1.5" fill="#5a4a18" opacity="0.3" transform="rotate(-30,280,274)"/>
+<!-- Small ferns at base -->
+<path d="M120,270 Q115,258 110,250 Q118,255 122,248 Q120,260 125,270 Z" fill="#1a4a25" opacity="0.5"/>
+<path d="M380,268 Q385,256 390,248 Q383,254 378,246 Q380,258 375,268 Z" fill="#1a4a25" opacity="0.5"/>
+<!-- Ground -->
+<ellipse cx="250" cy="275" rx="220" ry="15" fill="#152a1a" opacity="0.5"/>
+<rect x="0" y="272" width="500" height="8" fill="#0d2015" opacity="0.6"/>
+</svg>`;
+
 // Scene 2: Fox appears (glowing eyes in undergrowth) — reuse scene 0 visual since it's the same forest
 STORY_SCENES['forest_2'] = STORY_SCENES['forest_0'];
 

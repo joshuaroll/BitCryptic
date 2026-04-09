@@ -17,6 +17,7 @@ const BCWAudio = (() => {
   let enabled = true;
   let musicVolume = 0.3;
   let sfxVolume = 0.5;
+  let textSfxEnabled = true;
 
   const STORAGE_KEY = 'bcw_audio_settings';
 
@@ -28,6 +29,7 @@ const BCWAudio = (() => {
         enabled = saved.enabled !== false;
         musicVolume = saved.musicVolume ?? 0.3;
         sfxVolume = saved.sfxVolume ?? 0.5;
+        textSfxEnabled = saved.textSfxEnabled !== false;
       }
     } catch {}
 
@@ -67,7 +69,7 @@ const BCWAudio = (() => {
   function saveSettings() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        enabled, musicVolume, sfxVolume
+        enabled, musicVolume, sfxVolume, textSfxEnabled
       }));
     } catch {}
   }
@@ -126,7 +128,7 @@ const BCWAudio = (() => {
   }
 
   function playTypewriter() {
-    if (!audioCtx || !enabled) return;
+    if (!audioCtx || !enabled || !textSfxEnabled) return;
     const freq = 600 + Math.random() * 200;
     playTone(freq, 0.02, 'square', 0.03);
   }
@@ -259,9 +261,15 @@ const BCWAudio = (() => {
     saveSettings();
   }
 
+  function setTextSfxEnabled(val) {
+    textSfxEnabled = val;
+    saveSettings();
+  }
+
   function isEnabled() { return enabled; }
   function getMusicVolume() { return musicVolume; }
   function getSfxVolume() { return sfxVolume; }
+  function isTextSfxEnabled() { return textSfxEnabled; }
 
   return {
     init,
@@ -283,6 +291,8 @@ const BCWAudio = (() => {
     setSfxVolume,
     isEnabled,
     getMusicVolume,
-    getSfxVolume
+    getSfxVolume,
+    isTextSfxEnabled,
+    setTextSfxEnabled
   };
 })();

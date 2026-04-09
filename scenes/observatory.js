@@ -111,43 +111,49 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <circle cx="195" cy="78" r="0.5" fill="#fff" opacity="0.3"/>
 <circle cx="305" cy="85" r="0.6" fill="#fff" opacity="0.35"/>
 <circle cx="450" cy="75" r="0.5" fill="#fff" opacity="0.3"/>
-<!-- Constellation S — curved line of stars (left area) -->
+<!-- Constellation S — clear S-curve of stars, NO connecting lines (left area) -->
 <g filter="url(#constFilter)">
-  <circle cx="100" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite"/></circle>
-  <circle cx="115" cy="60" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.2s"/></circle>
-  <circle cx="120" cy="80" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.4s"/></circle>
-  <circle cx="135" cy="90" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.6s"/></circle>
-  <circle cx="140" cy="105" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.8s"/></circle>
-  <!-- S constellation lines -->
-  <path d="M100,70 Q118,55 115,60 Q112,65 120,80 Q128,95 135,90 Q142,85 140,105" fill="none" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <circle cx="120" cy="80" r="18" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite"/></circle>
+  <!-- Top curve of S -->
+  <circle cx="130" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite"/></circle>
+  <circle cx="118" cy="52" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.15s"/></circle>
+  <circle cx="108" cy="57" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.3s"/></circle>
+  <!-- Middle crossing -->
+  <circle cx="112" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.45s"/></circle>
+  <circle cx="122" cy="78" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.6s"/></circle>
+  <!-- Bottom curve of S -->
+  <circle cx="132" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.75s"/></circle>
+  <circle cx="125" cy="95" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.9s"/></circle>
+  <circle cx="112" cy="98" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="1.05s"/></circle>
+  <!-- NO lines — player must connect the dots mentally -->
+  <circle cx="120" cy="75" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite"/></circle>
 </g>
-<!-- Constellation K — crossed line of stars (center area) -->
+<!-- Constellation K — stars forming K shape, NO connecting lines (center area) -->
 <g filter="url(#constFilter)">
+  <!-- Vertical stroke -->
   <circle cx="240" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.1s"/></circle>
   <circle cx="240" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.3s"/></circle>
   <circle cx="240" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
   <circle cx="240" cy="100" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.7s"/></circle>
+  <!-- Upper diagonal -->
   <circle cx="255" cy="60" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.4s"/></circle>
+  <!-- Lower diagonal -->
   <circle cx="255" cy="95" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.6s"/></circle>
-  <!-- K constellation lines: vertical + two diagonals -->
-  <line x1="240" y1="55" x2="240" y2="100" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <line x1="240" y1="78" x2="255" y2="60" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <line x1="240" y1="78" x2="255" y2="95" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <circle cx="245" cy="78" r="20" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="1s"/></circle>
+  <!-- NO lines -->
+  <circle cx="245" cy="78" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="1s"/></circle>
 </g>
-<!-- Constellation Y — forking branch of stars (right area) -->
+<!-- Constellation Y — forking stars, NO connecting lines (right area) -->
 <g filter="url(#constFilter)">
+  <!-- Left branch top -->
   <circle cx="370" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.2s"/></circle>
+  <!-- Right branch top -->
   <circle cx="390" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+  <!-- Junction -->
   <circle cx="380" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.7s"/></circle>
+  <!-- Stem -->
   <circle cx="380" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.9s"/></circle>
   <circle cx="380" cy="100" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="1.1s"/></circle>
-  <!-- Y constellation lines: two branches merge into stem -->
-  <line x1="370" y1="55" x2="380" y2="70" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <line x1="390" y1="55" x2="380" y2="70" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <line x1="380" y1="70" x2="380" y2="100" stroke="#ffd700" stroke-width="0.5" opacity="0.3"/>
-  <circle cx="380" cy="78" r="20" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="2s"/></circle>
+  <!-- NO lines -->
+  <circle cx="380" cy="78" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="2s"/></circle>
 </g>
 <!-- Transparent dome outline (interior view) -->
 <path d="M30,240 Q30,30 250,15 Q470,30 470,240" fill="none" stroke="#8a9ab0" stroke-width="1" opacity="0.12"/>

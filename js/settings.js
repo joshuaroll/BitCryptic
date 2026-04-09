@@ -60,6 +60,13 @@ const BCWSettings = (() => {
             <label>SFX Volume</label>
             <input type="range" id="setting-sfx-vol" class="settings-slider" min="0" max="100" value="${Math.round(BCWAudio.getSfxVolume() * 100)}">
           </div>
+          <div class="settings-row">
+            <label>Text Sound Effects</label>
+            <div class="settings-toggle-wrap">
+              <input type="checkbox" id="setting-text-sfx" class="settings-toggle" ${BCWAudio.isTextSfxEnabled() ? 'checked' : ''}>
+              <label for="setting-text-sfx" class="settings-toggle-label"></label>
+            </div>
+          </div>
         </div>
 
         <div class="settings-section">
@@ -93,6 +100,9 @@ const BCWSettings = (() => {
           <div class="settings-row">
             <label>Font Size</label>
             <input type="range" id="setting-font-size" class="settings-slider" min="80" max="150" value="${Math.round(BCWAccessibility.getSettings().fontSize * 100)}">
+          </div>
+          <div class="settings-font-preview" id="settings-font-preview" style="font-size: ${BCWAccessibility.getSettings().fontSize}rem; color: rgba(255,255,255,0.6); padding: 6px 0; line-height: 1.5;">
+            The quick brown fox jumps over the lazy dog.
           </div>
         </div>
 
@@ -141,6 +151,11 @@ const BCWSettings = (() => {
       BCWAudio.setSfxVolume(e.target.value / 100);
     });
 
+    document.getElementById('setting-text-sfx').addEventListener('change', (e) => {
+      BCWAudio.setTextSfxEnabled(e.target.checked);
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackSettingsChange('textSfx', e.target.checked);
+    });
+
     document.getElementById('setting-difficulty').addEventListener('change', (e) => {
       settings.difficulty = e.target.value;
       save();
@@ -157,6 +172,8 @@ const BCWSettings = (() => {
 
     document.getElementById('setting-font-size').addEventListener('input', (e) => {
       BCWAccessibility.setFontSize(e.target.value / 100);
+      const preview = document.getElementById('settings-font-preview');
+      if (preview) preview.style.fontSize = (e.target.value / 100) + 'rem';
     });
   }
 
