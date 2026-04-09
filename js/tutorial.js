@@ -172,9 +172,19 @@ const BCWTutorial = (() => {
     isActive = false;
     try { localStorage.setItem(STORAGE_KEY, 'true'); } catch {}
     if (overlay) {
+      // Immediately stop blocking interaction
+      overlay.style.pointerEvents = 'none';
       overlay.classList.add('fade-out');
-      setTimeout(() => overlay.remove(), 500);
+      const ref = overlay;
       overlay = null;
+      setTimeout(() => { try { ref.remove(); } catch {} }, 500);
+    }
+    // Safety: remove any lingering tutorial overlay
+    const stale = document.getElementById('tutorial-overlay');
+    if (stale) {
+      stale.style.pointerEvents = 'none';
+      stale.style.opacity = '0';
+      setTimeout(() => { try { stale.remove(); } catch {} }, 100);
     }
   }
 

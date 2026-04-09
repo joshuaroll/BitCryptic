@@ -604,6 +604,200 @@ body.high-contrast .terminal-panel {
   font-size: calc(var(--bcw-font-scale, 1) * 1em);
 }
 
+/* ─── Map Designer Mode ─── */
+body.designer-mode #map-container { cursor: crosshair !important; }
+body.designer-mode .location:hover { transform: none; filter: none; }
+
+.designer-selected {
+  outline: 3px dashed #ff4444 !important;
+  outline-offset: 2px !important;
+}
+
+#designer-highlight {
+  position: fixed;
+  border: 2px solid rgba(255, 68, 68, 0.6);
+  background: rgba(255, 68, 68, 0.08);
+  pointer-events: none;
+  z-index: 9998;
+  display: none;
+  border-radius: 2px;
+}
+
+#designer-panel {
+  position: fixed;
+  top: 60px;
+  left: 12px;
+  width: 280px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  background: rgba(10, 15, 30, 0.95);
+  border: 2px solid #ff4444;
+  border-radius: 12px;
+  z-index: 9999;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+
+.designer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,68,68,0.3);
+}
+.designer-title {
+  font-family: 'Fredoka One', cursive;
+  color: #ff4444;
+  font-size: 0.95rem;
+}
+.designer-close {
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.designer-info {
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  word-break: break-all;
+}
+
+.designer-props { padding: 8px 14px; }
+.prop-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.prop-row label {
+  color: #ff8888;
+  font-size: 0.7rem;
+  min-width: 45px;
+  font-family: 'Courier New', monospace;
+}
+.prop-row input, .prop-row textarea {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,68,68,0.3);
+  border-radius: 4px;
+  color: #fff;
+  padding: 3px 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+}
+.prop-row input[type="number"] { width: 70px; flex: 0; }
+.prop-path {
+  width: 100%;
+  min-height: 50px;
+  resize: vertical;
+}
+
+.designer-coords {
+  padding: 6px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.designer-actions {
+  padding: 8px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.designer-btn {
+  padding: 5px 10px;
+  border: 1px solid rgba(255,68,68,0.4);
+  border-radius: 6px;
+  background: rgba(255,68,68,0.1);
+  color: #ff8888;
+  font-size: 0.7rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+.designer-btn:hover { background: rgba(255,68,68,0.25); }
+.designer-btn-sm { padding: 4px 8px; min-width: 30px; text-align: center; }
+
+.designer-section-label {
+  padding: 6px 14px 2px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,68,68,0.5);
+  font-weight: 700;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.designer-prompt-wrap { padding: 4px 14px 8px; }
+.designer-prompt {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,68,68,0.25);
+  border-radius: 6px;
+  color: #fff;
+  padding: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  resize: vertical;
+  min-height: 50px;
+}
+.designer-prompt::placeholder { color: rgba(255,255,255,0.25); }
+.designer-prompt:focus { border-color: rgba(255,68,68,0.6); outline: none; }
+.designer-btn-prompt {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  background: rgba(255,68,68,0.2) !important;
+  border-color: rgba(255,68,68,0.5) !important;
+  font-size: 0.8rem !important;
+}
+.designer-prompt-result {
+  margin-top: 6px;
+  font-size: 0.7rem;
+}
+
+.designer-export-output { padding: 0 14px 8px; }
+.designer-export-label {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 3px;
+}
+.designer-export-textarea {
+  width: 100%;
+  min-height: 60px;
+  max-height: 120px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,68,68,0.2);
+  border-radius: 4px;
+  color: #aaa;
+  padding: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  resize: vertical;
+}
+
+.designer-log {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  max-height: 120px;
+  overflow-y: auto;
+}
+.designer-log-line {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.4);
+  padding: 1px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
 /* ─── Loading Screen Improvements ─── */
 .loading-substatus {
   color: rgba(255, 255, 255, 0.35);
