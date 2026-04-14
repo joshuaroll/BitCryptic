@@ -134,9 +134,11 @@ const BCWAnalytics = (() => {
     track('achievement', { id: achievementId });
   }
 
+  let flushDisabled = false;
+
   // Persist analytics to localStorage for later review/export
   function flushEvents() {
-    if (eventQueue.length === 0) return;
+    if (eventQueue.length === 0 || flushDisabled) return;
 
     try {
       const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -146,7 +148,16 @@ const BCWAnalytics = (() => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
       eventQueue = [];
     } catch (e) {
-      // Storage full or unavailable - just keep in memory
+      // Storage quota exceeded — trim aggressively and retry once
+      try {
+        const fallback = eventQueue.slice(-500);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+        eventQueue = [];
+      } catch {
+        // Still failing — disable flush for this session to avoid repeated errors
+        flushDisabled = true;
+        eventQueue = eventQueue.slice(-100);
+      }
     }
   }
 

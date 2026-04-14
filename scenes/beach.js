@@ -1,4 +1,4 @@
-// Beach story scenes — "Cryptogram Cove"
+// Beach story scenes — "Scramble Shores"
 // Keys: beach_0 through beach_4
 // DRAFT — for review only
 
@@ -252,7 +252,7 @@ STORY_SCENES['beach_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 </ellipse>
 </svg>`;
 
-// Scene 4: Cryptogram Cove fully revealed, ancient cryptograms glowing
+// Scene 4: Cluey Cove fully revealed, ancient symbols glowing
 STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="coveReveal" x1="0" y1="0" x2="0" y2="1">
@@ -292,10 +292,10 @@ STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
   <text x="200" y="30" fill="#4af5e0" font-family="'Fredoka One',cursive" font-size="7" opacity="0.4"><animate attributeName="opacity" values="0.3;0.55;0.3" dur="5s" repeatCount="indefinite"/>&#x2234;</text>
   <text x="300" y="28" fill="#7ac5e8" font-family="'Fredoka One',cursive" font-size="7" opacity="0.4"><animate attributeName="opacity" values="0.25;0.5;0.25" dur="4.5s" repeatCount="indefinite" begin="0.6s"/>&#x221E;</text>
 </g>
-<!-- Central glowing inscription — "CRYPTOGRAM COVE" -->
+<!-- Central glowing inscription — "CLUEY COVE" -->
 <g filter="url(#glyphGlow)">
   <text x="250" y="90" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" letter-spacing="3" opacity="0.8">
-    CRYPTOGRAM COVE
+    CLUEY COVE
     <animate attributeName="opacity" values="0.6;0.9;0.6" dur="3s" repeatCount="indefinite"/>
   </text>
 </g>

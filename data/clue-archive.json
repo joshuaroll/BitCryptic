@@ -1,0 +1,866 @@
+{
+  "_meta": {
+    "title": "Bit Cryptic World — Complete Clue Archive",
+    "description": "Master database of every cryptic clue in the game as of 2026-04-13. This file is the authoritative archive — no clue should be deleted from the game without first being preserved here.",
+    "version": "1.1.0",
+    "dateCreated": "2026-04-13",
+    "lastValidated": "2026-04-13",
+    "totalClues": 25,
+    "validationSummary": {
+      "totalValidated": 25,
+      "passed": 16,
+      "issues": 9,
+      "criticalIssues": [
+        "daily_01: TAN — wordplay mechanism is broken. TAN is NOT hidden in 'tracked train takes in light'. Odd letters of TRAIN give T-A-N but 'tracked' is not a letter-selection indicator. NEEDS REPLACEMENT.",
+        "town_puzzle_02: LIBRARY — 'Quiet place where books live' is a straight definition, NOT a cryptic clue. No wordplay present. NEEDS REPLACEMENT.",
+        "library_puzzle_01: MAP — This is a traditional riddle, not a cryptic clue at all. NEEDS REPLACEMENT.",
+        "guide_homophone_02: SUR — 'SUR' is not a standard English word. The dictionary check passes but SUR is French/Spanish. NEEDS REPLACEMENT.",
+        "guide_reversal_01: THIN �� 'Take back the night by withholding first gold light' is a combined reversal+deletion, too complex for a teaching example. NEEDS SIMPLER REPLACEMENT."
+      ],
+      "minorIssues": [
+        "forest_clue_02: LEAF — 'Flea dancing through a page' — 'through' is padding. It serves no cryptic function (neither indicator nor fodder). Surface is still acceptable.",
+        "observatory_puzzle_01: SKY — visual/shape puzzle, not a cryptic clue. Valid as a unique puzzle type but doesn't teach a cryptic technique.",
+        "daily_02_commented: CHIME — 'Church's first meter echos bright sound' — Wordplay is unclear. CH (church) + IME (meter?) — 'meter' doesn't clearly give IME. NEEDS REVIEW before uncommenting.",
+        "skyship_svg_01 vs skyship_interaction_01: SHIP — SVG says 'worship' but interaction says 'warship'. Both work but inconsistency should be resolved."
+      ],
+      "allAnagramsVerified": true,
+      "allHiddenWordsVerified": "PASS except daily_01 TAN",
+      "allReversalsVerified": true,
+      "allCharadesVerified": true
+    }
+  },
+
+  "storyClues": [
+    {
+      "id": "docks_reversal_01",
+      "location": "Decoder Docks",
+      "storyKey": "docks",
+      "sceneStep": 2,
+      "clueText": "!EMOH EMOCLEW .S.P",
+      "answer": ["WELCOME HOME", "PS WELCOME HOME", "P.S. WELCOME HOME", "P.S. WELCOME HOME!"],
+      "technique": "reversal",
+      "difficulty": 1,
+      "definition": "The whole reversed phrase is the definition — a greeting",
+      "explanation": "The entire postscript line is written backwards. '.S.P' = 'P.S.' reversed. 'EMOCLEW EMOH' = 'WELCOME HOME' reversed.",
+      "speaker": "Dock Keeper",
+      "teachingDialogue": "That line at the end reads .S.P which is just P.S. written backwards. The whole line is reversed. Give it a read the right way round.",
+      "sourceFile": "index.html",
+      "sourceLine": 3732,
+      "hint": "Read the whole line backwards, starting from the right.",
+      "wrongReactions": [
+        "Not quite. Take it letter by letter. EMOCLEW backwards is W-E-L-C-O-M-E. Now do the same for EMOH.",
+        "You've almost got it. EMOCLEW is WELCOME. EMOH is HOME. Put them together.",
+        "He smiles patiently and traces the letters in the air: 'W-E-L-C-O-M-E H-O-M-E. Two words. Say it like you mean it.'"
+      ]
+    },
+    {
+      "id": "forest_clue_01",
+      "location": "Enigma Forest",
+      "storyKey": "forest",
+      "sceneStep": "SVG visual (forest_1)",
+      "clueText": "Yelp in sidebar knowledge (4)",
+      "previousClueText": "Dog's cry from tree's exterior (4)",
+      "answer": "BARK",
+      "technique": "hidden_word",
+      "difficulty": 1,
+      "definition": "Yelp (a bark = a yelp)",
+      "explanation": "Hidden word. 'In' is the indicator. BARK is hidden spanning side-BAR K-nowledge. Definition: 'Yelp'.",
+      "validationStatus": "PASSED",
+      "speaker": null,
+      "teachingDialogue": null,
+      "sourceFile": "scenes/forest.js",
+      "sourceLine": 121,
+      "hint": null,
+      "wrongReactions": null,
+      "notes": "Visual-only clue carved on ancient oak trunk in SVG. Not interactive — player reads it."
+    },
+    {
+      "id": "forest_clue_02",
+      "location": "Enigma Forest",
+      "storyKey": "forest",
+      "sceneStep": "SVG visual (forest_1)",
+      "clueText": "Page from the whole affair (4)",
+      "previousClueText": "Flea dancing through a page (4)",
+      "answer": "LEAF",
+      "technique": "hidden_word",
+      "difficulty": 1,
+      "definition": "Page (a leaf = a page of a book)",
+      "explanation": "Hidden word. 'From' is the indicator. LEAF is hidden spanning who-LE AF-fair. Definition: 'Page'.",
+      "validationStatus": "PASSED",
+      "speaker": null,
+      "teachingDialogue": null,
+      "sourceFile": "scenes/forest.js",
+      "sourceLine": 125,
+      "hint": null,
+      "wrongReactions": null,
+      "notes": "Visual-only clue carved on ancient oak trunk in SVG. The answer LEAF fits the forest theme."
+    },
+    {
+      "id": "forest_clue_03",
+      "location": "Enigma Forest",
+      "storyKey": "forest",
+      "sceneStep": "SVG visual (forest_1)",
+      "clueText": "Evergreen from worship in earnest (4)",
+      "previousClueText": "Long for an evergreen (4)",
+      "answer": "PINE",
+      "technique": "hidden_word",
+      "difficulty": 2,
+      "definition": "Evergreen (a pine is an evergreen tree)",
+      "explanation": "Hidden word. 'From' is the indicator. PINE is hidden spanning worshi-P IN E-arnest. Definition: 'Evergreen'.",
+      "validationStatus": "PASSED",
+      "speaker": null,
+      "teachingDialogue": null,
+      "sourceFile": "scenes/forest.js",
+      "sourceLine": 129,
+      "hint": null,
+      "wrongReactions": null,
+      "notes": "Visual-only clue carved on ancient oak trunk in SVG."
+    },
+    {
+      "id": "forest_puzzle_01",
+      "location": "Enigma Forest",
+      "storyKey": "forest",
+      "sceneStep": 3,
+      "clueText": "Face remodelled into a place for coffee (4)",
+      "answer": "CAFE",
+      "technique": "anagram",
+      "difficulty": 2,
+      "definition": "a place for coffee",
+      "explanation": "'Remodelled' is the anagram indicator. Rearrange FACE to get CAFE.",
+      "speaker": "The Letter Fox (via stone slab)",
+      "teachingDialogue": "The fox sits beside the stone and stares at you, tail flicking.",
+      "sourceFile": "index.html",
+      "sourceLine": 3778,
+      "hint": "The answer is an anagram. Look for a word whose letters can be rearranged.",
+      "wrongReactions": [
+        "The fox shakes its head and scratches at the word 'remodelled' on the stone.",
+        "The fox whines softly and nudges your hand. 'Remodelled' means the letters are shuffled. Which four-letter word can be rearranged?",
+        "The fox huffs and paws at 'face.' Rearrange those four letters into a place that serves drinks."
+      ]
+    },
+    {
+      "id": "cafe_puzzle_01",
+      "location": "Cryptic Cafe",
+      "storyKey": "cafe",
+      "sceneStep": 2,
+      "clueText": "Something instantly perky, starts a mouthful (3)",
+      "answer": "SIP",
+      "technique": "initial_letters",
+      "difficulty": 2,
+      "definition": "a mouthful",
+      "explanation": "'Starts' is the initial-letters indicator. Take the first letter of Something, Instantly, Perky = S-I-P. Definition: 'a mouthful' (a sip of a drink).",
+      "speaker": "Barista",
+      "teachingDialogue": "That's an initial letters clue. 'Starts' tells you to take the first letter of each word before it. Three letters, and the definition is 'a mouthful.'",
+      "sourceFile": "index.html",
+      "sourceLine": 3819,
+      "hint": "'Starts' tells you to look at the beginning of each word.",
+      "wrongReactions": [
+        "Not quite. Take the first letter of each word: Something, Instantly, Perky. What do those spell?",
+        "She traces the first letters on the counter with her finger: 'S... I... P...'",
+        "Three letters. S, I, P. What's a small mouthful of a drink?"
+      ]
+    },
+    {
+      "id": "town_puzzle_01",
+      "location": "Town Square",
+      "storyKey": "town",
+      "sceneStep": 3,
+      "clueText": "Wrote, mangled, a tall building (5)",
+      "answer": "TOWER",
+      "technique": "anagram",
+      "difficulty": 2,
+      "definition": "a tall building",
+      "explanation": "'Mangled' is the anagram indicator. Rearrange WROTE to get TOWER.",
+      "speaker": "Town Crier (fountain water)",
+      "teachingDialogue": "Look for anagram indicators like 'mangled' and 'scrambled.'",
+      "sourceFile": "index.html",
+      "sourceLine": 3865,
+      "hint": "Each clue describes a place on this island. Look for anagram indicators like 'mangled' and 'scrambled.'",
+      "wrongReactions": [
+        "Not quite. For the first one, 'mangled' tells you the letters of 'wrote' are mixed up. What building can you make?"
+      ],
+      "notes": "Part of a multi-puzzle set (3 clues solved in sequence)"
+    },
+    {
+      "id": "town_puzzle_02",
+      "location": "Town Square",
+      "storyKey": "town",
+      "sceneStep": 3,
+      "clueText": "Hushed collection? (7)",
+      "previousClueTexts": ["Quiet place where books live (7)", "Scales on railway, a place for books (7)"],
+      "answer": "LIBRARY",
+      "technique": "cryptic_definition",
+      "difficulty": 2,
+      "definition": "The entire clue is a cryptic definition — libraries are famously hushed, and they are collections",
+      "explanation": "Cryptic definition. The whole clue describes a LIBRARY obliquely: a 'hushed' place (libraries enforce quiet) that is a 'collection' (of books). The '?' signals something cryptic. Replaced the charade (LIBRA+RY) which was too obscure for this early stage.",
+      "validationStatus": "PASSED",
+      "speaker": "Town Crier (fountain water)",
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 3865,
+      "hint": "No tricks, just a description: where do books live?",
+      "wrongReactions": [
+        "She taps the fountain. 'The second one is simpler. No tricks, just a description: where do books live?'"
+      ],
+      "notes": "Part of the Town multi-puzzle. This is NOT a cryptic clue — it's a straight definition. Consider replacing with a proper cryptic clue."
+    },
+    {
+      "id": "town_puzzle_03",
+      "location": "Town Square",
+      "storyKey": "town",
+      "sceneStep": 3,
+      "clueText": "Hop works, scrambled, a place to build (8)",
+      "answer": "WORKSHOP",
+      "technique": "anagram",
+      "difficulty": 2,
+      "definition": "a place to build",
+      "explanation": "'Scrambled' is the anagram indicator. Rearrange HOP WORKS to get WORKSHOP (8 letters).",
+      "speaker": "Town Crier (fountain water)",
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 3865,
+      "hint": "'Scrambled' means rearrange 'hop works.' Eight letters, a place where you build things.",
+      "wrongReactions": [
+        "For the third: 'scrambled' means rearrange 'hop works.' Eight letters, a place where you build things."
+      ],
+      "notes": "Part of the Town multi-puzzle."
+    },
+    {
+      "id": "adventure_puzzle_01",
+      "location": "Adventure Tower",
+      "storyKey": "adventure",
+      "sceneStep": 2,
+      "clueText": "Warrior seized the road (4)",
+      "answer": "HERO",
+      "technique": "hidden_word",
+      "difficulty": 2,
+      "definition": "Warrior",
+      "explanation": "'Seized' is the hidden-word indicator. HERO is hidden inside 't-HERO-ad'. The definition is 'Warrior'.",
+      "speaker": "Tower Guardian",
+      "teachingDialogue": "Hidden word clue. The answer is concealed within the words themselves, spanning across them. Find it.",
+      "sourceFile": "index.html",
+      "sourceLine": 3910,
+      "hint": "The answer is hiding across the words.",
+      "wrongReactions": [
+        "Incorrect. Read the words again. The answer is spelled out across them, hidden in plain sight.",
+        "Look where one word ends and the next begins. The letters bridge the gap.",
+        "The answer sits across 'the road.' Four letters. Extract them."
+      ]
+    },
+    {
+      "id": "workshop_puzzle_01",
+      "location": "Puzzle Workshop",
+      "storyKey": "workshop",
+      "sceneStep": 2,
+      "clueText": "Ache about beginning of boating, on the shore (5)",
+      "answer": "BEACH",
+      "technique": "anagram_plus_initial",
+      "difficulty": 3,
+      "definition": "on the shore",
+      "explanation": "'About' is the anagram indicator. Take the letters of ACHE + the first letter ('beginning of') BOATING = B. Rearrange B+A+C+H+E to get BEACH.",
+      "speaker": "Cryptic Croc",
+      "teachingDialogue": "In a cryptic clue, 'about' tells you the letters are jumbled. 'Beginning of boating' means take the first letter of 'boating.' Mix that with the letters of 'ache,' and you get a word that means 'on the shore.'",
+      "sourceFile": "index.html",
+      "sourceLine": 4010,
+      "hint": "Jumble the letters of 'ache' with one more letter from the clue.",
+      "wrongReactions": [
+        "Not quite, but you're thinking. 'Beginning of boating' gives you the letter B. Mix that with A, C, H, E.",
+        "You've got the letters B, E, A, C, H. What word meaning 'shore' can you make from those?",
+        "He writes the five letters on the workbench with chalk: B, E, A, C, H. 'Rearrange these. Where do you find sand and waves?'"
+      ]
+    },
+    {
+      "id": "beach_puzzle_01",
+      "location": "Scramble Shores",
+      "storyKey": "beach",
+      "sceneStep": 2,
+      "clueText": "Horse, broken, on the coastline (5)",
+      "answer": "SHORE",
+      "technique": "anagram",
+      "difficulty": 2,
+      "definition": "on the coastline",
+      "explanation": "'Broken' is the anagram indicator. Rearrange HORSE to get SHORE. Definition: 'on the coastline'.",
+      "speaker": null,
+      "teachingDialogue": "This is Scramble Shores, after all. 'Broken' tells you to rearrange the letters.",
+      "sourceFile": "index.html",
+      "sourceLine": 4050,
+      "hint": "'Broken' is the anagram indicator. Rearrange the letters of HORSE. The definition is 'coastline.'",
+      "wrongReactions": [
+        "The crab clicks its claws impatiently. Rearrange the letters of 'horse.'",
+        "Five letters: H, O, R, S, E. What word meaning 'coastline' can you spell?",
+        "S-H-O-R-E. The horse, broken apart, becomes the shore beneath your feet."
+      ],
+      "validationStatus": "PASSED",
+      "notes": "NEW: Added as the first formal cryptic clue on Scramble Shores. The original TIFL OT NEPO choice-based puzzle remains later in the story."
+    },
+    {
+      "id": "cove_puzzle_01",
+      "location": "Cluey Cove",
+      "storyKey": "cove",
+      "sceneStep": 2,
+      "clueText": "Trap set up for a piece of the whole (4)",
+      "answer": "PART",
+      "technique": "reversal",
+      "difficulty": 3,
+      "definition": "a piece of the whole",
+      "explanation": "'Set up' is the reversal indicator. Reverse TRAP to get PART. Definition: 'a piece of the whole'.",
+      "speaker": null,
+      "teachingDialogue": "A reversal clue. 'Set up' tells you to reverse a word. The definition is 'a piece of the whole.'",
+      "sourceFile": "index.html",
+      "sourceLine": 4088,
+      "hint": "One of these words reads differently backwards.",
+      "wrongReactions": [
+        "The lock buzzes. 'Look for the reversal indicator. Which word tells you to read something backwards?'",
+        "A crab pinches your toe. 'Set up' means reversed. Which four-letter word in the clue can be flipped?",
+        "Reverse the word 'trap.' What do you get?"
+      ]
+    },
+    {
+      "id": "lair_puzzle_01",
+      "location": "Liam's Lair",
+      "storyKey": "lair",
+      "sceneStep": 3,
+      "clueText": "Treasure hidden in each estimate (5)",
+      "answer": "CHEST",
+      "technique": "hidden_word",
+      "difficulty": 3,
+      "definition": "Treasure",
+      "explanation": "'Hidden in' is the indicator. CHEST is hidden inside 'eaCHESTimate'. Definition: 'Treasure'.",
+      "speaker": "The Dragon",
+      "teachingDialogue": "A hidden word clue. Simple enough. But the next requires a different kind of thinking.",
+      "sourceFile": "index.html",
+      "sourceLine": 4134,
+      "hint": "The answer is hiding inside the words of the clue itself. Read across the word boundaries.",
+      "wrongReactions": [
+        "Look at the words more carefully. The answer is hidden in plain sight.",
+        "Read the letters across 'each estimate' slowly. What word do you see?",
+        "E-A-C-H-E-S-T-I-M-A-T-E. The answer spans two words."
+      ]
+    },
+    {
+      "id": "lair_puzzle_02",
+      "location": "Liam's Lair",
+      "storyKey": "lair",
+      "sceneStep": 5,
+      "clueText": "This beast makes proceedings drag on (6)",
+      "answer": "DRAGON",
+      "technique": "double_definition",
+      "difficulty": 3,
+      "definition": "This beast / makes proceedings drag on — both define DRAGON",
+      "explanation": "'This beast' = DRAGON (the creature). 'Makes proceedings drag on' = DRAGON (to drag on means to go slowly, and 'drag on' literally spells DRAGON).",
+      "speaker": "The Dragon",
+      "teachingDialogue": "A double definition. You have sharp eyes. But the final clue is my finest. It requires you to rearrange.",
+      "sourceFile": "index.html",
+      "sourceLine": 4153,
+      "hint": "This is a double definition. Both halves of the clue define the same word. What beast am I?",
+      "wrongReactions": [
+        "Two definitions in one clue. What creature guards this lair?",
+        "Think about what 'drag on' means as two separate words. Now think of a beast.",
+        "DRAG ON means to bore. What mythical creature sounds exactly like that?"
+      ]
+    },
+    {
+      "id": "lair_puzzle_03",
+      "location": "Liam's Lair",
+      "storyKey": "lair",
+      "sceneStep": 7,
+      "clueText": "Fun race, oddly, leads to the source of heat (7)",
+      "answer": "FURNACE",
+      "technique": "anagram",
+      "difficulty": 4,
+      "definition": "the source of heat",
+      "explanation": "'Oddly' is the anagram indicator. Rearrange FUN RACE (7 letters) to get FURNACE. Definition: 'the source of heat'.",
+      "speaker": "The Dragon",
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 4172,
+      "hint": "'Oddly' is the anagram indicator. Rearrange the letters of two words. 'Source of heat' is the definition.",
+      "wrongReactions": [
+        "Oddly tells you to rearrange some letters. Which letters?",
+        "Take the letters F-U-N-R-A-C-E. Jumble them up. What source of heat can you make?",
+        "Rearrange FUN RACE into a 7-letter word. Think of something hot."
+      ]
+    },
+    {
+      "id": "moon_puzzle_01",
+      "location": "The Moon",
+      "storyKey": "moon",
+      "sceneStep": 3,
+      "clueText": "Blemish is also a target (4)",
+      "answer": "MARK",
+      "technique": "double_definition",
+      "difficulty": 3,
+      "definition": "Blemish / a target — both define MARK",
+      "explanation": "Double definition. MARK = a blemish/stain AND MARK = a target to aim at. Also the character's name.",
+      "speaker": "Mark",
+      "teachingDialogue": "Yes, that's my name and my nature. I leave my mark on every puzzle.",
+      "sourceFile": "index.html",
+      "sourceLine": 4218,
+      "hint": "This is a double definition. Both halves of the clue point to the same four-letter word. A blemish on a surface, and something you aim at.",
+      "wrongReactions": [
+        "Two definitions, one word. Think about what a blemish is. Think about what a target is.",
+        "A stain or scratch on a surface. Something you aim for. Four letters.",
+        "It's also a name. My name, in fact."
+      ]
+    },
+    {
+      "id": "moon_puzzle_02",
+      "location": "The Moon",
+      "storyKey": "moon",
+      "sceneStep": 5,
+      "clueText": "Lunar feature from confused tracer (6)",
+      "answer": "CRATER",
+      "technique": "anagram",
+      "difficulty": 3,
+      "definition": "Lunar feature",
+      "explanation": "'Confused' is the anagram indicator. Rearrange TRACER to get CRATER. Definition: 'Lunar feature'.",
+      "speaker": "Mark",
+      "teachingDialogue": "Impressive. You solved my crater clue.",
+      "sourceFile": "index.html",
+      "sourceLine": 4237,
+      "hint": "'Confused' is the anagram indicator. Rearrange the letters of TRACER. The definition is 'lunar feature'.",
+      "wrongReactions": [
+        "The word confused tells you to jumble up some letters. Which letters?",
+        "Take T-R-A-C-E-R and rearrange them. What lunar feature can you spell?",
+        "An anagram of TRACER gives you a six-letter word for a hole on the moon's surface."
+      ]
+    },
+    {
+      "id": "observatory_puzzle_01",
+      "location": "Mystic Peak Observatory",
+      "storyKey": "observatory",
+      "sceneStep": 3,
+      "clueText": "What do the stars spell?",
+      "answer": "SKY",
+      "technique": "visual_letter_shapes",
+      "difficulty": 2,
+      "definition": "The stars form letter shapes: S (curved line), K (vertical with horizontals), Y (line forking at top)",
+      "explanation": "A visual puzzle. Three constellations form the shapes of the letters S, K, Y. Not a traditional cryptic clue.",
+      "speaker": "Star Watcher",
+      "teachingDialogue": "Up here, the universe writes in light. Softly. Patiently. Shall we read together?",
+      "sourceFile": "index.html",
+      "sourceLine": 4283,
+      "hint": "Read the shapes as letters.",
+      "wrongReactions": [
+        "Look again. The first curve. You've seen that shape on the page before. It bends and flows.",
+        "'S.' She traces it in the air. 'Then a crossed line. K. Then a forking branch. What letter splits at the top?'",
+        "She places her hand gently on yours. 'S. K. Y. Three letters. Where are you looking right now?'"
+      ]
+    },
+    {
+      "id": "house_puzzle_01",
+      "location": "Your Home (Cottage)",
+      "storyKey": "house",
+      "sceneStep": 3,
+      "clueText": "Head of household? Ring me, I live here! (4)",
+      "answer": "HOME",
+      "technique": "charade",
+      "difficulty": 3,
+      "definition": "I live here!",
+      "explanation": "'Head of household' = H (first letter). 'Ring' = O (circular shape, standard crossword abbreviation). 'Me' = ME. H+O+ME = HOME. Definition: 'I live here!'",
+      "speaker": null,
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 4329,
+      "hint": "'Head of' means take the first letter. 'Ring' is a common crossword word for a round shape.",
+      "wrongReactions": [
+        "'Head of household' gives you the letter H. What shape is a ring?",
+        "H, then O (a ring), then ME. Put them together.",
+        "H-O-M-E. The head of Household, a ring (O), and ME."
+      ]
+    },
+    {
+      "id": "airship_puzzle_01",
+      "location": "Simon's Skyship",
+      "storyKey": "airship",
+      "sceneStep": 3,
+      "clueText": "Savoy agent conceals a journey (6)",
+      "answer": "VOYAGE",
+      "technique": "hidden_word",
+      "difficulty": 3,
+      "definition": "a journey",
+      "explanation": "'Conceals' is the hidden-word indicator. VOYAGE is hidden inside 'sa-VOYAGE-nt'. Definition: 'a journey'.",
+      "speaker": "Simon",
+      "teachingDialogue": "It's a hidden word clue. The answer is tucked inside the words themselves, hiding across the gap between two words. See if you can spot it.",
+      "sourceFile": "index.html",
+      "sourceLine": 4375,
+      "hint": "The answer hides inside the surrounding words, spanning across the gap. Look at where 'savoy' ends and 'agent' begins.",
+      "wrongReactions": [
+        "Not quite. Read the letters across the two words slowly: S-A-V-O-Y-A-G-E-N-T. See a journey hiding in there?",
+        "Start from the 'V' in 'savoy' and read six letters forward: V-O-Y-A-G-E.",
+        "saVOYAGEnt. Six letters, right there in the middle. A journey."
+      ]
+    },
+    {
+      "id": "pond_puzzle_01",
+      "location": "Fishing Pond",
+      "storyKey": "pond",
+      "sceneStep": 2,
+      "clueText": "Stagger on a fishing spool (4)",
+      "answer": "REEL",
+      "technique": "double_definition",
+      "difficulty": 2,
+      "definition": "Stagger / a fishing spool — both define REEL",
+      "explanation": "Double definition. REEL = to stagger/sway AND REEL = a fishing spool that holds line.",
+      "speaker": null,
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 4416,
+      "hint": "Think of a word that means both 'to stagger' and 'a spool used for fishing line.'",
+      "wrongReactions": [
+        "Two definitions, one answer. What do you call it when someone staggers or sways?",
+        "Think about what holds the fishing line. A spool that you wind. It also means to stumble.",
+        "R-E-E-L. You reel in a fish, and you reel from a shock. Four letters."
+      ]
+    },
+    {
+      "id": "library_puzzle_01",
+      "location": "Lexicon Library",
+      "storyKey": "library",
+      "sceneStep": 3,
+      "clueText": "Chart or plan (3)",
+      "previousClueText": "I have cities but no houses. I have mountains but no trees. I have water but no fish. I have roads but no cars. What am I?",
+      "answer": ["MAP", "A MAP"],
+      "technique": "double_definition",
+      "difficulty": 1,
+      "definition": "Chart / plan — both define MAP",
+      "explanation": "Double definition. MAP = a chart (of territory) AND MAP = to plan (map out a route). Replaced the original traditional riddle with a proper cryptic clue. Library now teaches double definitions.",
+      "validationStatus": "PASSED",
+      "speaker": "Head Librarian",
+      "teachingDialogue": null,
+      "sourceFile": "index.html",
+      "sourceLine": 3969,
+      "hint": "Something that represents the world without being the world itself.",
+      "wrongReactions": [
+        "Not quite. Think about what shows you these things without actually containing them.",
+        "She glances at a rolled-up parchment on her desk. 'You use one of these every time you navigate somewhere new.'",
+        "Three letters. Flat, made of paper, and very useful when you're lost."
+      ],
+      "notes": "This is a traditional riddle, NOT a cryptic crossword clue. Consider replacing with a proper cryptic clue in a future update."
+    }
+  ],
+
+  "svgOnlyClues": [
+    {
+      "id": "skyship_svg_01",
+      "location": "Simon's Skyship",
+      "sceneKey": "airship_3",
+      "clueText": "Boat hidden in worship, I presume (4)",
+      "answer": "SHIP",
+      "technique": "hidden_word",
+      "difficulty": 2,
+      "definition": "Boat",
+      "explanation": "'Hidden in' is the indicator. SHIP is hidden inside 'wor-SHIP'. Definition: 'Boat'.",
+      "sourceFile": "scenes/skyship.js",
+      "sourceLine": 163,
+      "notes": "Displayed on the newspaper/gazette SVG in the cabin. Text only — no interactive puzzle. The index.html interaction version at line 3507 uses 'warship' instead of 'worship'."
+    },
+    {
+      "id": "skyship_svg_02",
+      "location": "Simon's Skyship",
+      "sceneKey": "airship_3",
+      "clueText": "Anger found in desire (3)",
+      "answer": "IRE",
+      "technique": "hidden_word",
+      "difficulty": 2,
+      "definition": "Anger",
+      "explanation": "'Found in' is the hidden-word indicator. IRE is hidden inside 'des-IRE'. Definition: 'Anger'.",
+      "sourceFile": "scenes/skyship.js",
+      "sourceLine": 164,
+      "notes": "Displayed on the newspaper/gazette SVG. Text only — no interactive puzzle."
+    }
+  ],
+
+  "interactionClues": [
+    {
+      "id": "beach_interaction_01",
+      "location": "Scramble Shores",
+      "clueText": "TRCPIYC",
+      "answer": "CRYPTIC",
+      "technique": "anagram_visual",
+      "difficulty": 1,
+      "explanation": "Unscramble TRCPIYC to get CRYPTIC.",
+      "sourceFile": "index.html",
+      "sourceLine": 3473,
+      "notes": "Alert-based interaction (Unscramble Shells button). Not a formal puzzle — just an alert dialog."
+    },
+    {
+      "id": "beach_interaction_02",
+      "location": "Scramble Shores",
+      "clueText": "DLROW CITPRYC TIB",
+      "answer": "BIT CRYPTIC WORLD",
+      "technique": "anagram_visual",
+      "difficulty": 1,
+      "explanation": "Unscramble each word: DLROW=WORLD, CITPRYC=CRYPTIC, TIB=BIT → BIT CRYPTIC WORLD.",
+      "sourceFile": "index.html",
+      "sourceLine": 3474,
+      "notes": "Alert-based interaction (Message in a Bottle button). Not a formal puzzle."
+    },
+    {
+      "id": "lair_interaction_01",
+      "location": "Liam's Lair",
+      "clueText": "Treasure hidden in each estimate (5)",
+      "answer": "CHEST",
+      "technique": "hidden_word",
+      "sourceFile": "index.html",
+      "sourceLine": 3450,
+      "notes": "Duplicate of lair_puzzle_01 — shown as an alert when clicking 'Face the Dragon's Clue' interaction button."
+    },
+    {
+      "id": "lair_interaction_02",
+      "location": "Liam's Lair",
+      "clueText": "This beast makes proceedings drag on (6)",
+      "answer": "DRAGON",
+      "technique": "double_definition",
+      "sourceFile": "index.html",
+      "sourceLine": 3451,
+      "notes": "Duplicate of lair_puzzle_02 — shown as alert when clicking 'Search the Hoard' interaction button."
+    },
+    {
+      "id": "lair_interaction_03",
+      "location": "Liam's Lair",
+      "clueText": "Fun race, oddly, leads to the source of heat (7)",
+      "answer": "FURNACE",
+      "technique": "anagram",
+      "sourceFile": "index.html",
+      "sourceLine": 3452,
+      "notes": "Duplicate of lair_puzzle_03 — shown as alert when clicking 'Read the Wall Carvings' interaction button."
+    },
+    {
+      "id": "moon_interaction_01",
+      "location": "The Moon",
+      "clueText": "Blemish is also a target (4)",
+      "answer": "MARK",
+      "technique": "double_definition",
+      "sourceFile": "index.html",
+      "sourceLine": 3484,
+      "notes": "Duplicate of moon_puzzle_01 — shown as alert when clicking 'Meet Mark' interaction button."
+    },
+    {
+      "id": "moon_interaction_02",
+      "location": "The Moon",
+      "clueText": "Lunar feature from confused tracer (6)",
+      "answer": "CRATER",
+      "technique": "anagram",
+      "sourceFile": "index.html",
+      "sourceLine": 3485,
+      "notes": "Duplicate of moon_puzzle_02 — shown as alert when clicking 'Mark's Esoteric Clue' interaction button."
+    },
+    {
+      "id": "skyship_interaction_01",
+      "location": "Simon's Skyship",
+      "clueText": "Boat hidden in warship, I presume (4)",
+      "answer": "SHIP",
+      "technique": "hidden_word",
+      "sourceFile": "index.html",
+      "sourceLine": 3507,
+      "notes": "Alert-based interaction. Note: uses 'warship' while the SVG version uses 'worship'. Both work as hidden-word containers for SHIP."
+    },
+    {
+      "id": "skyship_interaction_02",
+      "location": "Simon's Skyship",
+      "clueText": "Anger found in desire (3)",
+      "answer": "IRE",
+      "technique": "hidden_word",
+      "sourceFile": "index.html",
+      "sourceLine": 3508,
+      "notes": "Duplicate of skyship_svg_02 — shown as alert when clicking 'Browse Simon's Collection' interaction button."
+    }
+  ],
+
+  "dailyGameClues": [
+    {
+      "id": "daily_01",
+      "clueText": "Tracked train takes in light",
+      "answer": "TAN",
+      "definition": "takes in light",
+      "technique": "BROKEN",
+      "difficulty": 2,
+      "explanation": "ORIGINAL CLAIM: TAN hidden in 'tracked train takes'. VALIDATION FAILED: TAN does not appear as a consecutive string anywhere in the clue text. The odd-positioned letters of TRAIN (T,A,N) spell TAN, but 'tracked' is not a valid letter-selection indicator. This clue has broken wordplay and MUST be replaced.",
+      "sourceFile": "src/bitCrypticGame.js",
+      "sourceLine": 6,
+      "notes": "CRITICAL: Broken wordplay. The only active clue in the daily game. Must be replaced with a verified clue.",
+      "validationStatus": "FAILED"
+    },
+    {
+      "id": "daily_02_commented",
+      "clueText": "Church's first meter echos bright sound",
+      "answer": "CHIME",
+      "technique": "charade",
+      "difficulty": 3,
+      "explanation": "CH (Church's first two letters) + IME (meter/rhythm) = CHIME. Definition: 'bright sound'.",
+      "sourceFile": "src/bitCrypticGame.js",
+      "sourceLine": 10,
+      "notes": "COMMENTED OUT in source code. Not currently active."
+    }
+  ],
+
+  "wordPlayGuideExamples": [
+    {
+      "id": "guide_anagram_01",
+      "category": "Anagrams",
+      "clueText": "Confused rats are popular (4)",
+      "answer": "STAR",
+      "technique": "anagram",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 29
+    },
+    {
+      "id": "guide_anagram_02",
+      "category": "Anagrams",
+      "clueText": "Strange care runs fast (4)",
+      "answer": "RACE",
+      "technique": "anagram",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 36
+    },
+    {
+      "id": "guide_hidden_01",
+      "category": "Hidden Words",
+      "clueText": "A foreign car buried in the tennis sand (6)",
+      "answer": "NISSAN",
+      "technique": "hidden_word",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 52,
+      "notes": "Hidden in 'ten-NISSAN-d'. Correct but the word-boundary split is confusing."
+    },
+    {
+      "id": "guide_hidden_02",
+      "category": "Hidden Words",
+      "clueText": "Refined portion of garden within hedge shearing (5)",
+      "answer": "EDGES",
+      "technique": "hidden_word",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 60
+    },
+    {
+      "id": "guide_reversal_01",
+      "category": "Reversals",
+      "clueText": "Take back the night by witholding first gold light (4)",
+      "answer": "THIN",
+      "technique": "reversal_plus_deletion",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 77,
+      "notes": "Complex: NIGHT reversed = THGIN, delete G (first of Gold) = THIN. Too complex for a teaching example."
+    },
+    {
+      "id": "guide_reversal_02",
+      "category": "Reversals",
+      "clueText": "Northbound cablecar sells food (4)",
+      "answer": "MART",
+      "technique": "reversal",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 84
+    },
+    {
+      "id": "guide_deletion_01",
+      "category": "Deletions",
+      "clueText": "Beheaded monarch is still bowed (4)",
+      "answer": "ARCH",
+      "technique": "deletion",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 101
+    },
+    {
+      "id": "guide_deletion_02",
+      "category": "Deletions",
+      "clueText": "Half lycanthrope is still twisted (4)",
+      "answer": "ROPE",
+      "technique": "deletion",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 108
+    },
+    {
+      "id": "guide_letterindex_01",
+      "category": "Letter Index",
+      "clueText": "Even stripes can be formal wear (3)",
+      "answer": "TIE",
+      "technique": "letter_index",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 124
+    },
+    {
+      "id": "guide_letterindex_02",
+      "category": "Letter Index",
+      "clueText": "Ones wearing red, orange, yellow, and lilac can be crowned (5)",
+      "answer": "ROYAL",
+      "technique": "initial_letters",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 132
+    },
+    {
+      "id": "guide_homophone_01",
+      "category": "Homophones",
+      "clueText": "The number sounded not against it (4)",
+      "answer": "FOUR",
+      "technique": "homophone",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 149
+    },
+    {
+      "id": "guide_homophone_02",
+      "category": "Homophones",
+      "clueText": "The Mountain heard a noble title (3)",
+      "answer": "SUR",
+      "technique": "homophone",
+      "sourceFile": "src/components/WordPlayIndicators.js",
+      "sourceLine": 157,
+      "notes": "Questionable: 'SUR' is not standard English. Intended as 'sounds like SIR' but SUR is French/Spanish for 'south'. Consider replacing."
+    }
+  ],
+
+  "techniqueInventory": {
+    "anagram": {
+      "count": 7,
+      "clueIds": ["forest_clue_02", "forest_puzzle_01", "town_puzzle_01", "town_puzzle_03", "workshop_puzzle_01", "lair_puzzle_03", "moon_puzzle_02"]
+    },
+    "hidden_word": {
+      "count": 5,
+      "clueIds": ["adventure_puzzle_01", "lair_puzzle_01", "airship_puzzle_01", "skyship_svg_01", "skyship_svg_02"]
+    },
+    "double_definition": {
+      "count": 5,
+      "clueIds": ["forest_clue_01", "forest_clue_03", "lair_puzzle_02", "moon_puzzle_01", "pond_puzzle_01"]
+    },
+    "reversal": {
+      "count": 2,
+      "clueIds": ["docks_reversal_01", "cove_puzzle_01"]
+    },
+    "initial_letters": {
+      "count": 1,
+      "clueIds": ["cafe_puzzle_01"]
+    },
+    "charade": {
+      "count": 1,
+      "clueIds": ["house_puzzle_01"]
+    },
+    "visual_letter_shapes": {
+      "count": 1,
+      "clueIds": ["observatory_puzzle_01"]
+    },
+    "straight_definition": {
+      "count": 1,
+      "clueIds": ["town_puzzle_02"]
+    },
+    "riddle": {
+      "count": 1,
+      "clueIds": ["library_puzzle_01"]
+    },
+    "anagram_visual": {
+      "count": 3,
+      "clueIds": ["beach_puzzle_01", "beach_interaction_01", "beach_interaction_02"]
+    },
+    "anagram_plus_initial": {
+      "count": 1,
+      "clueIds": ["workshop_puzzle_01"]
+    },
+    "NOT_YET_USED": [
+      "container",
+      "homophone",
+      "deletion",
+      "substitution",
+      "and_lit",
+      "spoonerism"
+    ]
+  }
+}

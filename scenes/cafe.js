@@ -109,7 +109,7 @@ STORY_SCENES['cafe_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <line x1="0" y1="215" x2="500" y2="215" stroke="#6b3a10" stroke-width="0.5" opacity="0.1"/>
 <!-- Scaling group for the big, classic mug -->
 <!-- LOOK FOR: scale(2.3) <--- Adjust this number to control the mug size -->
-<g transform="translate(250, 130) scale(2.3) translate(-250, -130)">
+<g transform="translate(250, 145) scale(1.9) translate(-250, -145)">
   <!-- Saucer -->
   <ellipse cx="250" cy="188" rx="85" ry="12" fill="#d4c4a0" opacity="1"/>
   <ellipse cx="250" cy="186" rx="80" ry="10" fill="#e8d8c0" opacity="1"/>

@@ -93,12 +93,18 @@ const BCWSave = (() => {
             return;
           }
 
+          // Validate that at least one recognized game key exists
+          const gameKeys = Object.keys(data).filter(k => !k.startsWith('_') && ALL_KEYS.includes(k));
+          if (gameKeys.length === 0) {
+            alert('Save file contains no recognized game data.');
+            return;
+          }
+
           if (!confirm('This will replace your current save data. Are you sure?')) return;
 
-          // Restore all keys
-          Object.keys(data).forEach(key => {
-            if (key.startsWith('_')) return; // Skip metadata
-            if (ALL_KEYS.includes(key)) {
+          // Restore only recognized keys
+          gameKeys.forEach(key => {
+            if (typeof data[key] === 'object' || typeof data[key] === 'string' || typeof data[key] === 'boolean') {
               safeSet(key, data[key]);
             }
           });
@@ -135,19 +141,43 @@ const BCWSave = (() => {
 
   // Check save data integrity on load
   function validateSave() {
+    // Validate progress
     const progress = safeGet('bitcryptic_progress');
     if (progress) {
-      // Ensure required fields exist
       if (!progress.version) progress.version = 1;
       if (!Array.isArray(progress.unlockedLocations)) progress.unlockedLocations = [];
       if (!Array.isArray(progress.completedStories)) progress.completedStories = [];
       if (typeof progress.introComplete !== 'boolean') progress.introComplete = false;
-
-      // Remove duplicates
       progress.unlockedLocations = [...new Set(progress.unlockedLocations)];
       progress.completedStories = [...new Set(progress.completedStories)];
-
       safeSet('bitcryptic_progress', progress);
+    }
+
+    // Validate achievements
+    const achievements = safeGet('bcw_achievements');
+    if (achievements) {
+      if (!Array.isArray(achievements.unlocked)) achievements.unlocked = [];
+      if (typeof achievements.puzzleStreak !== 'number') achievements.puzzleStreak = 0;
+      if (typeof achievements.totalPuzzlesSolved !== 'number') achievements.totalPuzzlesSolved = 0;
+      achievements.unlocked = [...new Set(achievements.unlocked)];
+      safeSet('bcw_achievements', achievements);
+    }
+
+    // Validate house data
+    const house = safeGet('bitcryptic_house');
+    if (house) {
+      if (!Array.isArray(house.furniture)) house.furniture = [];
+      if (typeof house.wallColor !== 'string') house.wallColor = 'wood';
+      if (typeof house.floorStyle !== 'string') house.floorStyle = 'oak';
+      safeSet('bitcryptic_house', house);
+    }
+
+    // Validate fishing data
+    const fishing = safeGet('bitcryptic_fishing');
+    if (fishing) {
+      if (!Array.isArray(fishing.bucket)) fishing.bucket = [];
+      if (typeof fishing.money !== 'number') fishing.money = 0;
+      safeSet('bitcryptic_fishing', fishing);
     }
   }
 

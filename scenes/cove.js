@@ -1,4 +1,4 @@
-// Cove story scenes — "Cryptogram Cove"
+// Cove story scenes — "Cluey Cove"
 // Keys: cove_0 through cove_4
 // DRAFT — for review only
 
@@ -136,24 +136,24 @@ STORY_SCENES['cove_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M145,225 Q148,218 158,217 Q160,225 155,232 Z" fill="#2a2a3a" opacity="0.8"/>
 <path d="M340,228 Q345,220 352,218 Q356,226 350,234 Z" fill="#2a2a3a" opacity="0.8"/>
 <!-- Large treasure chest (half submerged) -->
-<rect x="218" y="175" width="64" height="38" rx="3" fill="#8a6a20"/>
-<rect x="218" y="175" width="64" height="18" rx="3" fill="#a07a28"/>
-<rect x="218" y="175" width="64" height="18" rx="3" fill="#b08a30" opacity="0.3"/>
+<rect x="200" y="165" width="100" height="50" rx="4" fill="#8a6a20"/>
+<rect x="200" y="165" width="100" height="24" rx="4" fill="#a07a28"/>
+<rect x="200" y="165" width="100" height="24" rx="4" fill="#b08a30" opacity="0.3"/>
 <!-- Chest bands -->
-<line x1="218" y1="193" x2="282" y2="193" stroke="#6a5018" stroke-width="1.5"/>
-<line x1="218" y1="200" x2="282" y2="200" stroke="#6a5018" stroke-width="1"/>
+<line x1="200" y1="189" x2="300" y2="189" stroke="#6a5018" stroke-width="2"/>
+<line x1="200" y1="200" x2="300" y2="200" stroke="#6a5018" stroke-width="1.2"/>
 <!-- Chest clasp -->
-<rect x="244" y="172" width="12" height="6" rx="1.5" fill="#ffd700" opacity="0.9"/>
+<rect x="243" y="162" width="14" height="6" rx="2" fill="#ffd700" opacity="0.9"/>
 <!-- Large golden padlock -->
-<path d="M245,198 Q245,190 250,188 Q255,190 255,198 Z" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.9"/>
-<rect x="243" y="198" width="14" height="10" rx="2" fill="#ffd700" opacity="0.85"/>
-<circle cx="250" cy="203" r="2" fill="#2a2a3a"/>
+<path d="M244,196 Q244,186 250,184 Q256,186 256,196 Z" fill="none" stroke="#ffd700" stroke-width="2.5" opacity="0.9"/>
+<rect x="241" y="196" width="18" height="13" rx="2.5" fill="#ffd700" opacity="0.85"/>
+<circle cx="250" cy="202" r="2.5" fill="#2a2a3a"/>
 <!-- Lock glow -->
-<circle cx="250" cy="200" r="25" fill="url(#lockGlow1)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/></circle>
-<!-- Inscription on lock -->
+<circle cx="250" cy="198" r="35" fill="url(#lockGlow1)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/></circle>
+<!-- Inscription on chest face -->
 <g filter="url(#lockTextGlow)">
-  <text x="250" y="195" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" opacity="0.9" letter-spacing="0.3">Trap set up for a</text>
-  <text x="250" y="203" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" opacity="0.9" letter-spacing="0.3">piece of the whole (4)</text>
+  <text x="250" y="137" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="10" opacity="0.9" letter-spacing="0.5">Trap set up for a</text>
+  <text x="250" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="10" opacity="0.9" letter-spacing="0.5">piece of the whole (4)</text>
 </g>
 <!-- Water over bottom of chest (half submerged effect) -->
 <ellipse cx="250" cy="213" rx="45" ry="8" fill="#1a4a6a" opacity="0.5"/>

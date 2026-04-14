@@ -493,16 +493,26 @@ STORY_SCENES['moon_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <circle cx="250" cy="60" r="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite" begin="1.5s"/></circle>
   <circle cx="460" cy="40" r="0.4"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.5s" repeatCount="indefinite" begin="0.8s"/></circle>
 </g>
-<!-- Earth rising over lunar horizon -->
-<circle cx="320" cy="110" r="45" fill="#1a4a6a"/>
-<circle cx="320" cy="110" r="45" fill="url(#m7EarthGlow)"/>
-<!-- Continents -->
-<path d="M295,90 Q303,95 298,104 Q308,112 302,120 Q310,124 316,115 Q324,110 320,102 Q312,94 303,88" fill="#2a8a5a" opacity="0.4"/>
-<path d="M330,94 Q338,98 342,107 Q336,115 340,124 Q346,120 344,112 Q350,104 342,95" fill="#2a8a5a" opacity="0.35"/>
-<path d="M308,125 Q312,132 320,135 Q326,133 324,126" fill="#2a8a5a" opacity="0.3"/>
-<!-- Atmosphere glow -->
-<circle cx="320" cy="110" r="48" fill="none" stroke="#6abaee" stroke-width="2" opacity="0.15"/>
-<circle cx="320" cy="110" r="50" fill="none" stroke="#4a9ade" stroke-width="1" opacity="0.08"/>
+<!-- Earth rising over lunar horizon (larger, more detailed) -->
+<circle cx="310" cy="100" r="65" fill="#0a2a4a"/>
+<circle cx="310" cy="100" r="65" fill="#1a4a6a"/>
+<circle cx="310" cy="100" r="65" fill="url(#m7EarthGlow)"/>
+<!-- Oceans - subtle depth -->
+<circle cx="310" cy="100" r="62" fill="#1a5a7a" opacity="0.3"/>
+<!-- Continents - larger and more recognisable -->
+<path d="M275,72 Q285,68 295,74 Q300,80 295,90 Q288,95 280,90 Q272,82 275,72" fill="#2a8a5a" opacity="0.5"/>
+<path d="M300,65 Q310,60 320,68 Q325,78 318,88 Q310,92 302,85 Q296,76 300,65" fill="#2a8a5a" opacity="0.45"/>
+<path d="M330,78 Q340,74 348,82 Q352,92 346,102 Q338,108 330,100 Q326,90 330,78" fill="#2a8a5a" opacity="0.4"/>
+<path d="M305,105 Q315,100 325,106 Q330,115 322,125 Q312,130 305,122 Q300,112 305,105" fill="#2a8a5a" opacity="0.35"/>
+<path d="M280,100 Q288,96 296,102 Q298,110 290,116 Q282,112 280,100" fill="#2a8a5a" opacity="0.3"/>
+<!-- Cloud wisps -->
+<path d="M270,80 Q290,76 310,82" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.08"/>
+<path d="M320,90 Q340,86 355,92" fill="none" stroke="#fff" stroke-width="1" opacity="0.06"/>
+<path d="M285,110 Q305,106 325,112" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.07"/>
+<!-- Atmosphere glow - thicker, more vivid -->
+<circle cx="310" cy="100" r="68" fill="none" stroke="#6abaee" stroke-width="3" opacity="0.18"/>
+<circle cx="310" cy="100" r="72" fill="none" stroke="#4a9ade" stroke-width="2" opacity="0.1"/>
+<circle cx="310" cy="100" r="76" fill="none" stroke="#3a8ace" stroke-width="1" opacity="0.05"/>
 <!-- Lunar horizon -->
 <path d="M0,185 Q80,178 160,182 Q250,175 340,184 Q420,178 500,182 L500,260 L0,260 Z" fill="#8a8880"/>
 <path d="M0,190 Q100,184 200,188 Q300,180 400,190 Q450,185 500,188 L500,260 L0,260 Z" fill="#7a7870"/>
@@ -523,6 +533,5 @@ STORY_SCENES['moon_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <rect x="0" y="0" width="500" height="260" fill="url(#m7DomeGlow)"/>
 <!-- Serene Earth glow -->
 <rect x="0" y="0" width="500" height="260" fill="url(#m7EarthGlow)"/>
-<!-- Title text -->
-<text x="250" y="250" text-anchor="middle" fill="#d4d0c0" font-family="'Fredoka One',cursive" font-size="11" opacity="0.45">THE LUNAR HERMIT</text>
+<!-- (title text removed) -->
 </svg>`;

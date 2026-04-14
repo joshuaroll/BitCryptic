@@ -1,4 +1,4 @@
-// Library story scenes — "Library of Riddles"
+// Library story scenes — "Lexicon Library"
 // Keys: library_0 through library_5
 // DRAFT — for review only
 

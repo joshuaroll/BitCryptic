@@ -1,0 +1,41 @@
+Ideas for Review — Bit Cryptic World
+======================================
+
+8. Better Mystic Peak Puzzles
+-----------------------------
+Concept: Mystic Peak Observatory currently has placeholder actions (stargaze, star charts).
+Replace with a proper puzzle experience themed around constellations and celestial wordplay.
+
+Ideas:
+- Star Chart Puzzle: Connect stars to spell out hidden words. The player traces lines
+  between stars (nodes) to form letters, like a celestial version of connect-the-dots.
+- Constellation Clues: Each constellation has a cryptic clue embedded in its name or shape.
+  e.g., "The Great Bear hides a weapon (3)" — answer: ARM (hidden in beARM).
+- Telescope Minigame: Looking through the telescope reveals scrambled star names the player
+  must unscramble. Could tie into unlocking the Moon location as a reward.
+- Difficulty Ramp: Start with simple double-definition clues, escalate to container and
+  deletion clues. Mark (from the Moon) could have written some of the harder ones.
+- Visual: Dark sky with animated twinkling. Clue text floats among the stars. Solving a
+  puzzle causes a constellation to light up permanently.
+
+
+9. Terminal Easter Eggs — bark, leaf, pine
+------------------------------------------
+Concept: Entering nature-themed words into the Town Square terminal triggers fun hidden
+responses that reward curious players without unlocking anything game-breaking.
+
+Ideas:
+- "BARK": Terminal responds with a riddle about the Enigma Forest.
+  e.g., "The trees remember. A fox watches from the undergrowth... it barks once, then
+  vanishes." Could briefly flash a fox sprite near the forest on the map.
+- "LEAF": Terminal responds with a seasonal poem or a cryptic clue.
+  e.g., "A leaf falls from the ancient oak. On it, scratched in tiny letters: 'Turn over
+  a new one to start fresh (4).' " (answer: LEAF — double definition).
+  Could trigger a leaf-falling particle animation over the island.
+- "PINE": Terminal responds with a longing message from a character.
+  e.g., "A message from the Puzzle Workshop: 'Cryptic Croc misses his old friend Pine
+  Martin. If you see him in the forest, say hello.' "
+  Could unlock a small Pine Martin NPC hidden in the forest scene.
+- General approach: Keep these light and flavourful, not required for progression. They
+  reward exploration and make the terminal feel alive. Track them in achievements.
+

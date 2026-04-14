@@ -118,16 +118,16 @@ STORY_SCENES['forest_1'] = `<svg width="100%" viewBox="0 0 500 280" xmlns="http:
 <line x1="362" y1="43" x2="387" y2="40" stroke="#ffffff" stroke-width="1" opacity="0.05" stroke-linecap="round"/>
 <!-- CARVED CRYPTIC CLUES on trunk -->
 <g filter="url(#carveGlow)">
-  <text x="250" y="135" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.7" font-weight="700" letter-spacing="0.5">Dog's cry from</text>
-  <text x="250" y="150" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.65" font-weight="700" letter-spacing="0.5">tree's exterior (4)</text>
+  <text x="250" y="135" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.7" font-weight="700" letter-spacing="0.5">Yelp in</text>
+  <text x="250" y="150" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.65" font-weight="700" letter-spacing="0.5">sidebar knowledge (4)</text>
   <text x="232" y="167" fill="#ffd700" font-size="8" opacity="0.3">~</text>
   <text x="268" y="167" fill="#ffd700" font-size="8" opacity="0.3">~</text>
-  <text x="250" y="185" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.6" font-weight="700" letter-spacing="0.5">Flea dancing</text>
-  <text x="250" y="200" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.55" font-weight="700" letter-spacing="0.5">through a page (4)</text>
+  <text x="250" y="185" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.6" font-weight="700" letter-spacing="0.5">Page from the</text>
+  <text x="250" y="200" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.55" font-weight="700" letter-spacing="0.5">whole affair (4)</text>
   <text x="232" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
   <text x="268" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
-  <text x="250" y="235" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.35" font-weight="700" letter-spacing="0.5">Long for an</text>
-  <text x="250" y="249" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.25" font-weight="700" letter-spacing="0.5">evergreen (4)</text>
+  <text x="250" y="235" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.35" font-weight="700" letter-spacing="0.5">Evergreen from</text>
+  <text x="250" y="249" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.25" font-weight="700" letter-spacing="0.5">worship in earnest (4)</text>
 </g>
 <!-- Warm glow from carvings -->
 <ellipse cx="250" cy="190" rx="50" ry="70" fill="#ffd700" opacity="0.03"/>

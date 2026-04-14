@@ -74,17 +74,17 @@ const WordPlayIndicators = () => {
       ],
       exampleClues: [
         {
-          clue: 'Take back the night by witholding first gold light (4)',
-          answer: 'THIN',
-          explanation: '"NIGHT" reversed becomes "THGIN" and when "G" (first letter of gold) is removed it becomes THIN',
-          highlight: 'NIGHT → THIN',
-          definition: 'light'
+          clue: 'Vermin returning as a celestial body (4)',
+          answer: 'STAR',
+          explanation: '"RATS" (vermin) reversed becomes "STAR" (a celestial body)',
+          highlight: 'RATS → STAR',
+          definition: 'celestial body'
         },
         {
           clue: 'Northbound cablecar sells food (4)',
           answer: 'MART',
           explanation: '"TRAM" (another name for cablecar) reversed becomes "MART" (market)',
-          highlight: 'MART → TRAM',
+          highlight: 'TRAM → MART',
           definition: 'sells food'
         }
       ]
@@ -148,16 +148,16 @@ const WordPlayIndicators = () => {
         {
           clue: 'The number sounded not against it (4)',
           answer: 'FOUR',
-          explanation: 'Sounds like "FOR" which is not against it',
+          explanation: 'Sounds like "FOR" which means not against it',
           highlight: 'FOUR (sounds like FOR)',
           definition: 'The number'
         },
         {
-          clue: 'The Mountain heard a noble title (3)',
-          answer: 'SUR',
-          explanation: 'Sounds like "SIR"',
-          highlight: 'SUR (sounds like SIR)',
-          definition: 'The Mountain'
+          clue: 'Story heard at the rear (4)',
+          answer: 'TALE',
+          explanation: 'Sounds like "TAIL" which means at the rear',
+          highlight: 'TALE (sounds like TAIL)',
+          definition: 'Story'
         }
       ]
     }

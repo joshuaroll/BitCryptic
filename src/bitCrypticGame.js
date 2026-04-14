@@ -1,16 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./components/ui/button";
 import confetti from "canvas-confetti";
-
-const clues = [
-  { 
-    clue: "Tracked train takes in light", 
-    answer: "tan",
-    definition: "takes in light"
-  },
-  // { clue: "Church's first meter echos bright sound", answer: "CHIME" },
-  // Add more clues here
-];
+import { getDailyClue } from "./data/dailyClues";
 
 const MAX_ATTEMPTS = 3;
 const crocStages = [
@@ -20,24 +11,66 @@ const crocStages = [
   process.env.PUBLIC_URL + "/crypticcroc/CCpixel_stage_final.png"
 ];
 
+const STORAGE_KEY_PREFIX = "bitcryptic_daily_";
+const STREAK_KEY = "bitcryptic_daily_streak";
+
+function getTodayKey() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function loadDailyState(dateKey) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_PREFIX + dateKey));
+    if (saved) return saved;
+  } catch {}
+  return null;
+}
+
+function saveDailyState(dateKey, state) {
+  try {
+    localStorage.setItem(STORAGE_KEY_PREFIX + dateKey, JSON.stringify(state));
+  } catch {}
+}
+
+function loadStreak() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STREAK_KEY));
+    if (saved) return saved;
+  } catch {}
+  return { current: 0, longest: 0, lastSolvedDate: null };
+}
+
+function saveStreak(streak) {
+  try {
+    localStorage.setItem(STREAK_KEY, JSON.stringify(streak));
+  } catch {}
+}
+
 export default function CrypticCrocGame({ dateString }) {
-    // eslint-disable-next-line
-  const [currentClueIndex, setCurrentClueIndex] = useState(0);
-  const [userInput, setUserInput] = useState(Array(clues[0].answer.length).fill(""));
-  const [message, setMessage] = useState("");
-  const [flashColors, setFlashColors] = useState(Array(clues[0].answer.length).fill(""));
-  const [attempts, setAttempts] = useState(0);
-  const [guessedWords, setGuessedWords] = useState(new Set());
-  const [isSolved, setIsSolved] = useState(false);
-  const [guessHistory, setGuessHistory] = useState([]);
+  const todayKey = getTodayKey();
+  const dailyClue = getDailyClue(todayKey);
+  const clue = {
+    clue: dailyClue.clue,
+    answer: dailyClue.answer.toUpperCase(),
+    definition: dailyClue.definition
+  };
+
+  const savedState = loadDailyState(todayKey);
+  const [userInput, setUserInput] = useState(Array(clue.answer.length).fill(""));
+  const [message, setMessage] = useState(savedState?.isSolved ? "Already solved today!" : "");
+  const [flashColors, setFlashColors] = useState(Array(clue.answer.length).fill(""));
+  const [attempts, setAttempts] = useState(savedState?.attempts || 0);
+  const [guessedWords, setGuessedWords] = useState(new Set(savedState?.guessHistory || []));
+  const [isSolved, setIsSolved] = useState(savedState?.isSolved || false);
+  const [guessHistory, setGuessHistory] = useState(savedState?.guessHistory || []);
   const [showDefinition, setShowDefinition] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
     if (flashColors.some(color => color)) {
-      setTimeout(() => setFlashColors(Array(clues[0].answer.length).fill("")), 500);
+      setTimeout(() => setFlashColors(Array(clue.answer.length).fill("")), 500);
     }
-  }, [flashColors]);
+  }, [flashColors, clue.answer.length]);
 
   const getCrocodileStage = () => {
     return crocStages[Math.min(attempts, MAX_ATTEMPTS)];
@@ -62,37 +95,53 @@ export default function CrypticCrocGame({ dateString }) {
   };
 
   const checkAnswer = () => {
-    if (attempts >= MAX_ATTEMPTS) return; 
+    if (attempts >= MAX_ATTEMPTS) return;
 
     const userAnswer = userInput.join("");
-    if (userAnswer.length < clues[currentClueIndex].answer.length) {
-      setFlashColors(Array(clues[currentClueIndex].answer.length).fill("bg-red-500"));
+    if (userAnswer.length < clue.answer.length) {
+      setFlashColors(Array(clue.answer.length).fill("bg-red-500"));
       return;
     }
-    
+
     if (isSolved || guessedWords.has(userAnswer)) {
       return;
     }
-    
-    if (userAnswer === clues[currentClueIndex].answer) {
-      setFlashColors(Array(clues[currentClueIndex].answer.length).fill("bg-green-500"));
-      setMessage(`🎉 Congratulations! You solved it!`);
+
+    if (userAnswer === clue.answer) {
+      setFlashColors(Array(clue.answer.length).fill("bg-green-500"));
+      setMessage(`Congratulations! You solved it!`);
       setIsSolved(true);
+      const newHistory = [...guessHistory, userAnswer];
       setGuessedWords(prev => new Set(prev).add(userAnswer));
-      setGuessHistory([...guessHistory, userAnswer]);
+      setGuessHistory(newHistory);
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-    } else {
-      setFlashColors(Array(clues[currentClueIndex].answer.length).fill("bg-red-500"));
-      setAttempts(prev => prev + 1);
-      // Only add to guess history if it's not the last attempt
-      if (attempts < MAX_ATTEMPTS - 1) {
-        setGuessedWords(prev => new Set(prev).add(userAnswer));
-        setGuessHistory([...guessHistory, userAnswer]);
+      // Persist solved state
+      saveDailyState(todayKey, { isSolved: true, attempts, guessHistory: newHistory });
+      // Update streak
+      const streak = loadStreak();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayKey = yesterday.toISOString().split("T")[0];
+      if (streak.lastSolvedDate === yesterdayKey) {
+        streak.current += 1;
+      } else if (streak.lastSolvedDate !== todayKey) {
+        streak.current = 1;
       }
+      streak.longest = Math.max(streak.longest, streak.current);
+      streak.lastSolvedDate = todayKey;
+      saveStreak(streak);
+    } else {
+      setFlashColors(Array(clue.answer.length).fill("bg-red-500"));
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      const newHistory = [...guessHistory, userAnswer];
+      setGuessedWords(prev => new Set(prev).add(userAnswer));
+      setGuessHistory(newHistory);
+      saveDailyState(todayKey, { isSolved: false, attempts: newAttempts, guessHistory: newHistory });
       setMessage(
-        attempts + 1 >= MAX_ATTEMPTS 
-          ? <div>🐊 Better luck tomorrow! 🐊</div>
-          : "❌ Try again!"
+        newAttempts >= MAX_ATTEMPTS
+          ? <div>Better luck tomorrow!</div>
+          : "Try again!"
       );
     }
   };
@@ -102,20 +151,20 @@ export default function CrypticCrocGame({ dateString }) {
       {/* Clue Window */}
       <div className="clue-window mb-6">
         <div className="clue-title-bar flex flex-col items-center">
-          <div className="text-lg font-semibold">Tuesday, March 25, 2025</div>
+          <div className="text-lg font-semibold">{dateString}</div>
           <div className="text-xs text-gray-500 bg-gray-100 border border-gray-300 rounded-full px-4 py-1 mt-1">by Joshua Rollins</div>
         </div>
         <div className="clue-content">
           <p className="text-lg">
             {showDefinition ? (
               <>
-                <span className="definition-highlight">{clues[currentClueIndex].definition}</span>
-                {clues[currentClueIndex].clue.slice(clues[currentClueIndex].definition.length)}
+                <span className="definition-highlight">{clue.definition}</span>
+                {clue.clue.slice(clue.definition.length)}
               </>
             ) : (
-              clues[currentClueIndex].clue
+              clue.clue
             )}
-            {" "}({clues[currentClueIndex].answer.length})
+            {" "}({clue.answer.length})
           </p>
           <button 
             className="definition-button"

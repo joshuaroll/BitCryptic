@@ -1407,6 +1407,20 @@
       font-weight: 600;
     }
 
+    .reward-item.locked {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+
+    .reward-item.locked .reward-lock-label {
+      color: #e74c3c;
+    }
+
+    .reward-item.unlocked .reward-lock-label {
+      color: #4af5a0;
+    }
+
     .house-trash {
       position: fixed;
       bottom: 24px;
@@ -1536,17 +1550,17 @@
 
     .story-panel {
       position: fixed;
-      top: 15vh;
+      top: 2vh;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       width: 700px;
       max-width: 94vw;
-      max-height: 92vh;
+      max-height: 96vh;
       overflow-y: auto;
       background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
       border: 2px solid rgba(255, 215, 0, 0.5);
       border-radius: 20px;
-      padding: 24px 28px 20px;
+      padding: 24px 28px 40px;
       z-index: 250;
       opacity: 0;
       visibility: hidden;
@@ -1591,7 +1605,8 @@
       font-size: 1rem;
       line-height: 1.8;
       min-height: 60px;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
+      flex-shrink: 0;
     }
 
     .story-text .typewriter-cursor {
@@ -1651,7 +1666,9 @@
     .story-puzzle-input-wrap {
       display: flex;
       gap: 8px;
-      margin-top: 4px;
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 215, 0, 0.15);
     }
 
     .story-puzzle-input {
@@ -2305,7 +2322,7 @@
           <path d="M665,265 Q785,240 935,218 Q1045,208 1100,220" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="6,10"></path>
 
           <!-- ═══════════════════════════════════════════ -->
-          <!--  CAVE HILL (right-center, Cryptogram Cove) -->
+          <!--  CAVE HILL (right-center, Cluey Cove) -->
           <!-- ═══════════════════════════════════════════ -->
 
           <!-- Hill mound -->
@@ -2314,16 +2331,16 @@
           <!-- Rock face highlight -->
           <path d="M1665,765 Q1670,710 1700,678 Q1730,653 1760,650 Q1790,653 1815,678
                Q1840,710 1845,765 Z" fill="#686858" opacity="0.7"></path>
-          <!-- Cave entrance -->
-          <path d="M1735,772 Q1738,745 1753,737 Q1762,733 1772,737 Q1785,745 1787,772 Z" fill="url(#caveDark)"></path>
+          <!-- Cave entrance (larger) -->
+          <path d="M1720,772 Q1724,735 1745,722 Q1760,715 1775,722 Q1796,735 1800,772 Z" fill="url(#caveDark)"></path>
           <!-- Stone arch -->
-          <path d="M1732,773 Q1734,742 1752,732 Q1763,727 1774,732 Q1790,742 1792,773" fill="none" stroke="#4a4a3a" stroke-width="4.5" stroke-linecap="round"></path>
-          <path d="M1736,772 Q1738,746 1753,738 Q1763,734 1773,738 Q1786,746 1788,772" fill="none" stroke="#7a7a6a" stroke-width="2" stroke-linecap="round"></path>
+          <path d="M1716,773 Q1720,730 1744,718 Q1760,710 1776,718 Q1800,730 1804,773" fill="none" stroke="#4a4a3a" stroke-width="5" stroke-linecap="round"></path>
+          <path d="M1720,772 Q1724,735 1745,722 Q1760,716 1775,722 Q1796,735 1800,772" fill="none" stroke="#7a7a6a" stroke-width="2.5" stroke-linecap="round"></path>
           <!-- Torches -->
-          <rect x="1726" y="752" width="2.5" height="14" fill="#8b6914" opacity="0.7"></rect>
-          <ellipse cx="1727" cy="750" rx="3.5" ry="5" fill="#ff8c00" opacity="0.5"></ellipse>
-          <rect x="1795" y="752" width="2.5" height="14" fill="#8b6914" opacity="0.7"></rect>
-          <ellipse cx="1796" cy="750" rx="3.5" ry="5" fill="#ff8c00" opacity="0.5"></ellipse>
+          <rect x="1710" y="745" width="3" height="16" fill="#8b6914" opacity="0.7"></rect>
+          <ellipse cx="1711" cy="743" rx="4" ry="6" fill="#ff8c00" opacity="0.5"></ellipse>
+          <rect x="1808" y="745" width="3" height="16" fill="#8b6914" opacity="0.7"></rect>
+          <ellipse cx="1809" cy="743" rx="4" ry="6" fill="#ff8c00" opacity="0.5"></ellipse>
 
           <!-- Mountain range (north) - connected solid range -->
           <!-- Back mountain mass (darker, further away) -->
@@ -2405,11 +2422,12 @@
             <path d="M1138,375 Q1260,355 1390,385 Q1485,415 1545,435"></path>
           </g>
 
-          <!-- ── DARK DIRT: Town Square → Cave + Workshop→Cave + Cave→Beach + Town→Forest + Forest→Cafe + Docks→Forest ── -->
+          <!-- ── DARK DIRT: Town→Cove + Workshop→Cove + Workshop→Beach + Beach→Cove + Town→Forest + Forest→Cafe + Docks→Forest ── -->
           <!-- Border -->
           <g fill="none" stroke="#3a2a18" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
             <path d="M1260,720 Q1400,732 1530,748 Q1640,760 1730,770"></path>
             <path d="M1400,960 Q1500,910 1580,870 Q1650,830 1720,780"></path>
+            <path d="M1380,1420 Q1500,1460 1620,1500 Q1740,1540 1840,1580"></path>
             <path d="M1770,780 Q1790,850 1820,930 Q1850,1010 1875,1080 Q1890,1120 1905,1148"></path>
             <path d="M1145,712 Q1000,705 850,695 Q720,685 600,665"></path>
             <path d="M640,645 Q700,598 748,555 Q775,535 795,522"></path>
@@ -2419,6 +2437,7 @@
           <g fill="none" stroke="#6a5030" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
             <path d="M1260,720 Q1400,732 1530,748 Q1640,760 1730,770"></path>
             <path d="M1400,960 Q1500,910 1580,870 Q1650,830 1720,780"></path>
+            <path d="M1380,1420 Q1500,1460 1620,1500 Q1740,1540 1840,1580"></path>
             <path d="M1770,780 Q1790,850 1820,930 Q1850,1010 1875,1080 Q1890,1120 1905,1148"></path>
             <path d="M1145,712 Q1000,705 850,695 Q720,685 600,665"></path>
             <path d="M640,645 Q700,598 748,555 Q775,535 795,522"></path>
@@ -2428,6 +2447,7 @@
           <g fill="none" stroke="#7a6040" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
             <path d="M1260,720 Q1400,732 1530,748 Q1640,760 1730,770"></path>
             <path d="M1400,960 Q1500,910 1580,870 Q1650,830 1720,780"></path>
+            <path d="M1380,1420 Q1500,1460 1620,1500 Q1740,1540 1840,1580"></path>
             <path d="M1770,780 Q1790,850 1820,930 Q1850,1010 1875,1080 Q1890,1120 1905,1148"></path>
             <path d="M1145,712 Q1000,705 850,695 Q720,685 600,665"></path>
             <path d="M640,645 Q700,598 748,555 Q775,535 795,522"></path>
@@ -2804,9 +2824,9 @@
         </div>
       </div>
 
-      <!-- 4. Library of Riddles (north-east) -->
-      <div class="location" style="left: 1490px; top: 860px;" onclick="openLocation('library')" id="loc-library" role="button" tabindex="0" aria-label="Library of Riddles - click to explore">
-        <div class="loc-label">Library of Riddles</div>
+      <!-- 4. Lexicon Library (north-east) -->
+      <div class="location" style="left: 1490px; top: 860px;" onclick="openLocation('library')" id="loc-library" role="button" tabindex="0" aria-label="Lexicon Library - click to explore">
+        <div class="loc-label">Lexicon Library</div>
         <div class="loc-glow" style="background: radial-gradient(circle, rgba(150,100,255,0.3), transparent);"></div>
         <div class="loc-building">
           <svg width="140" height="120" viewBox="0 0 140 120">
@@ -2951,7 +2971,7 @@
       <div class="location" style="left: 1720px; top: 1210px;" onclick="openLocation('cove')" id="loc-cove" role="button" tabindex="0" aria-label="Cluey Cove - click to explore">
         <div class="loc-label">Cluey Cove</div>
         <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,200,50,0.3), transparent);"></div>
-        <div class="loc-building" style="width:80px;height:60px;">
+        <div class="loc-building" style="width:120px;height:90px;">
           <!-- Hitbox only - cave is drawn in terrain SVG -->
         </div>
       </div>
@@ -2979,20 +2999,24 @@
             <rect x="55" y="58" width="22" height="30" rx="2" fill="#6b3010"></rect>
             <circle cx="73" cy="73" r="2" fill="#ffd700"></circle>
             <!-- Coffee cup on windowsill -->
-            <rect x="28" y="49" width="6" height="5" rx="1" fill="#fff"></rect>
-            <path d="M34,51 Q37,51 37,53" fill="none" stroke="#fff" stroke-width="1.5"></path>
+            <rect x="29" y="63" width="6" height="5" rx="1" fill="#fff"></rect>
+            <path d="M35,64 Q38,64 38,66" fill="none" stroke="#fff" stroke-width="1.2"></path>
             <!-- Steam -->
-            <path d="M31,47 Q29,44 31,41" fill="none" stroke="#aaa" stroke-width="1" opacity="0.5"></path>
-            <path d="M33,48 Q35,44 33,40" fill="none" stroke="#aaa" stroke-width="1" opacity="0.4"></path>
+            <path d="M31,61 Q29,58 31,55" fill="none" stroke="#aaa" stroke-width="1" opacity="0.5">
+              <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite"></animate>
+            </path>
+            <path d="M33,62 Q35,58 33,54" fill="none" stroke="#aaa" stroke-width="1" opacity="0.4">
+              <animate attributeName="opacity" values="0.2;0.5;0.2" dur="3.5s" repeatCount="indefinite" begin="0.5s"></animate>
+            </path>
             <!-- Awning -->
             <path d="M15,42 Q25,48 35,42 Q45,48 55,42 Q65,48 75,42 Q85,48 95,42" fill="none" stroke="#c0392b" stroke-width="3"></path>
           </svg>
         </div>
       </div>
 
-      <!-- 10. Anagram Beach (bottom-right, on the water) -->
-      <div class="location" style="left: 1850px; top: 1600px;" onclick="openLocation('beach')" id="loc-beach" role="button" tabindex="0" aria-label="Anagram Beach - click to explore">
-        <div class="loc-label">Anagram Beach</div>
+      <!-- 10. Scramble Shores (bottom-right, on the water) -->
+      <div class="location" style="left: 1850px; top: 1600px;" onclick="openLocation('beach')" id="loc-beach" role="button" tabindex="0" aria-label="Scramble Shores - click to explore">
+        <div class="loc-label">Scramble Shores</div>
         <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,230,150,0.3), transparent);"></div>
         <div class="loc-building">
           <svg width="110" height="80" viewBox="0 0 110 80">
@@ -3020,9 +3044,9 @@
         </div>
       </div>
 
-      <!-- 11. Your House (south shore, secret) -->
-      <div class="location hidden-loc" style="left: 950px; top: 1450px;" onclick="openLocation('house')" id="loc-house" role="button" tabindex="0" aria-label="Your House - click to explore">
-        <div class="loc-label">Your House</div>
+      <!-- 11. Your Home (south shore, secret) -->
+      <div class="location hidden-loc" style="left: 950px; top: 1450px;" onclick="openLocation('house')" id="loc-house" role="button" tabindex="0" aria-label="Your Home - click to explore">
+        <div class="loc-label">Your Home</div>
         <div class="loc-glow" style="background: radial-gradient(circle, rgba(255,200,100,0.3), transparent);"></div>
         <div class="loc-building">
           <svg width="100" height="80" viewBox="0 0 100 80">
@@ -3198,7 +3222,7 @@
   <!-- House Editor -->
   <div id="house-editor">
     <div class="house-header">
-      <h2>Your House</h2>
+      <h2>Your Home</h2>
       <div class="house-header-actions">
         <button class="house-action-btn" onclick="houseUndo()" id="house-undo-btn" title="Undo (Ctrl+Z)" disabled>&#x21A9; Undo</button>
         <button class="house-action-btn" onclick="houseRedo()" id="house-redo-btn" title="Redo (Ctrl+Y)" disabled>&#x21AA; Redo</button>
@@ -3248,13 +3272,19 @@
           <div class="palette-item" onclick="addFurniture('crocPlush')"><span class="palette-icon">&#x1F40A;</span><div class="palette-label">Croc Plushie<div class="palette-sublabel">Cryptic Croc</div></div></div>
           <div class="palette-item" onclick="addFurniture('letterTiles')"><span class="palette-icon">&#x1F1E6;</span><div class="palette-label">Letter Tiles<div class="palette-sublabel">Scrabble-style decor</div></div></div>
           <div class="palette-item" onclick="addFurniture('fishTank')"><span class="palette-icon">&#x1F41F;</span><div class="palette-label">Fish Tank<div class="palette-sublabel">Display your catches</div></div></div>
-          <div class="palette-item" onclick="addFurniture('mountedFish')"><span class="palette-icon">&#x1F3C6;</span><div class="palette-label">Mounted Fish<div class="palette-sublabel">Big Mouth Bass trophy</div></div></div>
           <div class="palette-section-label">Kitchen</div>
           <div class="palette-item" onclick="addFurniture('fridge')"><span class="palette-icon">&#x1F9CA;</span><div class="palette-label">Fridge<div class="palette-sublabel">Stores your cheese</div></div></div>
           <div class="palette-item" onclick="addFurniture('stove')"><span class="palette-icon">&#x1F373;</span><div class="palette-label">Stove<div class="palette-sublabel">For cooking</div></div></div>
           <div class="palette-item" onclick="addFurniture('sink')"><span class="palette-icon">&#x1F6B0;</span><div class="palette-label">Sink<div class="palette-sublabel">Running water</div></div></div>
           <div class="palette-item" onclick="addFurniture('kitchenCounter')"><span class="palette-icon">&#x1F3DA;</span><div class="palette-label">Counter<div class="palette-sublabel">Kitchen workspace</div></div></div>
           <div class="palette-item" onclick="addFurniture('toaster')"><span class="palette-icon">&#x1F35E;</span><div class="palette-label">Toaster<div class="palette-sublabel">For toast</div></div></div>
+        </div>
+        <h3>Trophies</h3>
+        <div class="palette-section" id="trophy-palette">
+          <div class="palette-item" onclick="addFurniture('mountedFish')"><span class="palette-icon">&#x1F3C6;</span><div class="palette-label">Mounted Fish<div class="palette-sublabel">Big Mouth Bass trophy</div></div></div>
+          <div class="palette-item reward-item" id="reward-dragonScale" onclick="addRewardFurniture('dragonScale')"><span class="palette-icon">&#x1F432;</span><div class="palette-label">Dragon Scale<div class="palette-sublabel reward-lock-label">Complete Liam's Lair</div></div></div>
+          <div class="palette-item reward-item" id="reward-spyglass" onclick="addRewardFurniture('spyglass')"><span class="palette-icon">&#x1F52D;</span><div class="palette-label">Brass Spyglass<div class="palette-sublabel reward-lock-label">Complete Simon's Skyship</div></div></div>
+          <div class="palette-item reward-item" id="reward-lunarRock" onclick="addRewardFurniture('lunarRock')"><span class="palette-icon">&#x1FA78;</span><div class="palette-label">Lunar Rock<div class="palette-sublabel reward-lock-label">Complete The Moon</div></div></div>
         </div>
         <h3>Wall Color</h3>
         <div class="wall-color-grid">
@@ -3313,6 +3343,7 @@
   <script src="scenes/beach.js"></script>
   <script src="scenes/cafe.js"></script>
   <script src="scenes/cove.js"></script>
+  <script src="scenes/skyship.js"></script>
   <script src="scenes/docks.js"></script>
   <script src="scenes/library.js"></script>
   <script src="scenes/observatory.js"></script>
@@ -3342,20 +3373,20 @@
         subtitle: 'Cryptic Croc\'s Training Ground',
         icon: '&#x1F40A;',
         iconBg: 'linear-gradient(135deg, #a0522d, #8b4513)',
-        desc: 'Cryptic Croc runs the Puzzle Workshop with patience and care. Practice cryptic clues at your own pace, learn the art of anagrams, hidden words, and reversals. Fresh puzzles daily.',
+        desc: 'Cryptic Croc runs the Puzzle Workshop. Practice cryptic clues at your own pace: anagrams, hidden words, reversals. Fresh puzzles daily.',
         actions: [
           { label: 'Enter Workshop', href: '../Bit Cryptic Adventure/index.html', primary: true },
           { label: 'View Leaderboard', onclick: () => { if (typeof BCWSharing !== 'undefined') BCWSharing.shareProgress(); else alert('Leaderboards coming soon!'); } }
         ]
       },
       library: {
-        title: 'Library of Riddles',
+        title: 'Lexicon Library',
         subtitle: 'Archives & Collection',
         icon: '&#x1F4DA;',
         iconBg: 'linear-gradient(135deg, #6a60b0, #4a4070)',
-        desc: 'The Library of Riddles houses every clue, relic, and secret you\'ve discovered. Browse your collection, study the lore of Bit Cryptic World, and unlock hidden achievements.',
+        desc: 'The Lexicon Library houses every clue, relic, and secret you\'ve discovered. Browse your collection, study the lore of Bit Cryptic World, and unlock hidden achievements.',
         actions: [
-          { label: 'Browse Collection', href: '../Bit Cryptic Adventure/index.html', primary: true },
+          { label: 'Achievements', onclick: () => showAchievementsPanel(), primary: true },
           { label: 'Lore Archive', onclick: () => showLoreArchive() }
         ]
       },
@@ -3388,7 +3419,7 @@
         iconBg: 'linear-gradient(135deg, #6a7a9a, #4a5a7a)',
         desc: 'Perched atop the highest mountain, the Observatory peers into the cosmos for hidden patterns. Astronomers here study the celestial wordplay that guides the island\'s deepest mysteries.',
         actions: [
-          { label: 'Stargaze', onclick: () => alert('The stars whisper: "Not all that glitters is gold... some of it is a hidden definition."') },
+          { label: 'Stargaze', onclick: () => alert('The stars shimmer above. Patterns form in the constellations, as if hiding a message...') },
           { label: 'Star Charts', onclick: () => alert('Star chart puzzles coming in a future update!') }
         ]
       },
@@ -3411,8 +3442,8 @@
         iconBg: 'linear-gradient(135deg, #c0a040, #8b6914)',
         desc: 'Tucked beneath the beach cliffs, Cluey Cove is accessible only to those who solve the way in. Treasure chests line the cove walls, each locked with a cryptic clue. The crash of waves echoes off the stone as you crack the clues to claim your reward.',
         actions: [
-          { label: 'Search for Treasure', onclick: () => alert('You found a chest! But it\'s locked with a cryptic clue... coming soon!') },
-          { label: 'Read the Walls', onclick: () => alert('The cave walls hold a cryptic clue: "Confused artist holds nothing back (7)" ... can you solve it?') }
+          { label: 'Search for Treasure', onclick: () => alert('You found a chest! But it\'s locked with a cryptic clue. Can you crack it?') },
+          { label: 'Read the Walls', onclick: () => alert('The cave walls shimmer with a cryptic inscription. Study the clues carefully...') }
         ]
       },
       lair: {
@@ -3422,9 +3453,9 @@
         iconBg: 'linear-gradient(135deg, #cc2200, #4a0a0a)',
         desc: 'Deep beneath the cliffs, an underground passage opens into a vast dragon\'s lair. The walls glow red with heat, and ancient cryptic clues of fiendish difficulty are carved into every surface. Only the most skilled solvers dare enter. The dragon hoards not gold, but the hardest crossword clues ever written.',
         actions: [
-          { label: 'Face the Dragon\'s Clue', onclick: () => alert('The dragon stirs and growls: "Treasure hidden in each estimate (5)." The answer is CHEST. A hidden word clue!'), primary: true },
-          { label: 'Search the Hoard', onclick: () => alert('You unroll a scorched scroll: "This beast makes proceedings drag on (6)." The answer is DRAGON. A double definition!') },
-          { label: 'Read the Wall Carvings', onclick: () => alert('Carved deep into the rock: "Fun race, oddly, leads to the source of heat (7)." The answer is FURNACE. An anagram of FUN RACE!') }
+          { label: 'Face the Dragon\'s Clue', onclick: () => alert('The dragon stirs and growls: "Treasure hidden in each estimate (5)." Can you solve it?'), primary: true },
+          { label: 'Search the Hoard', onclick: () => alert('You unroll a scorched scroll: "This beast makes proceedings drag on (6)." What could it be?') },
+          { label: 'Read the Wall Carvings', onclick: () => alert('Carved deep into the rock: "Fun race, oddly, leads to the source of heat (7)." Think carefully...') }
         ]
       },
       cafe: {
@@ -3434,19 +3465,19 @@
         iconBg: 'linear-gradient(135deg, #b5633a, #8b4513)',
         desc: 'Take a break from adventuring at the cozy Cryptic Cafe. The barista serves puzzles alongside hot drinks. Regulars swap stories, hints, and the occasional solved clue over a warm cup.',
         actions: [
-          { label: 'Order a Puzzle', onclick: () => alert('The barista slides you a napkin: "What has keys but no locks?" Answer: A keyboard!') },
+          { label: 'Order a Puzzle', onclick: () => alert('The barista slides you a napkin with a cryptic clue. Ponder it over your drink...') },
           { label: 'Daily Special', onclick: () => alert('Today\'s special: Enigma Espresso with a side of Anagram Toast!') }
         ]
       },
       beach: {
-        title: 'Anagram Beach',
+        title: 'Scramble Shores',
         subtitle: 'Shuffle the sands, shuffle the letters',
         icon: '&#x1F3D6;',
         iconBg: 'linear-gradient(135deg, #e8d5a3, #c4a86c)',
-        desc: 'The warm shores of Anagram Beach are littered with scrambled letters. Drag your toes through the sand and rearrange the shells to spell out hidden words. Messages in bottles wash up daily with jumbled clues waiting to be unscrambled.',
+        desc: 'The warm sands of Scramble Shores are littered with scrambled letters. Drag your toes through the sand and rearrange the shells to spell out hidden words. Messages in bottles wash up daily with jumbled clues waiting to be unscrambled.',
         actions: [
-          { label: 'Unscramble Shells', onclick: () => alert('The shells on the sand spell: "TRCPIYC"... can you unscramble it? (Answer: CRYPTIC)') },
-          { label: 'Message in a Bottle', onclick: () => alert('A bottle washes ashore... "DLROW CITPRYC TIB"... rearrange the words!') }
+          { label: 'Unscramble Shells', onclick: () => alert('The shells on the sand spell: "TRCPIYC"... can you unscramble it?') },
+          { label: 'Message in a Bottle', onclick: () => alert('A bottle washes ashore with jumbled letters... "DLROW CITPRYC TIB"... rearrange them!') }
         ]
       },
       moon: {
@@ -3456,13 +3487,13 @@
         iconBg: 'linear-gradient(135deg, #e8e4d4, #b0a890)',
         desc: 'A small pressurised dome sits among the craters, glowing with warm light. Inside lives Mark, an eccentric hermit who chose the moon as his home so he could write cryptic crossword clues in perfect silence. His clues are legendarily esoteric, challenging even the best solvers in the galaxy. Few visitors make it this far, and Mark treasures every one.',
         actions: [
-          { label: 'Meet Mark', onclick: () => alert('Mark looks up from a crossword grid etched into lunar rock. "Welcome, solver. Here is an easy one to warm up: Blemish is also a target (4). The answer is MARK. Double definition: a blemish and a target are both a MARK."') },
-          { label: 'Mark\'s Esoteric Clue', onclick: () => alert('Mark grins. "Try this: Lunar feature from confused tracer (6). The answer is CRATER. It is an anagram of TRACER. The word confused tells you to rearrange the letters."') },
+          { label: 'Meet Mark', onclick: () => alert('Mark looks up from a crossword grid etched into lunar rock. "Welcome, solver. Here is an easy one to warm up: Blemish is also a target (4)." Can you work it out?') },
+          { label: 'Mark\'s Esoteric Clue', onclick: () => alert('Mark grins. "Try this: Lunar feature from confused tracer (6)." He waits patiently for your answer.') },
           { label: 'Visit the Cheese Crater', onclick: () => collectCheese() }
         ]
       },
       house: {
-        title: 'Your House',
+        title: 'Your Home',
         subtitle: 'A place to call home',
         icon: '&#x1F3E0;',
         iconBg: 'linear-gradient(135deg, #c9956b, #8b6914)',
@@ -3479,8 +3510,8 @@
         iconBg: 'linear-gradient(135deg, #c0392b, #8b2020)',
         desc: 'A cheerful skyship bobs gently among the clouds. Its captain is Simon, a warm and enthusiastic sky captain who has spent years travelling the world collecting cryptic crossword clues. His leather-bound logbooks are stuffed with puzzles from every corner of the globe, and he loves nothing more than sharing them with visitors who find their way aboard.',
         actions: [
-          { label: 'Talk to Simon', onclick: () => alert('Simon beams. "Welcome aboard! Try this one: Boat hidden in warship, I presume (4). The answer is SHIP. It is hidden inside the letters of warSHIPpresume!"') },
-          { label: 'Browse Simon\'s Collection', onclick: () => alert('Simon opens a leather-bound book and points to a clue: "Anger found in desire (3). The answer is IRE. It is hidden inside the letters of desIRE."') }
+          { label: 'Talk to Simon', onclick: () => alert('Simon beams. "Welcome aboard! Try this one: Boat hidden in warship, I presume (4)." He watches you expectantly.') },
+          { label: 'Browse Simon\'s Collection', onclick: () => alert('Simon opens a leather-bound book and points to a clue: "Anger found in desire (3)." He taps the page and waits.') }
         ]
       },
       pond: {
@@ -3488,7 +3519,7 @@
         subtitle: 'Cast a line, catch some fish',
         icon: '&#x1F3A3;',
         iconBg: 'linear-gradient(135deg, #3a9ac5, #1a6080)',
-        desc: 'A quiet pond just south of the Town Square, stocked with all kinds of fish. Cast your line and see what bites. Your catches are tallied and can be displayed in a fish tank at your house.',
+        desc: 'A quiet pond just south of the Town Square, stocked with all kinds of fish. Cast your line and see what bites. Your catches are tallied and can be displayed in a fish tank at your home.',
         actions: [
           { label: 'Go Fishing', onclick: () => openFishingGame(), primary: true },
           { label: 'View Catches', onclick: () => viewFishCatches() }
@@ -3524,11 +3555,12 @@
       'M1200,685': 'adventure',   // Town Square -> Adventure Tower
       'M835,505': 'adventure',   // Cryptic Cafe -> Adventure Tower
       'M1108,362': 'observatory', // Adventure Tower -> Mystic Peak
-      'M1235,680': 'library',     // Town Square -> Library of Riddles
-      'M1138,375': 'library',     // Adventure Tower -> Library of Riddles
-      'M1260,720': 'cove',        // Town Square -> Cryptogram Cove
-      'M1400,960': 'cove',        // Puzzle Workshop -> Cryptogram Cove
-      'M1770,780': 'cove',        // Cryptogram Cove -> Anagram Beach
+      'M1235,680': 'library',     // Town Square -> Lexicon Library
+      'M1138,375': 'library',     // Adventure Tower -> Lexicon Library
+      'M1260,720': 'cove',        // Town Square -> Cluey Cove
+      'M1400,960': 'cove',        // Puzzle Workshop -> Cluey Cove
+      'M1380,1420': 'beach',      // Puzzle Workshop -> Scramble Shores
+      'M1770,780': 'cove',        // Cluey Cove -> Scramble Shores
       'M1145,712': 'town',        // Town Square -> Enigma Forest
       'M640,645': 'cafe',        // Enigma Forest -> Cryptic Cafe
       'M542,952': 'forest',      // Decoder Docks -> Enigma Forest
@@ -3589,7 +3621,8 @@
 
     function completeStory(id) {
       const state = getProgress();
-      if (!state.completedStories.includes(id)) {
+      const isNew = !state.completedStories.includes(id);
+      if (isNew) {
         state.completedStories.push(id);
         saveProgress(state);
       }
@@ -3599,6 +3632,13 @@
       const chain = UNLOCK_CHAIN[id];
       if (chain && chain.reveals.length > 0) {
         revealLocationsSequence(chain.reveals, 0);
+      }
+      // Grant story reward trophy if applicable
+      if (isNew && REWARD_MAP && REWARD_MAP[id]) {
+        const reward = REWARD_MAP[id];
+        setTimeout(() => {
+          showUnlockBanner('Trophy: ' + reward.label);
+        }, 1500);
       }
     }
 
@@ -3695,7 +3735,7 @@
           {
             type: 'puzzle',
             speaker: 'Dock Keeper',
-            text: 'He holds the lantern closer so you can read the reversed postscript: "!EMOH EMOCLEW .S.P" The .S.P tells you it\'s all written backwards. What does the message say when you reverse it?',
+            text: 'He holds the lantern closer so you can read the reversed postscript:<br><br>"!EMOH EMOCLEW .S.P"<br><br>The .S.P tells you it\'s all written backwards. What does the message say?',
             answer: ['WELCOME HOME', 'PS WELCOME HOME', 'P.S. WELCOME HOME', 'P.S. WELCOME HOME!'],
             placeholder: 'Read it backwards...',
             hint: 'Read the whole line backwards, starting from the right.',
@@ -3741,7 +3781,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The fox sits beside the stone and stares at you, tail flicking. The slab reads: "Face remodelled into a place for coffee (4)." The fox sniffs the air toward something warm and fragrant deeper in the forest.',
+            text: 'The fox sits beside the stone and stares at you, tail flicking. The slab reads:<br><br>"Face remodelled into a place for coffee (4)"<br><br>The fox sniffs the air toward something warm and fragrant.',
             answer: 'CAFE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'The answer is an anagram. Look for a word whose letters can be rearranged.',
@@ -3782,7 +3822,7 @@
           {
             type: 'puzzle',
             speaker: 'Barista',
-            text: 'Written on the cup in looping script is a cryptic clue: "Something instantly perky, starts a mouthful (3)." She leans on the counter. "That\'s an initial letters clue. \'Starts\' tells you to take the first letter of each word before it. Three letters, and the definition is \'a mouthful.\'"',
+            text: 'Written on the cup in looping script:<br><br>"Something instantly perky, starts a mouthful (3)"<br><br>She leans on the counter. "That\'s an initial letters clue. \'Starts\' tells you to take the first letter of each word before it."',
             answer: 'SIP',
             placeholder: 'Solve the cryptic clue...',
             hint: '"Starts" tells you to look at the beginning of each word.',
@@ -3828,13 +3868,13 @@
           {
             type: 'multi_puzzle',
             speaker: 'Town Crier',
-            text: 'She gestures to the fountain where three cryptic clues are shimmering in the water of its basin. "Three clues. Three destinations. Solve all three to open the paths."<br>1. "Wrote, mangled, a tall building (5)"<br>2. "Quiet place where books live (7)"<br>3. "Hop works, scrambled, a place to build (8)"',
+            text: 'She gestures to the fountain where three cryptic clues shimmer in the water.<br><br>1. "Wrote, mangled, a tall building (5)"<br><br>2. "Hushed collection? (7)"<br><br>3. "Hop works, scrambled, a place to build (8)"',
             answers: ['TOWER', 'LIBRARY', 'WORKSHOP'],
             placeholder: 'Solve one clue at a time...',
-            hint: 'Each clue describes a place on this island. Look for anagram indicators like "mangled" and "scrambled."',
+            hint: 'Clues 1 and 3 are anagrams, so look for indicators like "mangled" and "scrambled." Clue 2 is a cryptic definition where the whole clue is a sneaky description of the answer.',
             wrongReactions: [
               '"Not quite. For the first one, \'mangled\' tells you the letters of \'wrote\' are mixed up. What building can you make?"',
-              'She taps the fountain. "The second one is simpler. No tricks, just a description: where do books live?"',
+              '"The second is a cryptic definition. What kind of place is famously quiet and full of things you can borrow? A hushed collection..."',
               '"For the third: \'scrambled\' means rearrange \'hop works.\' Eight letters, a place where you build things."'
             ],
             progressMessages: [
@@ -3846,12 +3886,12 @@
           {
             type: 'narrative',
             speaker: 'Town Crier',
-            text: '"All three! Well done." She rings the bell in celebration. "Tower, Library, Workshop. The three pillars of Bit Cryptic World." The fountain surges with golden light as three paths illuminate. "Go forth, Voyager. And remember who told you first."'
+            text: '"All three! Ha!" She rings the bell with a flourish. "Tower, Library, Workshop. Three paths, three puzzles, three new places to get lost in." The fountain surges with golden light as three paths illuminate. "Go forth, Voyager. And remember who told you first."'
           },
           {
             type: 'complete',
             speaker: null,
-            text: 'Three paths glow with golden light. The Adventure Tower rises to the north. The Library of Riddles beckons to the east. The Puzzle Workshop clatters with invention to the south. The island opens up.',
+            text: 'Three paths glow with golden light. The Adventure Tower rises to the north. The Lexicon Library beckons to the east. The Puzzle Workshop clatters with invention to the south. The island opens up.',
             unlocks: ['adventure', 'library', 'workshop'],
             btnText: 'Explore the Island'
           }
@@ -3873,7 +3913,7 @@
           {
             type: 'puzzle',
             speaker: 'Tower Guardian',
-            text: 'Letters glow across the guardian\'s breastplate: "Warrior seized the road (4)." It speaks without inflection. "Hidden word clue. The answer is concealed within the words themselves, spanning across them. Find it."',
+            text: 'Letters glow across the guardian\'s breastplate:<br><br>"Warrior seized the road (4)"<br><br>It speaks without inflection. "Hidden word clue. The answer is concealed within the words themselves. Find it."',
             answer: 'HERO',
             placeholder: 'Find the hidden word...',
             hint: 'The answer is hiding across the words.',
@@ -3896,7 +3936,26 @@
           {
             type: 'narrative',
             speaker: 'Tower Guardian',
-            text: '"That structure is the Mystic Peak Observatory. Astronomers there study celestial wordplay." A pause. "The mountain path is classified as treacherous. For you, it should be... manageable. Proceed."'
+            text: '"That structure is the Mystic Peak Observatory." A pause. "Before you go. There is a second principle this tower guards. Harder than the first." A rune on the wall begins to glow. "A container clue. One word is placed inside another. The answer is built by nesting."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Tower Guardian',
+            text: 'The rune reshapes into glowing text:<br><br>"Germany embraces what\'s within for a meal (4)"<br><br>"DE is Germany. IN means within. One goes inside the other."',
+            answer: 'DINE',
+            placeholder: 'Solve the container clue...',
+            hint: 'DE (Germany) contains IN (within). Put IN inside DE. What meal do you get?',
+            wrongReactions: [
+              '"DE is the abbreviation for Germany. IN means within. Place IN inside DE."',
+              '"D... IN... E. Put the letters together. What word means to eat a meal?"',
+              '"D-I-N-E. Germany embraces what\'s within. To dine is to eat a meal."'
+            ],
+            next: 5
+          },
+          {
+            type: 'narrative',
+            speaker: 'Tower Guardian',
+            text: '"Correct. Container clues nest words within words. Remember this." The guardian steps aside. "The mountain path is classified as treacherous. For you, it should be... manageable. Proceed."'
           },
           {
             type: 'complete',
@@ -3913,7 +3972,7 @@
           {
             type: 'narrative',
             speaker: null,
-            text: 'The Library of Riddles smells of aged paper and candle wax. Towering shelves stretch into shadow above, every spine embossed with a different riddle. Brass ladders on rails slide between the stacks, and floating lanterns drift through the aisles.'
+            text: 'The Lexicon Library smells of aged paper and candle wax. Towering shelves stretch into shadow above, every spine embossed with a different riddle. Brass ladders on rails slide between the stacks, and floating lanterns drift through the aisles.'
           },
           {
             type: 'narrative',
@@ -3926,32 +3985,63 @@
             text: '"There is one shelf I keep locked. The Forbidden Shelf. Pre-settlement riddles, very old, very delicate." She tilts her head. "I don\'t open it for everyone, but if you can answer a riddle, I\'d be happy to make an exception."',
             choices: [
               { label: 'Accept the riddle challenge', next: 3 },
-              { label: 'Try to browse it without asking', correct: false, reaction: 'She clears her throat gently. "I appreciate the enthusiasm, but the shelf is locked for a reason. The older texts crumble if handled carelessly. Let\'s do it properly, shall we? Answer the riddle and it\'s all yours."' }
+              { label: 'Try to browse it without asking', correct: false, reaction: 'She clears her throat. "The shelf is locked for a reason. The older texts crumble if you handle them wrong. Answer the clue and it\'s yours."' }
             ]
           },
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: 'She folds her hands. "I have cities but no houses. I have mountains but no trees. I have water but no fish. I have roads but no cars. What am I?"',
+            text: 'She adjusts her glasses and smiles. "This is a double definition clue. Two separate definitions, both pointing to the same word." She writes on a slip of paper:<br><br>"Chart or plan (3)"',
             answer: ['MAP', 'A MAP'],
-            placeholder: 'What am I?',
-            hint: 'Something that represents the world without being the world itself.',
+            placeholder: 'Solve the double definition...',
+            hint: 'Both words in the clue are separate definitions of the same three-letter answer. A chart is one. A plan is the other.',
             wrongReactions: [
-              '"Not quite. Think about what shows you these things without actually containing them."',
-              'She glances at a rolled-up parchment on her desk. "You use one of these every time you navigate somewhere new."',
-              '"Three letters. Flat, made of paper, and very useful when you\'re lost."'
+              '"Two definitions, one answer. What do you call a chart of the world?"',
+              '"Think about it: you chart a course. You also plan a route. What three-letter word means both?"',
+              '"M-A-P. A chart of the land, and to plan something out. Both meanings, one word."'
             ],
             next: 4
           },
           {
             type: 'narrative',
             speaker: 'Head Librarian',
-            text: '"A map. Well done." She allows herself a small smile and pulls a lever hidden inside a hollow book. The Forbidden Shelf swings open, revealing rows of ancient tomes. "This island was built on words. Every tree, every stone, every wave. All part of one grand puzzle. Please, take your time. Just be gentle with the pages."'
+            text: '"A map. Very good." She pulls a lever hidden inside a hollow book. The Forbidden Shelf swings open. Ancient tomes line the shelves. "That was a double definition. Two meanings, one word. There are more in these pages. Shall we?"'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Head Librarian',
+            text: 'She opens a leather-bound volume and points to an inscription:<br><br>"New book (5)"<br><br>"Two words, two definitions, one answer. Something that is both new and a book."',
+            answer: 'NOVEL',
+            placeholder: 'One word, two meanings...',
+            hint: 'What word means "new" (as in a novel idea) AND is also a type of book?',
+            wrongReactions: [
+              '"Something original, something you read. Same word."',
+              '"N-O-V-E-L. A novel approach. A novel on the shelf."'
+            ],
+            next: 6
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Head Librarian',
+            text: 'She turns to another page:<br><br>"Departs or pages (6)"<br><br>"Same idea. Two separate definitions pointing to the same word."',
+            answer: 'LEAVES',
+            placeholder: 'One word, two meanings...',
+            hint: 'What word means "departs" (she leaves) AND also means "pages" (leaves of a book)?',
+            wrongReactions: [
+              '"She ___ the room. The ___ of the book. Same word."',
+              '"L-E-A-V-E-S. She leaves. The leaves of a manuscript."'
+            ],
+            next: 7
+          },
+          {
+            type: 'narrative',
+            speaker: 'Head Librarian',
+            text: '"Well done." She closes the tome with care. "Double definitions are the shortest clues you\'ll find. Two words, two meanings, one answer. No tricks. This island was built on words like that. Take your time with these shelves, but be gentle with the pages."'
           },
           {
             type: 'complete',
             speaker: null,
-            text: 'You close the ancient tome, its secrets still echoing in your mind. The Library of Riddles is yours to explore. A repository of every clue, relic, and piece of lore you discover on your journey.',
+            text: 'The Lexicon Library is yours to explore. Its shelves hold centuries of double meanings, and the Head Librarian is always happy to share another. A repository of every clue, relic, and piece of lore you discover on your journey.',
             unlocks: [],
             btnText: 'Continue Exploring'
           }
@@ -3973,7 +4063,7 @@
           {
             type: 'puzzle',
             speaker: 'Cryptic Croc',
-            text: 'He leads you to a brass machine covered in letter wheels. "This is the Anagram Engine. She sorts scrambled messages from the beach, but one of her gears has jammed." He taps a brass plate on the machine that reads: "Ache about beginning of boating, on the shore (5)." He adjusts his spectacles. "In a cryptic clue, \'about\' tells you the letters are jumbled. \'Beginning of boating\' means take the first letter of \'boating.\' Mix that with the letters of \'ache,\' and you get a word that means \'on the shore.\'"',
+            text: 'He leads you to a brass machine covered in letter wheels. "This is the Anagram Engine. One of her gears has jammed." He taps a brass plate on the machine:<br><br>"Ache about beginning of boating, on the shore (5)"<br><br>"In a cryptic clue, \'about\' tells you the letters are jumbled. \'Beginning of boating\' means take the first letter of \'boating.\' Mix that with the letters of \'ache.\'"',
             answer: 'BEACH',
             placeholder: 'Solve the cryptic clue...',
             hint: 'Jumble the letters of \'ache\' with one more letter from the clue.',
@@ -3987,7 +4077,38 @@
           {
             type: 'narrative',
             speaker: 'Cryptic Croc',
-            text: '"Beach! Well solved." The machine clicks into motion, gears turning smoothly. He watches it with quiet satisfaction. "She\'s running again. Good." A brass plate slides out with etched coordinates. "Those point to Anagram Beach, just south of here. The shells there carry scrambled messages. You\'ll enjoy it."'
+            text: '"Beach! Well solved." The machine clicks into motion, gears turning smoothly. He watches it with quiet satisfaction. "She\'s running again. Good." He pulls a lever and the machine begins producing puzzle cards. "While she warms up, help me test a few more."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Cryptic Croc',
+            text: 'A card slides out of the machine:<br><br>"Rages, shattered, these cogs (5)"<br><br>"Same trick. \'Shattered\' means rearrange. What cogs do you get from \'rages\'?"',
+            answer: 'GEARS',
+            placeholder: 'Rearrange the letters...',
+            hint: 'Rearrange R-A-G-E-S into a word meaning cogs.',
+            wrongReactions: [
+              '"Five letters: R, A, G, E, S. What turns inside a machine?"',
+              '"G-E-A-R-S. The cogs that make everything work."'
+            ],
+            next: 5
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Cryptic Croc',
+            text: 'Another card slides out:<br><br>"Traps, reworked, become components (5)"<br><br>"\'Reworked\' is another anagram indicator."',
+            answer: 'PARTS',
+            placeholder: 'Rearrange the letters...',
+            hint: 'Rearrange T-R-A-P-S into a word meaning components.',
+            wrongReactions: [
+              '"T, R, A, P, S. What do you call the components of a machine?"',
+              '"P-A-R-T-S. Traps reworked into parts."'
+            ],
+            next: 6
+          },
+          {
+            type: 'narrative',
+            speaker: 'Cryptic Croc',
+            text: '"That\'s the lot. Well done, well done." He polishes his spectacles and pats the humming machine. "Engine\'s calibrated. You\'ve got a knack for this." A brass plate slides out with etched coordinates. "Those point to Scramble Shores, south of here. The shells carry scrambled messages."'
           },
           {
             type: 'complete',
@@ -4004,7 +4125,31 @@
           {
             type: 'narrative',
             speaker: null,
-            text: 'Warm sand shifts beneath your feet as you step onto Anagram Beach. Shells arranged in clusters spell out scrambled words, and messages in bottles wash up with every wave, each one a jumbled clue.'
+            text: 'Warm sand shifts beneath your feet as you step onto Scramble Shores. Shells arranged in clusters spell out scrambled words, and messages in bottles wash up with every wave, each one a jumbled clue.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'You kneel beside a cluster of shells arranged in a deliberate pattern. Each shell has a letter scratched into its surface. They seem to spell out a jumbled message. A crab sits nearby, watching you expectantly.'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'The shells spell out a cryptic clue:<br><br>"Horse, broken, on the coastline (5)"<br><br>"Broken" tells you to rearrange the letters.',
+            answer: 'SHORE',
+            placeholder: 'Rearrange the letters...',
+            hint: '"Broken" is the anagram indicator. Rearrange the letters of HORSE. The definition is "coastline."',
+            wrongReactions: [
+              'The crab clicks its claws impatiently. Rearrange the letters of "horse."',
+              'Five letters: H, O, R, S, E. What word meaning "coastline" can you spell?',
+              'S-H-O-R-E. The horse, broken apart, becomes the shore beneath your feet.'
+            ],
+            next: 3
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The shells glow briefly and rearrange themselves to spell SHORE. The crab seems pleased. Further down the beach, you spot a bottle rolling in with the tide.'
           },
           {
             type: 'narrative',
@@ -4018,25 +4163,25 @@
             choices: [
               { label: 'Push the door', correct: false, reaction: 'The door doesn\'t budge. Sand rains from above, getting in your eyes. The chalk message is the real clue. "TIFL OT NEPO." Unscramble it.' },
               { label: 'Pull the door', correct: false, reaction: 'Nothing happens. A crab scuttles over your foot in what feels like judgement. Forget push and pull. Focus on the chalk: "TIFL OT NEPO."' },
-              { label: 'Lift to open', next: 3 }
+              { label: 'Lift to open', next: 6 }
             ]
           },
           {
             type: 'narrative',
             speaker: null,
-            text: '"Lift to open!" You grip the bottom edge and heave upward. The stone door slides up into the cliff with a satisfying rumble, revealing a hidden cove. Phosphorescent writing shimmers across the walls. Treasure chests line the rocky shelves, each locked with a different cryptogram.'
+            text: '"Lift to open!" You grip the bottom edge and heave upward. The stone door slides up into the cliff with a satisfying rumble, revealing a hidden cove.'
           },
           {
             type: 'complete',
             speaker: null,
-            text: 'Cluey Cove reveals itself. A beachside cliff cove, accessible only from the shore. Cryptic clue fragments glow on every surface, and the promise of hidden treasure fills the salt air.',
+            text: 'Cluey Cove reveals itself. Treasure chests line the rocky shelves, each waiting to be cracked.',
             unlocks: ['cove'],
             btnText: 'Enter the Cove'
           }
         ]
       },
       cove: {
-        title: 'The Cryptogram Depths',
+        title: 'The Cluey Depths',
         steps: [
           {
             type: 'narrative',
@@ -4046,31 +4191,50 @@
           {
             type: 'narrative',
             speaker: null,
-            text: 'The largest chest sits at the back of the cove, half-submerged in a crystal-clear tidal pool. Its lock bears a cryptic inscription.'
+            text: 'The largest chest sits at the back of the cove, half-submerged in a crystal-clear tidal pool. Its lock bears a cryptic inscription. Phosphorescent text above it reads: "In this cove, words lose their endings. Nothing lasts forever down here."'
           },
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The chest\'s lock glows, waiting for the answer. The inscription reads: "Trap set up for a piece of the whole (4)." A reversal clue. "Set up" tells you to reverse a word. The definition is "a piece of the whole."',
-            answer: 'PART',
-            placeholder: 'Solve the reversal clue...',
-            hint: 'One of these words reads differently backwards.',
+            text: 'The chest\'s lock glows. The inscription reads:<br><br>"Shelter endlessly is a bay (4)"<br><br>A deletion clue. "Endlessly" tells you to remove the last letter of a word.',
+            answer: 'COVE',
+            placeholder: 'Solve the deletion clue...',
+            hint: '"Endlessly" means remove the last letter. What word for "shelter" loses its final letter to become a bay?',
             wrongReactions: [
-              'The lock buzzes. "Look for the reversal indicator. Which word tells you to read something backwards?"',
-              'A crab pinches your toe. "Set up" means reversed. Which four-letter word in the clue can be flipped?',
-              '"Reverse the word \'trap.\' What do you get?"'
+              '"What\'s a five-letter word for shelter? Now cut off the last letter."',
+              '"COVER is a shelter. Remove the last letter..."',
+              '"C-O-V-E-R without the R. A bay, right here around you."'
             ],
             next: 3
           },
           {
             type: 'narrative',
             speaker: null,
-            text: '"Part." The lock clicks open with a satisfying thunk. Inside: ancient relics, cryptic clues, and fragments of the island\'s deepest lore. The cove shimmers around you, acknowledging your skill.'
+            text: '"Cove." The lock clicks open with a satisfying thunk. Inside: ancient relics, cryptic clues, and fragments of the island\'s deepest lore. But there is a second chest, smaller, wedged into a crack in the rock.'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'The second chest has a simpler lock. The inscription reads:<br><br>"Sculpt without right makes a hollow (4)"<br><br>Another deletion. "Without right" means remove the letter R.',
+            answer: 'CAVE',
+            placeholder: 'Solve the deletion clue...',
+            hint: '"Without right" means remove R. What word for "sculpt" loses an R to become a hollow?',
+            wrongReactions: [
+              '"What\'s a five-letter word for sculpt? Now remove the letter R."',
+              '"CARVE means to sculpt. Take away the R..."',
+              '"C-A-R-V-E without the R gives C-A-V-E. A hollow in the rock."'
+            ],
+            next: 5
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: '"Cave." The second chest opens. Inside, a polished stone tablet reads: "Deletion clues cut words down to size. Endlessly, headless, curtailed, without... they all mean something is missing." The cove shimmers around you, acknowledging your skill.'
           },
           {
             type: 'complete',
             speaker: null,
-            text: 'Cluey Cove is yours to explore. Return anytime to crack more cryptic clues, unlock treasures, and uncover secrets hidden in the cliff walls. The cove remembers those who solve its puzzles.',
+            text: 'Cluey Cove is yours to explore. Return anytime to crack more deletion clues, unlock treasures, and uncover secrets hidden in the cliff walls. The cove remembers those who solve its puzzles.',
             unlocks: [],
             btnText: 'Continue Exploring'
           }
@@ -4097,7 +4261,7 @@
           {
             type: 'puzzle',
             speaker: 'The Dragon',
-            text: '"First clue. Listen carefully." The dragon unfurls a scorched scroll.\n\n"Treasure hidden in each estimate (5)"',
+            text: '"First clue. Listen carefully." The dragon unfurls a scorched scroll.<br><br>"Treasure hidden in each estimate (5)"',
             answer: 'CHEST',
             placeholder: 'Enter the answer...',
             hint: 'The answer is hiding inside the words of the clue itself. Read across the word boundaries.',
@@ -4116,7 +4280,7 @@
           {
             type: 'puzzle',
             speaker: 'The Dragon',
-            text: 'The dragon scratches the second clue into the stone floor with one enormous claw.\n\n"This beast makes proceedings drag on (6)"',
+            text: 'The dragon scratches the second clue into the stone floor with one enormous claw.<br><br>"This beast makes proceedings drag on (6)"',
             answer: 'DRAGON',
             placeholder: 'Enter the answer...',
             hint: 'This is a double definition. Both halves of the clue define the same word. What beast am I?',
@@ -4135,7 +4299,7 @@
           {
             type: 'puzzle',
             speaker: 'The Dragon',
-            text: 'The dragon breathes a thin line of fire across the wall, searing the final clue into the rock.\n\n"Fun race, oddly, leads to the source of heat (7)"',
+            text: 'The dragon breathes a thin line of fire across the wall, searing the final clue into the rock.<br><br>"Fun race, oddly, leads to the source of heat (7)"',
             answer: 'FURNACE',
             placeholder: 'Enter the answer...',
             hint: '"Oddly" is the anagram indicator. Rearrange the letters of two words. "Source of heat" is the definition.',
@@ -4181,7 +4345,7 @@
           {
             type: 'puzzle',
             speaker: 'Mark',
-            text: 'Mark scratches a clue into the lunar dust with his finger.\n\n"Blemish is also a target (4)"',
+            text: 'Mark scratches a clue into the lunar dust with his finger.<br><br>"Blemish is also a target (4)"',
             answer: 'MARK',
             placeholder: 'Enter the answer...',
             hint: 'This is a double definition. Both halves of the clue point to the same four-letter word. A blemish on a surface, and something you aim at.',
@@ -4200,7 +4364,7 @@
           {
             type: 'puzzle',
             speaker: 'Mark',
-            text: 'Mark traces the next clue onto a fogged-up window of the dome.\n\n"Lunar feature from confused tracer (6)"',
+            text: 'Mark traces the next clue onto a fogged-up window of the dome.<br><br>"Lunar feature from confused tracer (6)"',
             answer: 'CRATER',
             placeholder: 'Enter the answer...',
             hint: '"Confused" is the anagram indicator. Rearrange the letters of TRACER. The definition is "lunar feature".',
@@ -4241,7 +4405,7 @@
           {
             type: 'narrative',
             speaker: 'Star Watcher',
-            text: 'She rises like smoke and drifts toward the telescope. "Words down below are loud. Scrambled. Forceful. But up here..." She gestures at the dome, and the ceiling dissolves into transparent glass. Stars fill every direction. "Up here, the universe writes in light. Softly. Patiently. Shall we read together?"'
+            text: 'She stands and drifts toward the telescope. "Words down below are loud. Scrambled. Up here, the sky writes in light." She gestures at the dome, and the ceiling dissolves into transparent glass. Stars fill every direction. "Shall we read together?"'
           },
           {
             type: 'puzzle',
@@ -4260,12 +4424,31 @@
           {
             type: 'narrative',
             speaker: 'Star Watcher',
-            text: '"Sky." She smiles, and for a moment the observatory fills with projected starlight. "The simplest word, and the truest. Every clue on this island sits beneath it." She turns back to the telescope. "Come back whenever the ground feels too heavy. The stars are always here. Always writing."'
+            text: '"Sky." She smiles, and for a moment the observatory fills with projected starlight. "The simplest word, and the truest." She turns from the telescope. "But there is another kind of clue the mountain teaches. Up here, words echo. They sound like other words. We call these homophones."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Star Watcher',
+            text: 'She cups her hands around her mouth and whispers toward the peak. An echo returns, carrying a clue:<br><br>"Mountaintop, we hear, is a quick look (4)"<br><br>"\'We hear\' tells you the answer sounds like another word. What sounds like a mountaintop?"',
+            answer: 'PEEK',
+            placeholder: 'What sounds like a mountaintop?',
+            hint: '"We hear" is the homophone indicator. Think of a word for mountaintop. Now what word sounds exactly like it but means a quick look?',
+            wrongReactions: [
+              '"A mountaintop is a peak. What word sounds like PEAK but means a quick look?"',
+              '"P-E-A-K is a mountaintop. Now spell a quick look that sounds the same..."',
+              '"P-E-E-K. Same sound as PEAK, different spelling, different meaning. A peek is a quick look."'
+            ],
+            next: 5
+          },
+          {
+            type: 'narrative',
+            speaker: 'Star Watcher',
+            text: '"Peek." A faint smile. "Same sound, different meaning. The mountain echoes words back in disguise." She turns to the telescope. "Come back when you need quiet. The stars keep their own schedule."'
           },
           {
             type: 'complete',
             speaker: null,
-            text: 'The Mystic Peak Observatory is yours. Return to gaze at the celestial wordplay, chart new star patterns, and listen to the quiet language of the cosmos. The peak of the island holds the peak of knowledge.',
+            text: 'The Mystic Peak Observatory is yours. Return to gaze at the celestial wordplay, listen for echoes in the mountain air, and chart new star patterns. The peak of the island holds the peak of knowledge.',
             unlocks: [],
             btnText: 'Continue Exploring'
           }
@@ -4292,7 +4475,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'Beneath the welcome message, in careful handwriting: "Head of household? Ring me, I live here! (4)"',
+            text: 'Beneath the welcome message, in careful handwriting:<br><br>"Head of household? Ring me, I live here! (4)"',
             answer: 'HOME',
             placeholder: 'Solve the cryptic clue...',
             hint: '"Head of" means take the first letter. "Ring" is a common crossword word for a round shape.',
@@ -4338,7 +4521,7 @@
           {
             type: 'puzzle',
             speaker: 'Simon',
-            text: 'He holds the logbook open for you to read: "Savoy agent conceals a journey (6)." He taps the page and waits.',
+            text: 'He holds the logbook open for you to read:<br><br>"Savoy agent conceals a journey (6)"<br><br>He taps the page and waits.',
             answer: 'VOYAGE',
             placeholder: 'Find the hidden word...',
             hint: 'The answer hides inside the surrounding words, spanning across the gap. Look at where "savoy" ends and "agent" begins.',
@@ -4352,7 +4535,43 @@
           {
             type: 'narrative',
             speaker: 'Simon',
-            text: '"Ha! Sharp eyes." Simon snaps the logbook shut with a satisfied grin. "You\'ve got the makings of a proper puzzle hunter." He pulls a brass spyglass from his coat and offers it to you. "Keep it. And come back anytime. I\'ve got a whole logbook of these, and the skies always have more to share."'
+            text: '"Ha! Sharp eyes." He flips to the next page. "That one was a hidden word, the answer tucked inside the surrounding text. But I\'ve collected all kinds. Here\'s an anagram from the Windswept Atoll."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Simon',
+            text: 'He points to a sun-bleached entry:<br><br>"Tacos, oddly, along the shoreline (5)"<br><br>"\'Oddly\' tells you to rearrange the letters of \'tacos.\'"',
+            answer: 'COAST',
+            placeholder: 'Rearrange the letters...',
+            hint: 'Rearrange T-A-C-O-S into a word for shoreline.',
+            wrongReactions: [
+              '"Five letters: T, A, C, O, S. What do you call the land where sea meets shore?"',
+              '"C-O-A-S-T. Tacos rearranged. I won that one at a beachside puzzle tournament."'
+            ],
+            next: 6
+          },
+          {
+            type: 'narrative',
+            speaker: 'Simon',
+            text: '"Coast! Exactly right." He grins and flips forward. "Now this one\'s different. A hidden word from the Cloud Harbour archives. The answer is hiding inside the words."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Simon',
+            text: 'The entry reads:<br><br>"Pole from dream astronaut (4)"<br><br>"The answer spans two words. Look carefully across the gap."',
+            answer: 'MAST',
+            placeholder: 'Find the hidden word...',
+            hint: '"From" is the indicator. Read across "dream astronaut" and look for a pole.',
+            wrongReactions: [
+              '"Look where \'dream\' ends and \'astronaut\' begins: d-r-e-a-M-A-S-T-r-o-n-a-u-t."',
+              '"M-A-S-T. A ship\'s pole, hiding across the gap. Rather fitting for a skyship, no?"'
+            ],
+            next: 8
+          },
+          {
+            type: 'narrative',
+            speaker: 'Simon',
+            text: '"Mast! Right there in dreaMAST ronaut." He snaps the logbook shut, grinning. "Hidden word, anagram, and a voyage. Three ports, three techniques." He pulls a brass spyglass from his coat. "Keep it. You earned this one."'
           },
           {
             type: 'complete',
@@ -4406,6 +4625,369 @@
       }
     };
 
+    // ═══════════════════════════════════
+    //  TUTORIALS — Technique lessons for each location
+    //  Separate from stories. Teach one cryptic clue technique
+    //  with explanation + practice clue.
+    // ═══════════════════════════════════
+    const TUTORIALS = {
+      docks: {
+        title: 'Learn: Reversals',
+        technique: 'Reversals',
+        btnLabel: 'Learn: Reversals',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            text: 'Reversals are the simplest trick in cryptic crosswords. You take a word and read it backwards. The clue will always contain a reversal indicator, a word that means "backwards" or "returned."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            text: 'Common indicators: "back", "returning", "reversed", "flipped", "set up." When you see one of these near a word, try reading that word backwards. The other part of the clue is the definition.'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Dock Keeper',
+            text: 'Try this one.<br><br>"Vermin returning as a celestial body (4)"<br><br>"Returning" is the reversal indicator. Which word should you reverse?',
+            answer: 'STAR',
+            placeholder: 'Reverse the right word...',
+            hint: '"Returning" tells you to reverse a word. "Vermin" = RATS. Reverse it.',
+            wrongReactions: [
+              'RATS is vermin. Read it backwards.',
+              'R-A-T-S backwards is S-T-A-R. A celestial body.'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: 'Dock Keeper',
+            text: 'Star! That\'s it. Words like "back", "returned", "reversed", "flipped" tell you to read something backwards. The definition sits at the start or end of the clue.<br><br>As you explore the island, you\'ll find reversals combined with other tricks. A hidden word might be reversed, or a selection of letters read backwards. Keep an eye out for those combinations.',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      forest: {
+        title: 'Learn: Hidden Words',
+        technique: 'Hidden Words',
+        btnLabel: 'Learn: Hidden Words',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The forest whispers its secret: some answers hide in plain sight, spelled out across multiple words in the clue itself.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'A hidden word clue has three parts: the definition, a hidden-word indicator ("in", "from", "some of", "found in"), and the words that contain the answer spanning across them. The answer always crosses a word boundary.'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'The ancient oak reveals a practice clue:<br><br>"Page found in maple aftermath (4)"<br><br>The answer spans two words. Look at where "maple" ends and "aftermath" begins.',
+            answer: 'LEAF',
+            placeholder: 'Find the hidden word...',
+            hint: '"Found in" is the indicator. Read across "maple aftermath": m-a-p-l-e-a-f-t-e-r-m-a-t-h. What page do you see spanning both words?',
+            wrongReactions: [
+              'Look at the letters where "maple" meets "aftermath": ...L-E-A-F...',
+              'map-L-E-A-F-termath. Four letters spanning the gap. A page.'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'LEAF was hiding across "mapLEAFtermath." A leaf is a page, and it was there the whole time. Indicators to watch for: "in", "from", "some of", "found in", "part of."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      cafe: {
+        title: 'Learn: Initial Letters',
+        technique: 'Initial Letters',
+        btnLabel: 'Learn: Initial Letters',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Barista',
+            text: '"Initial letter clues, also called acrostics, use the first letter of each word to spell the answer. The indicator tells you to take the beginnings: \'starts\', \'initially\', \'first letters of\', \'heads of.\'"'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Barista',
+            text: 'She writes on a napkin:<br><br>"Drink from terribly early alarm (3)"<br><br>"Take the first letter of each word after the indicator."',
+            answer: 'TEA',
+            placeholder: 'Read the initials...',
+            hint: '"From" links to the definition. "Terribly Early Alarm"... take the first letters: T, E, A.',
+            wrongReactions: [
+              '"First letter of Terribly = T. First of Early = E. First of Alarm = A."',
+              '"T-E-A. A drink. The initials spell it out."'
+            ],
+            next: 2
+          },
+          {
+            type: 'complete',
+            speaker: 'Barista',
+            text: '"TEA! First letters of Terribly, Early, Alarm." She taps each word on the napkin. "Indicators: \'starts\', \'initially\', \'at first\', \'heads of\', \'leaders.\' They all mean the same thing: grab the first letter of each word."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      town: {
+        title: 'Learn: Anagrams',
+        technique: 'Anagrams',
+        btnLabel: 'Learn: Anagrams',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Town Crier',
+            text: '"Anagrams are the most common type of cryptic clue. The letters of one word are rearranged to spell the answer. The clue always contains an anagram indicator, a word suggesting disorder or change."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Town Crier',
+            text: '"Common indicators: \'broken\', \'scrambled\', \'mangled\', \'confused\', \'wild\', \'dancing\', \'oddly\', \'rebuilt\', \'damaged.\' They all mean: rearrange these letters. The other part of the clue is the definition."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Town Crier',
+            text: '"Try this."<br><br>"Steal, somehow, these stories (5)"<br><br>"\'Somehow\' is the anagram indicator. Rearrange the letters of \'steal.\'"',
+            answer: 'TALES',
+            placeholder: 'Rearrange the letters...',
+            hint: 'Rearrange S-T-E-A-L. What five-letter word meaning "stories" can you spell?',
+            wrongReactions: [
+              '"The letters are S, T, E, A, L. Jumble them into stories."',
+              '"T-A-L-E-S. Stories told around a campfire."'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: 'Town Crier',
+            text: '"Tales! Spot on." She claps once. "When you see a disorder word in a clue, the letters nearby need rearranging. Broken, scrambled, wild, confused. The number in parentheses tells you how many letters."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      adventure: {
+        title: 'Learn: Containers',
+        technique: 'Containers',
+        btnLabel: 'Learn: Containers',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Tower Guardian',
+            text: '"Container clues place one word inside another. The indicator tells you which word goes inside which: \'holds\', \'embraces\', \'contains\', \'around\', \'within\', \'pocketing.\'"'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Tower Guardian',
+            text: '"The outer word wraps around the inner word. Together they spell the answer. Both the inner and outer parts are clued by synonyms or abbreviations."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Tower Guardian',
+            text: 'A rune glows on the wall:<br><br>"We hold \'in\' the drink (4)"<br><br>"WE is the outer word. IN goes inside it. What drink do you get?"',
+            answer: 'WINE',
+            placeholder: 'Put one word inside the other...',
+            hint: 'Put IN inside WE: W-IN-E. What drink is that?',
+            wrongReactions: [
+              '"W... then IN... then E. Put them together."',
+              '"W-I-N-E. We holding in. A drink."'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: 'Tower Guardian',
+            text: '"Wine. Correct." The rune fades. "Container indicators: \'holds\', \'embraces\', \'around\', \'carries\', \'keeps.\' One piece goes inside another. The combined letters spell the answer. Remember this."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      library: {
+        title: 'Learn: Double Definitions',
+        technique: 'Double Definitions',
+        btnLabel: 'Learn: Double Definitions',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Head Librarian',
+            text: '"A double definition clue gives you two separate definitions of the same word. No scrambling, no hiding, no reversing. Just two meanings, side by side. The answer satisfies both."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Head Librarian',
+            text: 'She opens a tome and points:<br><br>"Not heavy and illumination (5)"<br><br>"Each half is a different definition. One word means both."',
+            answer: 'LIGHT',
+            placeholder: 'One word, two meanings...',
+            hint: 'What word means "not heavy" AND also means "illumination"?',
+            wrongReactions: [
+              '"Something that is not heavy. Something that provides illumination. Same word."',
+              '"L-I-G-H-T. A light load. A light in the darkness."'
+            ],
+            next: 2
+          },
+          {
+            type: 'complete',
+            speaker: 'Head Librarian',
+            text: '"Light. Good." She adjusts her glasses. "Double definitions are short clues. Two or three words. Both definitions point to the same answer from different directions. That\'s the trick."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      workshop: {
+        title: 'Learn: Combination Clues',
+        technique: 'Combination Clues',
+        btnLabel: 'Learn: Combos',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Cryptic Croc',
+            text: 'In the Workshop, we build more complex clues. Sometimes a clue combines two techniques. You might need to select certain letters and then rearrange them, or take the head of one word and mix it with an anagram of another.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Cryptic Croc',
+            text: 'The key is spotting both indicators. One tells you how to select ("first of", "head of", "initially"), and the other tells you what to do with the result ("broken", "scrambled", "mixed").'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Cryptic Croc',
+            text: 'Cryptic Croc taps a brass plate:<br><br>"First of royal cue, broken, is a remedy (4)"<br><br>"First of royal" gives you one letter. "Broken" tells you to rearrange. Mix that letter with "cue."',
+            answer: 'CURE',
+            placeholder: 'Select, then rearrange...',
+            hint: '"First of royal" = R. Now take R and CUE together and rearrange all four letters. What remedy do you get?',
+            wrongReactions: [
+              'First of "royal" gives you R. Add that to the letters C, U, E. Now scramble all four.',
+              'R, C, U, E scrambled. What word meaning "remedy" can you make?'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: 'Cryptic Croc',
+            text: 'Cure! Well built. "First of royal" selects the R, "broken" tells you to rearrange R plus CUE, and "remedy" is the definition. When you see two indicators in one clue, look for what each one is doing. That\'s how the Workshop builds its trickiest puzzles.',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      beach: {
+        title: 'Learn: Advanced Anagrams',
+        technique: 'Anagrams',
+        btnLabel: 'Learn: Anagrams',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'Longer anagrams are trickier. Five or more letters, and the indicator blends into the sentence. The definition sits at the start or end of the clue, but you have to figure out which.'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'Shells spell out a practice clue:<br><br>"Heart, shattered, becomes the planet (5)"<br><br>"\'Shattered\' tells you to rearrange \'heart.\' The definition is \'the planet.\'"',
+            answer: 'EARTH',
+            placeholder: 'Rearrange the letters...',
+            hint: 'Rearrange H-E-A-R-T into a five-letter word for the planet we live on.',
+            wrongReactions: [
+              '"Five letters from \'heart\': H, E, A, R, T. Our planet."',
+              '"E-A-R-T-H. Heart shattered becomes Earth."'
+            ],
+            next: 2
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'Earth from heart. Nice. "Shattered" is the indicator, but the sentence reads like a normal phrase. The wordplay hides behind the surface meaning. That misdirection is what makes cryptic clues tick.',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      cove: {
+        title: 'Learn: Deletions',
+        technique: 'Deletions',
+        btnLabel: 'Learn: Deletions',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'In the cove, words lose their letters. Deletion clues remove part of a word to reveal the answer. The indicator tells you what to cut: "headless" removes the first letter, "endless" removes the last, "heartless" removes the middle.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'You can also remove specific letters: "without right" means remove R. "Loveless" means remove O (love = zero = O in tennis). "Quietly removed" means remove P (piano = quiet = P in music).'
+          },
+          {
+            type: 'puzzle',
+            speaker: null,
+            text: 'A message glows on the cave wall:<br><br>"Scare endlessly leaves a mark (4)"<br><br>"Endlessly" means remove the last letter. What word for scare, without its ending, leaves a mark?',
+            answer: 'SCAR',
+            placeholder: 'Remove the last letter...',
+            hint: '"Endlessly" means remove the last letter. SCARE without its final E...',
+            wrongReactions: [
+              'SCARE without its last letter. What are you left with?',
+              'S-C-A-R-E minus the E = S-C-A-R. A mark left behind.'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'Scar from scare. Well spotted. Deletion indicators: "headless" or "beheaded" removes the first letter. "Endless" or "curtailed" removes the last. "Heartless" removes the middle. "Without X" removes a specific letter.',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      },
+      observatory: {
+        title: 'Learn: Homophones',
+        technique: 'Homophones',
+        btnLabel: 'Learn: Homophones',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Star Watcher',
+            text: '"Homophones. Words that sound the same but are spelled differently. The mountain echoes them. The clue always contains a hearing indicator: \'we hear\', \'reportedly\', \'sounds like\', \'aloud\', \'say.\'"'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Star Watcher',
+            text: '"One part of the clue defines a word that sounds like the answer. The other part is the actual definition. The indicator tells you which part is the sound-alike."'
+          },
+          {
+            type: 'puzzle',
+            speaker: 'Star Watcher',
+            text: 'An echo carries down from the peak:<br><br>"Bargain event heard on a boat (4)"<br><br>"\'Heard\' is the indicator. What event sounds like something on a boat?"',
+            answer: 'SAIL',
+            placeholder: 'What sounds like a bargain event?',
+            hint: '"Heard" = homophone indicator. A bargain event is a SALE. What sounds like SALE but belongs on a boat?',
+            wrongReactions: [
+              '"A bargain event is a SALE. What word sounds exactly like SALE but means something on a boat?"',
+              '"S-A-I-L. Same sound as SALE, different spelling. You sail on a boat."'
+            ],
+            next: 3
+          },
+          {
+            type: 'complete',
+            speaker: 'Star Watcher',
+            text: '"Sail. Well done." She smiles. "Same sound as sale, different spelling, different meaning. The indicators are \'we hear\', \'reportedly\', \'sounds like\', \'aloud\', \'say\', \'broadcast.\' Listen for them."',
+            unlocks: [],
+            btnText: 'Got it!'
+          }
+        ]
+      }
+    };
+
     // Intro story (before any location is unlocked)
     const INTRO_STORY = {
       title: 'A Storm at Sea',
@@ -4419,6 +5001,15 @@
           type: 'narrative',
           speaker: null,
           text: 'A massive wave crashes over the bow. Everything goes dark. When you open your eyes again, you\'re lying on weathered wooden planks, the storm reduced to a distant rumble. The gentle creaking of a dock fills your ears.'
+        },
+        {
+          type: 'choice',
+          speaker: null,
+          text: 'This island is built on cryptic crossword clues, puzzles where every word has a secret meaning. Each location teaches a different solving technique. Would you like guided tutorials at each location?',
+          choices: [
+            { label: 'Yes, teach me the techniques', next: 3, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.areTutorialsEnabled = () => true; try { const s = JSON.parse(localStorage.getItem('bcw_settings') || '{}'); s.tutorialsEnabled = true; localStorage.setItem('bcw_settings', JSON.stringify(s)); } catch {} } } },
+            { label: 'No, I know cryptic clues', next: 3, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.areTutorialsEnabled = () => false; try { const s = JSON.parse(localStorage.getItem('bcw_settings') || '{}'); s.tutorialsEnabled = false; localStorage.setItem('bcw_settings', JSON.stringify(s)); } catch {} } } }
+          ]
         },
         {
           type: 'complete',
@@ -4485,6 +5076,67 @@
       document.body.appendChild(panel);
     }
 
+    function showAchievementsPanel() {
+      closePanel();
+      const achievements = (typeof BCWAchievements !== 'undefined') ? BCWAchievements.getAll() : [];
+      const progress = (typeof BCWAchievements !== 'undefined') ? BCWAchievements.getProgress() : { unlocked: 0, total: 0, percent: 0 };
+
+      const categories = [
+        { key: 'explore', label: 'Exploration' },
+        { key: 'story', label: 'Stories & Trophies' },
+        { key: 'puzzle', label: 'Puzzles' },
+        { key: 'fishing', label: 'Fishing' },
+        { key: 'house', label: 'Home' },
+        { key: 'terminal', label: 'Terminal' },
+        { key: 'social', label: 'Social' },
+        { key: 'meta', label: 'Meta' }
+      ];
+
+      let html = '';
+      for (const cat of categories) {
+        const items = achievements.filter(a => a.category === cat.key);
+        if (items.length === 0) continue;
+        html += '<div style="margin-bottom: 14px;">';
+        html += '<div style="font-family: \'Fredoka One\', cursive; color: rgba(255,215,0,0.6); font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 1px;">' + cat.label.toUpperCase() + '</div>';
+        for (const a of items) {
+          const opacity = a.unlocked ? '1' : '0.35';
+          const check = a.unlocked ? '<span style="color:#4af5a0;margin-left:auto;font-size:1.1rem;">&#x2714;</span>' : '';
+          html += '<div style="display:flex;align-items:center;gap:10px;padding:6px 8px;opacity:' + opacity + ';border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px;">';
+          html += '<span style="font-size:1.4rem;">' + a.icon + '</span>';
+          html += '<div style="flex:1;"><div style="color:#fff;font-size:0.85rem;font-weight:700;">' + a.title + '</div>';
+          html += '<div style="color:rgba(255,255,255,0.5);font-size:0.7rem;">' + a.desc + '</div></div>';
+          html += check + '</div>';
+        }
+        html += '</div>';
+      }
+
+      const overlay = document.createElement('div');
+      overlay.className = 'detail-overlay active';
+      overlay.onclick = () => { overlay.remove(); panel.remove(); };
+
+      const panel = document.createElement('div');
+      panel.className = 'detail-panel active';
+      panel.style.maxHeight = '80vh';
+      panel.style.overflowY = 'auto';
+      panel.innerHTML = `
+        <button class="detail-close" onclick="this.closest('.detail-panel').previousElementSibling.click()">&times;</button>
+        <div class="detail-header">
+          <div class="detail-icon" style="background: linear-gradient(135deg, #6a60b0, #4a4070);">&#x1F3C6;</div>
+          <div>
+            <div class="detail-title">Achievements</div>
+            <div class="detail-subtitle">${progress.unlocked} / ${progress.total} unlocked (${progress.percent}%)</div>
+          </div>
+        </div>
+        <div style="margin:12px 0 16px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${progress.percent}%;background:linear-gradient(90deg,#ffd700,#ff8c00);border-radius:3px;transition:width 0.5s ease;"></div>
+        </div>
+        ${html}
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+    }
+
     // ═══════════════════════════════════
     //  STORY ENGINE
     // ═══════════════════════════════════
@@ -4493,8 +5145,17 @@
     let typewriterInterval = null;
     let typewriterDone = false;
 
+    function getStoryData(storyId) {
+      if (storyId === '_intro') return INTRO_STORY;
+      if (storyId.startsWith('_tutorial_')) {
+        const locId = storyId.replace('_tutorial_', '');
+        return (typeof TUTORIALS !== 'undefined' && TUTORIALS[locId]) ? TUTORIALS[locId] : null;
+      }
+      return STORIES[storyId] || null;
+    }
+
     function startStory(storyId) {
-      const story = storyId === '_intro' ? INTRO_STORY : STORIES[storyId];
+      const story = getStoryData(storyId);
       if (!story) return;
       currentStoryId = storyId;
       currentStepIndex = 0;
@@ -4507,7 +5168,7 @@
     }
 
     function showStoryStep() {
-      const story = currentStoryId === '_intro' ? INTRO_STORY : STORIES[currentStoryId];
+      const story = getStoryData(currentStoryId);
       if (!story || currentStepIndex >= story.steps.length) { closeStory(); return; }
 
       const step = story.steps[currentStepIndex];
@@ -4547,7 +5208,7 @@
         if (charIndex < fullText.length) {
           textEl.innerHTML = fullText.substring(0, charIndex + 1) + '<span class="typewriter-cursor"></span>';
           charIndex++;
-          if (typeof BCWAudio !== 'undefined' && charIndex % 3 === 0) BCWAudio.playTypewriter();
+          if (typeof BCWAudio !== 'undefined' && charIndex % (BCWAudio.getTextSoundFrequency ? BCWAudio.getTextSoundFrequency() : 3) === 0) BCWAudio.playTypewriter();
         } else {
           clearInterval(typewriterInterval);
           typewriterInterval = null;
@@ -4633,6 +5294,7 @@
               reactionEl.textContent = choice.reaction;
               choicesEl.appendChild(reactionEl);
             } else {
+              if (typeof choice.onclick === 'function') choice.onclick();
               currentStepIndex = choice.next;
               showStoryStep();
             }
@@ -4813,8 +5475,10 @@
             saveProgress(state);
             if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkIntroComplete();
           }
-          // Unlock revealed locations
-          if (step.unlocks && step.unlocks.length > 0) {
+          // Tutorials don't unlock locations or mark stories complete
+          if (storyId.startsWith('_tutorial_')) {
+            // Tutorial complete — no progression changes
+          } else if (step.unlocks && step.unlocks.length > 0) {
             if (storyId !== '_intro') {
               completeStory(storyId);
             } else {
@@ -5222,6 +5886,18 @@
         actionsEl.appendChild(storyBtn);
       }
 
+      // Add tutorial button if a tutorial exists for this location
+      if (typeof TUTORIALS !== 'undefined' && TUTORIALS[id]) {
+        const showTutorials = typeof BCWSettings !== 'undefined' && BCWSettings.areTutorialsEnabled();
+        if (showTutorials || isStoryComplete(id)) {
+          const tutBtn = document.createElement('button');
+          tutBtn.className = 'detail-action-btn secondary';
+          tutBtn.textContent = TUTORIALS[id].btnLabel || 'Learn: ' + (TUTORIALS[id].technique || 'Technique');
+          tutBtn.onclick = () => { closePanel(); startStory('_tutorial_' + id); };
+          actionsEl.appendChild(tutBtn);
+        }
+      }
+
       loc.actions.forEach((a, i) => {
         if (a.href) {
           const link = document.createElement('a');
@@ -5250,7 +5926,7 @@
 
     // Close on Escape / open debug menu
     document.addEventListener('keydown', (e) => {
-      if (e.target.classList.contains('story-puzzle-input') || e.target.classList.contains('terminal-input-field')) return;
+      if (e.target.classList.contains('story-puzzle-input') || e.target.classList.contains('terminal-input-field') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'Escape') {
         const debugMenu = document.getElementById('debug-menu');
         if (debugMenu.classList.contains('active')) {
@@ -5263,7 +5939,45 @@
           openDebugMenu();
         }
       }
+      if (e.key === '?' || e.key === '/') {
+        showKeyboardHelp();
+      }
     });
+
+    function showKeyboardHelp() {
+      // Remove existing if open
+      const existing = document.getElementById('keyboard-help-overlay');
+      if (existing) { existing.remove(); document.getElementById('keyboard-help-panel').remove(); return; }
+
+      const overlay = document.createElement('div');
+      overlay.id = 'keyboard-help-overlay';
+      overlay.className = 'detail-overlay active';
+      overlay.onclick = () => { overlay.remove(); panel.remove(); };
+
+      const panel = document.createElement('div');
+      panel.id = 'keyboard-help-panel';
+      panel.className = 'detail-panel active';
+      panel.innerHTML = `
+        <button class="detail-close" onclick="document.getElementById('keyboard-help-overlay').click()">&times;</button>
+        <div class="detail-header">
+          <div class="detail-icon" style="background: linear-gradient(135deg, #6a7d93, #4a5d73);">&#x2328;</div>
+          <div>
+            <div class="detail-title">Keyboard Shortcuts</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Esc</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Close panels / Open debug</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">M</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Toggle minimap</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Arrow Keys</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Pan map</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">+ / -</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Zoom in / out</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Tab</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Navigate elements</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">?</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">This help panel</span></div>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+    }
 
     function openDebugMenu() {
       document.getElementById('debug-menu').classList.add('active');
@@ -5408,7 +6122,7 @@
       if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkTerminalCodes(getUnlockedCodes().length);
 
       // Special code rewards
-      if (normalized === 'FLOAT') {
+      if (normalized === 'FLOAT' || normalized === 'SIMON') {
         addTerminalLine('The clouds part... something descends from above!', 'success');
         addTerminalLine('Simon\'s Skyship has appeared in the skies!', 'info');
         setTimeout(() => { spawnAirship(); closeTerminal(); }, 1200);
@@ -5492,7 +6206,7 @@
     // Check if FLOAT was already unlocked on page load
     function checkAirshipOnLoad() {
       const codes = getUnlockedCodes();
-      if (codes.includes('FLOAT')) {
+      if (codes.includes('FLOAT') || codes.includes('SIMON')) {
         spawnAirship();
       }
     }
@@ -5512,7 +6226,7 @@
         locEl.style.transform = 'scale(1)';
         locEl.style.opacity = '1';
         spawnUnlockParticles(locEl);
-        showUnlockBanner('Your House');
+        showUnlockBanner('Your Home');
         document.querySelectorAll('.minimap-dot[data-location="house"]').forEach(d => d.classList.remove('hidden-loc'));
         setTimeout(() => { locEl.style.transition = ''; locEl.style.transform = ''; locEl.style.opacity = ''; }, 800);
       }
@@ -6148,6 +6862,80 @@
           '<rect x="24" y="10" width="4" height="6" rx="1" fill="#999"/>' +
           '</svg>',
         zone: 'floor', cols: 1, rows: 1
+      },
+
+      // ─── Story Reward Items ───
+      dragonScale: {
+        svg: '<svg width="50" height="60" viewBox="0 0 50 60">' +
+          // Mounting plaque
+          '<ellipse cx="25" cy="30" rx="22" ry="28" fill="#3a2210"/>' +
+          '<ellipse cx="25" cy="30" rx="20" ry="26" fill="#4a3018"/>' +
+          // Dragon scale
+          '<path d="M25,8 Q38,18 36,35 Q33,48 25,52 Q17,48 14,35 Q12,18 25,8 Z" fill="#8a2020"/>' +
+          '<path d="M25,10 Q35,19 33,34 Q31,45 25,48 Q19,45 17,34 Q15,19 25,10 Z" fill="#aa3030" opacity="0.7"/>' +
+          // Scale texture lines
+          '<path d="M20,20 Q25,24 30,20" fill="none" stroke="#cc4040" stroke-width="0.8" opacity="0.5"/>' +
+          '<path d="M18,28 Q25,33 32,28" fill="none" stroke="#cc4040" stroke-width="0.8" opacity="0.5"/>' +
+          '<path d="M19,36 Q25,40 31,36" fill="none" stroke="#cc4040" stroke-width="0.8" opacity="0.4"/>' +
+          // Faint red glow
+          '<ellipse cx="25" cy="30" rx="16" ry="20" fill="#ff4422" opacity="0.06">' +
+          '<animate attributeName="opacity" values="0.04;0.1;0.04" dur="4s" repeatCount="indefinite"/>' +
+          '</ellipse>' +
+          // Brass nameplate
+          '<rect x="10" y="53" width="30" height="5" rx="1.5" fill="#c0a040" opacity="0.7"/>' +
+          '<text x="25" y="57" text-anchor="middle" fill="#3a2210" font-size="3" font-family="sans-serif">DRAGON SCALE</text>' +
+          '</svg>',
+        zone: 'wall', cols: 1, rows: 1, reward: true
+      },
+      spyglass: {
+        svg: '<svg width="60" height="35" viewBox="0 0 60 35">' +
+          // Stand base
+          '<ellipse cx="30" cy="32" rx="18" ry="3" fill="#5a3a18"/>' +
+          '<rect x="28" y="18" width="4" height="14" fill="#6a4a20"/>' +
+          // Stand V arms
+          '<line x1="22" y1="28" x2="30" y2="18" stroke="#6a4a20" stroke-width="2.5" stroke-linecap="round"/>' +
+          '<line x1="38" y1="28" x2="30" y2="18" stroke="#6a4a20" stroke-width="2.5" stroke-linecap="round"/>' +
+          // Spyglass body
+          '<rect x="6" y="10" width="48" height="8" rx="4" fill="#b89030" transform="rotate(-8,30,14)"/>' +
+          '<rect x="8" y="11" width="44" height="6" rx="3" fill="#d4b040" opacity="0.6" transform="rotate(-8,30,14)"/>' +
+          // Lens end (wider)
+          '<rect x="2" y="9" width="10" height="10" rx="5" fill="#8a7020" transform="rotate(-8,7,14)"/>' +
+          '<circle cx="5" cy="13" r="4" fill="#4a8aba" opacity="0.3" transform="rotate(-8,5,13)"/>' +
+          // Eyepiece (narrower)
+          '<rect x="50" y="11" width="8" height="6" rx="3" fill="#8a7020" transform="rotate(-8,54,14)"/>' +
+          // Brass rings
+          '<rect x="20" y="10" width="3" height="8" rx="1" fill="#c0a040" opacity="0.5" transform="rotate(-8,21,14)"/>' +
+          '<rect x="36" y="10" width="3" height="8" rx="1" fill="#c0a040" opacity="0.5" transform="rotate(-8,37,14)"/>' +
+          '</svg>',
+        zone: 'floor', cols: 1, rows: 1, reward: true
+      },
+      lunarRock: {
+        svg: '<svg width="40" height="50" viewBox="0 0 40 50">' +
+          // Shelf bracket
+          '<rect x="5" y="18" width="30" height="4" rx="1" fill="#6a5030"/>' +
+          '<path d="M5,22 L5,30 L8,22 Z" fill="#5a4020"/>' +
+          '<path d="M35,22 L35,30 L32,22 Z" fill="#5a4020"/>' +
+          // Glass dome
+          '<path d="M10,18 Q10,2 20,0 Q30,2 30,18" fill="none" stroke="#aac" stroke-width="1.5" opacity="0.3"/>' +
+          '<path d="M11,18 Q11,3 20,1 Q29,3 29,18" fill="#aac" opacity="0.04"/>' +
+          // Moon rock
+          '<path d="M15,17 Q14,11 17,8 Q20,6 23,8 Q26,11 25,17 Z" fill="#8a8880"/>' +
+          '<path d="M16,16 Q15,12 18,9 Q20,7 22,9 Q24,12 23,16 Z" fill="#9a9890" opacity="0.7"/>' +
+          // Craters on rock
+          '<ellipse cx="19" cy="12" rx="2" ry="1.2" fill="#7a7870" opacity="0.6"/>' +
+          '<ellipse cx="22" cy="14" rx="1.5" ry="1" fill="#7a7870" opacity="0.5"/>' +
+          // Glow pulse
+          '<ellipse cx="20" cy="13" rx="8" ry="8" fill="#7ac5e8" opacity="0.06">' +
+          '<animate attributeName="opacity" values="0.03;0.1;0.03" dur="5s" repeatCount="indefinite"/>' +
+          '</ellipse>' +
+          '<ellipse cx="20" cy="13" rx="4" ry="5" fill="#4af5a0" opacity="0.05">' +
+          '<animate attributeName="opacity" values="0.03;0.08;0.03" dur="3.5s" repeatCount="indefinite" begin="1s"/>' +
+          '</ellipse>' +
+          // Label
+          '<rect x="8" y="24" width="24" height="5" rx="1.5" fill="#c0a040" opacity="0.6"/>' +
+          '<text x="20" y="28" text-anchor="middle" fill="#3a2210" font-size="3" font-family="sans-serif">LUNAR ROCK</text>' +
+          '</svg>',
+        zone: 'wall', cols: 1, rows: 1, reward: true
       }
     };
 
@@ -6221,11 +7009,11 @@
     }
 
     function getDefaultWindowItem() {
-      // Centred on the wall
+      // Centred on the wall, 2x default size
       const room = document.getElementById('house-room');
       const rw = room ? room.offsetWidth : 400;
       const rh = room ? room.offsetHeight : 300;
-      const w = 160, h = 120;
+      const w = 320, h = 240;
       return { type: 'houseWindow', xPx: Math.round((rw - w) / 2), yPx: Math.round(rh * 0.06), wPx: w, hPx: h };
     }
 
@@ -6461,6 +7249,7 @@
       renderHouse();
       applyRoomLighting();
       updateUndoRedoButtons();
+      refreshTrophyPalette();
     }
 
     function closeHouseEditor() {
@@ -6610,6 +7399,43 @@
       state.items.push(item);
       saveHouseState(state);
       createFurnitureElement(item, state.items.length - 1);
+    }
+
+    // ─── Story Reward Trophies ───
+    const REWARD_MAP = {
+      lair:    { item: 'dragonScale', label: 'Dragon Scale Trophy', achievement: 'Dragon Tamer' },
+      airship: { item: 'spyglass',    label: 'Brass Spyglass',      achievement: 'Sky Hunter' },
+      moon:    { item: 'lunarRock',   label: 'Lunar Rock Fragment', achievement: 'Moonwalker' }
+    };
+
+    function isRewardUnlocked(itemType) {
+      const state = getProgress();
+      for (const [storyId, reward] of Object.entries(REWARD_MAP)) {
+        if (reward.item === itemType) {
+          return state.completedStories.includes(storyId);
+        }
+      }
+      return false;
+    }
+
+    function addRewardFurniture(type) {
+      if (!isRewardUnlocked(type)) return;
+      addFurniture(type);
+    }
+
+    function refreshTrophyPalette() {
+      for (const [storyId, reward] of Object.entries(REWARD_MAP)) {
+        const el = document.getElementById('reward-' + reward.item);
+        if (!el) continue;
+        const unlocked = isRewardUnlocked(reward.item);
+        el.classList.toggle('locked', !unlocked);
+        el.classList.toggle('unlocked', unlocked);
+        const sublabel = el.querySelector('.reward-lock-label');
+        if (sublabel) {
+          sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText || sublabel.textContent;
+          if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
+        }
+      }
     }
 
     function createFurnitureElement(item, idx) {
@@ -7205,8 +8031,10 @@
               // Show welcome banner for returning players
               setTimeout(() => {
                 const banner = document.getElementById('welcome-banner');
-                banner.classList.add('show');
-                setTimeout(() => banner.classList.remove('show'), 5000);
+                if (banner) {
+                  banner.classList.add('show');
+                  setTimeout(() => { if (banner) banner.classList.remove('show'); }, 5000);
+                }
               }, 500);
             }
           }, 400);
@@ -7433,7 +8261,7 @@
       setCoins(coins - upg.cost);
       owned.push(id);
       localStorage.setItem(FISH_UPGRADES_KEY, JSON.stringify(owned));
-      // Trophy unlocks the mounted fish wall decoration in your house
+      // Trophy unlocks the mounted fish wall decoration in your home
       if (id === 'trophy1' && typeof addFurniture === 'function') {
         try { addFurniture('mountedFish'); } catch(e) {}
       }

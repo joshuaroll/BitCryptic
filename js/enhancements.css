@@ -17,7 +17,7 @@
     scrollbar-width: none;
   }
   .toolbar::-webkit-scrollbar { display: none; }
-  .toolbar-btn { width: 38px; height: 38px; font-size: 1rem; }
+  .toolbar-btn { min-width: 44px; min-height: 44px; font-size: 1rem; }
 
   .minimap { display: none; }
 
@@ -233,6 +233,7 @@ body.high-contrast .terminal-panel {
 .settings-row-btns {
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: flex-start;
 }
 
 /* Toggle switch */

@@ -34,6 +34,11 @@ const BCWAchievements = (() => {
     decorator: { title: 'Interior Designer', desc: 'Place 5 items in your house', icon: '🏠', category: 'house' },
     dream_home: { title: 'Dream Home', desc: 'Place 15 items in your house', icon: '🏡', category: 'house' },
 
+    // Story Trophies
+    dragon_tamer: { title: 'Dragon Tamer', desc: 'Complete Liam\'s Lair story', icon: '🐉', category: 'story' },
+    sky_hunter: { title: 'Sky Hunter', desc: 'Complete Simon\'s Skyship story', icon: '🔭', category: 'story' },
+    moonwalker: { title: 'Moonwalker', desc: 'Complete The Moon story', icon: '🌙', category: 'story' },
+
     // Social
     first_share: { title: 'Social Butterfly', desc: 'Share your progress for the first time', icon: '🦋', category: 'social' },
 
@@ -118,7 +123,7 @@ const BCWAchievements = (() => {
     if (unlockedLocations.length >= 5) unlock('explorer');
     const mainLocations = ['docks', 'forest', 'cafe', 'town', 'adventure', 'library', 'workshop', 'beach', 'cove', 'observatory'];
     if (mainLocations.every(l => unlockedLocations.includes(l))) unlock('cartographer');
-    const secrets = ['house', 'moon', 'lair', 'pond'];
+    const secrets = ['house', 'moon', 'lair', 'airship', 'pond'];
     if (secrets.some(l => unlockedLocations.includes(l))) unlock('secret_finder');
     if (secrets.every(l => unlockedLocations.includes(l))) unlock('all_secrets');
   }
@@ -127,6 +132,10 @@ const BCWAchievements = (() => {
     if (completedStories.length >= 1) unlock('first_story');
     const allStoryIds = ['docks', 'forest', 'cafe', 'town', 'adventure', 'library', 'workshop', 'beach', 'cove'];
     if (allStoryIds.every(s => completedStories.includes(s))) unlock('all_stories');
+    // Story trophy achievements
+    if (completedStories.includes('lair')) unlock('dragon_tamer');
+    if (completedStories.includes('airship')) unlock('sky_hunter');
+    if (completedStories.includes('moon')) unlock('moonwalker');
   }
 
   function checkPuzzleSolved(firstTry) {

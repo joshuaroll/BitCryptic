@@ -12,12 +12,12 @@ const BCWAudio = (() => {
   let ambientGain = null;
 
   let currentMusic = null;
-  let musicOscillators = [];
   let ambientNodes = [];
   let enabled = true;
   let musicVolume = 0.3;
   let sfxVolume = 0.5;
   let textSfxEnabled = true;
+  let textSoundFrequency = 3; // play sound every N characters (higher = slower, range 2-8)
 
   const STORAGE_KEY = 'bcw_audio_settings';
 
@@ -30,6 +30,8 @@ const BCWAudio = (() => {
         musicVolume = saved.musicVolume ?? 0.3;
         sfxVolume = saved.sfxVolume ?? 0.5;
         textSfxEnabled = saved.textSfxEnabled !== false;
+        if (saved.textSoundStyle) textSoundStyle = saved.textSoundStyle;
+        if (saved.textSoundFrequency) textSoundFrequency = saved.textSoundFrequency;
       }
     } catch {}
 
@@ -62,14 +64,22 @@ const BCWAudio = (() => {
       }
     };
 
-    document.addEventListener('click', resumeAudio, { once: false });
-    document.addEventListener('keydown', resumeAudio, { once: false });
+    // Remove listeners once AudioContext is successfully created and running
+    const onInteraction = () => {
+      resumeAudio();
+      if (audioCtx && audioCtx.state === 'running') {
+        document.removeEventListener('click', onInteraction);
+        document.removeEventListener('keydown', onInteraction);
+      }
+    };
+    document.addEventListener('click', onInteraction);
+    document.addEventListener('keydown', onInteraction);
   }
 
   function saveSettings() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        enabled, musicVolume, sfxVolume, textSfxEnabled
+        enabled, musicVolume, sfxVolume, textSfxEnabled, textSoundStyle, textSoundFrequency
       }));
     } catch {}
   }
@@ -127,10 +137,29 @@ const BCWAudio = (() => {
     });
   }
 
+  // ── Text sound options (change textSoundStyle to 'A', 'B', or 'C') ──
+  // A = Soft bubble pop (gentle sine blip, airy)
+  // B = Warm pluck (triangle wave with quick decay, cozy)
+  // C = Gentle chime (high sine with harmonic, sparkly)
+  let textSoundStyle = 'A';
+
   function playTypewriter() {
     if (!audioCtx || !enabled || !textSfxEnabled) return;
-    const freq = 600 + Math.random() * 200;
-    playTone(freq, 0.02, 'square', 0.03);
+
+    if (textSoundStyle === 'A') {
+      // Soft bubble pop — gentle sine blip
+      const freq = 400 + Math.random() * 150;
+      playTone(freq, 0.06, 'sine', 0.04);
+    } else if (textSoundStyle === 'B') {
+      // Warm pluck — triangle wave, short decay
+      const freq = 350 + Math.random() * 120;
+      playTone(freq, 0.04, 'triangle', 0.05);
+    } else if (textSoundStyle === 'C') {
+      // Gentle chime — higher sine with a faint harmonic
+      const freq = 700 + Math.random() * 200;
+      playTone(freq, 0.05, 'sine', 0.025);
+      playTone(freq * 1.5, 0.04, 'sine', 0.01);
+    }
   }
 
   function playStoryAdvance() {
@@ -226,7 +255,6 @@ const BCWAudio = (() => {
 
     playNote();
     currentMusic = setInterval(playNote, theme.tempo);
-    musicOscillators.push(currentMusic);
   }
 
   function stopMusic() {
@@ -234,8 +262,6 @@ const BCWAudio = (() => {
       clearInterval(currentMusic);
       currentMusic = null;
     }
-    musicOscillators.forEach(id => clearInterval(id));
-    musicOscillators = [];
   }
 
   // ─── Controls ───
@@ -266,6 +292,35 @@ const BCWAudio = (() => {
     saveSettings();
   }
 
+  function setTextSoundStyle(val) {
+    textSoundStyle = val;
+    saveSettings();
+  }
+
+  function getTextSoundStyle() { return textSoundStyle; }
+
+  function setTextSoundFrequency(val) {
+    textSoundFrequency = Math.max(2, Math.min(8, Math.round(val)));
+    saveSettings();
+  }
+
+  function getTextSoundFrequency() { return textSoundFrequency; }
+
+  function previewTextSound() {
+    // Play a quick burst at the current frequency so the user can hear the pacing
+    if (!audioCtx || !enabled) return;
+    let i = 0;
+    let charCount = 0;
+    const id = setInterval(() => {
+      charCount++;
+      if (charCount % textSoundFrequency === 0) {
+        playTypewriter();
+        i++;
+      }
+      if (i >= 6) clearInterval(id);
+    }, 25);
+  }
+
   function isEnabled() { return enabled; }
   function getMusicVolume() { return musicVolume; }
   function getSfxVolume() { return sfxVolume; }
@@ -293,6 +348,11 @@ const BCWAudio = (() => {
     getMusicVolume,
     getSfxVolume,
     isTextSfxEnabled,
-    setTextSfxEnabled
+    setTextSfxEnabled,
+    getTextSoundStyle,
+    setTextSoundStyle,
+    getTextSoundFrequency,
+    setTextSoundFrequency,
+    previewTextSound
   };
 })();

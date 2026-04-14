@@ -13,17 +13,19 @@ const BCWAccessibility = (() => {
 
   function init() {
     // Load saved settings
+    let hasSaved = false;
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (saved) {
+        hasSaved = true;
         reducedMotion = saved.reducedMotion || false;
         highContrast = saved.highContrast || false;
         fontSize = saved.fontSize || 1;
       }
     } catch {}
 
-    // Detect system preferences
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Only apply system preference if user has no saved setting
+    if (!hasSaved && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       reducedMotion = true;
     }
 
@@ -40,8 +42,12 @@ const BCWAccessibility = (() => {
       document.body.classList.remove('keyboard-nav');
     });
 
-    // Apply ARIA labels to existing elements
-    applyAriaLabels();
+    // Apply ARIA labels after DOM is fully loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      applyAriaLabels();
+    } else {
+      window.addEventListener('DOMContentLoaded', applyAriaLabels, { once: true });
+    }
 
     // Add keyboard shortcuts
     setupKeyboardShortcuts();
@@ -233,14 +239,81 @@ const BCWAccessibility = (() => {
     document.body.appendChild(liveRegion);
   }
 
+  let announceTimer = null;
   function announce(message) {
-    if (liveRegion) {
+    if (!liveRegion) return;
+    // Debounce rapid announcements to avoid flooding screen readers
+    if (announceTimer) clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => {
       liveRegion.textContent = '';
-      // Force re-read by clearing then setting
       requestAnimationFrame(() => {
         liveRegion.textContent = message;
       });
+      announceTimer = null;
+    }, 300);
+  }
+
+  // ─── Focus Trap for Modals ───
+
+  let activeTrap = null;
+  let previousFocus = null;
+
+  function trapFocus(panel) {
+    if (!panel) return;
+    releaseFocus(); // Release any existing trap
+    previousFocus = document.activeElement;
+    activeTrap = panel;
+
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        releaseFocus();
+        // Close the panel - look for common close mechanisms
+        const closeBtn = panel.querySelector('.close-btn, .panel-close, [aria-label="Close"]');
+        if (closeBtn) closeBtn.click();
+        else if (typeof closePanel === 'function') closePanel();
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+
+      const focusable = [...panel.querySelectorAll(focusableSelector)].filter(
+        el => !el.disabled && el.offsetParent !== null
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
+
+    panel._trapHandler = handleKeyDown;
+    panel.addEventListener('keydown', handleKeyDown);
+
+    // Focus the first focusable element
+    const firstFocusable = panel.querySelector(focusableSelector);
+    if (firstFocusable) firstFocusable.focus();
+  }
+
+  function releaseFocus() {
+    if (activeTrap && activeTrap._trapHandler) {
+      activeTrap.removeEventListener('keydown', activeTrap._trapHandler);
+      delete activeTrap._trapHandler;
+    }
+    activeTrap = null;
+    if (previousFocus && typeof previousFocus.focus === 'function') {
+      previousFocus.focus();
+    }
+    previousFocus = null;
   }
 
   // ─── Settings Controls ───
@@ -270,6 +343,8 @@ const BCWAccessibility = (() => {
   return {
     init,
     announce,
+    trapFocus,
+    releaseFocus,
     setReducedMotion,
     setHighContrast,
     setFontSize,

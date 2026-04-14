@@ -7,6 +7,7 @@ const BCWSettings = (() => {
   const STORAGE_KEY = 'bcw_settings';
   let settings = {
     difficulty: 'normal', // easy, normal, hard
+    tutorialsEnabled: true, // show technique tutorials at locations
   };
 
   function init() {
@@ -67,6 +68,25 @@ const BCWSettings = (() => {
               <label for="setting-text-sfx" class="settings-toggle-label"></label>
             </div>
           </div>
+          <div class="settings-row">
+            <label>Text Sound Style</label>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <select id="setting-text-sound-style" class="settings-select" style="flex:1;">
+                <option value="A" ${BCWAudio.getTextSoundStyle() === 'A' ? 'selected' : ''}>Soft Bubble</option>
+                <option value="B" ${BCWAudio.getTextSoundStyle() === 'B' ? 'selected' : ''}>Warm Pluck</option>
+                <option value="C" ${BCWAudio.getTextSoundStyle() === 'C' ? 'selected' : ''}>Gentle Chime</option>
+              </select>
+              <button class="settings-btn" style="padding:6px 12px;font-size:0.75rem;" onclick="BCWAudio.previewTextSound()">Preview</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <label>Text Sound Speed</label>
+            <div style="display:flex;align-items:center;gap:6px;max-width:160px;">
+              <span style="font-size:0.65rem;color:#999;">Slow</span>
+              <input type="range" id="setting-text-sound-freq" class="settings-slider" min="2" max="8" step="1" value="${BCWAudio.getTextSoundFrequency()}" style="flex:1;">
+              <span style="font-size:0.65rem;color:#999;">Fast</span>
+            </div>
+          </div>
         </div>
 
         <div class="settings-section">
@@ -78,6 +98,13 @@ const BCWSettings = (() => {
               <option value="normal" ${settings.difficulty === 'normal' ? 'selected' : ''}>Normal</option>
               <option value="hard" ${settings.difficulty === 'hard' ? 'selected' : ''}>Hard (fewer hints)</option>
             </select>
+          </div>
+          <div class="settings-row">
+            <label>Technique Tutorials</label>
+            <input type="checkbox" id="setting-tutorials" ${settings.tutorialsEnabled ? 'checked' : ''} />
+          </div>
+          <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
+            <label>Show cryptic clue technique tutorials at each location</label>
           </div>
         </div>
 
@@ -137,40 +164,63 @@ const BCWSettings = (() => {
     document.body.appendChild(overlay);
     document.body.appendChild(panel);
 
-    // Wire up event listeners
-    document.getElementById('setting-sfx').addEventListener('change', (e) => {
+    // Wire up event listeners (with null guards for robustness)
+    function bindSetting(id, event, handler) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener(event, handler);
+    }
+
+    bindSetting('setting-sfx', 'change', (e) => {
       BCWAudio.setEnabled(e.target.checked);
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackSettingsChange('audio', e.target.checked);
     });
 
-    document.getElementById('setting-music-vol').addEventListener('input', (e) => {
+    bindSetting('setting-music-vol', 'input', (e) => {
       BCWAudio.setMusicVolume(e.target.value / 100);
     });
 
-    document.getElementById('setting-sfx-vol').addEventListener('input', (e) => {
+    bindSetting('setting-sfx-vol', 'input', (e) => {
       BCWAudio.setSfxVolume(e.target.value / 100);
     });
 
-    document.getElementById('setting-text-sfx').addEventListener('change', (e) => {
+    bindSetting('setting-text-sfx', 'change', (e) => {
       BCWAudio.setTextSfxEnabled(e.target.checked);
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackSettingsChange('textSfx', e.target.checked);
     });
 
-    document.getElementById('setting-difficulty').addEventListener('change', (e) => {
+    bindSetting('setting-text-sound-style', 'change', (e) => {
+      BCWAudio.setTextSoundStyle(e.target.value);
+      BCWAudio.previewTextSound();
+    });
+
+    bindSetting('setting-text-sound-freq', 'input', (e) => {
+      BCWAudio.setTextSoundFrequency(parseInt(e.target.value));
+    });
+
+    bindSetting('setting-text-sound-freq', 'change', (e) => {
+      BCWAudio.previewTextSound();
+    });
+
+    bindSetting('setting-difficulty', 'change', (e) => {
       settings.difficulty = e.target.value;
       save();
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackSettingsChange('difficulty', e.target.value);
     });
 
-    document.getElementById('setting-reduced-motion').addEventListener('change', (e) => {
+    bindSetting('setting-tutorials', 'change', (e) => {
+      settings.tutorialsEnabled = e.target.checked;
+      save();
+    });
+
+    bindSetting('setting-reduced-motion', 'change', (e) => {
       BCWAccessibility.setReducedMotion(e.target.checked);
     });
 
-    document.getElementById('setting-high-contrast').addEventListener('change', (e) => {
+    bindSetting('setting-high-contrast', 'change', (e) => {
       BCWAccessibility.setHighContrast(e.target.checked);
     });
 
-    document.getElementById('setting-font-size').addEventListener('input', (e) => {
+    bindSetting('setting-font-size', 'input', (e) => {
       BCWAccessibility.setFontSize(e.target.value / 100);
       const preview = document.getElementById('settings-font-preview');
       if (preview) preview.style.fontSize = (e.target.value / 100) + 'rem';
@@ -211,11 +261,13 @@ const BCWSettings = (() => {
   }
 
   function getDifficulty() { return settings.difficulty; }
+  function areTutorialsEnabled() { return settings.tutorialsEnabled; }
 
   return {
     init,
     open: openSettings,
     close: closeSettings,
-    getDifficulty
+    getDifficulty,
+    areTutorialsEnabled
   };
 })();

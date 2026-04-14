@@ -1,7 +1,27 @@
+Critical:
+1. Fix the chest on the puzzle screen of Cluey Cove to fit the puzzle
+2. Make the entrance to Cluey Cove bigger
+3. Remove the Cryptogram references
+4. Cut the end of the Beach story to work better.
+5. Fix the path from the Workshop to the Beach.
 
-Needs a fishing minigame
+6. Make the window centered and 2x larger by default in the home decoration
+7. Rename Your House to Your Home
+
+8. Better Mystic Peak puzzles
+9. Easter eggs for putting bark, leaf, and pine into the terminal
+10. remove the Lunar Hermit text on the last moon scene. Make the earth image  better too
+
+11. Add mockups for skyship. Also make "Simon" a code to unlock skyship
+12. When clicking the interactions on locations don't say the answer or hints by default
+13. Rewards for solving Liam, Simon, and Mark clues. Should give an item unlock achievement and item in your house to use.
+
+14. Coffee mug on cryptic cafe is weird on the window atm
+
+
 Needs romance options, with gifts you can gain by climbing the cryptic tower
 Needs a cozy home decorator with cryptic clues answered in all modes as money
+Create your own island and puzzles
 
 Real cryptic clues for Liam's Lair
 Real cryptic clues for Simon's Skyship
@@ -11,10 +31,6 @@ In the library there should be walkthrough guides on how to unlock the terminal 
 
 Add more variability to the clouds so it doesn't look so static with the stacked clouds
 
-
-Fix road from puzzle workshop to your house
-fix the fishing pond hitbox for location
-refine the decoder docks coastline.
 Add more buildings and landmarks to the island
 
 Add kait easter egg
