@@ -3285,6 +3285,7 @@
           <div class="palette-item reward-item" id="reward-dragonScale" onclick="addRewardFurniture('dragonScale')"><span class="palette-icon">&#x1F432;</span><div class="palette-label">Dragon Scale<div class="palette-sublabel reward-lock-label">Complete Liam's Lair</div></div></div>
           <div class="palette-item reward-item" id="reward-spyglass" onclick="addRewardFurniture('spyglass')"><span class="palette-icon">&#x1F52D;</span><div class="palette-label">Brass Spyglass<div class="palette-sublabel reward-lock-label">Complete Simon's Skyship</div></div></div>
           <div class="palette-item reward-item" id="reward-lunarRock" onclick="addRewardFurniture('lunarRock')"><span class="palette-icon">&#x1FA78;</span><div class="palette-label">Lunar Rock<div class="palette-sublabel reward-lock-label">Complete The Moon</div></div></div>
+          <div class="palette-item reward-item" id="reward-kaitFrog" onclick="addRewardFurniture('kaitFrog')"><span class="palette-icon">&#x1F438;</span><div class="palette-label">Kait's Cutie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
         </div>
         <h3>Wall Color</h3>
         <div class="wall-color-grid">
@@ -3297,6 +3298,7 @@
           <div class="wall-swatch" style="background:#e8dcc8;" onclick="setWallColor('#e8dcc8')" title="Ivory"></div>
           <div class="wall-swatch" style="background:#4a5a6a;" onclick="setWallColor('#4a5a6a')" title="Slate"></div>
           <div class="wall-swatch" style="background:#6a6a5a;" onclick="setWallColor('#6a6a5a')" title="Olive"></div>
+          <div class="wall-swatch reward-item" id="reward-kaitWall" style="background:#3cb371;" onclick="setRewardWallColor('#3cb371')" title="Kait's Green"></div>
         </div>
         <h3>Floor Style</h3>
         <div class="floor-color-grid">
@@ -6115,38 +6117,54 @@
         return;
       }
 
-      saveUnlockedCode(normalized);
-      addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
-      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackTerminalCode(normalized, true);
-      if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
-      if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkTerminalCodes(getUnlockedCodes().length);
-
       // Special code rewards
       if (normalized === 'FLOAT' || normalized === 'SIMON') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('The clouds part... something descends from above!', 'success');
         addTerminalLine('Simon\'s Skyship has appeared in the skies!', 'info');
         setTimeout(() => { spawnAirship(); closeTerminal(); }, 1200);
       } else if (normalized === 'COME IN' || normalized === 'WELCOME HOME') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('A warm light flickers on the south shore...', 'success');
         addTerminalLine('A cottage has appeared! It\'s yours.', 'info');
         setTimeout(() => { spawnHouse(); closeTerminal(); }, 1200);
       } else if (normalized === 'LR' || normalized === 'LIAM RUNNALLS') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('The ground trembles beneath Cluey Cove...', 'success');
         addTerminalLine('An underground passage has opened! Smoke rises from the cliffs.', 'info');
         addTerminalLine('Liam\'s Lair has been revealed!', 'success');
         setTimeout(() => { spawnLair(); closeTerminal(); }, 1200);
       } else if (normalized === 'MARK' || normalized === 'MOON') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('The craters shift and align... something stirs on the lunar surface!', 'success');
         addTerminalLine('A dome glows with warm light among the craters.', 'info');
         addTerminalLine('The Mark on The Moon has been revealed!', 'success');
         setTimeout(() => { spawnMoon(); closeTerminal(); }, 1200);
       } else if (normalized === 'FISH' || normalized === 'FISHING') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('The water ripples... something stirs in the pond!', 'success');
         addTerminalLine('The Fishing Pond is now open!', 'info');
         setTimeout(() => { spawnPond(); closeTerminal(); }, 1200);
+      } else if (normalized === 'KAIT') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('Something soft and green tumbles out of the terminal...', 'success');
+        addTerminalLine('Kait\'s Cutie has been added to your furniture collection!', 'info');
+        addTerminalLine('A new wall color has been unlocked!', 'info');
+        setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
       } else {
-        addTerminalLine('Secret unlocked! This code has been saved to your profile.', 'success');
+        addTerminalLine('Code not accepted.', 'error');
+        if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+        return;
       }
+      if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackTerminalCode(normalized, true);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+      if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkTerminalCodes(getUnlockedCodes().length);
       renderUnlockedList();
     });
 
@@ -6936,6 +6954,43 @@
           '<text x="20" y="28" text-anchor="middle" fill="#3a2210" font-size="3" font-family="sans-serif">LUNAR ROCK</text>' +
           '</svg>',
         zone: 'wall', cols: 1, rows: 1, reward: true
+      },
+      kaitFrog: {
+        svg: '<svg width="55" height="65" viewBox="0 0 55 65">' +
+          // Body (round, squishy plushie shape)
+          '<ellipse cx="27" cy="40" rx="20" ry="18" fill="#7ecb5a"/>' +
+          '<ellipse cx="27" cy="40" rx="18" ry="16" fill="#8ed66a" opacity="0.6"/>' +
+          // Belly (lighter oval)
+          '<ellipse cx="27" cy="44" rx="12" ry="10" fill="#c8f0a0" opacity="0.5"/>' +
+          // Head (big round frog head)
+          '<ellipse cx="27" cy="22" rx="18" ry="16" fill="#7ecb5a"/>' +
+          '<ellipse cx="27" cy="22" rx="16" ry="14" fill="#8ed66a" opacity="0.5"/>' +
+          // Eyes (big round, sitting on top of head)
+          '<circle cx="18" cy="10" r="8" fill="#7ecb5a"/>' +
+          '<circle cx="36" cy="10" r="8" fill="#7ecb5a"/>' +
+          '<circle cx="18" cy="10" r="6" fill="#fff"/>' +
+          '<circle cx="36" cy="10" r="6" fill="#fff"/>' +
+          '<circle cx="19" cy="10" r="3.5" fill="#222"/>' +
+          '<circle cx="37" cy="10" r="3.5" fill="#222"/>' +
+          '<circle cx="20" cy="9" r="1.2" fill="#fff"/>' +
+          '<circle cx="38" cy="9" r="1.2" fill="#fff"/>' +
+          // Smile
+          '<path d="M20,26 Q27,32 34,26" fill="none" stroke="#4a8a30" stroke-width="1.5" stroke-linecap="round"/>' +
+          // Blush cheeks
+          '<ellipse cx="15" cy="24" rx="4" ry="2.5" fill="#f0a0b0" opacity="0.35"/>' +
+          '<ellipse cx="39" cy="24" rx="4" ry="2.5" fill="#f0a0b0" opacity="0.35"/>' +
+          // Little arms (stubby, plushie style)
+          '<ellipse cx="8" cy="38" rx="5" ry="4" fill="#6aba4a" transform="rotate(-20,8,38)"/>' +
+          '<ellipse cx="46" cy="38" rx="5" ry="4" fill="#6aba4a" transform="rotate(20,46,38)"/>' +
+          // Little feet
+          '<ellipse cx="18" cy="56" rx="6" ry="4" fill="#6aba4a"/>' +
+          '<ellipse cx="36" cy="56" rx="6" ry="4" fill="#6aba4a"/>' +
+          // Stitch line on belly (plushie detail)
+          '<path d="M27,36 L27,52" fill="none" stroke="#5aaa3a" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.4"/>' +
+          // Tiny heart on chest
+          '<path d="M25,40 Q25,38 27,37 Q29,38 29,40 Q27,43 25,40 Z" fill="#e85a7a" opacity="0.6"/>' +
+          '</svg>',
+        zone: 'floor', cols: 1, rows: 1, reward: true
       }
     };
 
@@ -7274,8 +7329,13 @@
       saveHouseState(state);
       applyWallColor(color);
       document.querySelectorAll('.wall-swatch').forEach(s => {
-        s.classList.toggle('active', s.getAttribute('onclick').includes(color));
+        s.classList.toggle('active', s.getAttribute('onclick') && s.getAttribute('onclick').includes(color));
       });
+    }
+
+    function setRewardWallColor(color) {
+      if (!getUnlockedCodes().includes('KAIT')) return;
+      setWallColor(color);
     }
 
     function applyWallColor(color) {
@@ -7408,11 +7468,22 @@
       moon:    { item: 'lunarRock',   label: 'Lunar Rock Fragment', achievement: 'Moonwalker' }
     };
 
+    // ─── Code Reward Items (unlocked via terminal codes) ───
+    const CODE_REWARD_MAP = {
+      KAIT: { item: 'kaitFrog', label: 'Kait\'s Cutie' }
+    };
+
     function isRewardUnlocked(itemType) {
       const state = getProgress();
       for (const [storyId, reward] of Object.entries(REWARD_MAP)) {
         if (reward.item === itemType) {
           return state.completedStories.includes(storyId);
+        }
+      }
+      const codes = getUnlockedCodes();
+      for (const [code, reward] of Object.entries(CODE_REWARD_MAP)) {
+        if (reward.item === itemType) {
+          return codes.includes(code);
         }
       }
       return false;
@@ -7435,6 +7506,25 @@
           sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText || sublabel.textContent;
           if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
         }
+      }
+      for (const [code, reward] of Object.entries(CODE_REWARD_MAP)) {
+        const el = document.getElementById('reward-' + reward.item);
+        if (!el) continue;
+        const unlocked = isRewardUnlocked(reward.item);
+        el.classList.toggle('locked', !unlocked);
+        el.classList.toggle('unlocked', unlocked);
+        const sublabel = el.querySelector('.reward-lock-label');
+        if (sublabel) {
+          sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText || sublabel.textContent;
+          if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
+        }
+      }
+      // Kait wall color swatch
+      const kaitWall = document.getElementById('reward-kaitWall');
+      if (kaitWall) {
+        const kaitUnlocked = getUnlockedCodes().includes('KAIT');
+        kaitWall.classList.toggle('locked', !kaitUnlocked);
+        kaitWall.classList.toggle('unlocked', kaitUnlocked);
       }
     }
 
