@@ -375,6 +375,146 @@
       border-color: rgba(255, 215, 0, 0.4);
     }
 
+    /* ─── Legend Scroll ─── */
+    .legend-scroll {
+      position: fixed;
+      top: 60px;
+      left: 16px;
+      z-index: 99;
+      font-family: 'Nunito', sans-serif;
+      pointer-events: all;
+      max-width: 280px;
+    }
+
+    .legend-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(62, 45, 25, 0.92), rgba(42, 30, 18, 0.92));
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      color: #ffd700;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .legend-toggle:hover {
+      background: linear-gradient(135deg, rgba(80, 58, 30, 0.95), rgba(55, 40, 22, 0.95));
+      border-color: rgba(255, 215, 0, 0.6);
+      box-shadow: 0 2px 16px rgba(255, 215, 0, 0.15);
+    }
+
+    .legend-toggle-icon {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .legend-scroll.open .legend-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .legend-body {
+      margin-top: 6px;
+      background: linear-gradient(180deg, rgba(62, 45, 25, 0.95) 0%, rgba(48, 34, 18, 0.97) 100%);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 12px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .legend-scroll.open .legend-body {
+      max-height: 600px;
+      opacity: 1;
+    }
+
+    .legend-header {
+      padding: 10px 14px 6px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.75rem;
+      color: rgba(255, 215, 0, 0.7);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.12);
+    }
+
+    .legend-list {
+      padding: 6px 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      transition: background 0.15s ease;
+    }
+
+    .legend-item:hover {
+      background: rgba(255, 215, 0, 0.06);
+    }
+
+    .legend-item.locked {
+      opacity: 0.35;
+    }
+
+    .legend-item-icon {
+      font-size: 0.95rem;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .legend-item-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #e8d5a3;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .legend-item-dot {
+      flex-shrink: 0;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 215, 0, 0.4);
+    }
+
+    .legend-item-skill {
+      font-size: 0.72rem;
+      color: rgba(255, 215, 0, 0.75);
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    .legend-item.locked .legend-item-name,
+    .legend-item.locked .legend-item-skill {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 480px) {
+      .legend-scroll {
+        top: 52px;
+        left: 8px;
+        max-width: 240px;
+      }
+      .legend-toggle {
+        padding: 5px 10px;
+        font-size: 0.72rem;
+      }
+      .legend-item {
+        padding: 4px 10px;
+      }
+    }
+
     /* ─── Bottom Toolbar ─── */
     .toolbar {
       position: fixed;
@@ -602,6 +742,75 @@
 
     .detail-close:hover {
       background: rgba(255, 80, 80, 0.3);
+    }
+
+    /* ─── Game Modal (replaces alert()) ─── */
+    .game-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 299;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .game-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .game-modal {
+      background: linear-gradient(135deg, #1a2444 0%, #0f1a30 100%);
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      border-radius: 20px;
+      padding: 28px 32px;
+      width: 400px;
+      max-width: 88vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(10px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    }
+    .game-modal-overlay.active .game-modal {
+      transform: scale(1) translateY(0);
+    }
+    .game-modal-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .game-modal-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      color: #ffd700;
+      margin-bottom: 12px;
+    }
+    .game-modal-body {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .game-modal-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+      color: #ffd700;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .game-modal-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.1));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.2);
     }
 
     /* ─── Sparkle particles ─── */
@@ -883,85 +1092,7 @@
       display: none !important;
     }
 
-    /* ─── Debug Menu ─── */
-    #debug-menu {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      background: linear-gradient(135deg, rgba(20, 20, 40, 0.97), rgba(10, 10, 30, 0.97));
-      border: 2px solid rgba(255, 215, 0, 0.5);
-      border-radius: 16px;
-      padding: 28px 36px;
-      min-width: 280px;
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
-    }
-
-    #debug-menu.active {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-    }
-
-    #debug-menu h3 {
-      font-family: 'Fredoka One', cursive;
-      color: #ffd700;
-      font-size: 1.1rem;
-      margin-bottom: 4px;
-      letter-spacing: 1px;
-    }
-
-    .debug-btn {
-      width: 100%;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-
-    .debug-btn:hover {
-      transform: scale(1.04);
-      filter: brightness(1.15);
-    }
-
-    .debug-btn:active {
-      transform: scale(0.97);
-    }
-
-    .debug-btn-unlock {
-      background: linear-gradient(135deg, #27ae60, #2ecc71);
-      color: #fff;
-    }
-
-    .debug-btn-reset {
-      background: linear-gradient(135deg, #c0392b, #e74c3c);
-      color: #fff;
-    }
-
-    .debug-btn-close {
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 4px;
-    }
-
-    #debug-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 9998;
-    }
-
-    #debug-overlay.active {
-      display: block;
-    }
+    /* Debug styles removed — debug tools now live inside Settings panel */
 
     /* ─── House Editor ─── */
     #house-editor {
@@ -1917,6 +2048,17 @@
       <button class="hud-btn" onclick="resetView()" aria-label="Reset map view">Reset View</button>
       <button class="hud-btn" onclick="BCWSharing.shareProgress()" aria-label="Share progress">Share</button>
       <button class="hud-btn" onclick="BCWSettings.open()" aria-label="Open settings">&#x2699; Settings</button>
+    </div>
+  </div>
+
+  <!-- Legend Scroll -->
+  <div class="legend-scroll" id="legend-scroll">
+    <button class="legend-toggle" onclick="toggleLegendScroll()" aria-label="Toggle skill legend">
+      <span class="legend-toggle-icon">&#x1F4DC;</span> Skill Guide
+    </button>
+    <div class="legend-body">
+      <div class="legend-header">Locations &amp; Techniques</div>
+      <div class="legend-list" id="legend-list"></div>
     </div>
   </div>
 
@@ -3314,14 +3456,7 @@
     </div>
   </div>
 
-  <!-- Debug Menu -->
-  <div id="debug-overlay" onclick="closeDebugMenu()"></div>
-  <div id="debug-menu">
-    <h3>Debug Menu</h3>
-    <button class="debug-btn debug-btn-unlock" onclick="debugUnlockAll()">Unlock All Locations</button>
-    <button class="debug-btn debug-btn-reset" onclick="debugReset()">Reset Progress</button>
-    <button class="debug-btn debug-btn-close" onclick="closeDebugMenu()">Close</button>
-  </div>
+  <!-- Debug tools injected into Settings when activated -->
 
   <div class="story-overlay" id="story-overlay"></div>
   <div class="story-panel" id="story-panel">
@@ -3356,6 +3491,46 @@
 
   <script>
     // ═══════════════════════════════════
+    //  PROGRESS (declared early so LOCATIONS can call isStoryComplete)
+    // ═══════════════════════════════════
+    const PROGRESS_KEY = 'bitcryptic_progress';
+
+    function getDefaultProgress() {
+      return { version: 1, introComplete: false, unlockedLocations: [], completedStories: [] };
+    }
+
+    function getProgress() {
+      try {
+        const raw = localStorage.getItem(PROGRESS_KEY);
+        if (raw) {
+          const p = JSON.parse(raw);
+          if (p && p.version) {
+            if (!Array.isArray(p.unlockedLocations)) p.unlockedLocations = [];
+            if (!Array.isArray(p.completedStories)) p.completedStories = [];
+            return p;
+          }
+        }
+      } catch (e) {
+        console.warn('Progress data corrupted, resetting:', e);
+        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'getProgress');
+      }
+      return getDefaultProgress();
+    }
+
+    function saveProgress(state) {
+      try {
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn('Failed to save progress:', e);
+        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'saveProgress');
+      }
+    }
+
+    function isStoryComplete(id) {
+      return getProgress().completedStories.includes(id);
+    }
+
+    // ═══════════════════════════════════
     //  LOCATION DATA
     // ═══════════════════════════════════
     const locations = {
@@ -3367,7 +3542,7 @@
         desc: 'The grand Adventure Tower rises above all. Within its walls, brave Cryptic Voyagers face word puzzles, battle strange foes, and ascend toward the ultimate cryptic challenge. Do you dare enter?',
         actions: [
           { label: 'Begin Adventure', href: 'https://joshuaroll.github.io/BitCryptic/game/', primary: true },
-          { label: 'How To Play', onclick: () => alert('Solve cryptic clues to build words, fight enemies, collect relics, and reach the final boss!') }
+          { label: 'How To Play', onclick: () => showGameModal('Solve cryptic clues to build words, fight enemies, collect relics, and reach the final boss!', 'How To Play', '\u{1F4D6}') }
         ]
       },
       workshop: {
@@ -3378,7 +3553,7 @@
         desc: 'Cryptic Croc runs the Puzzle Workshop. Practice cryptic clues at your own pace: anagrams, hidden words, reversals. Fresh puzzles daily.',
         actions: [
           { label: 'Enter Workshop', href: '../Bit Cryptic Adventure/index.html', primary: true },
-          { label: 'View Leaderboard', onclick: () => { if (typeof BCWSharing !== 'undefined') BCWSharing.shareProgress(); else alert('Leaderboards coming soon!'); } }
+          { label: 'View Leaderboard', onclick: () => { if (typeof BCWSharing !== 'undefined') BCWSharing.shareProgress(); else showGameModal('Leaderboards coming soon!', 'Coming Soon', '\u{1F3C6}'); } }
         ]
       },
       library: {
@@ -3399,8 +3574,8 @@
         iconBg: 'linear-gradient(135deg, #2a8ab5, #1a6a95)',
         desc: 'The Decoder Docks jut out from the island\'s south-west shore. Ships arrive carrying encoded messages, visitors, and mysterious cargo. Check the notice board for decoded dispatches and community links.',
         actions: [
-          { label: 'Notice Board', onclick: () => alert('Check back soon for community updates!') },
-          { label: 'Set Sail', onclick: () => alert('New destinations coming in future updates!') }
+          { label: 'Notice Board', onclick: () => showGameModal('Check back soon for community updates!', 'Notice Board', '\u{1F4CC}') },
+          { label: 'Set Sail', onclick: () => showGameModal('New destinations coming in future updates!', 'Set Sail', '\u26F5') }
         ]
       },
       town: {
@@ -3411,7 +3586,7 @@
         desc: 'The bustling Town Square sits at the center of Bit Cryptic World. A mysterious terminal hums quietly near the fountain. Rumor has it that entering the right code can unlock hidden secrets across the island.',
         actions: [
           { label: 'Use Terminal', onclick: () => openTerminal(), primary: true },
-          { label: 'Bulletin Board', onclick: () => alert('Community features coming soon!') }
+          { label: 'Bulletin Board', onclick: () => showGameModal('Community features coming soon!', 'Bulletin Board', '\u{1F4CB}') }
         ]
       },
       observatory: {
@@ -3421,8 +3596,8 @@
         iconBg: 'linear-gradient(135deg, #6a7a9a, #4a5a7a)',
         desc: 'Perched atop the highest mountain, the Observatory peers into the cosmos for hidden patterns. Astronomers here study the celestial wordplay that guides the island\'s deepest mysteries.',
         actions: [
-          { label: 'Stargaze', onclick: () => alert('The stars shimmer above. Patterns form in the constellations, as if hiding a message...') },
-          { label: 'Star Charts', onclick: () => alert('Star chart puzzles coming in a future update!') }
+          { label: 'Stargaze', onclick: () => showGameModal('The stars shimmer above. Patterns form in the constellations, as if hiding a message...', 'Stargaze', '\u2728') },
+          { label: 'Star Charts', onclick: () => showGameModal('Star chart puzzles coming in a future update!', 'Coming Soon', '\u{1F30C}') }
         ]
       },
       forest: {
@@ -3434,7 +3609,7 @@
         customStoryBtn: true,
         actions: [
           { label: isStoryComplete('forest') ? 'Replay Story' : 'Enter Forest', onclick: () => { closePanel(); startStory('forest'); }, primary: !isStoryComplete('forest') },
-          { label: 'Forest Map', onclick: () => alert('The paths shift and change. No map can capture this forest.') }
+          { label: 'Forest Map', onclick: () => showGameModal('The paths shift and change. No map can capture this forest.', 'Forest Map', '\u{1F5FA}') }
         ]
       },
       cove: {
@@ -3444,8 +3619,8 @@
         iconBg: 'linear-gradient(135deg, #c0a040, #8b6914)',
         desc: 'Tucked beneath the beach cliffs, Cluey Cove is accessible only to those who solve the way in. Treasure chests line the cove walls, each locked with a cryptic clue. The crash of waves echoes off the stone as you crack the clues to claim your reward.',
         actions: [
-          { label: 'Search for Treasure', onclick: () => alert('You found a chest! But it\'s locked with a cryptic clue. Can you crack it?') },
-          { label: 'Read the Walls', onclick: () => alert('The cave walls shimmer with a cryptic inscription. Study the clues carefully...') }
+          { label: 'Search for Treasure', onclick: () => showGameModal('You found a chest! But it\'s locked with a cryptic clue. Can you crack it?', 'Treasure Chest', '\u{1F5DD}') },
+          { label: 'Read the Walls', onclick: () => showGameModal('The cave walls shimmer with a cryptic inscription. Study the clues carefully...', 'Cave Inscription', '\u{1F4DC}') }
         ]
       },
       lair: {
@@ -3455,9 +3630,9 @@
         iconBg: 'linear-gradient(135deg, #cc2200, #4a0a0a)',
         desc: 'Deep beneath the cliffs, an underground passage opens into a vast dragon\'s lair. The walls glow red with heat, and ancient cryptic clues of fiendish difficulty are carved into every surface. Only the most skilled solvers dare enter. The dragon hoards not gold, but the hardest crossword clues ever written.',
         actions: [
-          { label: 'Face the Dragon\'s Clue', onclick: () => alert('The dragon stirs and growls: "Treasure hidden in each estimate (5)." Can you solve it?'), primary: true },
-          { label: 'Search the Hoard', onclick: () => alert('You unroll a scorched scroll: "This beast makes proceedings drag on (6)." What could it be?') },
-          { label: 'Read the Wall Carvings', onclick: () => alert('Carved deep into the rock: "Fun race, oddly, leads to the source of heat (7)." Think carefully...') }
+          { label: 'Face the Dragon\'s Clue', onclick: () => showGameModal('The dragon stirs and growls:<br><br><em>"Treasure hidden in each estimate (5)."</em><br><br>Can you solve it?', 'Dragon\'s Clue', '\u{1F409}'), primary: true },
+          { label: 'Search the Hoard', onclick: () => showGameModal('You unroll a scorched scroll:<br><br><em>"This beast makes proceedings drag on (6)."</em><br><br>What could it be?', 'Scorched Scroll', '\u{1F4DC}') },
+          { label: 'Read the Wall Carvings', onclick: () => showGameModal('Carved deep into the rock:<br><br><em>"Fun race, oddly, leads to the source of heat (7)."</em><br><br>Think carefully...', 'Wall Carvings', '\u{1FAA8}') }
         ]
       },
       cafe: {
@@ -3467,8 +3642,8 @@
         iconBg: 'linear-gradient(135deg, #b5633a, #8b4513)',
         desc: 'Take a break from adventuring at the cozy Cryptic Cafe. The barista serves puzzles alongside hot drinks. Regulars swap stories, hints, and the occasional solved clue over a warm cup.',
         actions: [
-          { label: 'Order a Puzzle', onclick: () => alert('The barista slides you a napkin with a cryptic clue. Ponder it over your drink...') },
-          { label: 'Daily Special', onclick: () => alert('Today\'s special: Enigma Espresso with a side of Anagram Toast!') }
+          { label: 'Order a Puzzle', onclick: () => showGameModal('The barista slides you a napkin with a cryptic clue. Ponder it over your drink...', 'Napkin Clue', '\u2615') },
+          { label: 'Daily Special', onclick: () => showGameModal('Today\'s special: Enigma Espresso with a side of Anagram Toast!', 'Daily Special', '\u2615') }
         ]
       },
       beach: {
@@ -3478,8 +3653,8 @@
         iconBg: 'linear-gradient(135deg, #e8d5a3, #c4a86c)',
         desc: 'The warm sands of Scramble Shores are littered with scrambled letters. Drag your toes through the sand and rearrange the shells to spell out hidden words. Messages in bottles wash up daily with jumbled clues waiting to be unscrambled.',
         actions: [
-          { label: 'Unscramble Shells', onclick: () => alert('The shells on the sand spell: "TRCPIYC"... can you unscramble it?') },
-          { label: 'Message in a Bottle', onclick: () => alert('A bottle washes ashore with jumbled letters... "DLROW CITPRYC TIB"... rearrange them!') }
+          { label: 'Unscramble Shells', onclick: () => showGameModal('The shells on the sand spell:<br><br><strong style="font-size:1.3rem;letter-spacing:4px;color:#ffd700;">TRCPIYC</strong><br><br>Can you unscramble it?', 'Shell Puzzle', '\u{1F41A}') },
+          { label: 'Message in a Bottle', onclick: () => showGameModal('A bottle washes ashore with jumbled letters...<br><br><strong style="font-size:1.1rem;letter-spacing:3px;color:#ffd700;">DLROW CITPRYC TIB</strong><br><br>Rearrange them!', 'Message in a Bottle', '\u{1F37E}') }
         ]
       },
       moon: {
@@ -3489,8 +3664,8 @@
         iconBg: 'linear-gradient(135deg, #e8e4d4, #b0a890)',
         desc: 'A small pressurised dome sits among the craters, glowing with warm light. Inside lives Mark, an eccentric hermit who chose the moon as his home so he could write cryptic crossword clues in perfect silence. His clues are legendarily esoteric, challenging even the best solvers in the galaxy. Few visitors make it this far, and Mark treasures every one.',
         actions: [
-          { label: 'Meet Mark', onclick: () => alert('Mark looks up from a crossword grid etched into lunar rock. "Welcome, solver. Here is an easy one to warm up: Blemish is also a target (4)." Can you work it out?') },
-          { label: 'Mark\'s Esoteric Clue', onclick: () => alert('Mark grins. "Try this: Lunar feature from confused tracer (6)." He waits patiently for your answer.') },
+          { label: 'Meet Mark', onclick: () => showGameModal('Mark looks up from a crossword grid etched into lunar rock.<br><br>"Welcome, solver. Here is an easy one to warm up:<br><br><em>Blemish is also a target (4).</em>"<br><br>Can you work it out?', 'Mark', '\u{1F319}') },
+          { label: 'Mark\'s Esoteric Clue', onclick: () => showGameModal('Mark grins.<br><br>"Try this:<br><br><em>Lunar feature from confused tracer (6).</em>"<br><br>He waits patiently for your answer.', 'Mark\'s Clue', '\u{1F319}') },
           { label: 'Visit the Cheese Crater', onclick: () => collectCheese() }
         ]
       },
@@ -3512,8 +3687,8 @@
         iconBg: 'linear-gradient(135deg, #c0392b, #8b2020)',
         desc: 'A cheerful skyship bobs gently among the clouds. Its captain is Simon, a warm and enthusiastic sky captain who has spent years travelling the world collecting cryptic crossword clues. His leather-bound logbooks are stuffed with puzzles from every corner of the globe, and he loves nothing more than sharing them with visitors who find their way aboard.',
         actions: [
-          { label: 'Talk to Simon', onclick: () => alert('Simon beams. "Welcome aboard! Try this one: Boat hidden in warship, I presume (4)." He watches you expectantly.') },
-          { label: 'Browse Simon\'s Collection', onclick: () => alert('Simon opens a leather-bound book and points to a clue: "Anger found in desire (3)." He taps the page and waits.') }
+          { label: 'Talk to Simon', onclick: () => showGameModal('Simon beams.<br><br>"Welcome aboard! Try this one:<br><br><em>Boat hidden in worship, I presume (4).</em>"<br><br>He watches you expectantly.', 'Simon', '\u{1F6E9}') },
+          { label: 'Browse Simon\'s Collection', onclick: () => showGameModal('Simon opens a leather-bound book and points to a clue:<br><br><em>"Anger found in desire (3)."</em><br><br>He taps the page and waits.', 'Simon\'s Collection', '\u{1F4D5}') }
         ]
       },
       pond: {
@@ -3571,46 +3746,8 @@
       'M1152,742': 'town'         // Town Square -> Decoder Docks
     };
 
-    const PROGRESS_KEY = 'bitcryptic_progress';
-
-    function getDefaultProgress() {
-      return { version: 1, introComplete: false, unlockedLocations: [], completedStories: [] };
-    }
-
-    function getProgress() {
-      try {
-        const raw = localStorage.getItem(PROGRESS_KEY);
-        if (raw) {
-          const p = JSON.parse(raw);
-          if (p && p.version) {
-            // Ensure arrays exist (corruption recovery)
-            if (!Array.isArray(p.unlockedLocations)) p.unlockedLocations = [];
-            if (!Array.isArray(p.completedStories)) p.completedStories = [];
-            return p;
-          }
-        }
-      } catch (e) {
-        console.warn('Progress data corrupted, resetting:', e);
-        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'getProgress');
-      }
-      return getDefaultProgress();
-    }
-
-    function saveProgress(state) {
-      try {
-        localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
-      } catch (e) {
-        console.warn('Failed to save progress:', e);
-        if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'saveProgress');
-      }
-    }
-
     function isUnlocked(id) {
       return getProgress().unlockedLocations.includes(id);
-    }
-
-    function isStoryComplete(id) {
-      return getProgress().completedStories.includes(id);
     }
 
     function unlockLocation(id) {
@@ -5926,19 +6063,58 @@
       if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuClose();
     }
 
-    // Close on Escape / open debug menu
+    function showGameModal(message, title, icon) {
+      let overlay = document.getElementById('game-modal-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'game-modal-overlay';
+        overlay.className = 'game-modal-overlay';
+        overlay.innerHTML = `
+          <div class="game-modal">
+            <div class="game-modal-icon" id="game-modal-icon"></div>
+            <div class="game-modal-title" id="game-modal-title"></div>
+            <div class="game-modal-body" id="game-modal-body"></div>
+            <button class="game-modal-btn" id="game-modal-close">Got it</button>
+          </div>`;
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeGameModal(); });
+        overlay.querySelector('#game-modal-close').addEventListener('click', closeGameModal);
+        document.body.appendChild(overlay);
+      }
+      const iconEl = overlay.querySelector('#game-modal-icon');
+      const titleEl = overlay.querySelector('#game-modal-title');
+      iconEl.textContent = icon || '';
+      iconEl.style.display = icon ? 'block' : 'none';
+      titleEl.textContent = title || '';
+      titleEl.style.display = title ? 'block' : 'none';
+      overlay.querySelector('#game-modal-body').innerHTML = message;
+      requestAnimationFrame(() => overlay.classList.add('active'));
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
+    }
+
+    function closeGameModal() {
+      const overlay = document.getElementById('game-modal-overlay');
+      if (overlay) overlay.classList.remove('active');
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuClose();
+    }
+
+    // Close on Escape / open settings
     document.addEventListener('keydown', (e) => {
       if (e.target.classList.contains('story-puzzle-input') || e.target.classList.contains('terminal-input-field') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'Escape') {
-        const debugMenu = document.getElementById('debug-menu');
-        if (debugMenu.classList.contains('active')) {
-          closeDebugMenu();
+        const gameModal = document.getElementById('game-modal-overlay');
+        if (gameModal && gameModal.classList.contains('active')) {
+          closeGameModal();
+          return;
+        }
+        const settingsOverlay = document.getElementById('settings-overlay');
+        if (settingsOverlay && settingsOverlay.classList.contains('active')) {
+          BCWSettings.close();
         } else if (document.getElementById('detail-panel').classList.contains('active') ||
           document.getElementById('story-panel').classList.contains('active') ||
           document.getElementById('terminal-panel').classList.contains('active')) {
           closePanel(); closeTerminal(); closeStory();
         } else {
-          openDebugMenu();
+          BCWSettings.open();
         }
       }
       if (e.key === '?' || e.key === '/') {
@@ -5968,7 +6144,7 @@
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
-          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Esc</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Close panels / Open debug</span></div>
+          <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Esc</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Close panels / Open settings</span></div>
           <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">M</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Toggle minimap</span></div>
           <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Arrow Keys</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Pan map</span></div>
           <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">+ / -</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Zoom in / out</span></div>
@@ -5981,14 +6157,24 @@
       document.body.appendChild(panel);
     }
 
-    function openDebugMenu() {
-      document.getElementById('debug-menu').classList.add('active');
-      document.getElementById('debug-overlay').classList.add('active');
-    }
+    // ─── Debug Mode (disabled for production) ───
+    const debugModeActive = false;
+    try { localStorage.removeItem('bcw_debug_mode'); } catch {}
 
-    function closeDebugMenu() {
-      document.getElementById('debug-menu').classList.remove('active');
-      document.getElementById('debug-overlay').classList.remove('active');
+    function injectDebugSettings() {
+      const settingsBody = document.querySelector('#settings-panel .settings-body');
+      if (!settingsBody || document.getElementById('debug-settings-section')) return;
+      const section = document.createElement('div');
+      section.className = 'settings-section';
+      section.id = 'debug-settings-section';
+      section.innerHTML = `
+        <h3 style="color:#ffd700;">Developer Tools</h3>
+        <div class="settings-row settings-row-btns">
+          <button class="settings-btn" onclick="debugUnlockAll()" style="background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;">Unlock All Locations</button>
+          <button class="settings-btn settings-btn-danger" onclick="debugReset()">Reset Progress</button>
+        </div>
+      `;
+      settingsBody.appendChild(section);
     }
 
     function debugUnlockAll() {
@@ -6004,12 +6190,50 @@
       state.introComplete = true;
       saveProgress(state);
       applyUnlockState();
-      closeDebugMenu();
+      BCWSettings.close();
     }
 
     function debugReset() {
-      closeDebugMenu();
+      BCWSettings.close();
       resetProgress();
+    }
+
+    // ═══════════════════════════════════
+    //  LEGEND SCROLL
+    // ═══════════════════════════════════
+    const LEGEND_SKILLS = [
+      { id: 'docks',       icon: '\u26F5',     name: 'Decoder Docks',    skill: 'Reversals' },
+      { id: 'forest',      icon: '\uD83C\uDF32', name: 'Enigma Forest',    skill: 'Anagrams' },
+      { id: 'cafe',        icon: '\u2615',     name: 'Cryptic Cafe',     skill: 'Initial Letters' },
+      { id: 'town',        icon: '\u26F2',     name: 'Town Square',      skill: 'Mixed Techniques' },
+      { id: 'adventure',   icon: '\uD83C\uDFF0', name: 'Adventure Tower',  skill: 'Hidden Words & Containers' },
+      { id: 'library',     icon: '\uD83D\uDCDA', name: 'Lexicon Library',  skill: 'Double Definitions' },
+      { id: 'workshop',    icon: '\u2699\uFE0F', name: 'Puzzle Workshop',  skill: 'Anagrams (Advanced)' },
+      { id: 'beach',       icon: '\uD83C\uDFD6\uFE0F', name: 'Scramble Shores', skill: 'Scrambles' },
+      { id: 'cove',        icon: '\uD83D\uDDDD\uFE0F', name: 'Cluey Cove',      skill: 'Deletion Clues' },
+      { id: 'observatory', icon: '\uD83D\uDD2D', name: 'Mystic Peak',      skill: 'Coming Soon' },
+    ];
+
+    function toggleLegendScroll() {
+      const scroll = document.getElementById('legend-scroll');
+      scroll.classList.toggle('open');
+      if (scroll.classList.contains('open')) refreshLegend();
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+    }
+
+    function refreshLegend() {
+      const list = document.getElementById('legend-list');
+      if (!list) return;
+      const state = getProgress();
+      list.innerHTML = LEGEND_SKILLS.map(loc => {
+        const unlocked = state.unlockedLocations.includes(loc.id) || (UNLOCK_CHAIN[loc.id] && !UNLOCK_CHAIN[loc.id].unlockedBy);
+        return `<div class="legend-item${unlocked ? '' : ' locked'}" title="${unlocked ? loc.skill : 'Locked'}">
+          <span class="legend-item-icon">${loc.icon}</span>
+          <span class="legend-item-name">${unlocked ? loc.name : '???'}</span>
+          <span class="legend-item-dot"></span>
+          <span class="legend-item-skill">${unlocked ? loc.skill : 'Locked'}</span>
+        </div>`;
+      }).join('');
     }
 
     // ═══════════════════════════════════
@@ -6083,13 +6307,13 @@
 
       const normalized = code.toUpperCase();
 
-      // Debug commands for game progression
-      if (normalized === 'RESET') {
+      // Debug commands (only available in development)
+      if (normalized === 'RESET' && debugModeActive) {
         addTerminalLine('Resetting all progress...', 'info');
         setTimeout(() => resetProgress(), 800);
         return;
       }
-      if (normalized === 'UNLOCKALL') {
+      if (normalized === 'UNLOCKALL' && debugModeActive) {
         addTerminalLine('Unlocking all locations...', 'success');
         const state = getProgress();
         Object.keys(UNLOCK_CHAIN).forEach(id => {
@@ -6098,7 +6322,6 @@
           }
         });
         state.introComplete = true;
-        // Mark all stories complete too
         Object.keys(STORIES).forEach(id => {
           if (!state.completedStories.includes(id)) {
             state.completedStories.push(id);
@@ -8214,7 +8437,7 @@
 
       if (now - last < cooldown) {
         const remaining = Math.ceil((cooldown - (now - last)) / 60000);
-        alert('The Cheese Crater is still cooling. Come back in about ' + remaining + ' minute' + (remaining === 1 ? '' : 's') + '.');
+        showGameModal('The Cheese Crater is still cooling. Come back in about ' + remaining + ' minute' + (remaining === 1 ? '' : 's') + '.', 'Cooling Down', '\u{1F9C0}');
         return;
       }
 
@@ -8234,7 +8457,7 @@
 
       // Show result
       const rarityColors = { common: '#aaa', uncommon: '#4a9ae8', rare: '#a070e0', epic: '#e8a020', legendary: '#ffd700' };
-      alert('You collected: ' + cheese.name + '! (' + cheese.rarity.toUpperCase() + ')\n\n"' + cheese.desc + '"\n\nStored in your fridge at home.');
+      showGameModal('<strong>' + cheese.name + '</strong> <span style="color:' + (rarityColors[cheese.rarity] || '#fff') + '">(' + cheese.rarity.toUpperCase() + ')</span><br><br><em>"' + cheese.desc + '"</em><br><br>Stored in your fridge at home.', 'Cheese Collected!', '\u{1F9C0}');
     }
 
     function openFridge() {

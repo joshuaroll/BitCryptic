@@ -150,7 +150,7 @@ const BCWSettings = (() => {
         <div class="settings-section">
           <h3>Keyboard Shortcuts</h3>
           <div class="settings-shortcuts">
-            <div><kbd>Esc</kbd> Close panels / Open debug</div>
+            <div><kbd>Esc</kbd> Close panels / Open settings</div>
             <div><kbd>M</kbd> Toggle minimap</div>
             <div><kbd>Arrow Keys</kbd> Pan map</div>
             <div><kbd>+</kbd> / <kbd>-</kbd> Zoom in/out</div>
@@ -231,6 +231,11 @@ const BCWSettings = (() => {
     document.getElementById('settings-overlay').classList.add('active');
     document.getElementById('settings-panel').classList.add('active');
     if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
+
+    // Inject debug section if debug mode is active
+    if (typeof debugModeActive !== 'undefined' && debugModeActive) {
+      if (typeof injectDebugSettings === 'function') injectDebugSettings();
+    }
 
     // Update stats
     const statsEl = document.getElementById('settings-stats');

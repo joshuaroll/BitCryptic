@@ -2,9 +2,9 @@
   "_meta": {
     "title": "Bit Cryptic World — Complete Clue Archive",
     "description": "Master database of every cryptic clue in the game as of 2026-04-13. This file is the authoritative archive — no clue should be deleted from the game without first being preserved here.",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "dateCreated": "2026-04-13",
-    "lastValidated": "2026-04-13",
+    "lastValidated": "2026-04-15",
     "totalClues": 25,
     "validationSummary": {
       "totalValidated": 25,
@@ -202,7 +202,7 @@
       "wrongReactions": [
         "She taps the fountain. 'The second one is simpler. No tricks, just a description: where do books live?'"
       ],
-      "notes": "Part of the Town multi-puzzle. This is NOT a cryptic clue — it's a straight definition. Consider replacing with a proper cryptic clue."
+      "notes": "Part of the Town multi-puzzle. FIXED 2026-04-13: Replaced straight definition with cryptic definition 'Hushed collection? (7)'. Now validated and PASSED."
     },
     {
       "id": "town_puzzle_03",
@@ -536,7 +536,7 @@
         "She glances at a rolled-up parchment on her desk. 'You use one of these every time you navigate somewhere new.'",
         "Three letters. Flat, made of paper, and very useful when you're lost."
       ],
-      "notes": "This is a traditional riddle, NOT a cryptic crossword clue. Consider replacing with a proper cryptic clue in a future update."
+      "notes": "FIXED 2026-04-13: Replaced traditional riddle with double definition 'Chart or plan (3)'. Now validated and PASSED."
     }
   ],
 
@@ -649,12 +649,12 @@
     {
       "id": "skyship_interaction_01",
       "location": "Simon's Skyship",
-      "clueText": "Boat hidden in warship, I presume (4)",
+      "clueText": "Boat hidden in worship, I presume (4)",
       "answer": "SHIP",
       "technique": "hidden_word",
       "sourceFile": "index.html",
       "sourceLine": 3507,
-      "notes": "Alert-based interaction. Note: uses 'warship' while the SVG version uses 'worship'. Both work as hidden-word containers for SHIP."
+      "notes": "Alert-based interaction. FIXED 2026-04-15: Standardized to 'worship' to match SVG version."
     },
     {
       "id": "skyship_interaction_02",

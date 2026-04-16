@@ -58,7 +58,6 @@
   .fish-layout { grid-template-columns: 1fr !important; }
   .fish-scene { height: 240px; }
 
-  #debug-menu { width: 85vw; min-width: unset; }
 }
 
 @media (max-width: 480px) {

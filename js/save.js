@@ -89,14 +89,14 @@ const BCWSave = (() => {
         try {
           const data = JSON.parse(ev.target.result);
           if (!data._version) {
-            alert('Invalid save file. Please select a valid Bit Cryptic World save file.');
+            showGameModal('Invalid save file. Please select a valid Bit Cryptic World save file.', 'Import Error', '\u26A0\uFE0F');
             return;
           }
 
           // Validate that at least one recognized game key exists
           const gameKeys = Object.keys(data).filter(k => !k.startsWith('_') && ALL_KEYS.includes(k));
           if (gameKeys.length === 0) {
-            alert('Save file contains no recognized game data.');
+            showGameModal('Save file contains no recognized game data.', 'Import Error', '\u26A0\uFE0F');
             return;
           }
 
@@ -115,7 +115,7 @@ const BCWSave = (() => {
 
           setTimeout(() => location.reload(), 500);
         } catch (err) {
-          alert('Failed to import save file: ' + err.message);
+          showGameModal('Failed to import save file: ' + err.message, 'Import Error', '\u26A0\uFE0F');
         }
       };
       reader.readAsText(file);
