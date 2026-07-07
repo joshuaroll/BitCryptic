@@ -1,17 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/BitCryptic/Adventure/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;600;700&family=Noto+Color+Emoji&display=swap" rel="stylesheet" />
-    <title>Bit Cryptic Adventure</title>
-    <script type="module" crossorigin src="/BitCryptic/Adventure/assets/index-BJnr236L.js"></script>
-    <link rel="stylesheet" crossorigin href="/BitCryptic/Adventure/assets/index-CCR5LLZN.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bit Cryptic has moved → bitcryptic.org</title>
+  <link rel="canonical" href="https://bitcryptic.org/adventure">
+  <meta http-equiv="refresh" content="0; url=https://bitcryptic.org/adventure">
+  <meta name="robots" content="noindex">
+  <script>window.location.replace("https://bitcryptic.org/adventure" + window.location.hash);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#0B1021;--amber:#F2C14E;--mint:#4ADE80;--dim:#64748B;--text:#E2E8F0;--border:#2A3553;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 3px);pointer-events:none}
+    .win{background:#161B2E;border:1px solid var(--border);border-radius:8px;max-width:460px;width:100%;box-shadow:0 0 30px rgba(242,193,78,.08)}
+    .hd{display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(11,16,33,.6);border-bottom:1px solid var(--border)}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .r{background:#F87171}.y{background:var(--amber)}.g{background:var(--mint)}
+    .handle{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+    .bd{padding:32px 28px}
+    .prompt{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mint);margin-bottom:14px}
+    h1{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--amber);margin-bottom:10px;line-height:1.3}
+    p{font-size:14px;color:#94A3B8;line-height:1.6;margin-bottom:22px}
+    a.btn{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ink);background:var(--amber);padding:12px 24px;border-radius:8px;text-decoration:none;transition:.2s}
+    a.btn:hover{background:#FB923C;color:#fff}
+    .cur{display:inline-block;width:9px;height:16px;background:var(--amber);vertical-align:text-bottom;margin-left:2px;animation:bl 1s step-end infinite}
+    @keyframes bl{50%{opacity:0}}
+  </style>
+</head>
+<body>
+  <div class="win">
+    <div class="hd"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="handle">@bit_cryptic</span></div>
+    <div class="bd">
+      <div class="prompt">[bit_cryptic@world ~]$ redirect_<span class="cur"></span></div>
+      <h1>We've moved to bitcryptic.org</h1>
+      <p>Bit Cryptic now lives on its own domain. Redirecting you now — if nothing happens, use the link below.</p>
+      <a class="btn" href="https://bitcryptic.org/adventure">▶&nbsp; Play Adventure</a>
+    </div>
+  </div>
+</body>
 </html>
