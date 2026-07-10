@@ -462,24 +462,16 @@ const dailyClues = [
 
 /**
  * Get the daily clue for a given date string (YYYY-MM-DD).
- * Uses a simple hash to deterministically select the same clue
- * for all players on the same day.
+ * Uses days-since-epoch so every clue in the pool is reached,
+ * rotating sequentially with the same clue for all players on a given date.
  */
-function hashDate(dateStr) {
-  let hash = 0;
-  for (let i = 0; i < dateStr.length; i++) {
-    const char = dateStr.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash);
-}
-
 export function getDailyClue(date) {
   const dateStr = date instanceof Date
-    ? date.toISOString().split('T')[0]
+    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
     : date;
-  const index = hashDate(dateStr) % dailyClues.length;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dayNumber = Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+  const index = ((dayNumber % dailyClues.length) + dailyClues.length) % dailyClues.length;
   return { ...dailyClues[index], dayIndex: index };
 }
 

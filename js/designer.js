@@ -19,7 +19,16 @@ const BCWDesigner = (() => {
   let redoStack = [];
   const MAX_UNDO = 50;
 
+  // Dev tool: only reachable with ?designer in the URL or a local opt-in flag
+  function isEnabled() {
+    try {
+      return new URLSearchParams(window.location.search).has('designer') ||
+        localStorage.getItem('bcw_designer') === '1';
+    } catch (e) { return false; }
+  }
+
   function init() {
+    if (!isEnabled()) return;
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') {
         e.preventDefault();

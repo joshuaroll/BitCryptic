@@ -268,11 +268,21 @@ const BCWSettings = (() => {
   function getDifficulty() { return settings.difficulty; }
   function areTutorialsEnabled() { return settings.tutorialsEnabled; }
 
+  // Programmatic setter (used by the intro story choice) — persists through
+  // the normal settings pipeline so the Settings checkbox stays in sync.
+  function setTutorialsEnabled(enabled) {
+    settings.tutorialsEnabled = !!enabled;
+    save();
+    const cb = document.getElementById('setting-tutorials');
+    if (cb) cb.checked = settings.tutorialsEnabled;
+  }
+
   return {
     init,
     open: openSettings,
     close: closeSettings,
     getDifficulty,
-    areTutorialsEnabled
+    areTutorialsEnabled,
+    setTutorialsEnabled
   };
 })();

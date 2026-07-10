@@ -12,8 +12,8 @@ const BCWTutorial = (() => {
   const STEPS = [
     {
       target: null,
-      title: 'Welcome to Bit Cryptic World!',
-      text: 'This is an island full of word puzzles, hidden secrets, and adventures. Let me show you around!',
+      title: 'Welcome to Bit Cryptic World',
+      text: 'An island built out of word puzzles, with a few things it keeps to itself. Let me show you around.',
       position: 'center'
     },
     {
@@ -43,7 +43,7 @@ const BCWTutorial = (() => {
     {
       target: null,
       title: 'Ready to Explore!',
-      text: 'Click on glowing locations to explore them. Solve puzzles to unlock new areas. Your journey begins at the Decoder Docks!',
+      text: 'Click on glowing locations to explore them. Solve puzzles to unlock new areas. Start at the Decoder Docks. The Dock Keeper is expecting you.',
       position: 'center'
     }
   ];
@@ -88,6 +88,16 @@ const BCWTutorial = (() => {
     }
 
     const step = STEPS[currentStep];
+
+    // Skip steps whose target is hidden at this viewport (e.g. minimap on mobile)
+    if (step.target) {
+      const targetEl = document.querySelector(step.target);
+      if (!targetEl || targetEl.offsetParent === null) {
+        currentStep++;
+        showStep();
+        return;
+      }
+    }
 
     // Clear previous
     overlay.innerHTML = '';

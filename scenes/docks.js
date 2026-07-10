@@ -1,4 +1,4 @@
-// Docks story scenes — "Docks" (DRAFT — not live)
+// Docks story scenes — "Washed Ashore"
 // Keys: docks_0 through docks_6
 
 // Scene 0: Ocean at night, wooden dock planks, red boat rocking, stars
@@ -248,8 +248,8 @@ STORY_SCENES['docks_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <text x="250" y="95" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="12" fill="#3a2a10" opacity="0.65" font-weight="700">BIT CRYPTIC WORLD.</text>
 <text x="250" y="118" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="11" fill="#3a2a10" opacity="0.55">NOTHinG IS AS IT SEEMS.</text>
 <!-- Reversed postscript — glowing -->
-<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffd700" opacity="0.9">.S.P EMOCLEW EMOH</text>
-<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffeaa7" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/>.S.P EMOCLEW EMOH</text>
+<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffd700" opacity="0.9">!EMOH EMOCLEW .S.P</text>
+<text x="250" y="168" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#ffeaa7" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/>!EMOH EMOCLEW .S.P</text>
 <!-- Lantern light flicker on edges -->
 <rect x="100" y="30" width="300" height="200" fill="none" stroke="#ffd700" stroke-width="1" rx="3" opacity="0.15"><animate attributeName="opacity" values="0.1;0.25;0.1" dur="2s" repeatCount="indefinite"/></rect>
 <!-- Pin at top -->

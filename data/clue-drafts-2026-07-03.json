@@ -1,0 +1,273 @@
+{
+  "description": "Draft record of every clue changed or added on 2026-07-03, pending Joshua's approval. Old texts are preserved verbatim from backups/pre_beta_fixes_20260703.zip. Approve/veto each; vetoed clues revert to oldClue. Once approved, merge into clue-archive.json.",
+  "created": "2026-07-03",
+  "status": "reviewed_2026-07-03",
+  "decisions": {
+    "TEA": "APPROVED (new)",
+    "DINE": "APPROVED option A: 'Eat in, embraced by Germany (4)' — def 'Eat'; IN embraced by DE (applied)",
+    "HERO": "APPROVED (new)",
+    "BEACH": "APPROVED Joshua's wording: 'Ache stirred after beginning of boating for a sandy shore (5)' — EACH (ache stirred) after B; def 'a sandy shore' (applied; workshop.js plate synced)",
+    "FURNACE": "APPROVED (new)",
+    "COAST": "APPROVED (new)",
+    "NOVA": "APPROVED option A: 'Stellar explosion in casino vault (4)' — hidden casi(NO VA)ult; story step, narration, hints, and both recap modals switched from reversal to hidden-word teaching (applied)",
+    "CHEST": "REVERTED to old 'Treasure hidden in each estimate (5)' per Joshua (applied)",
+    "SAIL": "REVERTED to old 'Bargain event heard on a boat (4)' per Joshua (applied)",
+    "MAST": "APPROVED (new charade)",
+    "ECLIPSE": "APPROVED (new)",
+    "guide.anagram1.LISTEN": "APPROVED (new)",
+    "guide.anagram2.RACE": "APPROVED (new)",
+    "guide.hidden1.LEMON": "APPROVED (new)",
+    "guide.hidden2": "REVERTED to old EDGES clue per Joshua (applied; explanation corrected to describe hEDGE Shearing accurately)",
+    "guide.reversal1": "APPROVED: 'Cooking vessel flipped for a quick sleep (3)' = NAP (PAN flipped) (applied). Spare approved candidate, unused: 'Reward sent back: a place for socks (6)' = DRAWER",
+    "guide.reversal2.MART": "APPROVED (new)",
+    "guide.deletion1": "REVERTED to old 'Beheaded monarch is still bowed (4)' ARCH per Joshua (applied)",
+    "guide.deletion2": "REWORDED per Joshua to 'Part lycanthrope is still twisted (4)' ROPE (applied)",
+    "guide.acrostic": "REWORDED per Joshua to 'Ones of red, orange, yellow, and lilac can be crowned (5)' ROYAL (applied)",
+    "guide.homophone.TALE": "APPROVED with commas removed: 'Dog's extremity we hear makes a story (4)' (applied)",
+    "guide.doubleDefinitions": "APPROVED (new section)",
+    "guide.charadesContainers": "no verdict given — left in place",
+    "tutorial.oddlyIndicator": "KEEP — 'oddly' stays in the Town tutorial indicator list per Joshua",
+    "cafe.napkin.MOCHA": "APPROVED NEW (2026-07-03): 'Flustered macho gets a coffee (5)' — anagram of MACHO; def 'a coffee'. Cafe 'Order a Puzzle' post-story rotation, answer behind flip-the-napkin reveal (applied)",
+    "cafe.napkin.DECAF": "APPROVED NEW (2026-07-03): 'Faced about for coffee without the kick (5)' — anagram of FACED; def 'coffee without the kick'. Same rotation (applied)",
+    "town.fountain.LIBRARY": "APPROVED NEW (2026-07-03): 'Moved by rail right to the book house (7)' — anagram of BY RAIL + R (right), indicator 'Moved'; def 'the book house'. Replaced rejected 'Hushed collection?'; fountain puzzle, hint, wrongReactions, and scenes/town.js art all updated (applied)"
+  },
+  "storyAndTutorialClues": [
+    {
+      "answer": "TEA",
+      "location": "Cafe tutorial (Learn: Initial Letters), index.html",
+      "oldClue": "Drink from terribly early alarm (3)",
+      "newClue": "Drink initially taken every afternoon (3)",
+      "type": "acrostic",
+      "parse": "Initial letters of Taken Every Afternoon = T+E+A; indicator 'initially'; definition 'Drink'.",
+      "reason": "Old clue had no initial-letters indicator at all, and 'terribly' read as an anagram indicator — it mis-taught the technique the tutorial exists to teach."
+    },
+    {
+      "answer": "DINE",
+      "location": "Adventure Tower story, index.html",
+      "oldClue": "Germany embraces what's within for a meal (4)",
+      "newClue": "Germany embraces what's within: eat well (4)",
+      "type": "container",
+      "parse": "DE (Germany) around IN ('what's within') = D(IN)E; definition 'eat well'.",
+      "reason": "Old definition 'a meal' is a noun but DINE is a verb — failed the substitution test. Wordplay unchanged."
+    },
+    {
+      "answer": "HERO",
+      "location": "Adventure Tower story, index.html",
+      "oldClue": "Warrior seized the road (4)",
+      "newClue": "Warrior seized by the road (4)",
+      "type": "hidden_word",
+      "parse": "Hidden in t(HE RO)ad; indicator 'seized by'; definition 'Warrior'.",
+      "reason": "'Seized' pointed the wrong way (warrior grabbing the road); a hidden answer must be seized BY the fodder."
+    },
+    {
+      "answer": "BEACH",
+      "location": "Workshop story, index.html (also mirrored on the Anagram Engine plate in scenes/workshop.js)",
+      "oldClue": "Ache about beginning of boating, on the shore (5)",
+      "newClue": "Beginning of boating, with ache stirred, on the shore (5)",
+      "type": "anagram_plus_initial",
+      "parse": "B ('beginning of boating') + ACHE, all stirred = BEACH; definition 'on the shore'.",
+      "reason": "Old anagram indicator 'about' governed only ACHE while the B was appended with no positional indication; 'stirred' now governs the combined fodder."
+    },
+    {
+      "answer": "FURNACE",
+      "location": "Liam's Lair story, index.html",
+      "oldClue": "Fun race, oddly, leads to the source of heat (7)",
+      "newClue": "Fun race, wildly, leads to the source of heat (7)",
+      "type": "anagram",
+      "parse": "Anagram of FUN RACE = FURNACE; indicator 'wildly'; definition 'the source of heat'.",
+      "reason": "'Oddly' is the standard alternate-letters indicator, not an anagram indicator — a trap in a game that teaches conventions. Odd letters of FUN RACE give F-N-A-E, not the answer."
+    },
+    {
+      "answer": "COAST",
+      "location": "Simon's Skyship story, index.html",
+      "oldClue": "Tacos, oddly, along the shoreline (5)",
+      "newClue": "Tacos, adrift, along the shoreline (5)",
+      "type": "anagram",
+      "parse": "Anagram of TACOS = COAST; indicator 'adrift'; definition 'along the shoreline'.",
+      "reason": "Same 'oddly' problem as FURNACE; 'adrift' also suits the nautical surface."
+    },
+    {
+      "answer": "NOVA",
+      "location": "Observatory story, index.html",
+      "oldClue": "Stellar explosion from river reflected (4)",
+      "newClue": "Stellar explosion from a river, say, reflected (4)",
+      "type": "reversal",
+      "parse": "AVON (a river, by example) reversed = NOVA; 'say' marks the definition-by-example; definition 'Stellar explosion'.",
+      "reason": "River→AVON is definition-by-example and must be marked ('say'); unmarked, the reversal fodder was under-indicated and effectively unsolvable without the hint."
+    },
+    {
+      "answer": "CHEST",
+      "location": "Liam's Lair story + lair recap modal, index.html",
+      "oldClue": "Treasure hidden in each estimate (5)",
+      "newClue": "Trunk hidden in each estimate (5)",
+      "type": "hidden_word",
+      "parse": "Hidden in ea(CH EST)imate; definition 'Trunk'.",
+      "reason": "A chest HOLDS treasure; 'Treasure' is not substitutable for CHEST. Excellent wordplay kept intact."
+    },
+    {
+      "answer": "SAIL",
+      "location": "Observatory tutorial (Learn: Homophones), index.html",
+      "oldClue": "Bargain event heard on a boat (4)",
+      "newClue": "Canvas heard at a bargain event (4)",
+      "type": "homophone",
+      "parse": "Sounds like SALE ('bargain event'); indicator 'heard'; definition 'Canvas'.",
+      "reason": "Old definition 'on a boat' was locative — a sail is ON a boat, it isn't 'on a boat'. 'Canvas' is a true synonym."
+    },
+    {
+      "answer": "MAST",
+      "location": "Simon's Skyship story (third puzzle) + airship recap modal, index.html",
+      "oldClue": "Pole from dream astronaut (4)",
+      "newClue": "Mum's street pole (4)",
+      "type": "charade (NEW COMPOSITION)",
+      "parse": "MA ('mum') + ST ('street') = MAST; definition 'pole'.",
+      "reason": "Old clue was a weak 1+3 hidden word with an unnatural surface, AND it was the same technique as the story's first clue while Simon claims 'three ports, three techniques'. The charade makes his claim true (hidden, anagram, charade)."
+    },
+    {
+      "answer": "ECLIPSE",
+      "location": "The Mark on The Moon story, step 6 (converted from a narrative step), index.html",
+      "oldClue": null,
+      "newClue": "Overshadow left in shattered pieces (7)",
+      "type": "container + anagram (NEW COMPOSITION)",
+      "parse": "L ('left') inside an anagram of PIECES ('shattered') = EC(L)IPSE; definition 'Overshadow' (verb). Verified: sorted(PIECES+L) = sorted(ECLIPSE); the only 7-letter dictionary word from those letters.",
+      "reason": "Moon is billed 'hardest clues in the universe' but had only two easy clues; this two-mechanism closer makes the arc's difficulty match its lore."
+    }
+  ],
+  "wordPlayGuideExamples": [
+    {
+      "slot": "Anagram example 1",
+      "answer": "LISTEN (was STAR)",
+      "oldClue": "Confused rats are popular (4)",
+      "newClue": "Hear silent broadcast (6)",
+      "parse": "Anagram of SILENT ('broadcast') = LISTEN; definition 'Hear'.",
+      "reason": "Old definition 'popular' (adjective) doesn't define STAR (noun); STAR was also the answer to five different clues project-wide."
+    },
+    {
+      "slot": "Anagram example 2",
+      "answer": "RACE",
+      "oldClue": "Strange care runs fast (4)",
+      "newClue": "Strange care makes a contest (4)",
+      "parse": "Anagram of CARE ('strange') = RACE; definition 'a contest'.",
+      "reason": "'Runs fast' (third-person verb) disagreed grammatically with RACE (base form/noun)."
+    },
+    {
+      "slot": "Hidden word example 1",
+      "answer": "LEMON (was NISSAN)",
+      "oldClue": "A foreign car buried in the tennis sand (6)",
+      "newClue": "Some stole money for fruit? (5)",
+      "parse": "Hidden in sto(LE MON)ey; indicator 'Some'; definition-by-example 'fruit?' (question mark marks the example).",
+      "reason": "NISSAN is a proper noun absent from the game's dictionary standard and 'the tennis sand' was unnatural."
+    },
+    {
+      "slot": "Hidden word example 2",
+      "answer": "SEDGE (was EDGES)",
+      "oldClue": "Refined portion of garden within hedge shearing (5)",
+      "newClue": "Marsh plant amused gentry somewhat (5)",
+      "parse": "Hidden in amu(SED GE)ntry (3+2 boundary split); indicator 'somewhat'; definition 'Marsh plant'.",
+      "reason": "Old definition 'Refined portion of garden' doesn't define EDGES ('refined' had no role); it also stacked two hidden indicators and hid only one letter in the second word."
+    },
+    {
+      "slot": "Reversal example 1",
+      "answer": "PEEK (was STAR)",
+      "oldClue": "Vermin returning as a celestial body (4)",
+      "newClue": "Overturned castle tower gives a quick look (4)",
+      "parse": "KEEP ('castle tower') reversed ('overturned') = PEEK; definition 'a quick look'.",
+      "reason": "Old clue duplicated the docks tutorial and daily clue #30 near-verbatim (STAR over-use)."
+    },
+    {
+      "slot": "Reversal example 2",
+      "answer": "MART",
+      "oldClue": "Northbound cablecar sells food (4)",
+      "newClue": "Market's streetcar sent back (4)",
+      "parse": "TRAM ('streetcar') reversed ('sent back') = MART; definition 'Market'.",
+      "reason": "'Northbound' is a down-entry-only indicator (meaningless without a grid) and 'sells food' is a verb phrase defining a place noun."
+    },
+    {
+      "slot": "Deletion example 1",
+      "answer": "ARCH",
+      "oldClue": "Beheaded monarch is still bowed (4)",
+      "newClue": "March, beheaded, becomes a curve (4)",
+      "parse": "MARCH minus its head (M) = ARCH; definition 'a curve'.",
+      "reason": "'Beheaded' removes exactly ONE letter; MONARCH beheaded is ONARCH. The old explanation admitted stripping three letters — invalid."
+    },
+    {
+      "slot": "Deletion example 2",
+      "answer": "CHAR (was ROPE)",
+      "oldClue": "Half lycanthrope is still twisted (4)",
+      "newClue": "Chart cut short will burn (4)",
+      "parse": "CHART 'cut short' (last letter removed) = CHAR; definition 'burn'.",
+      "reason": "'Half' of 11-letter LYCANTHROPE cannot yield 4 letters, and 'twisted' (adjective) didn't define ROPE (noun) — doubly broken."
+    },
+    {
+      "slot": "Acrostic example",
+      "answer": "ROYAL",
+      "oldClue": "Ones wearing red, orange, yellow, and lilac can be crowned (5)",
+      "newClue": "Initially red, orange, yellow, and lilac is fit for a crown (5)",
+      "parse": "Initials of Red Orange Yellow And Lilac = ROYAL; indicator 'Initially'; definition 'fit for a crown'.",
+      "reason": "Old clue had no acrostic indicator — 'wearing' signals containment, so the solver had no licensed operation."
+    },
+    {
+      "slot": "Homophone example 2",
+      "answer": "TALE",
+      "oldClue": "Story heard at the rear (4)",
+      "newClue": "Dog's extremity, we hear, makes a story (4)",
+      "parse": "Sounds like TAIL ('dog's extremity'); indicator 'we hear' on the TAIL side; definition 'a story'.",
+      "reason": "Old clue was ambiguous standalone: TALE and TAIL are both 4 letters and 'heard' sat between the definitions, so both answers parsed validly."
+    },
+    {
+      "slot": "Reversal indicator list",
+      "answer": null,
+      "oldClue": "included: east, south, north, west, up, rising, ascending, upside down",
+      "newClue": "back, returning, returned, reversed, reflected, sent back, brought back, overturned, turned, flipped, rejected",
+      "parse": null,
+      "reason": "'East'/'south' are not reversal indicators (east = normal reading direction); 'up/rising/ascending' are down-clue-only indicators that mislead in a gridless game."
+    }
+  ],
+  "newGuideSections": [
+    {
+      "section": "Double Definitions (NEW SECTION)",
+      "examples": [
+        { "clue": "New book (5)", "answer": "NOVEL", "parse": "new = novel (adjective) / book = novel (noun). Reused from the Library story.", "newComposition": false },
+        { "clue": "Departs or pages (6)", "answer": "LEAVES", "parse": "departs = leaves / pages (of a book) = leaves. Reused from the Library story.", "newComposition": false }
+      ],
+      "reason": "8 of 30 daily clues are double definitions but the guide never explained the type."
+    },
+    {
+      "section": "Charades & Containers (NEW SECTION)",
+      "examples": [
+        { "clue": "Company encountered celestial visitor (5)", "answer": "COMET", "parse": "CO (company) + MET (encountered); definition 'celestial visitor'. Reused from the Observatory story.", "newComposition": false },
+        { "clue": "Chat about energy to swindle (5)", "answer": "CHEAT", "parse": "CHAT around E (energy) = CH(E)AT; indicator 'about'; definition 'swindle'.", "newComposition": true }
+      ],
+      "reason": "3 daily clues are charades/containers and the island tutorials teach containers, but the guide never covered them."
+    }
+  ],
+  "lairHardClues_approved_2026-07-05": [
+    { "clue": "Tough about love, a dragon's pile (5)", "answer": "HOARD", "parse": "HARD (tough) about O (love) = HOARD; def 'a dragon's pile'", "status": "applied: lair story puzzle 1 + lair.js scroll art" },
+    { "clue": "Iron fen forged into a blaze (7)", "answer": "INFERNO", "parse": "anagram of IRON FEN ('forged'); def 'a blaze'", "status": "applied: lair story puzzle 2 + lair.js scroll art" },
+    { "clue": "Riches make one strangely austerer (8)", "answer": "TREASURE", "parse": "anagram of AUSTERER ('strangely'); def 'Riches'. Wording per Joshua.", "status": "applied: lair story puzzle 3 + lair.js scroll art" }
+  ],
+  "reusedInBonusChallenges_2026-07-05": [
+    { "clue": "Treasure hidden in each estimate (5)", "answer": "CHEST", "location": "Lair action 'Dragon's Clue' (interactive challenge modal, post-story)" },
+    { "clue": "This beast makes proceedings drag on (6)", "answer": "DRAGON", "location": "Lair action 'Scorched Scroll' (interactive challenge modal, post-story)" },
+    { "clue": "Fun race, wildly, leads to the source of heat (7)", "answer": "FURNACE", "location": "Lair action 'Wall Carvings' (interactive challenge modal, post-story)" },
+    { "clue": "Reward sent back: a place for socks (6)", "answer": "DRAWER", "location": "Airship action 'Simon's Collection' (interactive challenge modal, post-story)" }
+  ],
+  "spareUnusedClues": [
+    { "clue": "Marsh plant amused gentry somewhat (5)", "answer": "SEDGE", "type": "hidden_word", "note": "Composed and verified; not placed anywhere yet" }
+  ],
+  "bonusChallenges_approved_2026-07-05": [
+    { "clue": "Scheme with the alien for a world (6)", "answer": "PLANET", "parse": "PLAN (scheme) + ET (alien); def 'a world'", "location": "Observatory 'Stargaze' challenge, with pannable telescope sky" },
+    { "clue": "Pirate beheaded is furious (5)", "answer": "IRATE", "parse": "PIRATE - P; def 'furious'", "location": "Cove 'Treasure Chest' challenge" },
+    { "clue": "Plank cut short reveals a scheme (4)", "answer": "PLAN", "parse": "PLANK - K; def 'a scheme'", "location": "Cove 'Cave Inscription' challenge" },
+    { "clue": "Taxi in? There's your quarters aboard (5)", "answer": "CABIN", "parse": "CAB (taxi) + IN; def 'your quarters aboard'. 'There's' wording per Joshua.", "location": "Airship 'Simon' challenge" }
+  ],
+  "removed_2026-07-05": [
+    "Observatory 'Star Watcher's Lessons' action deleted per Joshua"
+  ],
+  "moonChallenges_approved_2026-07-05": [
+    { "clue": "A shaft of moonlight smiles widely (4)", "answer": "BEAM", "parse": "double definition: a shaft of moonlight / smiles widely. Wording per Joshua.", "location": "Moon 'Mark' challenge" },
+    { "clue": "Nautical, dropping anchor's head, turns moonstruck (7)", "answer": "LUNATIC", "parse": "NAUTICAL minus A (anchor's head), anagrammed ('turns'); def 'moonstruck'", "location": "Moon 'Mark's Clue' challenge" }
+  ],
+  "openQuestions": [
+    "index.html's Town anagram tutorial still lists 'oddly' among anagram indicators ('broken', 'scrambled', ..., 'oddly', ...). Both clues that used it were changed; the teaching list itself still endorses it. Remove 'oddly' from the list (it conventionally means alternate letters)?"
+  ]
+}

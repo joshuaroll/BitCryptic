@@ -75,18 +75,32 @@ Scene SVGs use `<animate>` tags, gradient defs, and blur filters. When editing:
 - Test animations in-browser — CSS `@keyframes` and SVG `<animate>` are both used
 - Designer mode (Ctrl+Shift+D) allows real-time SVG element positioning in the running game
 
-## Daily Clue System
+## CLUE APPROVAL RULE (read this first)
+
+**Never add, compose, or reword a cryptic clue anywhere in this project without Joshua's explicit approval.** Propose the clue text with its full parse and wait for sign-off before editing files. Mechanical bug fixes are fine; clue content is not. Bonus-challenge clues must never duplicate clues used in the stories. All clue decisions since 2026-07-03 are recorded in `data/clue-drafts-2026-07-03.json` (approvals, vetoes, rewordings, reserved/spare clues).
+
+## Deployment
+
+The island game is live at **https://joshuaroll.github.io/BitCryptic/** (primary, deployed 2026-07-05) and **https://bit-cryptic-world.vercel.app** (staging mirror). Deploy to Vercel with `vercel --prod --yes` from the project root. `.vercelignore` excludes notes/, data/, backups/, src/, and every other dev file containing answers or secret codes — never remove those exclusions. Cache: js/ and scenes/ serve with 5-minute revalidation so testers pick up fixes quickly.
+
+To publish updates to the GitHub Pages copy: copy `index.html`, `js/`, and `scenes/` (excluding `scenes/mockups/`) into `../BitCryptic-deploy/`, then `git commit` and `git push origin gh-pages` from that repo. That repo's root is the live site; `/Adventure/` there serves Bit Cryptic Adventure.
+
+## Bonus Challenge System
+
+`showClueChallenge(opts)` (index.html, near showGameModal) renders a solvable clue inside a modal: brand-styled input, stepped "Need a hint?" reveals, parse shown only on solving. Every post-story location action uses it — no action may print a clue's answer outright. The observatory's Stargaze challenge also embeds a draggable telescope sky (`telescopeHtml()` + `initTelescope()`).
+
+## Daily Clue System (React app — currently deprioritized)
 
 - Clue database: `src/data/dailyClues.js` — 30 verified clues with hints, types, and difficulty ratings
-- Selection: `getDailyClue(dateString)` hashes the date to pick the same clue for all players
+- Selection: `getDailyClue(dateString)` uses days-since-epoch modulo the pool, so every clue is reached in rotation; rollover is local midnight (component remounts on date change)
 - Persistence: `bitcryptic_daily_{YYYY-MM-DD}` in localStorage saves solved state, attempts, guess history
 - Streaks: `bitcryptic_daily_streak` tracks current/longest streaks
-- All clues are original compositions verified programmatically (anagram letter matching, hidden word presence, reversal checks)
-- When adding clues, use the cryptic-clue-setter skill and verify with `an-array-of-english-words` dictionary
+- `src/data/dailyClues.test.js` machine-verifies all clue wordplay (anagram letter math, hidden-word contiguity, enumerations, definition-substring, rotation coverage) — keep it passing
+- Daily-clue content expansion is on hold per Joshua ("we do not need daily clues now")
 
 ## Clue Archive
 
-`data/clue-archive.json` is the master archive of every cryptic clue in the game. Before modifying or removing any clue from the game, ensure it's preserved in this archive. The archive includes validation status, technique classification, and source locations.
+`data/clue-archive.json` is the master archive of every cryptic clue in the game. **It is currently stale** (predates the 2026-07 clue overhaul) and needs regenerating from live sources; until then, `data/clue-drafts-2026-07-03.json` is the accurate ledger of recent clue changes. Before modifying or removing any clue from the game, ensure it's preserved in one of these files.
 
 ## Audio System Notes
 

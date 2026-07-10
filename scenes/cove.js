@@ -143,17 +143,17 @@ STORY_SCENES['cove_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <line x1="200" y1="189" x2="300" y2="189" stroke="#6a5018" stroke-width="2"/>
 <line x1="200" y1="200" x2="300" y2="200" stroke="#6a5018" stroke-width="1.2"/>
 <!-- Chest clasp -->
-<rect x="243" y="162" width="14" height="6" rx="2" fill="#ffd700" opacity="0.9"/>
-<!-- Large golden padlock -->
-<path d="M244,196 Q244,186 250,184 Q256,186 256,196 Z" fill="none" stroke="#ffd700" stroke-width="2.5" opacity="0.9"/>
-<rect x="241" y="196" width="18" height="13" rx="2.5" fill="#ffd700" opacity="0.85"/>
-<circle cx="250" cy="202" r="2.5" fill="#2a2a3a"/>
+<rect x="243" y="160" width="14" height="6" rx="2" fill="#ffd700" opacity="0.9"/>
+<!-- Large golden padlock (below the inscription zone) -->
+<path d="M244,199 Q244,189 250,187 Q256,189 256,199 Z" fill="none" stroke="#ffd700" stroke-width="2.5" opacity="0.9"/>
+<rect x="241" y="199" width="18" height="13" rx="2.5" fill="#ffd700" opacity="0.85"/>
+<circle cx="250" cy="205" r="2.5" fill="#2a2a3a"/>
 <!-- Lock glow -->
-<circle cx="250" cy="198" r="35" fill="url(#lockGlow1)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/></circle>
-<!-- Inscription on chest face -->
+<circle cx="250" cy="201" r="35" fill="url(#lockGlow1)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/></circle>
+<!-- Inscription contained on the chest lid: below clasp (y 166), above shackle top (y 187) -->
 <g filter="url(#lockTextGlow)">
-  <text x="250" y="137" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="10" opacity="0.9" letter-spacing="0.5">Trap set up for a</text>
-  <text x="250" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="10" opacity="0.9" letter-spacing="0.5">piece of the whole (4)</text>
+  <text x="250" y="174" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="6.5" opacity="0.9" letter-spacing="0.2">Shelter endlessly</text>
+  <text x="250" y="183" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="6.5" opacity="0.9" letter-spacing="0.2">is a bay (4)</text>
 </g>
 <!-- Water over bottom of chest (half submerged effect) -->
 <ellipse cx="250" cy="213" rx="45" ry="8" fill="#1a4a6a" opacity="0.5"/>
@@ -258,5 +258,8 @@ STORY_SCENES['cove_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <circle cx="420" cy="150" r="1.5" fill="#7ac5e8" filter="url(#coveGlow3)"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.2s" repeatCount="indefinite" begin="2s"/></circle>
 </svg>`;
 
-// Scene 4 (complete): Cove is yours to explore — reuse the open-chest scene
+// Scene 4 (CAVE puzzle — "Sculpt without right makes a hollow (4)") reuses cove_3.
+// Note: cove_3 shows the opened FIRST chest; there is no second-chest/plaque art
+// in this file to carry the CAVE clue text, so the clue is shown only in the
+// puzzle dialog (index.html).
 STORY_SCENES['cove_4'] = STORY_SCENES['cove_3'];

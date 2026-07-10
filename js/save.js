@@ -8,7 +8,12 @@ const BCWSave = (() => {
     'bitcryptic_progress',
     'bitcryptic_unlocked_codes',
     'bitcryptic_house',
-    'bitcryptic_fishing',
+    'bitcryptic_fish',
+    'bitcryptic_fish_coins',
+    'bitcryptic_fish_bucket',
+    'bitcryptic_fish_upgrades',
+    'bitcryptic_cheese',
+    'bitcryptic_cheese_cooldown',
     'bcw_audio_settings',
     'bcw_accessibility',
     'bcw_settings',
@@ -104,7 +109,7 @@ const BCWSave = (() => {
 
           // Restore only recognized keys
           gameKeys.forEach(key => {
-            if (typeof data[key] === 'object' || typeof data[key] === 'string' || typeof data[key] === 'boolean') {
+            if (typeof data[key] === 'object' || typeof data[key] === 'string' || typeof data[key] === 'boolean' || typeof data[key] === 'number') {
               safeSet(key, data[key]);
             }
           });
@@ -163,22 +168,24 @@ const BCWSave = (() => {
       safeSet('bcw_achievements', achievements);
     }
 
-    // Validate house data
+    // Validate house data (schema matches the house editor: items/wallColor/floorColor)
     const house = safeGet('bitcryptic_house');
     if (house) {
-      if (!Array.isArray(house.furniture)) house.furniture = [];
-      if (typeof house.wallColor !== 'string') house.wallColor = 'wood';
-      if (typeof house.floorStyle !== 'string') house.floorStyle = 'oak';
+      if (!Array.isArray(house.items)) house.items = [];
+      if (typeof house.wallColor !== 'string') house.wallColor = '#7a6a5a';
+      if (typeof house.floorColor !== 'string') house.floorColor = '#8b7355';
       safeSet('bitcryptic_house', house);
     }
 
-    // Validate fishing data
-    const fishing = safeGet('bitcryptic_fishing');
-    if (fishing) {
-      if (!Array.isArray(fishing.bucket)) fishing.bucket = [];
-      if (typeof fishing.money !== 'number') fishing.money = 0;
-      safeSet('bitcryptic_fishing', fishing);
-    }
+    // Validate fishing data (stored across separate keys)
+    const fishLog = safeGet('bitcryptic_fish');
+    if (fishLog !== null && !Array.isArray(fishLog)) safeSet('bitcryptic_fish', []);
+    const fishBucket = safeGet('bitcryptic_fish_bucket');
+    if (fishBucket !== null && !Array.isArray(fishBucket)) safeSet('bitcryptic_fish_bucket', []);
+    const fishCoins = safeGet('bitcryptic_fish_coins');
+    if (fishCoins !== null && typeof fishCoins !== 'number') safeSet('bitcryptic_fish_coins', 0);
+    const fishUpgrades = safeGet('bitcryptic_fish_upgrades');
+    if (fishUpgrades !== null && !Array.isArray(fishUpgrades)) safeSet('bitcryptic_fish_upgrades', []);
   }
 
   return {

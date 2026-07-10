@@ -1,6 +1,5 @@
-// Workshop story scenes — "The Puzzle Workshop"
-// Keys: workshop_0 through workshop_4
-// DRAFT — for review only
+// Workshop story scenes — "Gears and Clues"
+// Keys: workshop_0 through workshop_7 (8-step story; steps 2-5 share the engine art)
 
 // Scene 0: Workshop interior — gears, crossword grids, puzzle boxes on shelves
 STORY_SCENES['workshop_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -283,7 +282,8 @@ STORY_SCENES['workshop_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="htt
 <rect x="160" y="150" width="180" height="24" rx="3" fill="#c8a855" stroke="#d4a017" stroke-width="1"/>
 <rect x="165" y="153" width="170" height="18" rx="2" fill="#b09840" opacity="0.5"/>
 <g filter="url(#wsPlateGlow)">
-  <text x="250" y="166" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="8" letter-spacing="0.3">CLUE: Rearrange letters</text>
+  <text x="250" y="161" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="6.5" letter-spacing="0.3">Ache stirred after beginning of</text>
+  <text x="250" y="170" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="6.5" letter-spacing="0.3">boating for a sandy shore (5)</text>
 </g>
 <!-- Machine gears (left side, animated) -->
 <g transform="translate(118,130)">
@@ -353,8 +353,13 @@ STORY_SCENES['workshop_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="htt
 </g>
 </svg>`;
 
-// Scene 3: Machine clicks, brass plate with coordinates slides out
-STORY_SCENES['workshop_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+// Scenes 3-5 (engine running narrative + GEARS/PARTS card puzzles): reuse engine art
+STORY_SCENES['workshop_3'] = STORY_SCENES['workshop_2'];
+STORY_SCENES['workshop_4'] = STORY_SCENES['workshop_2'];
+STORY_SCENES['workshop_5'] = STORY_SCENES['workshop_2'];
+
+// Scene 6: Machine calibrated, brass plate with coordinates slides out
+STORY_SCENES['workshop_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="wsBg3" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#3a2210"/><stop offset="50%" stop-color="#4a2a14"/><stop offset="100%" stop-color="#2a1a0c"/>
@@ -487,8 +492,8 @@ STORY_SCENES['workshop_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="htt
 <circle cx="300" cy="94" r="1.5" fill="#ffd700" opacity="0.4"><animate attributeName="cy" values="94;78;62" dur="1.8s" repeatCount="indefinite" begin="0.7s"/><animate attributeName="opacity" values="0.4;0.7;0" dur="1.8s" repeatCount="indefinite" begin="0.7s"/></circle>
 </svg>`;
 
-// Scene 4: Anagram Engine projects golden beam southward to coastline
-STORY_SCENES['workshop_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+// Scene 7 (complete): Anagram Engine projects golden beam southward to coastline
+STORY_SCENES['workshop_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="wsBg4" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#2a1a0c"/><stop offset="40%" stop-color="#3a2210"/><stop offset="100%" stop-color="#1a1208"/>

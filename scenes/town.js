@@ -256,9 +256,9 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <!-- Clue 1 (left): TOWER. Answer: WROTE mangled -->
   <text x="125" y="180" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Wrote, mangled,</text>
   <text x="125" y="188" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">a tall building (5)</text>
-  <!-- Clue 2 (center): LIBRARY. Answer: Quiet place where books live -->
-  <text x="250" y="202" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Quiet place where</text>
-  <text x="250" y="210" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">books live (7)</text>
+  <!-- Clue 2 (center): LIBRARY. Clue: Moved by rail right (anagram of BY RAIL + R) -->
+  <text x="250" y="198" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Moved by rail right</text>
+  <text x="250" y="206" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">to the book house (7)</text>
   <!-- Clue 3 (right): WORKSHOP. Answer: HOP WORKS scrambled -->
   <text x="375" y="180" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Hop works, scrambled,</text>
   <text x="375" y="188" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">a place to build (8)</text>

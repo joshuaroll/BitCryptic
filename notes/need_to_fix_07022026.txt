@@ -1,0 +1,23 @@
+== ITEMS 1-7 FIXED (07/04/2026) — item 8 still open ==
+
+1. [FIXED] Order a puzzle for cryptic cafe shouldn't give the same puzzle as the story and it shouldn't tell you the answer right away.
+   -> Now serves MOCHA / DECAF (rotating daily), answer behind a "flip the napkin" fold.
+2. [FIXED] The cafe story shouldn't tell you it's a starts clue
+   -> Technique explanation moved into the hint button.
+3. [FIXED] The town square puzzle 2 "hushed collection?" doesn't work I need a new clue with the answer of library
+   -> "Moved by rail right to the book house (7)" (anagram of BY RAIL + R); fountain art synced.
+4. [FIXED] Tower guardian has clue on it's chest before answering and it should not
+   -> The art was showing the ANSWER letters (H-E-R-O); replaced with cryptic runes.
+5. [FIXED] The text at the end of the tower's challenge doesn't make sense the clue doesn't either
+   -> "Second principle" now stated and paid off; DINE clue replaced with the approved "Eat in, embraced by Germany (4)".
+6. [FIXED] For all clues have a reveal hint button instead of explanations in the text of the story before solving.
+   -> All 15 stories swept: explanations moved to hints; technique-revealing placeholders neutralized; clue texts verified byte-identical through the sweep. (Tutorials keep inline teaching — they're lessons.)
+7. [FIXED] Gears and clues puzzles don't need commas.
+   -> "Rages shattered these cogs (5)" / "Traps reworked become components (5)".
+
+8. [OPEN] Don't need so many anagram teaching spaces, scramble shores needs to be reworked or come earlier somehow.
+   Context from the clue audit: anagrams are ~40% of all clues (pro-setter norm ~20%), and the main chain
+   hits anagram-heavy stops back to back: Forest (CAFE anagram) -> Town fountain (3 anagrams) ->
+   Workshop (Anagram Engine: BEACH/GEARS/PARTS) -> Scramble Shores (SHORE anagram + advanced-anagram tutorial).
+   Options to discuss: retheme Scramble Shores' puzzle to a different technique, move the beach earlier in the
+   chain, or swap Workshop/Beach puzzle types so the techniques alternate. Clue changes need Joshua's approval.

@@ -126,8 +126,8 @@ STORY_SCENES['forest_1'] = `<svg width="100%" viewBox="0 0 500 280" xmlns="http:
   <text x="250" y="200" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="10" opacity="0.55" font-weight="700" letter-spacing="0.5">whole affair (4)</text>
   <text x="232" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
   <text x="268" y="217" fill="#ffd700" font-size="8" opacity="0.25">~</text>
-  <text x="250" y="235" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.35" font-weight="700" letter-spacing="0.5">Evergreen from</text>
-  <text x="250" y="249" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.25" font-weight="700" letter-spacing="0.5">worship in earnest (4)</text>
+  <text x="250" y="235" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.35" font-weight="700" letter-spacing="0.5">Long for an</text>
+  <text x="250" y="249" text-anchor="middle" fill="#ffd700" font-family="'Nunito',serif" font-size="9" opacity="0.25" font-weight="700" letter-spacing="0.5">evergreen (4)</text>
 </g>
 <!-- Warm glow from carvings -->
 <ellipse cx="250" cy="190" rx="50" ry="70" fill="#ffd700" opacity="0.03"/>

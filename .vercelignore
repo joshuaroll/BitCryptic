@@ -1,0 +1,23 @@
+# Dev-only content — must never be published (notes and data contain puzzle answers and secret codes)
+backups/
+build/
+characters/
+concept/
+data/
+game/
+map_inspo/
+node_modules/
+notes/
+public/
+scenes/mockups/
+src/
+test-results/
+.vercel
+index_v1.html
+path_editor.svg
+CLAUDE.md
+README.md
+package.json
+package-lock.json
+postcss.config.js
+tailwind.config.js

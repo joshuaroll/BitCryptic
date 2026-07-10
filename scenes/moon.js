@@ -1,4 +1,4 @@
-// Moon story scenes — "The Lunar Hermit"
+// Moon story scenes — "The Mark on The Moon"
 // Keys: moon_0 through moon_7
 
 // Scene 0: Moon surface, silence, craters everywhere, starfield
@@ -386,7 +386,7 @@ STORY_SCENES['moon_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <circle cx="250" cy="125" r="18" fill="#ffe880" opacity="0.04"/>
 </svg>`;
 
-// Scene 6: Mark's approval, warm scene
+// Scene 6: Mark's final test (the eclipse clue), warm desk scene
 STORY_SCENES['moon_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="m6DomeBg" x1="0" y1="0" x2="0" y2="1">

@@ -280,5 +280,17 @@ STORY_SCENES['observatory_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <path d="M303,175 Q305,168 310,165 Q315,168 317,175" fill="#101c40"/>
 </svg>`;
 
-// Scene 5 (complete): Same as scene 4 — observatory flooded with starlight
-STORY_SCENES['observatory_5'] = STORY_SCENES['observatory_4'];
+// Scene 5 (NOVA puzzle — "Stellar explosion from river reflected (4)"): Same interior with constellations
+STORY_SCENES['observatory_5'] = STORY_SCENES['observatory_2'];
+
+// Scene 6 (narrative after NOVA): Interior
+STORY_SCENES['observatory_6'] = STORY_SCENES['observatory_2'];
+
+// Scene 7 (COMET puzzle — "Company encountered celestial visitor (5)"): Interior
+STORY_SCENES['observatory_7'] = STORY_SCENES['observatory_2'];
+
+// Scene 8 (narrative after COMET): Observatory flooded with starlight
+STORY_SCENES['observatory_8'] = STORY_SCENES['observatory_4'];
+
+// Scene 9 (complete): Same flooded starlight
+STORY_SCENES['observatory_9'] = STORY_SCENES['observatory_4'];

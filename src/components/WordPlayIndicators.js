@@ -12,7 +12,9 @@ const WordPlayIndicators = () => {
 
   const scrollToSection = (category) => {
     const element = document.getElementById(category.toLowerCase());
-    element.scrollIntoView({ behavior: 'smooth' });
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const indicators = [
@@ -26,18 +28,18 @@ const WordPlayIndicators = () => {
       ],
       exampleClues: [
         {
-          clue: 'Confused rats are popular (4)',
-          answer: 'STAR',
-          explanation: 'Rearrange "RATS" to get "STAR" (also works as a reversal here)',
-          highlight: 'RATS → STAR',
-          definition: 'popular'
+          clue: 'Hear silent broadcast (6)',
+          answer: 'LISTEN',
+          explanation: '"Broadcast" is the anagram indicator: rearrange the letters of "SILENT" to get "LISTEN", meaning to hear',
+          highlight: 'SILENT → LISTEN',
+          definition: 'Hear'
         },
         {
-          clue: 'Strange care runs fast (4)',
+          clue: 'Strange care makes a contest (4)',
           answer: 'RACE',
-          explanation: 'Rearrange "CARE" to get "RACE"',
+          explanation: '"Strange" is the anagram indicator: rearrange the letters of "CARE" to get "RACE", a contest',
           highlight: 'CARE → RACE',
-          definition: 'runs fast'
+          definition: 'a contest'
         }
       ]
     },
@@ -50,16 +52,16 @@ const WordPlayIndicators = () => {
       ],
       exampleClues: [
         {
-          clue: 'A foreign car buried in the tennis sand (6)',
-          answer: 'NISSAN',
-          explanation: '"NISSAN" is hidden within "tennis sand"',
-          highlight: 'ten[NIS SAN]d',
-          definition: 'A foreign car'
+          clue: 'Some stole money for fruit? (5)',
+          answer: 'LEMON',
+          explanation: '"Some" is the hidden-word indicator: "LEMON" is hidden across "stoLE MONey". The question mark flags that "fruit" defines by example',
+          highlight: 'sto[LE MON]ey',
+          definition: 'fruit'
         },
         {
           clue: 'Refined portion of garden within hedge shearing (5)',
           answer: 'EDGES',
-          explanation: '"EDGE" is hidden within "hedge" with the final letter from "shearing"',
+          explanation: '"Within" is the hidden-word indicator: "EDGES" is hidden across "hEDGE Shearing"',
           highlight: 'h[EDGE S]hearing',
           definition: 'Refined portion of garden'
         },
@@ -69,23 +71,23 @@ const WordPlayIndicators = () => {
       category: 'Reversals',
       description: 'Words that suggest backwards movement or direction',
       examples: [
-        'back', 'returning', 'reversed', 'up', 'north', 'east', 'south', 'west','ascending',
-        'rising', 'overturned', 'reflected', 'upside down'
+        'back', 'returning', 'returned', 'reversed', 'reflected', 'sent back',
+        'brought back', 'overturned', 'turned', 'flipped', 'rejected'
       ],
       exampleClues: [
         {
-          clue: 'Vermin returning as a celestial body (4)',
-          answer: 'STAR',
-          explanation: '"RATS" (vermin) reversed becomes "STAR" (a celestial body)',
-          highlight: 'RATS → STAR',
-          definition: 'celestial body'
+          clue: 'Cooking vessel flipped for a quick sleep (3)',
+          answer: 'NAP',
+          explanation: '"Flipped" is the reversal indicator: "PAN" (a cooking vessel) reversed becomes "NAP", a quick sleep',
+          highlight: 'PAN → NAP',
+          definition: 'a quick sleep'
         },
         {
-          clue: 'Northbound cablecar sells food (4)',
+          clue: "Market's streetcar sent back (4)",
           answer: 'MART',
-          explanation: '"TRAM" (another name for cablecar) reversed becomes "MART" (market)',
+          explanation: '"Sent back" is the reversal indicator: "TRAM" (a streetcar) reversed becomes "MART", a market',
           highlight: 'TRAM → MART',
-          definition: 'sells food'
+          definition: 'Market'
         }
       ]
     },
@@ -100,14 +102,14 @@ const WordPlayIndicators = () => {
         {
           clue: 'Beheaded monarch is still bowed (4)',
           answer: 'ARCH',
-          explanation: 'Monarch without the first three letter gives ARCH which a shape that is bowed',
+          explanation: 'Monarch without its first three letters gives ARCH, a shape that is bowed',
           highlight: 'mon[ARCH] → arch',
           definition: 'bowed'
         },
         {
-          clue: 'Half lycanthrope is still twisted (4)',
+          clue: 'Part lycanthrope is still twisted (4)',
           answer: 'ROPE',
-          explanation: 'The latter portion of lycanthrope is ROPE which is twisted string',
+          explanation: '"Part" tells you to take part of "lycanthrope" — its tail end gives ROPE, which is twisted string',
           highlight: 'lycanth[ROPE]',
           definition: 'twisted'
         }
@@ -129,11 +131,11 @@ const WordPlayIndicators = () => {
           definition: 'formal wear'
         },
         {
-          clue: 'Ones wearing red, orange, yellow, and lilac can be crowned (5)',
+          clue: 'Ones of red, orange, yellow, and lilac can be crowned (5)',
           answer: 'ROYAL',
-          explanation: 'Take the first letter of each word: Red, Orange, Yellow, And Lilac',
+          explanation: '"Ones of" tells you to take the first ones — the initial letters: Red, Orange, Yellow, And, Lilac spell "ROYAL", which can be crowned',
           highlight: '[R]ed [O]range [Y]ellow [A]nd [L]ilac',
-          definition: 'crowned'
+          definition: 'can be crowned'
         }
       ]
     },
@@ -153,11 +155,58 @@ const WordPlayIndicators = () => {
           definition: 'The number'
         },
         {
-          clue: 'Story heard at the rear (4)',
+          clue: "Dog's extremity we hear makes a story (4)",
           answer: 'TALE',
-          explanation: 'Sounds like "TAIL" which means at the rear',
-          highlight: 'TALE (sounds like TAIL)',
-          definition: 'Story'
+          explanation: '"We hear" marks the homophone: a dog\'s extremity is its "TAIL", which sounds like "TALE", a story',
+          highlight: 'TAIL (sounds like TALE)',
+          definition: 'a story'
+        }
+      ]
+    },
+    {
+      category: 'Double Definitions',
+      description: 'Two definitions placed side by side, each independently defining the same answer. There is no indicator word — the trick is spotting that the clue splits into two separate meanings, often joined by a small link word.',
+      examples: [
+        'or', 'and', "'s", 'to', 'for', 'is', '(often no link word at all)'
+      ],
+      exampleClues: [
+        {
+          clue: 'New book (5)',
+          answer: 'NOVEL',
+          explanation: 'Double definition: "NOVEL" means new (a novel idea) AND a "NOVEL" is a book. Both halves define the answer independently',
+          highlight: 'NEW = NOVEL | BOOK = NOVEL',
+          definition: "both 'New' and 'book'"
+        },
+        {
+          clue: 'Departs or pages (6)',
+          answer: 'LEAVES',
+          explanation: 'Double definition: "LEAVES" means departs AND "LEAVES" are the pages of a book. "Or" simply links the two definitions',
+          highlight: 'DEPARTS = LEAVES | PAGES = LEAVES',
+          definition: "both 'Departs' and 'pages'"
+        }
+      ]
+    },
+    {
+      category: 'Charades & Containers',
+      description: 'Charades build the answer from smaller parts placed one after another (like the parlour game). Containers put one word inside another. Charades often need no indicator — the parts are simply adjacent — while containers always have an indicator showing which word swallows which.',
+      examples: [
+        'holds', 'wearing', 'embraces', 'swallows', 'around', 'inside',
+        'next to', 'before', 'after', 'on'
+      ],
+      exampleClues: [
+        {
+          clue: 'Company encountered celestial visitor (5)',
+          answer: 'COMET',
+          explanation: 'Charade: "CO" (company) followed by "MET" (encountered) builds "COMET", a celestial visitor. The parts are simply placed side by side',
+          highlight: 'CO + MET = COMET',
+          definition: 'celestial visitor'
+        },
+        {
+          clue: 'Chat about energy to swindle (5)',
+          answer: 'CHEAT',
+          explanation: 'Container: "about" signals that "CHAT" wraps around "E" (energy), giving "CH-E-AT", meaning to swindle',
+          highlight: 'CH(E)AT',
+          definition: 'swindle'
         }
       ]
     }

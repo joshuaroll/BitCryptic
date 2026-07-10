@@ -187,12 +187,12 @@ STORY_SCENES['adventure_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="ht
   <!-- Breastplate — prominent, with glowing HERO letters -->
   <path d="M218,108 L282,108 L278,185 Q250,194 222,185 Z" fill="#5a5a7a" opacity="0.7"/>
   <path d="M222,112 L278,112 L274,180 Q250,188 226,180 Z" fill="#6a6a8a" opacity="0.55"/>
-  <!-- The letters H E R O glowing on breastplate -->
+  <!-- Glowing cryptic runes on breastplate (the clue is spoken, never shown solved) -->
   <g filter="url(#letterBloom)">
-    <text x="234" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>H</text>
-    <text x="248" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.2s"/>E</text>
-    <text x="262" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.4s"/>R</text>
-    <text x="276" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>O</text>
+    <text x="234" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>&#x2727;</text>
+    <text x="248" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.2s"/>&#x2738;</text>
+    <text x="262" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.4s"/>&#x2726;</text>
+    <text x="276" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>&#x2740;</text>
   </g>
   <!-- Letter glow halos -->
   <circle cx="250" cy="145" r="28" fill="url(#letterGlow)" opacity="0.25"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="2s" repeatCount="indefinite"/></circle>

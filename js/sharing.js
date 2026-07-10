@@ -7,12 +7,12 @@ const BCWSharing = (() => {
   const GAME_URL = 'https://bit-cryptic-world.vercel.app';
 
   function shareAchievement(title, description) {
-    const text = `${title} - ${description}\n\nPlay Bit Cryptic World!`;
+    const text = `${title} - ${description}\n\nEarned in Bit Cryptic World. Your move.`;
     share(text, 'achievement');
   }
 
   function shareStoryComplete(storyTitle) {
-    const text = `I just completed "${storyTitle}" in Bit Cryptic World! Can you solve the puzzles?`;
+    const text = `I just finished "${storyTitle}" in Bit Cryptic World. Can you solve the puzzles?`;
     share(text, 'story');
   }
 
@@ -34,7 +34,7 @@ const BCWSharing = (() => {
       const text = `I've explored ${locations} locations and completed ${stories} stories in Bit Cryptic World! How far can you get?`;
       share(text, 'progress');
     } catch {
-      share('Come explore Bit Cryptic World - a puzzle adventure island!', 'progress');
+      share('Come explore Bit Cryptic World, an island made of word puzzles.', 'progress');
     }
   }
 

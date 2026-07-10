@@ -20,7 +20,7 @@ const BCWAchievements = (() => {
 
     // Puzzles
     first_puzzle: { title: 'Puzzle Solver', desc: 'Solve your first cryptic clue', icon: '🧩', category: 'puzzle' },
-    no_hints: { title: 'Sharp Mind', desc: 'Solve a puzzle on the first try', icon: '⚡', category: 'puzzle' },
+    no_hints: { title: 'Clean Solve', desc: 'Solve a puzzle on the first try', icon: '⚡', category: 'puzzle' },
     puzzle_streak_5: { title: 'On a Roll', desc: 'Solve 5 puzzles in a row without mistakes', icon: '🔥', category: 'puzzle' },
     puzzle_master: { title: 'Cryptic Master', desc: 'Solve 25 puzzles total', icon: '🎓', category: 'puzzle' },
 
@@ -35,8 +35,8 @@ const BCWAchievements = (() => {
     dream_home: { title: 'Dream Home', desc: 'Place 15 items in your house', icon: '🏡', category: 'house' },
 
     // Story Trophies
-    dragon_tamer: { title: 'Dragon Tamer', desc: 'Complete Liam\'s Lair story', icon: '🐉', category: 'story' },
-    sky_hunter: { title: 'Sky Hunter', desc: 'Complete Simon\'s Skyship story', icon: '🔭', category: 'story' },
+    dragon_tamer: { title: 'Worth the Hoard', desc: 'Complete Liam\'s Lair story', icon: '🐉', category: 'story' },
+    sky_hunter: { title: 'Ship\'s Log', desc: 'Complete Simon\'s Skyship story', icon: '🔭', category: 'story' },
     moonwalker: { title: 'Moonwalker', desc: 'Complete The Moon story', icon: '🌙', category: 'story' },
 
     // Social
@@ -44,7 +44,7 @@ const BCWAchievements = (() => {
 
     // Terminal
     code_breaker: { title: 'Code Breaker', desc: 'Enter your first terminal code', icon: '💻', category: 'terminal' },
-    master_hacker: { title: 'Master Hacker', desc: 'Enter 5 terminal codes', icon: '🖥️', category: 'terminal' },
+    master_hacker: { title: 'Terminal Velocity', desc: 'Enter 5 terminal codes', icon: '🖥️', category: 'terminal' },
 
     // Meta
     completionist: { title: 'Completionist', desc: 'Earn all other achievements', icon: '✨', category: 'meta' }

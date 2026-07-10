@@ -14,8 +14,20 @@ const crocStages = [
 const STORAGE_KEY_PREFIX = "bitcryptic_daily_";
 const STREAK_KEY = "bitcryptic_daily_streak";
 
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+// Local calendar date (Wordle-style rollover at local midnight)
 function getTodayKey() {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+}
+
+function getYesterdayKey(todayKey) {
+  const [y, m, d] = todayKey.split("-").map(Number);
+  const yesterday = new Date(y, m - 1, d - 1);
+  return `${yesterday.getFullYear()}-${pad2(yesterday.getMonth() + 1)}-${pad2(yesterday.getDate())}`;
 }
 
 function loadDailyState(dateKey) {
@@ -46,8 +58,8 @@ function saveStreak(streak) {
   } catch {}
 }
 
-export default function CrypticCrocGame({ dateString }) {
-  const todayKey = getTodayKey();
+export default function CrypticCrocGame({ dateString, todayKey: todayKeyProp }) {
+  const todayKey = todayKeyProp || getTodayKey();
   const dailyClue = getDailyClue(todayKey);
   const clue = {
     clue: dailyClue.clue,
@@ -56,8 +68,17 @@ export default function CrypticCrocGame({ dateString }) {
   };
 
   const savedState = loadDailyState(todayKey);
-  const [userInput, setUserInput] = useState(Array(clue.answer.length).fill(""));
-  const [message, setMessage] = useState(savedState?.isSolved ? "Already solved today!" : "");
+  const savedLost = Boolean(savedState) && !savedState.isSolved && savedState.attempts >= MAX_ATTEMPTS;
+  const [userInput, setUserInput] = useState(
+    savedState?.isSolved ? clue.answer.split("") : Array(clue.answer.length).fill("")
+  );
+  const [message, setMessage] = useState(
+    savedState?.isSolved
+      ? "Already solved today!"
+      : savedLost
+        ? "Better luck tomorrow!"
+        : ""
+  );
   const [flashColors, setFlashColors] = useState(Array(clue.answer.length).fill(""));
   const [attempts, setAttempts] = useState(savedState?.attempts || 0);
   const [guessedWords, setGuessedWords] = useState(new Set(savedState?.guessHistory || []));
@@ -65,6 +86,12 @@ export default function CrypticCrocGame({ dateString }) {
   const [guessHistory, setGuessHistory] = useState(savedState?.guessHistory || []);
   const [showDefinition, setShowDefinition] = useState(false);
   const inputRefs = useRef([]);
+
+  const isLost = !isSolved && attempts >= MAX_ATTEMPTS;
+  const isOver = isSolved || isLost;
+
+  // Locate the definition inside the clue text (case-insensitive) for highlighting
+  const definitionIndex = clue.clue.toLowerCase().indexOf(clue.definition.toLowerCase());
 
   useEffect(() => {
     if (flashColors.some(color => color)) {
@@ -95,7 +122,7 @@ export default function CrypticCrocGame({ dateString }) {
   };
 
   const checkAnswer = () => {
-    if (attempts >= MAX_ATTEMPTS) return;
+    if (isSolved || attempts >= MAX_ATTEMPTS) return;
 
     const userAnswer = userInput.join("");
     if (userAnswer.length < clue.answer.length) {
@@ -103,7 +130,8 @@ export default function CrypticCrocGame({ dateString }) {
       return;
     }
 
-    if (isSolved || guessedWords.has(userAnswer)) {
+    if (guessedWords.has(userAnswer)) {
+      setMessage(`Already tried ${userAnswer}`);
       return;
     }
 
@@ -117,11 +145,9 @@ export default function CrypticCrocGame({ dateString }) {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       // Persist solved state
       saveDailyState(todayKey, { isSolved: true, attempts, guessHistory: newHistory });
-      // Update streak
+      // Update streak (all keys are local calendar dates)
       const streak = loadStreak();
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayKey = yesterday.toISOString().split("T")[0];
+      const yesterdayKey = getYesterdayKey(todayKey);
       if (streak.lastSolvedDate === yesterdayKey) {
         streak.current += 1;
       } else if (streak.lastSolvedDate !== todayKey) {
@@ -138,11 +164,7 @@ export default function CrypticCrocGame({ dateString }) {
       setGuessedWords(prev => new Set(prev).add(userAnswer));
       setGuessHistory(newHistory);
       saveDailyState(todayKey, { isSolved: false, attempts: newAttempts, guessHistory: newHistory });
-      setMessage(
-        newAttempts >= MAX_ATTEMPTS
-          ? <div>Better luck tomorrow!</div>
-          : "Try again!"
-      );
+      setMessage(newAttempts >= MAX_ATTEMPTS ? "Better luck tomorrow!" : "Try again!");
     }
   };
 
@@ -156,16 +178,22 @@ export default function CrypticCrocGame({ dateString }) {
         </div>
         <div className="clue-content">
           <p className="text-lg">
-            {showDefinition ? (
+            {showDefinition && definitionIndex !== -1 ? (
               <>
-                <span className="definition-highlight">{clue.definition}</span>
-                {clue.clue.slice(clue.definition.length)}
+                {clue.clue.slice(0, definitionIndex)}
+                <span className="definition-highlight">
+                  {clue.clue.slice(definitionIndex, definitionIndex + clue.definition.length)}
+                </span>
+                {clue.clue.slice(definitionIndex + clue.definition.length)}
               </>
             ) : (
               clue.clue
             )}
             {" "}({clue.answer.length})
           </p>
+          {showDefinition && definitionIndex === -1 && (
+            <p className="text-base text-gray-600">Definition: {clue.definition}</p>
+          )}
           <button 
             className="definition-button"
             onClick={() => setShowDefinition(!showDefinition)}
@@ -203,7 +231,16 @@ export default function CrypticCrocGame({ dateString }) {
             Check Answer
           </Button>
 
-          {message && <p className="text-lg font-semibold mb-4 text-center">{message}</p>}
+          {message && <div className="text-lg font-semibold mb-4 text-center">{message}</div>}
+
+          {isOver && (
+            <div className="w-full max-w-xs mb-4 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg text-center">
+              <div className="text-lg font-bold mb-1">
+                The answer was <span className="text-blue-600">{clue.answer}</span>
+              </div>
+              <div className="text-sm text-gray-600">{dailyClue.explanation}</div>
+            </div>
+          )}
 
           <div className="w-full max-w-xs">
             <h2 className="text-xl font-bold mb-2">Previous Guesses:</h2>

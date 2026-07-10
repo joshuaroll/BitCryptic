@@ -158,7 +158,7 @@ STORY_SCENES['lair_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 // Scene 2: Dragon speaks, challenges the solver — reuse dragon chamber scene
 STORY_SCENES['lair_2'] = STORY_SCENES['lair_1'];
 
-// Scene 3: Puzzle — "Treasure hidden in each estimate (5)" on scorched scroll
+// Scene 3: Puzzle — "Tough about love, a dragon's pile (5)" HOARD on scorched scroll
 STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lairScroll1" x1="0" y1="0" x2="0" y2="1">
@@ -189,8 +189,8 @@ STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S FIRST CLUE</text>
 <line x1="140" y1="92" x2="360" y2="92" stroke="#2a1a10" stroke-width="0.5" opacity="0.3"/>
 <!-- Clue text -->
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Treasure hidden in</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">each estimate (5)"</text>
+<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Tough about love,</text>
+<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">a dragon's pile (5)"</text>
 <text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
 <!-- Dragon eyes watching from darkness -->
 <ellipse cx="55" cy="130" rx="5" ry="3.5" fill="#ff2200" opacity="0.4">
@@ -213,7 +213,7 @@ STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 // Scene 4: Dragon responds, impressed — reuse dragon chamber scene
 STORY_SCENES['lair_4'] = STORY_SCENES['lair_1'];
 
-// Scene 5: Puzzle — "This beast makes proceedings drag on (6)" on scorched scroll
+// Scene 5: Puzzle — "Iron fen forged into a blaze (7)" INFERNO on scorched scroll
 STORY_SCENES['lair_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lairScroll2" x1="0" y1="0" x2="0" y2="1">
@@ -244,8 +244,8 @@ STORY_SCENES['lair_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S SECOND CLUE</text>
 <line x1="140" y1="92" x2="360" y2="92" stroke="#2a1a10" stroke-width="0.5" opacity="0.3"/>
 <!-- Clue text -->
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"This beast makes proceedings</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">drag on (6)"</text>
+<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Iron fen forged</text>
+<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">into a blaze (7)"</text>
 <text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
 <!-- Dragon eyes — closer, brighter -->
 <ellipse cx="50" cy="125" rx="6" ry="4" fill="#ff2200" opacity="0.5">
@@ -350,7 +350,7 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <rect x="0" y="245" width="500" height="15" fill="#1a0a08"/>
 </svg>`;
 
-// Scene 7: Puzzle — "Fun race, oddly, leads to the source of heat (7)" on scorched scroll
+// Scene 7: Puzzle — "Riches make one strangely austerer (8)" TREASURE on scorched scroll
 STORY_SCENES['lair_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lairScroll3" x1="0" y1="0" x2="0" y2="1">
@@ -382,8 +382,8 @@ STORY_SCENES['lair_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S FINAL CLUE</text>
 <line x1="140" y1="92" x2="360" y2="92" stroke="#2a1a10" stroke-width="0.5" opacity="0.3"/>
 <!-- Clue text -->
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Fun race, oddly, leads to</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">the source of heat (7)"</text>
+<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Riches make one</text>
+<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">strangely austerer (8)"</text>
 <text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the final clue</text>
 <!-- Dragon eyes — very close, flanking the scroll -->
 <ellipse cx="45" cy="120" rx="7" ry="5" fill="#ff2200" opacity="0.6">

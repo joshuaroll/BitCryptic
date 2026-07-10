@@ -1,5 +1,5 @@
-// Skyship story scenes — "Simon's Skyship"
-// Keys: airship_0 through airship_4
+// Skyship story scenes — "The Sky Captain's Collection"
+// Keys: airship_0 through airship_8 (9-step story; some steps share art)
 
 // Scene 0: Boarding the Skyship — blue sky, fluffy clouds, airship from below
 STORY_SCENES['airship_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -122,7 +122,7 @@ STORY_SCENES['airship_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 // Scene 2: Puzzle step — shares cabin scene
 STORY_SCENES['airship_2'] = STORY_SCENES['airship_1'];
 
-// Scene 3: Solved — newspaper with crossword and porthole
+// Scene 3 (VOYAGE puzzle): gazette with empty crossword grid and the live clue
 STORY_SCENES['airship_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="paperBg" x1="0" y1="0" x2="0" y2="1">
@@ -154,14 +154,8 @@ STORY_SCENES['airship_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <rect x="220" y="110" width="20" height="20" fill="#333"/>
 <rect x="160" y="130" width="20" height="20" fill="#333"/>
 <rect x="240" y="130" width="20" height="20" fill="#333"/>
-<!-- Filled letters -->
-<text x="210" y="86" fill="#333" font-family="sans-serif" font-size="12" text-anchor="middle">S</text>
-<text x="230" y="86" fill="#333" font-family="sans-serif" font-size="12" text-anchor="middle">H</text>
-<text x="250" y="86" fill="#333" font-family="sans-serif" font-size="12" text-anchor="middle">I</text>
-<text x="270" y="86" fill="#333" font-family="sans-serif" font-size="12" text-anchor="middle">P</text>
 <!-- Clue text -->
-<text x="80" y="210" fill="#888" font-size="5" font-family="sans-serif">1. Boat hidden in worship, I presume (4)</text>
-<text x="80" y="220" fill="#888" font-size="5" font-family="sans-serif">2. Anger found in desire (3)</text>
+<text x="80" y="210" fill="#666" font-size="6" font-family="sans-serif" font-weight="bold">1. Savoy agent conceals a journey (6)</text>
 <!-- Porthole -->
 <circle cx="410" cy="130" r="55" fill="#5aafe8"/>
 <ellipse cx="400" cy="115" rx="25" ry="12" fill="#fff" opacity="0.7"/>
@@ -175,8 +169,14 @@ STORY_SCENES['airship_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <circle cx="450" cy="170" r="2.5" fill="#d4b040"/>
 </svg>`;
 
-// Scene 4: Sunset farewell — deck railing, sunset, island far below
-STORY_SCENES['airship_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+// Scenes 4-7 (narratives + COAST/MAST puzzles): reuse the cabin interior
+STORY_SCENES['airship_4'] = STORY_SCENES['airship_1'];
+STORY_SCENES['airship_5'] = STORY_SCENES['airship_1'];
+STORY_SCENES['airship_6'] = STORY_SCENES['airship_1'];
+STORY_SCENES['airship_7'] = STORY_SCENES['airship_1'];
+
+// Scene 8 (complete): Sunset farewell — deck railing, sunset, island far below
+STORY_SCENES['airship_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="sunsetBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#0a1a40"/><stop offset="25%" stop-color="#2a4a88"/><stop offset="50%" stop-color="#c87830"/><stop offset="70%" stop-color="#e8a040"/><stop offset="85%" stop-color="#f0c060"/>

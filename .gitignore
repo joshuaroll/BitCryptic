@@ -34,3 +34,10 @@ yarn-error.log*
 backups/
 
 .vercel
+
+# Graphify knowledge graph output (regenerate with: graphify update .)
+graphify-out/
+
+# Test artifacts / stray output
+test-results/
+undefined/
