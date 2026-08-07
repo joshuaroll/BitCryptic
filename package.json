@@ -27,7 +27,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:e2e": "playwright test",
+    "check:syntax": "node scripts/ci/check-syntax.mjs",
+    "check:clues": "node scripts/ci/check-clues.mjs",
+    "check:spoilers": "node scripts/ci/check-spoilers.mjs",
+    "check:secrets": "node scripts/ci/scan-secrets.mjs",
+    "verify": "npm run check:syntax && npm run check:clues && npm run check:spoilers"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "an-array-of-english-words": "^2.0.0",
     "autoprefixer": "^9.8.8",
     "gh-pages": "^6.3.0",

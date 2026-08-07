@@ -1,0 +1,181 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # This repo has NO build step: index.html, js/ and scenes/ are served to
+  # players byte-for-byte as they sit in git. There is no compiler between a
+  # typo and production, so parsing every shipped script IS the build.
+  # ---------------------------------------------------------------------------
+  syntax:
+    name: Script syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      # Covers js/*.js, scenes/*.js AND the inline <script> blocks inside the
+      # 9.8k-line monolith — the largest surface and the one nothing else reads.
+      - name: Parse every shipped script
+        run: npm run check:syntax
+
+  # ---------------------------------------------------------------------------
+  # Clue content is editorial and requires Joshua's sign-off (see CLAUDE.md's
+  # CLUE APPROVAL RULE). The freeze proof makes an accidental clue edit during a
+  # UI or restyle pass fail loudly instead of shipping silently.
+  # ---------------------------------------------------------------------------
+  content:
+    name: Clue integrity + freeze
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Validate clues and verify freeze proof
+        run: npm run check:clues
+
+  # ---------------------------------------------------------------------------
+  # Everything Vercel uploads is readable by any player with devtools open.
+  # .vercelignore is the ONLY thing keeping puzzle answers and secret terminal
+  # codes off the live site, so removing a line from it must fail CI.
+  # ---------------------------------------------------------------------------
+  spoilers:
+    name: Spoiler protection
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Assert answer files stay excluded from deploys
+        run: npm run check:spoilers
+
+  # ---------------------------------------------------------------------------
+  # Drives the real page in a browser. The 2026-07-10 production incident is the
+  # reason this job exists: a Vercel trailingSlash change made all 24 relative
+  # script refs 404, and the page still LOOKED fine because the inline monolith
+  # ran — the island just silently lost stories, audio, saves and achievements.
+  # ---------------------------------------------------------------------------
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Supply chain + secret hygiene.
+  # ---------------------------------------------------------------------------
+  security:
+    name: Security checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history so the secret scan can walk a PR's whole commit range.
+          # A key added and then "removed" later is still in history, still burned.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ADVISORY here, unlike Adventure's blocking gate. This repo still carries
+      # react-scripts 5 for the separate (deprioritized) daily game, which pins a
+      # deep tree of unfixable transitive advisories. Blocking on them would make
+      # every unrelated PR red with no action anyone could take — the
+      # permanently-red-gate failure mode. Revisit if react-scripts is dropped.
+      - name: Audit dependencies (advisory)
+        run: |
+          npm audit --audit-level=high || \
+            echo "::warning::High-severity advisories found — see log. Not blocking (react-scripts legacy tree); Dependabot tracks fixes."
+
+      - name: Scan for committed secrets
+        run: npm run check:secrets
+
+      - name: Assert no env files are tracked
+        run: |
+          tracked=$(git ls-files -- '.env' '.env.*' '*.env' | grep -v '^\.env\.example$' || true)
+          if [ -n "$tracked" ]; then
+            echo "::error::Tracked env file(s): $tracked — remove them and rotate anything they held."
+            exit 1
+          fi
+          echo "No env files tracked."
+
+  # ---------------------------------------------------------------------------
+  # Single required status check — branch protection points here.
+  # ---------------------------------------------------------------------------
+  ci:
+    name: CI
+    if: always()
+    needs: [syntax, content, spoilers, e2e, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify all jobs succeeded
+        run: |
+          results="${{ join(needs.*.result, ' ') }}"
+          echo "Job results: $results"
+          # An empty string would make the loop iterate zero times and pass
+          # vacuously — the exact hole this gate exists to close.
+          if [ -z "$results" ]; then
+            echo "::error::No job results to evaluate."
+            exit 1
+          fi
+          for r in $results; do
+            if [ "$r" != "success" ]; then
+              echo "::error::A required job did not succeed (saw: $results)"
+              exit 1
+            fi
+          done
+          echo "All checks passed."

@@ -1,0 +1,31 @@
+version: 2
+
+# The CI `security` job is ADVISORY here (react-scripts 5 pins a deep tree of
+# unfixable transitive advisories for the deprioritized daily game). Dependabot
+# is what actually resolves them: it opens a PR when an upstream fix ships, and
+# that PR runs the full CI suite before anyone merges it.
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    # A solo maintainer drowns in per-dependency PRs. Group the routine ones into
+    # a single PR and let majors come through individually, since those are the
+    # ones that need a human reading a changelog.
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: "deps"
+
+  # Actions are pinned to commit SHAs in ci.yml, which is the safe choice but
+  # freezes them. This is what keeps those pins current.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"
