@@ -153,6 +153,8 @@ const BCWSave = (() => {
       if (!Array.isArray(progress.unlockedLocations)) progress.unlockedLocations = [];
       if (!Array.isArray(progress.completedStories)) progress.completedStories = [];
       if (typeof progress.introComplete !== 'boolean') progress.introComplete = false;
+      if (!progress.storyProgress || typeof progress.storyProgress !== 'object') progress.storyProgress = {};
+      if (progress.version === 1) progress.version = 2; // v2 adds storyProgress (lossless)
       progress.unlockedLocations = [...new Set(progress.unlockedLocations)];
       progress.completedStories = [...new Set(progress.completedStories)];
       safeSet('bitcryptic_progress', progress);

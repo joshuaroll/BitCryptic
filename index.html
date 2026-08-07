@@ -2149,7 +2149,12 @@
     <div class="hud-controls">
       <button class="hud-btn" onclick="resetView()" aria-label="Reset map view">Reset View</button>
       <button class="hud-btn" onclick="BCWSharing.shareProgress()" aria-label="Share progress">Share</button>
+      <button class="hud-btn" onclick="showHelpOverlay()" aria-label="Help and clue guide">?</button>
       <button class="hud-btn" onclick="BCWSettings.open()" aria-label="Open settings">&#x2699; Settings</button>
+      <!-- Filled by js/account.js once auth has loaded. Stays empty when no
+           Supabase project is configured, so the island never shows a sign-in
+           control that cannot work. -->
+      <span id="hud-account"></span>
     </div>
   </div>
 
@@ -2966,8 +2971,6 @@
             <text x="1916" y="1152" fill="#8b6914" font-size="9" text-anchor="middle">I</text>
             <rect x="1932" y="1145" width="12" height="12" rx="2" fill="#f5e8d0" stroke="#c4a86c" stroke-width="1"></rect>
             <text x="1938" y="1155" fill="#8b6914" font-size="9" text-anchor="middle">T</text>
-            <rect x="1955" y="1150" width="12" height="12" rx="2" fill="#f5e8d0" stroke="#c4a86c" stroke-width="1" transform="rotate(8,1961,1156)"></rect>
-            <text x="1961" y="1160" fill="#8b6914" font-size="9" text-anchor="middle" transform="rotate(8,1961,1160)">C</text>
           </g>
           <!-- Starfish -->
           <text x="1870" y="1178" font-size="10" opacity="0.35">★</text>
@@ -3560,10 +3563,22 @@
 
   <!-- Debug tools injected into Settings when activated -->
 
+  <!-- First-run storm sky: DOM chrome over the map during the intro dive -->
+  <div id="intro-sky" aria-hidden="true">
+    <div class="intro-rain"></div>
+    <div class="intro-flash"></div>
+  </div>
+
   <div class="story-overlay" id="story-overlay"></div>
   <div class="story-panel" id="story-panel">
     <button class="detail-close" id="story-close-btn" onclick="requestCloseStory()" aria-label="Close story">&times;</button>
     <div class="story-title" id="story-title"></div>
+    <div class="story-nav" id="story-nav">
+      <button class="story-nav-btn" id="story-back" onclick="storyNavBack()" aria-label="Previous beat">&#8249;</button>
+      <div class="story-progress"><div class="story-progress-fill" id="story-progress-fill"></div></div>
+      <span class="story-progress-label" id="story-progress-label"></span>
+      <button class="story-nav-btn" id="story-fwd" onclick="storyNavForward()" aria-label="Next beat">&#8250;</button>
+    </div>
     <div class="story-scene" id="story-scene"></div>
     <div class="story-speaker" id="story-speaker"></div>
     <div class="story-text" id="story-text"></div>
@@ -3598,7 +3613,9 @@
     const PROGRESS_KEY = 'bitcryptic_progress';
 
     function getDefaultProgress() {
-      return { version: 1, introComplete: false, unlockedLocations: [], completedStories: [] };
+      // v2: storyProgress maps storyId -> { visited: [stepIndex, ...] } so
+      // leaving mid-story is silent and re-entering resumes at the frontier.
+      return { version: 2, introComplete: false, unlockedLocations: [], completedStories: [], storyProgress: {} };
     }
 
     function getProgress() {
@@ -3609,6 +3626,9 @@
           if (p && p.version) {
             if (!Array.isArray(p.unlockedLocations)) p.unlockedLocations = [];
             if (!Array.isArray(p.completedStories)) p.completedStories = [];
+            // v1 -> v2 migration: lossless, just adds the beat map
+            if (p.version === 1) p.version = 2;
+            if (!p.storyProgress || typeof p.storyProgress !== 'object') p.storyProgress = {};
             return p;
           }
         }
@@ -3626,6 +3646,10 @@
         console.warn('Failed to save progress:', e);
         if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackError(e, 'saveProgress');
       }
+      // Mirror to the cloud when signed in. localStorage above stays the source
+      // of truth, so this is additive: it is debounced, it no-ops for guests,
+      // and a network failure can never block or corrupt a local save.
+      if (typeof BCSync !== 'undefined') BCSync.schedulePush('world');
     }
 
     function isStoryComplete(id) {
@@ -4051,16 +4075,20 @@
     function completeStory(id) {
       const state = getProgress();
       const isNew = !state.completedStories.includes(id);
-      if (isNew) {
-        state.completedStories.push(id);
-        saveProgress(state);
-      }
+      // Completed stories restart clean on replay — drop the beat bookmark
+      delete state.storyProgress[id];
+      if (isNew) state.completedStories.push(id);
+      saveProgress(state);
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackStoryComplete(id);
       if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkStoryComplete(state.completedStories);
-      // Trigger chain unlocks
+      // Trigger chain unlocks. After the very first story (docks), the reveal
+      // finishes by teaching map movement (tutorial phase 2).
       const chain = UNLOCK_CHAIN[id];
       if (chain && chain.reveals.length > 0) {
-        revealLocationsSequence(chain.reveals, 0);
+        const onRevealDone = (id === 'docks' && typeof BCWTutorial !== 'undefined' && BCWTutorial.startPhase2)
+          ? () => BCWTutorial.startPhase2()
+          : undefined;
+        revealLocationsSequence(chain.reveals, 0, onRevealDone);
       }
       // Grant story reward trophy if applicable
       if (isNew && REWARD_MAP && REWARD_MAP[id]) {
@@ -5599,6 +5627,56 @@
     let currentStepIndex = 0;
     let typewriterInterval = null;
     let typewriterDone = false;
+    // Beat history for back/forward. visitedSteps is the ordered list of step
+    // indices actually seen (branching makes index-- wrong); viewPos points at
+    // the beat being displayed. viewPos === visitedSteps.length - 1 => at the
+    // live frontier. currentStepIndex always tracks the FRONTIER step.
+    let visitedSteps = [];
+    let viewPos = 0;
+
+    function persistStoryPos() {
+      if (!currentStoryId) return;
+      const state = getProgress();
+      state.storyProgress[currentStoryId] = { visited: visitedSteps.slice() };
+      saveProgress(state);
+    }
+
+    // The single advance path: every continue/choice/solve goes through here.
+    function gotoStep(nextIdx) {
+      visitedSteps.push(nextIdx);
+      viewPos = visitedSteps.length - 1;
+      currentStepIndex = nextIdx;
+      persistStoryPos();
+      showStoryStep();
+    }
+
+    function storyNavBack() {
+      if (viewPos > 0) {
+        viewPos--;
+        if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+        showStoryStep();
+      }
+    }
+
+    function storyNavForward() {
+      if (viewPos < visitedSteps.length - 1) {
+        viewPos++;
+        if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+        showStoryStep();
+      }
+    }
+
+    function updateStoryNav(story, renderIdx) {
+      const nav = document.getElementById('story-nav');
+      if (!nav) return;
+      if (!story || story.steps.length < 2) { nav.style.display = 'none'; return; }
+      nav.style.display = '';
+      document.getElementById('story-back').disabled = viewPos <= 0;
+      document.getElementById('story-fwd').disabled = viewPos >= visitedSteps.length - 1;
+      const pct = Math.min(100, Math.round(((renderIdx + 1) / story.steps.length) * 100));
+      document.getElementById('story-progress-fill').style.width = pct + '%';
+      document.getElementById('story-progress-label').textContent = (renderIdx + 1) + ' / ' + story.steps.length;
+    }
 
     function getStoryData(storyId) {
       if (storyId === '_intro') return INTRO_STORY;
@@ -5613,7 +5691,15 @@
       const story = getStoryData(storyId);
       if (!story) return;
       currentStoryId = storyId;
-      currentStepIndex = 0;
+      // Resume from the saved frontier if this story was left mid-way
+      const saved = getProgress().storyProgress[storyId];
+      const validSaved = saved && Array.isArray(saved.visited) && saved.visited.length &&
+        saved.visited.every(i => Number.isInteger(i) && i >= 0 && i < story.steps.length) &&
+        !isStoryComplete(storyId);
+      visitedSteps = validSaved ? saved.visited.slice() : [0];
+      viewPos = visitedSteps.length - 1;
+      currentStepIndex = visitedSteps[viewPos];
+      persistStoryPos();
       document.getElementById('story-overlay').classList.add('active');
       document.getElementById('story-panel').classList.add('active');
       document.getElementById('story-title').textContent = story.title;
@@ -5624,18 +5710,22 @@
 
     function showStoryStep() {
       const story = getStoryData(currentStoryId);
-      if (!story || currentStepIndex >= story.steps.length) { closeStory(); return; }
+      const renderIdx = visitedSteps[viewPos];
+      const reviewMode = viewPos < visitedSteps.length - 1;
+      if (!story || renderIdx >= story.steps.length) { closeStory(); return; }
 
-      const step = story.steps[currentStepIndex];
+      const step = story.steps[renderIdx];
       const speakerEl = document.getElementById('story-speaker');
       const textEl = document.getElementById('story-text');
       const choicesEl = document.getElementById('story-choices');
       const continueBtn = document.getElementById('story-continue');
       const completeBtn = document.getElementById('story-complete-btn');
 
+      updateStoryNav(story, renderIdx);
+
       // Scene visual
       const sceneEl = document.getElementById('story-scene');
-      const sceneKey = currentStoryId + '_' + currentStepIndex;
+      const sceneKey = currentStoryId + '_' + renderIdx;
       if (STORY_SCENES && STORY_SCENES[sceneKey]) {
         sceneEl.innerHTML = STORY_SCENES[sceneKey];
         sceneEl.classList.add('visible');
@@ -5654,6 +5744,16 @@
       choicesEl.innerHTML = '';
       continueBtn.classList.remove('visible');
       completeBtn.classList.remove('visible');
+
+      // Review mode (stepped back): instant text, read-only controls,
+      // no typewriter, no analytics re-count.
+      if (reviewMode) {
+        if (typewriterInterval) { clearInterval(typewriterInterval); typewriterInterval = null; }
+        typewriterDone = true;
+        textEl.innerHTML = step.text;
+        showStoryControlsReview(step);
+        return;
+      }
 
       // Typewriter effect
       typewriterDone = false;
@@ -5728,12 +5828,16 @@
       const continueBtn = document.getElementById('story-continue');
       const completeBtn = document.getElementById('story-complete-btn');
 
+      // Interactive clue anatomy (only wraps clues with approved annotations)
+      if (typeof BCWClueAnatomy !== 'undefined') {
+        BCWClueAnatomy.annotate(document.getElementById('story-text'));
+      }
+
       if (step.type === 'narrative') {
         continueBtn.classList.add('visible');
         continueBtn.onclick = () => {
           if (typeof BCWAudio !== 'undefined') BCWAudio.playStoryAdvance();
-          currentStepIndex++;
-          showStoryStep();
+          gotoStep(currentStepIndex + 1);
         };
       } else if (step.type === 'choice') {
         step.choices.forEach((choice, idx) => {
@@ -5754,8 +5858,7 @@
               choicesEl.appendChild(reactionEl);
             } else {
               if (typeof choice.onclick === 'function') choice.onclick();
-              currentStepIndex = choice.next;
-              showStoryStep();
+              gotoStep(choice.next);
             }
           };
           choicesEl.appendChild(btn);
@@ -5788,7 +5891,7 @@
           });
           const hintList = (step.hint ? [step.hint] : []).concat(reactions);
           if (hintList.length && typeof BCWHints !== 'undefined') {
-            BCWHints.createHintButton(hintList, choicesEl);
+            BCWHints.createHintButton(hintList, choicesEl, currentStoryId + '_' + currentStepIndex);
           }
         }
 
@@ -5803,8 +5906,7 @@
             if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackPuzzleAttempt(currentStoryId, currentStepIndex, true, val);
             if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkPuzzleSolved(wrongCount === 0);
             if (typeof BCWHints !== 'undefined') BCWHints.clearHintTimer(currentStoryId + '_' + currentStepIndex);
-            currentStepIndex = step.next;
-            showStoryStep();
+            gotoStep(step.next);
           } else {
             if (typeof BCWAudio !== 'undefined') BCWAudio.playWrong();
             if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackPuzzleAttempt(currentStoryId, currentStepIndex, false, val);
@@ -5843,16 +5945,8 @@
         wrap.appendChild(submitBtn);
         choicesEl.appendChild(wrap);
 
-        if (step.hint) {
-          const hintBtn = document.createElement('button');
-          hintBtn.className = 'hint-btn';
-          hintBtn.textContent = 'Show Hint';
-          const hintEl = document.createElement('div');
-          hintEl.className = 'story-puzzle-hint';
-          hintEl.textContent = step.hint;
-          hintBtn.onclick = () => { hintEl.classList.add('visible'); hintBtn.style.display = 'none'; };
-          choicesEl.appendChild(hintBtn);
-          choicesEl.appendChild(hintEl);
+        if (step.hint && typeof BCWHints !== 'undefined') {
+          BCWHints.createHintButton([step.hint], choicesEl, currentStoryId + '_' + currentStepIndex);
         }
 
         const allAnswers = step.answers.map(a => a.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' '));
@@ -5877,8 +5971,7 @@
             const oldReaction = choicesEl.querySelector('.story-wrong-reaction');
             if (oldReaction) oldReaction.remove();
             if (solved.length >= allAnswers.length) {
-              currentStepIndex = step.next;
-              showStoryStep();
+              gotoStep(step.next);
             } else {
               progressEl.textContent = step.progressMessages[solved.length - 1] || (solved.length + ' of ' + allAnswers.length + ' solved');
               input.focus();
@@ -5966,12 +6059,35 @@
       }
     }
 
-    // Manual close (X button / Escape): confirm if mid-story, since progress restarts
-    function requestCloseStory() {
-      if (currentStoryId && currentStepIndex > 0 &&
-          !confirm('Leave the story? Your progress in it will restart from the beginning.')) {
-        return;
+    // Read-only controls for beats the player has stepped back to.
+    // Never re-asks a puzzle, never prints an answer.
+    function showStoryControlsReview(step) {
+      const choicesEl = document.getElementById('story-choices');
+      if (typeof BCWClueAnatomy !== 'undefined') {
+        BCWClueAnatomy.annotate(document.getElementById('story-text'));
       }
+      if (step.type === 'puzzle' || step.type === 'multi_puzzle') {
+        const chip = document.createElement('div');
+        chip.className = 'story-solved-chip';
+        chip.textContent = '✓ Solved';
+        choicesEl.appendChild(chip);
+      } else if (step.type === 'choice') {
+        const takenNext = visitedSteps[viewPos + 1];
+        step.choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.className = 'story-choice-btn story-choice-review' +
+            (choice.next === takenNext ? ' story-choice-taken' : '');
+          btn.textContent = choice.label;
+          btn.disabled = true;
+          choicesEl.appendChild(btn);
+        });
+      }
+      // narrative: no controls — the forward arrow is the way on
+    }
+
+    // Manual close (X button / Escape). No confirm: the current beat is
+    // persisted, so leaving is silent and re-entering resumes.
+    function requestCloseStory() {
       closeStory();
     }
 
@@ -5993,7 +6109,10 @@
       }
       // Remove any dynamically added share buttons
       panel.querySelectorAll('.story-complete-btn:not(#story-complete-btn)').forEach(el => el.remove());
+      persistStoryPos();
       currentStoryId = null;
+      visitedSteps = [];
+      viewPos = 0;
     }
 
     // ═══════════════════════════════════
@@ -6018,27 +6137,27 @@
       pond: { x: 1200, y: 920 }
     };
 
-    function panToLocation(locId, callback) {
-      const coords = LOCATION_COORDS[locId];
-      if (!coords) { if (callback) callback(); return; }
-
+    // Animated camera: glide the viewport center from wherever it is to world
+    // point (wx, wy) while interpolating zoom to targetScale.
+    function smoothZoomTo(wx, wy, targetScale, duration, callback) {
       isPanning = true;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const targetPanX = (vw / 2) - (coords.x * scale);
-      const targetPanY = (vh / 2) - (coords.y * scale);
-      const startPanX = panX;
-      const startPanY = panY;
-      const duration = 1000;
+      const startScale = scale;
+      // World coords currently at the viewport center
+      const cx0 = (vw / 2 - panX) / startScale;
+      const cy0 = (vh / 2 - panY) / startScale;
       const startTime = performance.now();
 
       function animate(time) {
-        const elapsed = time - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const ease = 1 - Math.pow(1 - t, 3);
-        panX = startPanX + (targetPanX - startPanX) * ease;
-        panY = startPanY + (targetPanY - startPanY) * ease;
+        const t = Math.min((time - startTime) / duration, 1);
+        // Ease in-out cubic
+        const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        scale = startScale + (targetScale - startScale) * ease;
+        const cx = cx0 + (wx - cx0) * ease;
+        const cy = cy0 + (wy - cy0) * ease;
+        panX = (vw / 2) - cx * scale;
+        panY = (vh / 2) - cy * scale;
         clampPan();
         updateTransform();
         if (t < 1) {
@@ -6051,6 +6170,69 @@
       requestAnimationFrame(animate);
     }
 
+    function panToLocation(locId, callback, duration) {
+      const coords = LOCATION_COORDS[locId];
+      if (!coords) { if (callback) callback(); return; }
+      smoothZoomTo(coords.x, coords.y, scale, duration || 1000, callback);
+    }
+
+    // First point of a road that leads to locId (from its d-attribute prefix)
+    function roadStartPoint(locId) {
+      for (const prefix in ROAD_MAP) {
+        if (ROAD_MAP[prefix] === locId) {
+          const m = prefix.match(/M\s*([\d.]+)[ ,]\s*([\d.]+)/);
+          if (m) return { x: parseFloat(m[1]), y: parseFloat(m[2]) };
+        }
+      }
+      return null;
+    }
+
+    // Draw the road(s) to locId before its marker appears. Solid stroke
+    // layers get the dash-offset draw-in; layers that already use
+    // stroke-dasharray (cobble/texture) fade in instead.
+    function animateRoadReveal(locId, callback) {
+      const reduced = document.body.classList.contains('reduced-motion');
+      const layers = [];
+      document.querySelectorAll('.island-svg path').forEach(pathEl => {
+        const d = pathEl.getAttribute('d');
+        if (!d) return;
+        const prefix = d.substring(0, d.indexOf(' '));
+        if (ROAD_MAP[prefix] === locId) layers.push(pathEl);
+      });
+      if (!layers.length || reduced) {
+        applyRoadState();
+        if (callback) callback();
+        return;
+      }
+      layers.forEach(pathEl => {
+        pathEl.style.display = '';
+        if (pathEl.hasAttribute('stroke-dasharray')) {
+          const targetOpacity = pathEl.getAttribute('opacity') || '1';
+          pathEl.style.opacity = '0';
+          pathEl.getBoundingClientRect(); // reflow
+          pathEl.style.transition = 'opacity 0.4s ease 0.5s';
+          pathEl.style.opacity = targetOpacity;
+        } else {
+          const len = pathEl.getTotalLength();
+          pathEl.style.strokeDasharray = len;
+          pathEl.style.strokeDashoffset = len;
+          pathEl.getBoundingClientRect(); // reflow
+          pathEl.style.transition = 'stroke-dashoffset 0.9s ease-out';
+          pathEl.style.strokeDashoffset = '0';
+        }
+      });
+      setTimeout(() => {
+        layers.forEach(pathEl => {
+          pathEl.style.transition = '';
+          pathEl.style.strokeDasharray = '';
+          pathEl.style.strokeDashoffset = '';
+          pathEl.style.opacity = '';
+        });
+        applyRoadState();
+        if (callback) callback();
+      }, 1000);
+    }
+
     function animateUnlock(locId, callback) {
       const locEl = document.getElementById('loc-' + locId);
       if (!locEl) { if (callback) callback(); return; }
@@ -6058,8 +6240,18 @@
       // Unlock in state
       unlockLocation(locId);
 
-      // Pan to location first
-      panToLocation(locId, () => {
+      // Guide the eye: pan toward the road, draw it in, then arrive at the
+      // location and pop its marker.
+      const startPt = roadStartPoint(locId);
+      const coords = LOCATION_COORDS[locId];
+      const midCb = (next) => {
+        if (startPt && coords) {
+          smoothZoomTo((startPt.x + coords.x) / 2, (startPt.y + coords.y) / 2, scale, 700, next);
+        } else {
+          next();
+        }
+      };
+      midCb(() => animateRoadReveal(locId, () => panToLocation(locId, () => {
         // Reveal with animation
         locEl.classList.remove('hidden-loc');
         locEl.style.transform = 'scale(0)';
@@ -6079,8 +6271,7 @@
         document.querySelectorAll('.minimap-dot[data-location="' + locId + '"]').forEach(d => d.classList.remove('hidden-loc'));
         document.querySelectorAll('.toolbar-btn[data-location="' + locId + '"]').forEach(b => b.classList.remove('hidden-loc'));
 
-        // Show roads leading to this location
-        applyRoadState();
+        // (Road already drew in animateRoadReveal)
 
         // Show banner
         const title = locations[locId] ? locations[locId].title : locId;
@@ -6093,7 +6284,7 @@
           locEl.style.opacity = '';
           if (callback) callback();
         }, 800);
-      });
+      }, 600)));
     }
 
     function spawnUnlockParticles(el) {
@@ -6152,17 +6343,38 @@
     }
 
     function startIntroSequence() {
-      // Pan to docks area
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      panX = (vw / 2) - (470 * scale);
-      panY = (vh / 2) - (1430 * scale);
+
+      // Reduced motion: no storm, no camera dive — straight to the docks
+      if (document.body.classList.contains('reduced-motion')) {
+        panX = (vw / 2) - (470 * scale);
+        panY = (vh / 2) - (1430 * scale);
+        clampPan();
+        updateTransform();
+        setTimeout(() => { startStory('_intro'); }, 600);
+        return;
+      }
+
+      // Establishing shot: whole island in frame under a storm sky, then the
+      // camera dives down onto Decoder Docks and the intro story begins.
+      scale = Math.max(0.4, Math.min(vw / 2400, vh / 2100));
+      panX = (vw / 2) - (1200 * scale);
+      panY = (vh / 2) - (1050 * scale);
       clampPan();
       updateTransform();
 
+      const sky = document.getElementById('intro-sky');
+      if (sky) sky.classList.add('active');
+
       setTimeout(() => {
-        startStory('_intro');
-      }, 600);
+        if (sky) sky.classList.add('fading');
+        const targetScale = Math.max(1.1, Math.max(vw / 2400, vh / 2100));
+        smoothZoomTo(470, 1430, targetScale, 3000, () => {
+          if (sky) sky.remove();
+          startStory('_intro');
+        });
+      }, 1500);
     }
 
     // ═══════════════════════════════════
@@ -6451,22 +6663,30 @@
     function showClueChallenge(opts) {
       activeChallenge = {
         answers: (Array.isArray(opts.answer) ? opts.answer : [opts.answer]).map(a => a.toUpperCase()),
-        hints: opts.hints || [],
         explanation: opts.explanation || '',
         successLine: opts.successLine || 'Solved!',
-        hintIdx: 0
+        wrongCount: 0
       };
       showGameModal(
         opts.intro + (opts.beforeClue ? '<br><br>' + opts.beforeClue : '') + '<br><br><em>"' + opts.clue + '"</em><br><br>' +
         '<input id="challenge-input" class="story-puzzle-input" style="width:100%;box-sizing:border-box;margin-bottom:8px;" placeholder="Solve the cryptic clue..." autocomplete="off" onkeydown="if(event.key===\'Enter\'){event.preventDefault();checkChallenge();}">' +
         '<div style="display:flex;gap:8px;">' +
         '<button type="button" class="story-puzzle-submit" onclick="checkChallenge()">Solve</button>' +
-        '<button type="button" class="story-puzzle-submit" style="opacity:0.85;" onclick="challengeHint()">Need a hint?</button>' +
         '</div>' +
+        '<div id="challenge-hint-area"></div>' +
         '<div id="challenge-feedback" style="margin-top:10px;min-height:1.3em;color:#F2C14E;"></div>' +
         (opts.postscript ? '<br>' + opts.postscript : ''),
         opts.title, opts.icon
       );
+      // Same hint component as story puzzles — one look, one behavior, always visible
+      const hintArea = document.getElementById('challenge-hint-area');
+      if (hintArea && (opts.hints || []).length && typeof BCWHints !== 'undefined') {
+        BCWHints.createHintButton(opts.hints, hintArea, 'challenge_' + (opts.title || 'untitled').replace(/\W+/g, '_').toLowerCase());
+      }
+      // Anatomy on the challenge clue too (no-op unless annotated)
+      if (typeof BCWClueAnatomy !== 'undefined') {
+        BCWClueAnatomy.annotate(document.getElementById('game-modal-body'));
+      }
       setTimeout(() => { const el = document.getElementById('challenge-input'); if (el) el.focus(); }, 300);
     }
 
@@ -6483,21 +6703,10 @@
         input.disabled = true;
         if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
       } else {
+        activeChallenge.wrongCount++;
         feedback.textContent = 'Not quite. Try again, or take a hint.';
         if (typeof BCWAudio !== 'undefined') BCWAudio.playWrong();
       }
-    }
-
-    function challengeHint() {
-      if (!activeChallenge) return;
-      const feedback = document.getElementById('challenge-feedback');
-      if (!feedback) return;
-      if (activeChallenge.hintIdx >= activeChallenge.hints.length) {
-        feedback.textContent = 'No more hints. You have everything you need.';
-        return;
-      }
-      feedback.textContent = activeChallenge.hints[activeChallenge.hintIdx];
-      activeChallenge.hintIdx++;
     }
 
     // ─── Telescope: a draggable window onto a wide night sky ───
@@ -6576,23 +6785,17 @@
         } else if (document.getElementById('detail-panel').classList.contains('active') ||
           document.getElementById('story-panel').classList.contains('active') ||
           document.getElementById('terminal-panel').classList.contains('active')) {
-          // Mid-story progress is lost on close — confirm before discarding it
-          const storyOpen = document.getElementById('story-panel').classList.contains('active');
-          if (storyOpen && currentStoryId && currentStepIndex > 0 &&
-              !confirm('Leave the story? Your progress in it will restart from the beginning.')) {
-            return;
-          }
           closePanel(); closeTerminal(); closeStory();
         } else {
           BCWSettings.open();
         }
       }
       if (e.key === '?' || e.key === '/') {
-        showKeyboardHelp();
+        showHelpOverlay();
       }
     });
 
-    function showKeyboardHelp() {
+    function showHelpOverlay() {
       // Remove existing if open
       const existing = document.getElementById('keyboard-help-overlay');
       if (existing) { existing.remove(); document.getElementById('keyboard-help-panel').remove(); return; }
@@ -6608,11 +6811,18 @@
       panel.innerHTML = `
         <button class="detail-close" onclick="document.getElementById('keyboard-help-overlay').click()">&times;</button>
         <div class="detail-header">
-          <div class="detail-icon" style="background: linear-gradient(135deg, #6a7d93, #4a5d73);">&#x2328;</div>
+          <div class="detail-icon" style="background: linear-gradient(135deg, #6a7d93, #4a5d73);">?</div>
           <div>
-            <div class="detail-title">Keyboard Shortcuts</div>
+            <div class="detail-title">Help</div>
           </div>
         </div>
+        <div id="help-anatomy-section"></div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin-top:12px;line-height:1.6;">
+          Every unlocked location has a <span style="color:#64D9A0;">Learn</span> lesson teaching one
+          clue technique — look for it on the location's panel. The Skill Guide scroll on the left
+          edge of the map tracks which techniques you've met.
+        </div>
+        <div style="font-family:monospace;font-size:0.72rem;letter-spacing:0.08em;color:rgba(255,255,255,0.45);margin-top:16px;text-transform:uppercase;">Keyboard shortcuts</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
           <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">Esc</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Close panels / Open settings</span></div>
           <div style="display:flex;justify-content:space-between;"><kbd style="background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:0.8rem;">M</kbd><span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Toggle minimap</span></div>
@@ -6626,6 +6836,8 @@
       document.body.appendChild(overlay);
       document.body.appendChild(panel);
     }
+    // Back-compat alias (old name)
+    function showKeyboardHelp() { showHelpOverlay(); }
 
     // ─── Debug Mode (disabled for production) ───
     const debugModeActive = false;
@@ -9683,6 +9895,12 @@
 <script src="js/settings.js"></script>
 <script src="js/tutorial.js"></script>
 <script src="js/designer.js"></script>
+<script src="js/clueAnnotations.js"></script>
+<script src="js/clueAnatomy.js"></script>
+<!-- Account/cloud-sync. type="module" because it dynamically imports the shared
+     auth modules; it boots after load and no-ops entirely when auth is not
+     configured, so the island never depends on it. -->
+<script type="module" src="js/account.js"></script>
 
 </body>
 

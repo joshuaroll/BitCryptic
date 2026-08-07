@@ -4,18 +4,35 @@
 // ═══════════════════════════════════
 
 const BCWTutorial = (() => {
-  const STORAGE_KEY = 'bcw_tutorial_complete';
+  const LEGACY_KEY = 'bcw_tutorial_complete';
+  const P1_KEY = 'bcw_tutorial_p1';
+  const P2_KEY = 'bcw_tutorial_p2';
   let currentStep = 0;
   let overlay = null;
   let isActive = false;
+  let activeSteps = [];
+  let activeKey = null;
 
-  const STEPS = [
+  // Phase 1 — right after the intro story: orient, point at the Docks.
+  // Map movement is NOT taught yet; that comes after the first solve.
+  const PHASE1_STEPS = [
     {
       target: null,
       title: 'Welcome to Bit Cryptic World',
       text: 'An island built out of word puzzles, with a few things it keeps to itself. Let me show you around.',
       position: 'center'
     },
+    {
+      target: null,
+      title: 'Ready to Explore!',
+      text: 'Click on glowing locations to explore them. Solve puzzles to unlock new areas. Start at the Decoder Docks. The Dock Keeper is expecting you.',
+      position: 'center'
+    }
+  ];
+
+  // Phase 2 — after the first story completes and the map has grown:
+  // now movement matters, so teach it.
+  const PHASE2_STEPS = [
     {
       target: '#map-container',
       title: 'The Island Map',
@@ -39,19 +56,23 @@ const BCWTutorial = (() => {
       title: 'Controls',
       text: 'Access settings, your profile, and more from here. Press the gear icon for settings.',
       position: 'bottom'
-    },
-    {
-      target: null,
-      title: 'Ready to Explore!',
-      text: 'Click on glowing locations to explore them. Solve puzzles to unlock new areas. Start at the Decoder Docks. The Dock Keeper is expecting you.',
-      position: 'center'
     }
   ];
 
+  function flagDone(key) {
+    try { return localStorage.getItem(key) === 'true'; } catch { return false; }
+  }
+
   function init() {
+    // Legacy migration: old single-flag completions have seen everything
     try {
-      if (localStorage.getItem(STORAGE_KEY) === 'true') return;
+      if (localStorage.getItem(LEGACY_KEY) === 'true') {
+        localStorage.setItem(P1_KEY, 'true');
+        localStorage.setItem(P2_KEY, 'true');
+        return;
+      }
     } catch {}
+    if (flagDone(P1_KEY)) return;
 
     // Wait for intro story to complete (not just loading screen)
     // The tutorial should show AFTER the player finishes washing ashore
@@ -67,10 +88,12 @@ const BCWTutorial = (() => {
     }, 1000);
   }
 
-  function start() {
+  function begin(steps, key) {
     if (isActive) return;
     isActive = true;
     currentStep = 0;
+    activeSteps = steps;
+    activeKey = key;
 
     // Create overlay
     overlay = document.createElement('div');
@@ -81,13 +104,24 @@ const BCWTutorial = (() => {
     showStep();
   }
 
+  function start() {
+    if (flagDone(P1_KEY)) return;
+    begin(PHASE1_STEPS, P1_KEY);
+  }
+
+  // Called after the first story's reveal sequence finishes
+  function startPhase2() {
+    if (flagDone(P2_KEY)) return;
+    begin(PHASE2_STEPS, P2_KEY);
+  }
+
   function showStep() {
-    if (currentStep >= STEPS.length) {
+    if (currentStep >= activeSteps.length) {
       complete();
       return;
     }
 
-    const step = STEPS[currentStep];
+    const step = activeSteps[currentStep];
 
     // Skip steps whose target is hidden at this viewport (e.g. minimap on mobile)
     if (step.target) {
@@ -148,12 +182,12 @@ const BCWTutorial = (() => {
       <h3 class="tutorial-title">${step.title}</h3>
       <p class="tutorial-text">${step.text}</p>
       <div class="tutorial-footer">
-        <div class="tutorial-dots">${STEPS.map((_, i) =>
+        <div class="tutorial-dots">${activeSteps.map((_, i) =>
           `<span class="tutorial-dot ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}"></span>`
         ).join('')}</div>
         <div class="tutorial-btns">
           <button class="tutorial-skip" onclick="BCWTutorial.skip()">Skip</button>
-          <button class="tutorial-next" onclick="BCWTutorial.next()">${currentStep === STEPS.length - 1 ? 'Start Playing!' : 'Next'}</button>
+          <button class="tutorial-next" onclick="BCWTutorial.next()">${currentStep === activeSteps.length - 1 ? (activeKey === P2_KEY ? 'Got it!' : 'Start Playing!') : 'Next'}</button>
         </div>
       </div>
     `;
@@ -180,7 +214,7 @@ const BCWTutorial = (() => {
 
   function complete() {
     isActive = false;
-    try { localStorage.setItem(STORAGE_KEY, 'true'); } catch {}
+    try { if (activeKey) localStorage.setItem(activeKey, 'true'); } catch {}
     if (overlay) {
       // Immediately stop blocking interaction
       overlay.style.pointerEvents = 'none';
@@ -199,12 +233,17 @@ const BCWTutorial = (() => {
   }
 
   function reset() {
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    try {
+      localStorage.removeItem(LEGACY_KEY);
+      localStorage.removeItem(P1_KEY);
+      localStorage.removeItem(P2_KEY);
+    } catch {}
   }
 
   return {
     init,
     start,
+    startPhase2,
     next,
     skip,
     reset

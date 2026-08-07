@@ -52,7 +52,7 @@ const BCWHints = (() => {
   }
 
   // Show a hint button that reveals on click
-  function createHintButton(hints, container) {
+  function createHintButton(hints, container, puzzleId) {
     const difficulty = getDifficulty();
     if (difficulty === 'hard' && hints.length === 0) return;
 
@@ -69,21 +69,14 @@ const BCWHints = (() => {
         if (currentHint >= hints.length) hintBtn.disabled = true;
 
         if (typeof BCWAnalytics !== 'undefined') {
-          BCWAnalytics.trackPuzzleHintUsed('manual', currentHint - 1);
+          BCWAnalytics.trackPuzzleHintUsed(puzzleId || 'manual', currentHint - 1);
         }
         if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
       }
     };
 
-    // Delay showing the hint button based on difficulty
-    const showDelay = { easy: 5000, normal: 15000, hard: 30000 }[difficulty];
-    hintBtn.style.opacity = '0';
-    hintBtn.style.transition = 'opacity 0.5s ease';
+    // Ever-present: no reveal delay — help is always in reach
     container.appendChild(hintBtn);
-
-    setTimeout(() => {
-      hintBtn.style.opacity = '1';
-    }, showDelay);
 
     return hintBtn;
   }
