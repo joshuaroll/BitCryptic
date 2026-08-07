@@ -1,0 +1,68 @@
+{
+  "_comment": "Clue-freeze proof. Regenerate ONLY after Joshua signs off on a clue change: node scripts/ci/check-clues.mjs --update",
+  "generated": "2026-07-28",
+  "count": 12,
+  "digest": "b3aacd987a0865b13e86c7700f8dea863b0dda6905cd3f3b91be5fca750ac0b0",
+  "clues": [
+    {
+      "clue": "Scheme with the alien for a world (6)",
+      "answer": "PLANET",
+      "hash": "b26c355e8e90eb44"
+    },
+    {
+      "clue": "Pirate beheaded is furious (5)",
+      "answer": "IRATE",
+      "hash": "a08216e6e6d75f29"
+    },
+    {
+      "clue": "Plank cut short reveals a scheme (4)",
+      "answer": "PLAN",
+      "hash": "da3fe97d439bca6e"
+    },
+    {
+      "clue": "Treasure hidden in each estimate (5)",
+      "answer": "CHEST",
+      "hash": "bbd39c00c810f7ee"
+    },
+    {
+      "clue": "This beast makes proceedings drag on (6)",
+      "answer": "DRAGON",
+      "hash": "728736057e4768af"
+    },
+    {
+      "clue": "Fun race, wildly, leads to the source of heat (7)",
+      "answer": "FURNACE",
+      "hash": "b6cf8caf6dba31d2"
+    },
+    {
+      "clue": "\"Flustered macho gets a coffee (5)\"",
+      "answer": "MOCHA",
+      "hash": "845ec0693e7f1633"
+    },
+    {
+      "clue": "\"Faced about for coffee without the kick (5)\"",
+      "answer": "DECAF",
+      "hash": "932f4dad04b18493"
+    },
+    {
+      "clue": "A shaft of moonlight smiles widely (4)",
+      "answer": "BEAM",
+      "hash": "53c0199bc4ad9e4e"
+    },
+    {
+      "clue": "Nautical, dropping anchor's head, turns moonstruck (7)",
+      "answer": "LUNATIC",
+      "hash": "0b284d5db934945f"
+    },
+    {
+      "clue": "Taxi in? There's your quarters aboard (5)",
+      "answer": "CABIN",
+      "hash": "8591cb5631c5084e"
+    },
+    {
+      "clue": "Reward sent back: a place for socks (6)",
+      "answer": "DRAWER",
+      "hash": "341b3f296abc9fee"
+    }
+  ]
+}
