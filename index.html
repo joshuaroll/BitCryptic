@@ -9289,9 +9289,75 @@
       renderBucket();
     }
 
-    // Fish log (all time, sold fish)
-    function getFishCatches() { try { return JSON.parse(localStorage.getItem(FISH_STORAGE_KEY)) || []; } catch(e) { return []; } }
-    function saveFishCatch(f) { const c = getFishCatches(); c.push(f); localStorage.setItem(FISH_STORAGE_KEY, JSON.stringify(c)); window.BCSync?.schedulePush('world'); }
+    // ─── Fish log (all time, sold fish) ───
+    //
+    // This list grew one entry per sold fish forever. The cloud sync RPC hard-
+    // rejects any payload over 256 KB uncompressed, and it rejects the WHOLE
+    // save — so a dedicated angler would eventually stop syncing anything at
+    // all: house, stories, achievements, everything, with no visible cause.
+    //
+    // So the log keeps the newest FISH_LOG_CAP catches and rolls everything
+    // older into a per-species aggregate. Nothing a player can see is lost:
+    // the only two consumers want species totals, best weight and a grand
+    // total, all of which the aggregate carries exactly.
+    const FISH_LOG_CAP = 300;
+    const FISH_STATS_KEY = 'bitcryptic_fish_stats';
+
+    // { total, species: { name: { count, bestWeight, rarity, emoji } } }
+    function getFishStats() {
+      try {
+        const s = JSON.parse(localStorage.getItem(FISH_STATS_KEY));
+        if (s && typeof s === 'object' && s.species && typeof s.species === 'object') {
+          return { total: typeof s.total === 'number' ? s.total : 0, species: s.species };
+        }
+      } catch (e) {}
+      return { total: 0, species: {} };
+    }
+
+    function foldIntoStats(stats, fish) {
+      if (!fish || !fish.name) return;
+      const s = stats.species[fish.name] || (stats.species[fish.name] = {
+        count: 0, bestWeight: 0, rarity: fish.rarity, emoji: fish.emoji || '🐟'
+      });
+      s.count++;
+      const w = typeof fish.weight === 'number' ? fish.weight : 0;
+      if (w > s.bestWeight) s.bestWeight = w;
+      // A species keeps whatever rarity/emoji it was last seen with; these are
+      // static per species in FISH_TYPES, so this only fills in older entries
+      // that predate a field.
+      if (!s.rarity && fish.rarity) s.rarity = fish.rarity;
+      if (!s.emoji && fish.emoji) s.emoji = fish.emoji;
+      stats.total++;
+    }
+
+    function getFishCatches() { try { const v = JSON.parse(localStorage.getItem(FISH_STORAGE_KEY)); return Array.isArray(v) ? v : []; } catch(e) { return []; } }
+
+    function saveFishCatch(f) {
+      const c = getFishCatches();
+      c.push(f);
+      if (c.length > FISH_LOG_CAP) {
+        // Fold the overflow into the aggregate BEFORE dropping it, so the
+        // totals a player sees never move.
+        const stats = getFishStats();
+        const dropped = c.splice(0, c.length - FISH_LOG_CAP);
+        dropped.forEach(d => foldIntoStats(stats, d));
+        try { localStorage.setItem(FISH_STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+      }
+      localStorage.setItem(FISH_STORAGE_KEY, JSON.stringify(c));
+      window.BCSync?.schedulePush('world');
+    }
+
+    // Species totals across the whole history: the trimmed aggregate plus the
+    // entries still in the live log. This is what every consumer should use.
+    function getFishSummary() {
+      const stats = getFishStats();
+      const summary = { total: stats.total, species: {} };
+      for (const [name, s] of Object.entries(stats.species)) {
+        summary.species[name] = { count: s.count, bestWeight: s.bestWeight, rarity: s.rarity, emoji: s.emoji || '🐟' };
+      }
+      getFishCatches().forEach(f => foldIntoStats(summary, f));
+      return summary;
+    }
 
     // Sell price
     function getFishPrice(fish) {
@@ -9615,7 +9681,12 @@
       document.getElementById('session-count').textContent = sessionCatches;
 
       if (typeof BCWAchievements !== 'undefined') {
-        const uniqueSpecies = new Set(getFishCatches().concat(bucket).map(f => f.name)).size;
+        // Summary, not the raw log — otherwise trimming the log would silently
+        // re-lock the fish_collection achievement for the players who earned it
+        // most.
+        const seen = new Set(Object.keys(getFishSummary().species));
+        bucket.forEach(f => seen.add(f.name));
+        const uniqueSpecies = seen.size;
         BCWAchievements.checkFishing({
           caught: true,
           weight: fish.weight,
@@ -9749,24 +9820,21 @@
     }
 
     function renderFishLog() {
-      const catches = getFishCatches();
+      // Reads the summary so a trimmed log still shows lifetime totals — the
+      // panel was only ever a grouped view, never a per-catch list, so nothing
+      // on screen changes.
+      const summary = getFishSummary();
       const log = document.getElementById('fish-log');
       if (!log) return;
-      if (catches.length === 0) {
+      if (summary.total === 0) {
         log.innerHTML = '<div style="color:rgba(255,255,255,0.4);text-align:center;">No fish sold yet.</div>';
         return;
       }
-      const grouped = {};
-      catches.forEach(f => {
-        if (!grouped[f.name]) grouped[f.name] = { count: 0, bestWeight: 0, rarity: f.rarity, emoji: f.emoji || '🐟' };
-        grouped[f.name].count++;
-        if (f.weight > grouped[f.name].bestWeight) grouped[f.name].bestWeight = f.weight;
-      });
       let html = '';
-      for (const [name, data] of Object.entries(grouped).sort((a, b) => b[1].count - a[1].count)) {
+      for (const [name, data] of Object.entries(summary.species).sort((a, b) => b[1].count - a[1].count)) {
         html += '<div class="fish-entry"><span>' + data.emoji + ' ' + name + '</span><span class="rarity-' + data.rarity + '">' + data.count + ' sold (best: ' + data.bestWeight + ' kg)</span></div>';
       }
-      html += '<div style="margin-top:8px;color:rgba(255,255,255,0.35);font-size:0.8rem;">Total: ' + catches.length + ' fish sold</div>';
+      html += '<div style="margin-top:8px;color:rgba(255,255,255,0.35);font-size:0.8rem;">Total: ' + summary.total + ' fish sold</div>';
       log.innerHTML = html;
     }
 

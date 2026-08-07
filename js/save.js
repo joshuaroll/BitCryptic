@@ -4,11 +4,21 @@
 // ═══════════════════════════════════
 
 const BCWSave = (() => {
+  // Everything export / import / reset touches.
+  //
+  // This list drifted out of step with the game: the two tutorial phase flags,
+  // the anatomy taught flag and the fish-log aggregate were all real progress
+  // that export silently dropped and reset silently left behind — so a "full
+  // reset" re-taught nothing and a restored export lost lifetime fish totals.
+  // The cloud's own list (GAME_KEYS.world in shared/auth/bc-sync.js) already
+  // treated them as progress; these two lists now agree, except bcw_analytics,
+  // which belongs in a local export but is deliberately never uploaded.
   const ALL_KEYS = [
     'bitcryptic_progress',
     'bitcryptic_unlocked_codes',
     'bitcryptic_house',
     'bitcryptic_fish',
+    'bitcryptic_fish_stats',
     'bitcryptic_fish_coins',
     'bitcryptic_fish_bucket',
     'bitcryptic_fish_upgrades',
@@ -19,7 +29,10 @@ const BCWSave = (() => {
     'bcw_settings',
     'bcw_achievements',
     'bcw_analytics',
-    'bcw_tutorial_complete'
+    'bcw_tutorial_complete',
+    'bcw_tutorial_p1',
+    'bcw_tutorial_p2',
+    'bcw_anatomy_taught'
   ];
 
   // Safely get from localStorage with fallback
@@ -144,6 +157,45 @@ const BCWSave = (() => {
     location.reload();
   }
 
+  // Fish-log cap. Must match FISH_LOG_CAP / FISH_STATS_KEY in index.html —
+  // this module runs the ONE-TIME migration for saves created before the cap
+  // existed, which can be tens of thousands of entries and, left alone, would
+  // push the whole save past the 256 KB cloud-sync limit and stop every key
+  // from syncing.
+  const FISH_LOG_CAP = 300;
+  const FISH_STATS_KEY = 'bitcryptic_fish_stats';
+
+  // Fold the overflow into per-species aggregates before trimming. Lossless
+  // for everything the game actually reads back: species totals, best weight,
+  // and the lifetime count.
+  function migrateFishLog(fishLog) {
+    const existing = safeGet(FISH_STATS_KEY);
+    const stats = (existing && typeof existing === 'object' && existing.species)
+      ? { total: typeof existing.total === 'number' ? existing.total : 0, species: existing.species }
+      : { total: 0, species: {} };
+
+    const overflow = fishLog.slice(0, fishLog.length - FISH_LOG_CAP);
+    overflow.forEach(f => {
+      if (!f || !f.name) return;
+      const s = stats.species[f.name] || (stats.species[f.name] = {
+        count: 0, bestWeight: 0, rarity: f.rarity, emoji: f.emoji || '🐟'
+      });
+      s.count++;
+      const w = typeof f.weight === 'number' ? f.weight : 0;
+      if (w > s.bestWeight) s.bestWeight = w;
+      if (!s.rarity && f.rarity) s.rarity = f.rarity;
+      if (!s.emoji && f.emoji) s.emoji = f.emoji;
+      stats.total++;
+    });
+
+    // Stats first: if the second write fails, the aggregate is already safe and
+    // the untrimmed log is still there to retry from. The reverse order could
+    // drop catches on a storage error.
+    if (safeSet(FISH_STATS_KEY, stats)) {
+      safeSet('bitcryptic_fish', fishLog.slice(fishLog.length - FISH_LOG_CAP));
+    }
+  }
+
   // Check save data integrity on load
   function validateSave() {
     // Validate progress
@@ -182,6 +234,7 @@ const BCWSave = (() => {
     // Validate fishing data (stored across separate keys)
     const fishLog = safeGet('bitcryptic_fish');
     if (fishLog !== null && !Array.isArray(fishLog)) safeSet('bitcryptic_fish', []);
+    else if (Array.isArray(fishLog) && fishLog.length > FISH_LOG_CAP) migrateFishLog(fishLog);
     const fishBucket = safeGet('bitcryptic_fish_bucket');
     if (fishBucket !== null && !Array.isArray(fishBucket)) safeSet('bitcryptic_fish_bucket', []);
     const fishCoins = safeGet('bitcryptic_fish_coins');
