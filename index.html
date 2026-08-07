@@ -4146,6 +4146,23 @@
           showUnlockBanner('Trophy: ' + reward.label);
         }, 1500);
       }
+      // The one-time guest reminder (W4). Fires at the FIRST story a player ever
+      // finishes: before that there is nothing worth protecting, and after it
+      // they have a real stake in not losing the island.
+      //
+      // Gated on isNew AND on the count being exactly one, so replaying the
+      // docks or importing a save never re-triggers it. The shared helper's
+      // once-per-device guard is the real backstop; this just keeps the call
+      // honest about what it means.
+      //
+      // Delayed past the reveal sequence and the trophy banner — a toast that
+      // lands on top of the reward the player just earned reads as an
+      // interruption, which is the one thing this reminder must never be.
+      if (isNew && state.completedStories.length === 1) {
+        setTimeout(() => {
+          if (typeof BCWAccount !== 'undefined' && BCWAccount.nudgeGuest) BCWAccount.nudgeGuest();
+        }, 4000);
+      }
     }
 
     function resetProgress() {

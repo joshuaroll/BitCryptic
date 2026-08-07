@@ -338,20 +338,46 @@ const BCWSettings = (() => {
       wrap.appendChild(btns);
     }
 
+    // Policy links, in BOTH states. A guest weighing up whether to hand over an
+    // email is exactly the person who needs to read these first, so putting
+    // them behind sign-in would be backwards.
+    //
+    // Root-absolute because these pages live at the site root, not under
+    // /world/. They only render when auth is configured, which is only ever on
+    // the deployed site — the standalone/E2E case returns above and never
+    // reaches this, so there is no path here that renders a link to a 404.
+    const legal = document.createElement('p');
+    legal.className = 'settings-account-legal';
+    const privacy = document.createElement('a');
+    privacy.href = '/privacy/';
+    privacy.target = '_blank';
+    privacy.rel = 'noopener';
+    privacy.textContent = 'Privacy';
+    const terms = document.createElement('a');
+    terms.href = '/terms/';
+    terms.target = '_blank';
+    terms.rel = 'noopener';
+    terms.textContent = 'Terms';
+    legal.appendChild(privacy);
+    legal.appendChild(document.createTextNode(' · '));
+    legal.appendChild(terms);
+    legal.appendChild(document.createTextNode(' · Accounts are for players 13 and up. Younger puzzlers are welcome to play as guests — nothing is collected.'));
+    wrap.appendChild(legal);
+
     host.appendChild(wrap);
   }
 
   // The shared account panel (rename / export / delete / sign out / policy
-  // links) is S5 and lands in M3. Until then this falls back to the sign-in
-  // modal, which at least reaches a real surface. Wired to the documented API
-  // name so the fallback disappears the moment S5 ships, with no edit here.
+  // links) — S5, now shipped. It self-manages every action against BCAuth, so
+  // there is nothing to do here but open it and re-render afterwards: signing
+  // out or deleting from inside the panel changes what this section should say.
   function openAccountPanel() {
-    if (typeof BCAuthUI === 'undefined') return;
-    if (typeof BCAuthUI.openAccount === 'function') {
-      BCAuthUI.openAccount({ game: 'world' });
-      return;
-    }
-    BCAuthUI.open({ reason: 'Manage your account.', onGuest: () => {} });
+    if (typeof BCAuthUI === 'undefined' || typeof BCAuthUI.openAccount !== 'function') return;
+    BCAuthUI.openAccount({
+      onSignOut: () => renderAccountSection(),
+      onDeleted: () => renderAccountSection(),
+      onClose: () => renderAccountSection(),
+    });
   }
 
   // Privacy requirement: the player can take everything the account holds.

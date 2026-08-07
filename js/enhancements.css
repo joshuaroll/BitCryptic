@@ -341,6 +341,23 @@ body.high-contrast .terminal-panel {
   line-height: 1.5;
   margin-bottom: 10px;
 }
+/* Policy links + the 13+ statement. Quieter than the status line above it —
+   this is reference material, not something the player has to act on. */
+.settings-account-legal {
+  color: #64748B;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+.settings-account-legal a {
+  color: #94A3B8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.settings-account-legal a:hover,
+.settings-account-legal a:focus-visible {
+  color: #F2C14E;
+}
 
 /* Stats */
 .settings-stats {}
