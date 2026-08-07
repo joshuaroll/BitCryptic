@@ -23,6 +23,7 @@ const BCWSettings = (() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     } catch {}
+    window.BCSync?.schedulePush('world');
   }
 
   function createSettingsPanel() {

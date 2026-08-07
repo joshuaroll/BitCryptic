@@ -76,6 +76,16 @@ const BCWAccount = (() => {
         if (document.visibilityState === 'hidden') BCSync.flush().catch(() => {});
       });
 
+      // Safety net. Every writer site schedules its own debounced push, but a
+      // missed one (a new feature, a code path nobody thought about) would
+      // silently strand progress on this device — the exact failure this whole
+      // system exists to prevent. A minute is cheap insurance: push() no-ops on
+      // an unchanged fingerprint before any network call, so an idle tab costs
+      // one JSON.stringify per minute and zero requests.
+      setInterval(() => {
+        if (BCAuth.getState().signedIn) BCSync.push('world').catch(() => {});
+      }, 60_000);
+
       ready = true;
       render();
       return true;

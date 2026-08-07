@@ -71,6 +71,10 @@ const BCWAchievements = (() => {
         unlocked, puzzleStreak, totalPuzzlesSolved
       }));
     } catch {}
+    // Mirror to the cloud when signed in. Optional-chained because BCSync only
+    // exists once the shared auth modules load — guests and offline play must
+    // never notice this line at all.
+    window.BCSync?.schedulePush('world');
   }
 
   function unlock(id) {

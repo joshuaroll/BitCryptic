@@ -82,6 +82,7 @@ const BCWAudio = (() => {
         enabled, musicVolume, sfxVolume, textSfxEnabled, textSoundStyle, textSoundFrequency
       }));
     } catch {}
+    window.BCSync?.schedulePush('world');
   }
 
   // Synthesized tones using Web Audio API (no external files needed)

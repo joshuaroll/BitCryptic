@@ -68,6 +68,7 @@ const BCWAccessibility = (() => {
         reducedMotion, highContrast, fontSize
       }));
     } catch {}
+    window.BCSync?.schedulePush('world');
   }
 
   function applySettings() {

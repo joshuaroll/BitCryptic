@@ -40,4 +40,5 @@ graphify-out/
 
 # Test artifacts / stray output
 test-results/
+playwright-report/
 undefined/

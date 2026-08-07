@@ -6942,6 +6942,7 @@
       if (!codes.includes(code)) {
         codes.push(code);
         localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify(codes));
+        window.BCSync?.schedulePush('world');
       }
     }
 
@@ -7939,6 +7940,7 @@
         houseRedoStack = [];
       }
       localStorage.setItem(HOUSE_STORAGE_KEY, JSON.stringify(state));
+      window.BCSync?.schedulePush('world');
       updateUndoRedoButtons();
     }
 
@@ -7954,6 +7956,7 @@
       const current = localStorage.getItem(HOUSE_STORAGE_KEY);
       if (current) houseRedoStack.push(current);
       localStorage.setItem(HOUSE_STORAGE_KEY, houseUndoStack.pop());
+      window.BCSync?.schedulePush('world');
       updateUndoRedoButtons();
       houseSelectedIdx = -1;
       renderHouse();
@@ -7964,6 +7967,7 @@
       const current = localStorage.getItem(HOUSE_STORAGE_KEY);
       if (current) houseUndoStack.push(current);
       localStorage.setItem(HOUSE_STORAGE_KEY, houseRedoStack.pop());
+      window.BCSync?.schedulePush('world');
       updateUndoRedoButtons();
       houseSelectedIdx = -1;
       renderHouse();
@@ -9121,6 +9125,7 @@
 
     function saveCheeseCollection(arr) {
       localStorage.setItem(CHEESE_STORAGE_KEY, JSON.stringify(arr));
+      window.BCSync?.schedulePush('world');
     }
 
     function getLastCheeseTime() {
@@ -9152,6 +9157,7 @@
       collection.push({ name: cheese.name, desc: cheese.desc, color: cheese.color, rarity: cheese.rarity, collectedAt: new Date().toISOString() });
       saveCheeseCollection(collection);
       localStorage.setItem(CHEESE_COOLDOWN_KEY, String(now));
+      window.BCSync?.schedulePush('world');
 
       // Show result
       const rarityColors = { common: '#94A3B8', uncommon: '#4a9ae8', rare: '#a070e0', epic: '#FB923C', legendary: '#F2C14E' };
@@ -9247,12 +9253,12 @@
 
     // Coin management
     function getCoins() { return parseInt(localStorage.getItem(FISH_COINS_KEY)) || 0; }
-    function setCoins(n) { localStorage.setItem(FISH_COINS_KEY, String(Math.max(0, Math.floor(n)))); }
+    function setCoins(n) { localStorage.setItem(FISH_COINS_KEY, String(Math.max(0, Math.floor(n)))); window.BCSync?.schedulePush('world'); }
     function addCoins(n) { setCoins(getCoins() + n); }
 
     // Bucket management
     function getBucket() { try { return JSON.parse(localStorage.getItem(FISH_BUCKET_KEY)) || []; } catch(e) { return []; } }
-    function saveBucket(arr) { localStorage.setItem(FISH_BUCKET_KEY, JSON.stringify(arr)); }
+    function saveBucket(arr) { localStorage.setItem(FISH_BUCKET_KEY, JSON.stringify(arr)); window.BCSync?.schedulePush('world'); }
     function getBucketMax() {
       const owned = getUpgrades();
       const bucketUpgrades = FISH_UPGRADES.filter(u => u.type === 'bucket' && owned.includes(u.id));
@@ -9272,6 +9278,7 @@
       setCoins(coins - upg.cost);
       owned.push(id);
       localStorage.setItem(FISH_UPGRADES_KEY, JSON.stringify(owned));
+      window.BCSync?.schedulePush('world');
       // Trophy unlocks the mounted fish wall decoration in your home
       if (id === 'trophy1' && typeof addFurniture === 'function') {
         try { addFurniture('mountedFish'); } catch(e) {}
@@ -9284,7 +9291,7 @@
 
     // Fish log (all time, sold fish)
     function getFishCatches() { try { return JSON.parse(localStorage.getItem(FISH_STORAGE_KEY)) || []; } catch(e) { return []; } }
-    function saveFishCatch(f) { const c = getFishCatches(); c.push(f); localStorage.setItem(FISH_STORAGE_KEY, JSON.stringify(c)); }
+    function saveFishCatch(f) { const c = getFishCatches(); c.push(f); localStorage.setItem(FISH_STORAGE_KEY, JSON.stringify(c)); window.BCSync?.schedulePush('world'); }
 
     // Sell price
     function getFishPrice(fish) {

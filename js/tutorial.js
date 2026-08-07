@@ -69,6 +69,7 @@ const BCWTutorial = (() => {
       if (localStorage.getItem(LEGACY_KEY) === 'true') {
         localStorage.setItem(P1_KEY, 'true');
         localStorage.setItem(P2_KEY, 'true');
+        window.BCSync?.schedulePush('world');
         return;
       }
     } catch {}
@@ -215,6 +216,7 @@ const BCWTutorial = (() => {
   function complete() {
     isActive = false;
     try { if (activeKey) localStorage.setItem(activeKey, 'true'); } catch {}
+    window.BCSync?.schedulePush('world');
     if (overlay) {
       // Immediately stop blocking interaction
       overlay.style.pointerEvents = 'none';

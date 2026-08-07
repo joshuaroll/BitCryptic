@@ -144,6 +144,7 @@ const BCWClueAnatomy = (() => {
     if (tip) tip.remove();
     document.querySelectorAll('.anatomy-pulse').forEach(el => el.classList.remove('anatomy-pulse'));
     try { localStorage.setItem(TAUGHT_KEY, 'true'); } catch {}
+    window.BCSync?.schedulePush('world');
   }
 
   // Dev-mode integrity sweep: every segment must be locatable in its key
