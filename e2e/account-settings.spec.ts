@@ -30,10 +30,21 @@ async function bootWithAuth(page: Page, stub: Stub) {
         return { dataDeleted: true, authRowDeleted: true };
       },
     };
-    w.BCAuthUI = { open: () => { w.__authUiOpened = true; } };
-    w.BCWAccount = { isReady: () => s.ready !== false, boot: async () => false, render: () => {} };
+    w.BCAuthUI = {
+      open: () => { w.__authUiOpened = true; },
+      openAccount: () => { w.__accountOpened = true; return true; },
+    };
+    w.__stubAccount = { isReady: () => s.ready !== false, boot: async () => false, render: () => {} };
   }, stub);
   await page.goto('/index.html', { waitUntil: 'load' });
+  // js/account.js publishes the real BCWAccount on load (it is a module, so the
+  // global assignment is explicit). Install the stub AFTER load or the real one
+  // wins the race and isReady() is false forever.
+  await page.evaluate(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    w.BCWAccount = w.__stubAccount;
+  });
   await page.evaluate(() => eval('BCWSettings.open()'));
 }
 

@@ -125,6 +125,32 @@ const BCWAccount = (() => {
     }, 4200);
   }
 
+  // The one ACTIVE guest reminder (W4 / S6 rule 2). Called from completeStory in
+  // index.html at the first story completion — the first moment the player has
+  // something they would be sorry to lose.
+  //
+  // The once-ever guard, the signed-in check and the storage-failure handling
+  // all live in the shared helper (bc-auth-ui.js guestNudge, guard key
+  // bc-guest-nudge:world, deliberately outside bc-sync's GAME_KEYS so it never
+  // follows an account to a new device). World does NOT hand-roll a second
+  // toast: one implementation means the island and the tower cannot drift into
+  // nudging the same player twice with two different voices.
+  //
+  // Every failure path is a silent no-op. A guest who is not offered an account
+  // has lost nothing; a guest interrupted mid-reveal by a broken toast has.
+  function nudgeGuest() {
+    if (!ready) return false;
+    if (typeof BCAuthUI === 'undefined' || typeof BCAuthUI.guestNudge !== 'function') return false;
+    try {
+      return BCAuthUI.guestNudge('world', {
+        reason: 'One account covers the island and the tower. Sign in and your progress follows you between them, and onto any device.',
+        onDone: () => render(),
+      });
+    } catch {
+      return false;
+    }
+  }
+
   function render() {
     const slot = document.getElementById('hud-account');
     if (!slot) return;
@@ -146,9 +172,16 @@ const BCWAccount = (() => {
     if (state.signedIn) {
       btn.textContent = state.displayName || 'Account';
       btn.title = 'Signed in as ' + (state.email || state.displayName) + ' — click to sign out';
-      btn.setAttribute('aria-label', 'Signed in. Click to sign out.');
+      btn.setAttribute('aria-label', 'Signed in. Open your account.');
+      // Opens the shared account panel (rename / export / delete / sign out /
+      // policy links) rather than signing out on the spot. A single click that
+      // silently ends the session was always the wrong default: it is the one
+      // destructive thing on this control and it had no confirmation, while the
+      // things a player actually needs — take my data, delete my account — had
+      // no entry point at all.
       btn.addEventListener('click', () => {
-        BCAuth.signOut().catch((e) => console.warn('[account] sign out failed:', e.message));
+        if (typeof BCAuthUI === 'undefined' || typeof BCAuthUI.openAccount !== 'function') return;
+        BCAuthUI.openAccount({ onSignOut: render, onDeleted: render });
       });
     } else {
       btn.textContent = 'Sign in';
@@ -164,8 +197,20 @@ const BCWAccount = (() => {
     slot.appendChild(btn);
   }
 
-  return { boot, render, isReady: () => ready };
+  return { boot, render, nudgeGuest, isReady: () => ready };
 })();
+
+// This file is loaded as <script type="module"> (index.html) because it uses
+// dynamic import() for the config probe and the shared auth modules. That makes
+// the const above MODULE-scoped, not a global — unlike every other js/ module
+// here, which is a classic script whose top-level const does become one.
+//
+// So publish it explicitly. Two consumers read it off window and would both
+// fail silently without this: settings.js:276 gates the whole account section
+// (export / delete / policy links) on `typeof BCWAccount !== 'undefined'`, and
+// index.html's completeStory gates the guest nudge the same way. Both would
+// simply never render — no error, no clue why.
+window.BCWAccount = BCWAccount;
 
 // Boot after the page has settled so auth never competes with the island for
 // first paint.
