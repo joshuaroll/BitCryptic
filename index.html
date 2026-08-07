@@ -870,6 +870,41 @@
       box-shadow: 0 6px 28px rgba(251, 146, 60, 0.35);
     }
 
+    /* Confirm variant: two buttons side by side. Cancel is the quiet one and
+       comes first, so the destructive action is never what a fast click lands
+       on by muscle memory. */
+    .game-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .game-modal-actions .game-modal-btn { flex: 1; }
+    .game-modal-btn.secondary {
+      background: transparent;
+      color: #CBD5E1;
+      border: 1px solid #2A3553;
+      box-shadow: none;
+    }
+    .game-modal-btn.secondary:hover {
+      background: #1E2540;
+      color: #E2E8F0;
+      border-color: #F2C14E;
+      box-shadow: none;
+    }
+    .game-modal-btn.danger {
+      background: #F87171;
+      color: #0B1021;
+      box-shadow: 0 4px 20px rgba(248, 113, 113, 0.25);
+    }
+    .game-modal-btn.danger:hover {
+      background: #E85555;
+      color: #fff;
+      box-shadow: 0 6px 28px rgba(248, 113, 113, 0.35);
+    }
+    .keyboard-nav .game-modal-btn:focus {
+      outline: 2px solid #F2C14E;
+      outline-offset: 2px;
+    }
+
     /* ─── Sparkle particles ─── */
     .sparkle {
       position: absolute;
@@ -6655,6 +6690,127 @@
       const overlay = document.getElementById('game-modal-overlay');
       if (overlay) overlay.classList.remove('active');
       if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuClose();
+    }
+
+    // ─── Branded confirm ───
+    //
+    // Replaces native confirm(), which was the last place the island dropped
+    // out of its own skin: an OS dialog in a system font, over a game that has
+    // spent the whole session establishing a look. It is also unstyleable,
+    // untestable, and on mobile it can be suppressed entirely by the browser —
+    // which would silently turn "cancel" into "yes, delete everything".
+    //
+    // Returns a Promise<boolean>, so callers read the same as before.
+    // Deliberately its own overlay rather than reusing #game-modal-overlay:
+    // the reset flow chains two confirms, and sharing one node made the second
+    // reuse the first's still-animating element.
+    function showGameConfirm(opts) {
+      const o = opts || {};
+      return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'game-modal-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', o.title || 'Confirm');
+
+        const modal = document.createElement('div');
+        modal.className = 'game-modal';
+
+        if (o.icon) {
+          const iconEl = document.createElement('div');
+          iconEl.className = 'game-modal-icon';
+          iconEl.textContent = o.icon;
+          modal.appendChild(iconEl);
+        }
+        if (o.title) {
+          const titleEl = document.createElement('div');
+          titleEl.className = 'game-modal-title';
+          titleEl.textContent = o.title;
+          modal.appendChild(titleEl);
+        }
+
+        const bodyEl = document.createElement('div');
+        bodyEl.className = 'game-modal-body';
+        // textContent, not innerHTML — this helper exists partly to be safe by
+        // construction, and no caller needs markup here.
+        bodyEl.textContent = o.message || '';
+        modal.appendChild(bodyEl);
+
+        const actions = document.createElement('div');
+        actions.className = 'game-modal-actions';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'game-modal-btn secondary';
+        cancelBtn.textContent = o.cancelLabel || 'Cancel';
+
+        const okBtn = document.createElement('button');
+        okBtn.type = 'button';
+        okBtn.className = 'game-modal-btn' + (o.danger ? ' danger' : '');
+        okBtn.textContent = o.confirmLabel || 'Continue';
+
+        actions.appendChild(cancelBtn);
+        actions.appendChild(okBtn);
+        modal.appendChild(actions);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const previouslyFocused = document.activeElement;
+        let settled = false;
+
+        function finish(result) {
+          if (settled) return;
+          settled = true;
+          document.removeEventListener('keydown', onKey, true);
+          overlay.classList.remove('active');
+          if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuClose();
+          setTimeout(() => { try { overlay.remove(); } catch (e) {} }, 250);
+          try { if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus(); } catch (e) {}
+          resolve(result);
+        }
+
+        function onKey(e) {
+          // Escape cancels. On a destructive prompt the safe answer must always
+          // be one keystroke away.
+          if (e.key === 'Escape') { e.preventDefault(); finish(false); return; }
+          if (e.key !== 'Tab') return;
+          // Minimal focus trap: only two focusable elements live in here.
+          e.preventDefault();
+          (document.activeElement === okBtn ? cancelBtn : okBtn).focus();
+        }
+
+        cancelBtn.addEventListener('click', () => finish(false));
+        okBtn.addEventListener('click', () => finish(true));
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) finish(false); });
+        document.addEventListener('keydown', onKey, true);
+
+        requestAnimationFrame(() => {
+          overlay.classList.add('active');
+
+          // Focus lands on Cancel, not the destructive button — a keyboard
+          // player hitting Enter on reflex must not erase their save.
+          //
+          // Focusing here does NOT work: .active only starts a 0.25s
+          // visibility transition, and .focus() on a still-hidden element is a
+          // silent no-op. Measured: focus stayed on <body> for the whole
+          // animation, so the dialog opened with nothing focused, Escape and
+          // Tab had no anchor, and a screen reader landed nowhere.
+          //
+          // So wait for the transition to actually finish, with a timeout
+          // fallback because transitionend never fires under prefers-reduced-
+          // motion or when a background tab throttles animations.
+          let focused = false;
+          const takeFocus = () => {
+            if (focused || settled) return;
+            focused = true;
+            try { cancelBtn.focus(); } catch (e) {}
+          };
+          overlay.addEventListener('transitionend', takeFocus, { once: true });
+          setTimeout(takeFocus, 300);
+        });
+        if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
+        if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.announce(o.title || 'Confirmation required');
+      });
     }
 
     // ─── Bonus clue challenges: a solvable clue inside a modal, with stepped hints ───

@@ -45,8 +45,74 @@ const BCWAnalytics = (() => {
       flushEvents();
     });
 
+    installGlobalErrorHook();
+
     // Auto-flush every 30 seconds
     flushTimer = setInterval(flushEvents, 30000);
+  }
+
+  // ─── Global error hook ───
+  //
+  // Until now trackError only fired inside explicit try/catch, so the errors
+  // nobody predicted — the ones that matter — went nowhere. A thrown error in
+  // an event handler kills that handler and nothing else, which is why the
+  // island can look fine while one button has quietly stopped working.
+  //
+  // Three rules, in order of importance:
+  //   1. NEVER touch a save. An error handler that "cleans up" is how a player
+  //      loses a year of progress to a typo. This one only records.
+  //   2. Never break the game further. The handler does not preventDefault, so
+  //      the console still shows everything a developer expects, and it is
+  //      wrapped so a failure inside it cannot cascade.
+  //   3. Stay local. This is the same no-network telemetry as every other
+  //      event — bcw_analytics is deliberately excluded from cloud sync.
+  let errorHookInstalled = false;
+  let errorsThisSession = 0;
+  const MAX_ERRORS_LOGGED = 25;
+
+  function installGlobalErrorHook() {
+    if (errorHookInstalled || typeof window === 'undefined') return;
+    errorHookInstalled = true;
+
+    // A render loop throwing every frame would otherwise fill storage with
+    // 60 identical entries a second and evict real progress.
+    function record(kind, message, detail) {
+      if (errorsThisSession >= MAX_ERRORS_LOGGED) return;
+      errorsThisSession++;
+      try {
+        track('error', {
+          error: String(message).substring(0, 200),
+          context: kind,
+          where: detail ? String(detail).substring(0, 120) : undefined,
+          fatalToSave: false
+        });
+        if (errorsThisSession === MAX_ERRORS_LOGGED) {
+          track('error', { error: 'error log capped for this session', context: 'global' });
+        }
+      } catch {
+        // Telemetry must never be the thing that breaks the game.
+      }
+    }
+
+    window.addEventListener('error', (e) => {
+      try {
+        // Failed <img>/<script> loads surface here too, with no e.error.
+        if (e && e.target && e.target !== window && e.target.tagName) {
+          record('resource', (e.target.src || e.target.href || e.target.tagName), e.target.tagName);
+          return;
+        }
+        const msg = (e && e.error && e.error.message) || (e && e.message) || 'unknown error';
+        const where = e && e.filename ? `${e.filename}:${e.lineno || 0}` : '';
+        record('window.onerror', msg, where);
+      } catch {}
+    }, true); // capture phase: resource errors do not bubble
+
+    window.addEventListener('unhandledrejection', (e) => {
+      try {
+        const r = e && e.reason;
+        record('unhandledrejection', (r && r.message) || r || 'unknown rejection', r && r.stack);
+      } catch {}
+    });
   }
 
   function generateSessionId() {

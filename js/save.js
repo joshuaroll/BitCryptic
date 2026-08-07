@@ -103,22 +103,30 @@ const BCWSave = (() => {
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = (ev) => {
+      reader.onload = async (ev) => {
         try {
           const data = JSON.parse(ev.target.result);
           if (!data._version) {
-            showGameModal('Invalid save file. Please select a valid Bit Cryptic World save file.', 'Import Error', '\u26A0\uFE0F');
+            showGameModal('That does not look like a Bit Cryptic World save file. Pick the .json file the game exported for you.', 'Import Error', '\u26A0\uFE0F');
             return;
           }
 
           // Validate that at least one recognized game key exists
           const gameKeys = Object.keys(data).filter(k => !k.startsWith('_') && ALL_KEYS.includes(k));
           if (gameKeys.length === 0) {
-            showGameModal('Save file contains no recognized game data.', 'Import Error', '\u26A0\uFE0F');
+            showGameModal('That file has no island progress in it.', 'Import Error', '\u26A0\uFE0F');
             return;
           }
 
-          if (!confirm('This will replace your current save data. Are you sure?')) return;
+          const ok = await confirmDialog({
+            title: 'Replace this save?',
+            message: 'Loading this file will overwrite the progress currently on this device. Anything not in the file is lost.',
+            confirmLabel: 'Load the file',
+            cancelLabel: 'Keep what I have',
+            danger: true,
+            icon: '\u{1F4E5}'
+          });
+          if (!ok) return;
 
           // Restore only recognized keys
           gameKeys.forEach(key => {
@@ -141,14 +149,42 @@ const BCWSave = (() => {
     input.click();
   }
 
+  // The island's own confirm dialog, with a native fallback.
+  //
+  // showGameConfirm lives in index.html, so it is present wherever the game
+  // actually runs. The fallback exists for the one case where it is not — a
+  // unit harness loading this module alone — and must never be the reason a
+  // destructive action silently proceeds.
+  function confirmDialog(opts) {
+    if (typeof showGameConfirm === 'function') return showGameConfirm(opts);
+    return Promise.resolve(
+      typeof confirm === 'function'
+        ? confirm((opts.title ? opts.title + '\n\n' : '') + (opts.message || ''))
+        : false
+    );
+  }
+
   // Confirm and reset all progress
-  function confirmReset() {
-    if (!confirm('This will permanently delete ALL your progress, including unlocked locations, completed stories, house decorations, and fishing data. This cannot be undone.\n\nAre you sure?')) {
-      return;
-    }
-    if (!confirm('Really? This is your last chance. All progress will be lost.')) {
-      return;
-    }
+  async function confirmReset() {
+    const first = await confirmDialog({
+      title: 'Erase everything?',
+      message: 'This wipes every location you have unlocked, every story you have finished, your house, your fish and your achievements. There is no undo. If you want a copy first, close this and choose Export.',
+      confirmLabel: 'Erase my progress',
+      cancelLabel: 'Never mind',
+      danger: true,
+      icon: '⚠️'
+    });
+    if (!first) return;
+
+    const second = await confirmDialog({
+      title: 'Last chance',
+      message: 'Once this is gone the island starts over from the shore. Still sure?',
+      confirmLabel: 'Yes, erase it',
+      cancelLabel: 'Take me back',
+      danger: true,
+      icon: '⚠️'
+    });
+    if (!second) return;
 
     ALL_KEYS.forEach(key => {
       try { localStorage.removeItem(key); } catch {}
