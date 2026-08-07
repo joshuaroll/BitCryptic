@@ -325,6 +325,22 @@ body.high-contrast .terminal-panel {
   color: #F87171;
 }
 .settings-btn-danger:hover { background: rgba(248, 113, 113, 0.2); }
+.settings-btn:disabled { opacity: 0.55; cursor: default; }
+.settings-btn:disabled:hover { background: transparent; border-color: #2A3553; color: #CBD5E1; }
+
+/* Account block inside Save Data — separated by a rule so the account controls
+   read as their own thing, not more save buttons. */
+.settings-account-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #2A3553;
+}
+.settings-account-line {
+  color: #94A3B8;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
 
 /* Stats */
 .settings-stats {}

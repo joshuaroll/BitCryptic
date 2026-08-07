@@ -214,4 +214,56 @@ test.describe('branded confirm', () => {
     await expect(page.locator('.game-modal-overlay[role="dialog"]')).toBeVisible();
     expect(nativeDialogSeen, 'a native confirm() dialog still opens').toBe(false);
   });
+
+  test('a confirm outranks every other layer in the game', async ({ page }) => {
+    // A confirm is opened FROM something — the settings panel, the fishing
+    // overlay, the fridge. If any of those paints over it the dialog is visible
+    // but unclickable, and the thing the player cannot click is "cancel" on
+    // erasing their save. So this is not a cosmetic rule.
+    //
+    // Asserted against every stacking context in the shipped CSS rather than a
+    // hardcoded number, so a new overlay added at 10005 fails here instead of
+    // silently swallowing the dialog on someone's device.
+    await boot(page);
+    await page.evaluate(() => { eval('BCWSave.confirmReset()'); });
+
+    const overlay = page.locator('.game-modal-overlay.game-modal-confirm');
+    await expect(overlay).toBeVisible();
+
+    const confirmZ = await overlay.evaluate((el) =>
+      parseInt(getComputedStyle(el).zIndex, 10),
+    );
+
+    // Walk every rule in every stylesheet the page actually loaded.
+    const maxOtherZ = await page.evaluate(() => {
+      let max = 0;
+      for (const sheet of Array.from(document.styleSheets)) {
+        let rules: CSSRuleList;
+        try {
+          rules = sheet.cssRules;
+        } catch {
+          continue; // cross-origin sheet, not ours
+        }
+        for (const rule of Array.from(rules)) {
+          const style = (rule as CSSStyleRule).style;
+          const selector = (rule as CSSStyleRule).selectorText;
+          if (!style || !selector) continue;
+          if (selector.includes('game-modal-confirm')) continue;
+          const z = parseInt(style.zIndex, 10);
+          if (!Number.isNaN(z) && z > max) max = z;
+        }
+      }
+      // Inline styles count too — the fridge close button is one.
+      for (const el of Array.from(document.querySelectorAll<HTMLElement>('[style*="z-index"]'))) {
+        const z = parseInt(el.style.zIndex, 10);
+        if (!Number.isNaN(z) && z > max) max = z;
+      }
+      return max;
+    });
+
+    expect(
+      confirmZ,
+      `confirm z-index ${confirmZ} does not clear the highest other layer (${maxOtherZ}); a tie resolves on DOM order, which is luck, not a guarantee`,
+    ).toBeGreaterThan(maxOtherZ);
+  });
 });

@@ -870,6 +870,20 @@
       box-shadow: 0 6px 28px rgba(251, 146, 60, 0.35);
     }
 
+    /* A confirm is almost always opened FROM something — the settings panel
+       (z-index 9991), the fishing overlay, a story panel. At the base overlay's
+       z-index of 299 the dialog rendered underneath its own opener, which made
+       it visible but completely unclickable: the panel swallowed every press.
+       Confirms are modal over everything, so they sit above everything.
+
+       10002 rather than 10000 deliberately: #fridge-overlay is also 10000 and
+       .tutorial-tooltip is 10001. A tie resolves on DOM order, which happens to
+       favour the confirm today only because it is appended last — that is luck,
+       not a rule, and the thing it decides is whether a player can click
+       "cancel" on erasing their save. This is the top of the stack; nothing in
+       the game should ever render over a destructive confirm. */
+    .game-modal-overlay.game-modal-confirm { z-index: 10002; }
+
     /* Confirm variant: two buttons side by side. Cancel is the quiet one and
        comes first, so the destructive action is never what a fast click lands
        on by muscle memory. */
@@ -6708,7 +6722,7 @@
       const o = opts || {};
       return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.className = 'game-modal-overlay';
+        overlay.className = 'game-modal-overlay game-modal-confirm';
         overlay.setAttribute('role', 'dialog');
         overlay.setAttribute('aria-modal', 'true');
         overlay.setAttribute('aria-label', o.title || 'Confirm');

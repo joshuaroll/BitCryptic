@@ -141,6 +141,9 @@ const BCWSettings = (() => {
             <button class="settings-btn" onclick="BCWSave.importSave()">Import Save</button>
             <button class="settings-btn settings-btn-danger" onclick="BCWSave.confirmReset()">Reset All Data</button>
           </div>
+          <!-- Account controls render here, or not at all when no Supabase
+               project is configured. See renderAccountSection(). -->
+          <div id="settings-account"></div>
         </div>
 
         <div class="settings-section">
@@ -251,6 +254,184 @@ const BCWSettings = (() => {
           <div class="stat-row"><span>Total Play Time</span><span>${formatTime(summary.totalPlayTime)}</span></div>
         `;
       }
+    }
+
+    renderAccountSection();
+  }
+
+  // ─── Account controls (W5) ───
+  //
+  // Rendered fresh every time the panel opens, because auth state changes
+  // underneath it: the player can sign in from the HUD, or a token can expire,
+  // while this panel is closed.
+  //
+  // When no Supabase project is configured — the island served standalone, the
+  // E2E harness, a local file — this renders NOTHING. A dead "Sign in" button
+  // is worse than no button.
+  function renderAccountSection() {
+    const host = document.getElementById('settings-account');
+    if (!host) return;
+    host.innerHTML = '';
+
+    const ready = typeof BCWAccount !== 'undefined' && BCWAccount.isReady && BCWAccount.isReady();
+    if (!ready || typeof BCAuth === 'undefined') return;
+
+    const state = BCAuth.getState();
+
+    const wrap = document.createElement('div');
+    wrap.className = 'settings-account-block';
+
+    const line = document.createElement('div');
+    line.className = 'settings-account-line';
+
+    if (state.signedIn) {
+      // Signed in: identity, then the two privacy controls launch requires.
+      line.textContent = 'Signed in as ' + (state.email || state.displayName || 'your account') + '. Progress syncs to this account.';
+      wrap.appendChild(line);
+
+      const btns = document.createElement('div');
+      btns.className = 'settings-row settings-row-btns';
+
+      const manageBtn = document.createElement('button');
+      manageBtn.className = 'settings-btn';
+      manageBtn.type = 'button';
+      manageBtn.textContent = 'Manage account';
+      manageBtn.addEventListener('click', openAccountPanel);
+      btns.appendChild(manageBtn);
+
+      const exportBtn = document.createElement('button');
+      exportBtn.className = 'settings-btn';
+      exportBtn.type = 'button';
+      exportBtn.textContent = 'Download my data';
+      exportBtn.addEventListener('click', () => downloadMyData(exportBtn));
+      btns.appendChild(exportBtn);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'settings-btn settings-btn-danger';
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = 'Delete my account';
+      deleteBtn.addEventListener('click', () => deleteMyAccount(deleteBtn));
+      btns.appendChild(deleteBtn);
+
+      wrap.appendChild(btns);
+    } else {
+      // Guest: state the consequence once, plainly, and offer the fix. No
+      // nagging and no gate — the island is fully playable exactly as it is.
+      line.textContent = 'Playing as a guest. Your progress lives only on this device. Sign in to keep it safe and carry it to the tower.';
+      wrap.appendChild(line);
+
+      const btns = document.createElement('div');
+      btns.className = 'settings-row settings-row-btns';
+      const signInBtn = document.createElement('button');
+      signInBtn.className = 'settings-btn';
+      signInBtn.type = 'button';
+      signInBtn.textContent = 'Sign in';
+      signInBtn.addEventListener('click', () => {
+        if (typeof BCAuthUI === 'undefined') return;
+        BCAuthUI.open({
+          reason: 'One account covers the island and the tower. Sign in and your progress follows you between them, and onto any device.',
+          onGuest: () => {},
+          onDone: () => renderAccountSection(),
+        });
+      });
+      btns.appendChild(signInBtn);
+      wrap.appendChild(btns);
+    }
+
+    host.appendChild(wrap);
+  }
+
+  // The shared account panel (rename / export / delete / sign out / policy
+  // links) is S5 and lands in M3. Until then this falls back to the sign-in
+  // modal, which at least reaches a real surface. Wired to the documented API
+  // name so the fallback disappears the moment S5 ships, with no edit here.
+  function openAccountPanel() {
+    if (typeof BCAuthUI === 'undefined') return;
+    if (typeof BCAuthUI.openAccount === 'function') {
+      BCAuthUI.openAccount({ game: 'world' });
+      return;
+    }
+    BCAuthUI.open({ reason: 'Manage your account.', onGuest: () => {} });
+  }
+
+  // Privacy requirement: the player can take everything the account holds.
+  // Mirrors BCWSave.exportSave's blob pattern so both downloads behave alike.
+  async function downloadMyData(btn) {
+    if (typeof BCAuth === 'undefined') return;
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Preparing…';
+    try {
+      const data = await BCAuth.exportMyData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bitcryptic-account-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.announce('Account data downloaded');
+    } catch (err) {
+      showGameModal('Could not fetch your data: ' + (err && err.message ? err.message : 'unknown error'), 'Download Failed', '⚠️');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  }
+
+  // Deleting the ACCOUNT is not the same as deleting the SAVE: the local island
+  // progress stays exactly where it is and remains theirs to keep playing. The
+  // copy says so, because "delete" next to a save button reads as both.
+  async function deleteMyAccount(btn) {
+    if (typeof BCAuth === 'undefined') return;
+
+    const confirmFn = typeof showGameConfirm === 'function' ? showGameConfirm : null;
+    if (!confirmFn) return;
+
+    const first = await confirmFn({
+      title: 'Delete your account?',
+      message: 'This permanently removes your account and everything stored with it, including your cloud save. Your progress on this device stays put and stays playable. This cannot be undone.',
+      confirmLabel: 'Delete my account',
+      cancelLabel: 'Never mind',
+      danger: true,
+      icon: '⚠️'
+    });
+    if (!first) return;
+
+    const second = await confirmFn({
+      title: 'Last chance',
+      message: 'Deleting is permanent. You can sign up again later, but the cloud copy of this account is gone for good.',
+      confirmLabel: 'Yes, delete it',
+      cancelLabel: 'Take me back',
+      danger: true,
+      icon: '⚠️'
+    });
+    if (!second) return;
+
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+      const result = await BCAuth.deleteMyAccount();
+      renderAccountSection();
+      // Honest about the half-success the RPC can report: player DATA is always
+      // gone, but removing the login row can fail on managed Supabase. Claiming
+      // a clean delete when the login still exists would be a lie a player
+      // could catch by trying to sign in again.
+      if (result && result.authRowDeleted === false) {
+        showGameModal(
+          'Your data is deleted and you are signed out. The login itself is still being removed on our side — it will not give anyone access to anything.',
+          'Account Deleted',
+          '✅'
+        );
+      } else {
+        showGameModal('Your account and everything stored with it are gone. Your progress on this device is untouched.', 'Account Deleted', '✅');
+      }
+    } catch (err) {
+      showGameModal('Could not delete the account: ' + (err && err.message ? err.message : 'unknown error'), 'Delete Failed', '⚠️');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
     }
   }
 
