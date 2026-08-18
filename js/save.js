@@ -167,9 +167,9 @@ const BCWSave = (() => {
   // Confirm and reset all progress
   async function confirmReset() {
     const first = await confirmDialog({
-      title: 'Erase everything?',
+      title: 'Reset everything?',
       message: 'This wipes every location you have unlocked, every story you have finished, your house, your fish and your achievements. There is no undo. If you want a copy first, close this and choose Export.',
-      confirmLabel: 'Erase my progress',
+      confirmLabel: 'Reset my progress',
       cancelLabel: 'Never mind',
       danger: true,
       icon: '⚠️'
@@ -179,7 +179,7 @@ const BCWSave = (() => {
     const second = await confirmDialog({
       title: 'Last chance',
       message: 'Once this is gone the island starts over from the shore. Still sure?',
-      confirmLabel: 'Yes, erase it',
+      confirmLabel: 'Yes, reset it',
       cancelLabel: 'Take me back',
       danger: true,
       icon: '⚠️'

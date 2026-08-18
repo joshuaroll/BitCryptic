@@ -145,7 +145,7 @@ test.describe('branded confirm', () => {
 
     const dialog = page.locator('.game-modal-overlay[role="dialog"]');
     await expect(dialog).toBeVisible();
-    await expect(dialog.locator('.game-modal-title')).toHaveText('Erase everything?');
+    await expect(dialog.locator('.game-modal-title')).toHaveText('Reset everything?');
 
     // Cancel must actually cancel.
     await dialog.locator('.game-modal-btn.secondary').click();
