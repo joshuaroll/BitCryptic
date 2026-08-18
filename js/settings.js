@@ -329,7 +329,7 @@ const BCWSettings = (() => {
       signInBtn.addEventListener('click', () => {
         if (typeof BCAuthUI === 'undefined') return;
         BCAuthUI.open({
-          reason: 'One account covers the island and the tower. Sign in and your progress follows you between them, and onto any device.',
+          reason: 'Sign in and pick up where you left off, on any device. One account, both games.',
           onGuest: () => {},
           onDone: () => renderAccountSection(),
         });

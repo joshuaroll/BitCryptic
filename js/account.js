@@ -143,7 +143,7 @@ const BCWAccount = (() => {
     if (typeof BCAuthUI === 'undefined' || typeof BCAuthUI.guestNudge !== 'function') return false;
     try {
       return BCAuthUI.guestNudge('world', {
-        reason: 'One account covers the island and the tower. Sign in and your progress follows you between them, and onto any device.',
+        reason: 'Sign in and pick up where you left off, on any device. One account, both games.',
         onDone: () => render(),
       });
     } catch {
@@ -188,7 +188,7 @@ const BCWAccount = (() => {
       btn.title = 'Sign in to carry your progress between the island and the tower';
       btn.addEventListener('click', () => {
         BCAuthUI.open({
-          reason: 'One account covers the island and the tower. Sign in and your progress follows you between them, and onto any device.',
+          reason: 'Sign in and pick up where you left off, on any device. One account, both games.',
           onGuest: () => {},
         });
       });
