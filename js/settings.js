@@ -329,7 +329,7 @@ const BCWSettings = (() => {
       signInBtn.addEventListener('click', () => {
         if (typeof BCAuthUI === 'undefined') return;
         BCAuthUI.open({
-          reason: 'Sign in and pick up where you left off, on any device. One account, both games.',
+          reason: 'Sign in and pick up where you left off, on any device.',
           onGuest: () => {},
           onDone: () => renderAccountSection(),
         });
