@@ -18,8 +18,15 @@
    does today: no accounts, no network, local saves only.
    ============================================================ */
 
-export const BC_SUPABASE_URL = 'https://REPLACE_ME.supabase.co';
-export const BC_SUPABASE_ANON_KEY = 'sb_publishable_REPLACE_ME';
+// Real project values, wired 2026-08-21 (M1 step 8). The anon/publishable key
+// is public by design — it ships in the bundle to every browser, so committing
+// it is correct; Row Level Security is what protects player data.
+//
+// Byte-identical to bitcryptic-org/assets/js/bc-config.js. check:config fails
+// the build on drift: half-configured is silent, and one game quietly dropping
+// to guest-only looks like a design decision rather than a bug.
+export const BC_SUPABASE_URL = 'https://cbtaiplanaeievnvpiii.supabase.co';
+export const BC_SUPABASE_ANON_KEY = 'sb_publishable_kJ6FvIv200VEbTfMUecpnw_2TOprJyE';
 
 export const BC_AUTH_CONFIGURED =
   !BC_SUPABASE_URL.includes('REPLACE_ME') && !BC_SUPABASE_ANON_KEY.includes('REPLACE_ME');
