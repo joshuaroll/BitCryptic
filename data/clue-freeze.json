@@ -1,8 +1,8 @@
 {
   "_comment": "Clue-freeze proof. Regenerate ONLY after Joshua signs off on a clue change: node scripts/ci/check-clues.mjs --update",
-  "generated": "2026-07-28",
+  "generated": "2026-08-29",
   "count": 12,
-  "digest": "b3aacd987a0865b13e86c7700f8dea863b0dda6905cd3f3b91be5fca750ac0b0",
+  "digest": "44988f4035f5cc0e67eea0aed7a9ab254c7b2d6722f4a41be1d3bf873bdd4ce9",
   "clues": [
     {
       "clue": "Scheme with the alien for a world (6)",
@@ -60,9 +60,9 @@
       "hash": "8591cb5631c5084e"
     },
     {
-      "clue": "Reward sent back: a place for socks (6)",
-      "answer": "DRAWER",
-      "hash": "341b3f296abc9fee"
+      "clue": "Fine mast rebuilt: cargo list, plain to see (8)",
+      "answer": "MANIFEST",
+      "hash": "b17a5cfc990db7f8"
     }
   ]
 }

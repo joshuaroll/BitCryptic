@@ -32,7 +32,8 @@ const BCWSave = (() => {
     'bcw_tutorial_complete',
     'bcw_tutorial_p1',
     'bcw_tutorial_p2',
-    'bcw_anatomy_taught'
+    'bcw_anatomy_taught',
+    'bcw_auto_lesson_seen'
   ];
 
   // Safely get from localStorage with fallback

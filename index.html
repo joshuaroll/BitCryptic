@@ -404,6 +404,48 @@
       border-color: rgba(242, 193, 78, 0.4);
     }
 
+    /* Toggle pills read amber when on, dim when off */
+    #hud-anatomy, #hud-lessons {
+      color: #F2C14E;
+      border-color: rgba(242, 193, 78, 0.35);
+    }
+
+    #hud-anatomy.hud-btn--off, #hud-lessons.hud-btn--off {
+      color: #64748B;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* System-voice notice for the toggles */
+    .hud-notice {
+      position: fixed;
+      left: 50%;
+      bottom: 88px;
+      transform: translate(-50%, 12px);
+      background: #161B2E;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: #CBD5E1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      z-index: 4000;
+      max-width: min(90vw, 460px);
+      text-align: center;
+    }
+
+    .hud-notice::before {
+      content: '> ';
+      color: #64D9A0;
+    }
+
+    .hud-notice.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
     /* ─── Legend Scroll ─── */
     .legend-scroll {
       position: fixed;
@@ -2197,6 +2239,8 @@
     <div class="hud-title">BIT CRYPTIC WORLD <span>v0.2</span></div>
     <div class="hud-controls">
       <button class="hud-btn" onclick="resetView()" aria-label="Reset map view">Reset View</button>
+      <button class="hud-btn" id="hud-anatomy" onclick="toggleAnatomy()" aria-label="Toggle clue anatomy highlighting">Anatomy: on</button>
+      <button class="hud-btn" id="hud-lessons" onclick="toggleAutoLessons()" aria-label="Toggle lessons before stories">Lessons: on</button>
       <button class="hud-btn" onclick="BCWSharing.shareProgress()" aria-label="Share progress">Share</button>
       <button class="hud-btn" onclick="showHelpOverlay()" aria-label="Help and clue guide">?</button>
       <button class="hud-btn" onclick="BCWSettings.open()" aria-label="Open settings">&#x2699; Settings</button>
@@ -4038,15 +4082,16 @@
             if (isStoryComplete('airship')) {
               showClueChallenge({
                 title: 'Simon\'s Collection', icon: '\u{1F4D5}',
-                intro: 'Simon flips to a dog-eared page near the back. "Picked this one up in a port full of pickpockets. Never cracked it in front of an audience. Care to have a go?"',
-                clue: 'Reward sent back: a place for socks (6)',
-                answer: 'DRAWER',
+                intro: 'Simon flips to a dog-eared page near the back. "Traded a whole afternoon of stories for this one, off a freight captain who couldn\'t spell. Six years I\'ve carried it and it still gets me."',
+                clue: 'Fine mast rebuilt: cargo list, plain to see (8)',
+                answer: 'MANIFEST',
                 hints: [
-                  'A reversal: "sent back" tells you to read a word backwards.',
-                  'Reverse REWARD itself. Where do the socks live?'
+                  'The definition is doing double duty. Both "cargo list" and "plain to see" describe the answer.',
+                  '"Rebuilt" signals an anagram.',
+                  'The letters in "fine mast" are rearranged.'
                 ],
                 successLine: 'Correct!',
-                explanation: '"DRAWER! REWARD, sent back. Six years I\'ve carried that one," he laughs, and pencils your name in the margin.'
+                explanation: '"MANIFEST! FINE MAST, rebuilt," Simon says, delighted. He pencils your name in the margin.'
               });
             } else {
               showGameModal('Simon rests a gloved hand on the leather-bound logbook. "Ah-ah. A collection\'s no fun without the tour. Let me walk you through it properly first." He seems keen to tell you the whole story.', 'Simon\'s Collection', '\u{1F4D5}');
@@ -5549,12 +5594,22 @@
           text: 'A wave takes the bow. Everything goes dark. When you open your eyes again, you\'re lying on weathered wooden planks, the storm reduced to a far-off grumble, and the dock under you creaks like it\'s making up its mind.'
         },
         {
+          type: 'narrative',
+          speaker: 'Dock Keeper',
+          text: '"You\'ll get clues here. Each one\'s two things stuck together. Somewhere in it there\'s a definition of the answer, same as any crossword. The rest of it is instructions for building that same answer out of letters." He watches the water. "Both parts are meant to lead you to the same word. You\'ll grow a sense for which part is definition and which is wordplay as you try more."'
+        },
+        {
+          type: 'narrative',
+          speaker: 'Dock Keeper',
+          text: '"Here\'s one off the board."<br><br>"Reward sent back: a place for socks (6)"<br><br>"A place for socks, that\'s the definition, and the \'(6)\' means the answer is 6 letters long." He nods at the pinned dispatch. "Now the other half. \'Sent back\' is the wordplay indicator, and what it\'s telling you is to read something backwards. The something is Reward." He traces the letters in the air. "R-E-W-A-R-D backwards is D-R-A-W-E-R, a drawer, which is where the socks go."'
+        },
+        {
           type: 'choice',
-          speaker: null,
-          text: 'This island runs on cryptic crossword clues, puzzles where words never mean only one thing. Each location teaches a different solving technique. Would you like guided tutorials at each location?',
+          speaker: 'Dock Keeper',
+          text: '"Go explore the island! Completing locations opens more paths, some with full cryptic clues, some with smaller skills the cryptics lean on later. Nothing here is scored, and the lessons and hints are yours to use." He nods up the pier. "I can put the lesson in front of you when you get somewhere new, or you can go without."',
           choices: [
-            { label: 'Yes, teach me the techniques', next: 3, onclick: () => { if (typeof BCWSettings !== 'undefined') BCWSettings.setTutorialsEnabled(true); } },
-            { label: 'No, I know cryptic clues', next: 3, onclick: () => { if (typeof BCWSettings !== 'undefined') BCWSettings.setTutorialsEnabled(false); } }
+            { label: 'Show lessons before stories', next: 5, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(true); BCWSettings.setAutoLessonsEnabled(true); } } },
+            { label: 'Do not show lessons before stories', next: 5, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(false); BCWSettings.setAutoLessonsEnabled(false); } } }
           ]
         },
         {
@@ -6496,6 +6551,77 @@
       updateTransform();
     }
 
+    // ═══════════════════════════════════
+    //  HUD TOGGLES — clue anatomy + lessons-before-stories
+    //  Both mirror their Settings checkboxes; BCWSettings owns the state and
+    //  the cloud push, these pills are just a second way in.
+    // ═══════════════════════════════════
+    const ANATOMY_DEMO_CLUE = 'Eat in, embraced by Germany (4)';
+
+    function syncHudToggles() {
+      if (typeof BCWSettings === 'undefined') return;
+      const pairs = [
+        ['hud-anatomy', 'Anatomy', BCWSettings.isAnatomyEnabled?.()],
+        ['hud-lessons', 'Lessons', BCWSettings.areAutoLessonsEnabled?.()]
+      ];
+      pairs.forEach(([id, label, on]) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.textContent = label + ': ' + (on ? 'on' : 'off');
+        btn.classList.toggle('hud-btn--off', !on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    window.syncHudToggles = syncHudToggles;
+
+    function hudNotice(text) {
+      const el = document.createElement('div');
+      el.className = 'hud-notice';
+      el.setAttribute('role', 'status');
+      el.textContent = text;
+      document.body.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      setTimeout(() => {
+        el.classList.remove('show');
+        setTimeout(() => { try { el.remove(); } catch {} }, 400);
+      }, 2600);
+    }
+
+    // Switching anatomy ON opens a live, clickable sample so the feature
+    // explains itself. Switching it off is a quiet notice.
+    function toggleAnatomy() {
+      if (typeof BCWSettings === 'undefined') return;
+      const next = !BCWSettings.isAnatomyEnabled();
+      BCWSettings.setAnatomyEnabled(next);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+      if (!next) { hudNotice('anatomy off'); return; }
+      showAnatomyDemo();
+    }
+
+    function showAnatomyDemo() {
+      if (typeof BCWClueAnatomy === 'undefined') { hudNotice('anatomy on'); return; }
+      const rendered = BCWClueAnatomy.renderClue(ANATOMY_DEMO_CLUE);
+      if (!rendered) { hudNotice('anatomy on'); return; }
+      showGameModal(
+        'Tap any word to see the job it does.<br><br>' + rendered,
+        'Clue Anatomy', '\u{1F50D}'
+      );
+      const body = document.getElementById('game-modal-body');
+      if (body && BCWClueAnatomy.wireInteraction) {
+        BCWClueAnatomy.wireInteraction(body, ANATOMY_DEMO_CLUE);
+      }
+    }
+
+    function toggleAutoLessons() {
+      if (typeof BCWSettings === 'undefined') return;
+      const next = !BCWSettings.areAutoLessonsEnabled();
+      BCWSettings.setAutoLessonsEnabled(next);
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+      hudNotice(next
+        ? 'lessons on · new locations open with the lesson'
+        : 'lessons off · find them on each location panel');
+    }
+
     // Mouse drag
     container.addEventListener('mousedown', (e) => {
       if (isPanning) return;
@@ -6633,31 +6759,37 @@
       const actionsEl = document.getElementById('detail-actions');
       actionsEl.innerHTML = '';
 
-      // Add story button if story exists — but skip if location already has a custom story trigger
+      // Story and lesson buttons. The lesson button is ALWAYS offered where a
+      // tutorial exists — the intro choice and the Lessons pill control whether
+      // it LEADS, never whether it exists.
+      const hasTutorial = typeof TUTORIALS !== 'undefined' && !!TUTORIALS[id];
+      const storyDone = isStoryComplete(id);
+      const lessonLeads = hasTutorial && !storyDone
+        && typeof BCWSettings !== 'undefined' && BCWSettings.areTutorialsEnabled();
+
+      let storyBtn = null;
       if (STORIES[id] && !loc.customStoryBtn) {
-        const storyBtn = document.createElement('button');
-        if (isStoryComplete(id)) {
+        storyBtn = document.createElement('button');
+        if (storyDone) {
           storyBtn.className = 'detail-action-btn secondary';
           storyBtn.textContent = 'Replay Story';
         } else {
-          storyBtn.className = 'detail-action-btn';
+          storyBtn.className = 'detail-action-btn' + (lessonLeads ? ' secondary' : '');
           storyBtn.textContent = 'Begin Story';
         }
         storyBtn.onclick = () => { closePanel(); startStory(id); };
-        actionsEl.appendChild(storyBtn);
       }
 
-      // Add tutorial button if a tutorial exists for this location
-      if (typeof TUTORIALS !== 'undefined' && TUTORIALS[id]) {
-        const showTutorials = typeof BCWSettings !== 'undefined' && BCWSettings.areTutorialsEnabled();
-        if (showTutorials || isStoryComplete(id)) {
-          const tutBtn = document.createElement('button');
-          tutBtn.className = 'detail-action-btn secondary';
-          tutBtn.textContent = TUTORIALS[id].btnLabel || 'Learn: ' + (TUTORIALS[id].technique || 'Technique');
-          tutBtn.onclick = () => { closePanel(); startStory('_tutorial_' + id); };
-          actionsEl.appendChild(tutBtn);
-        }
+      let tutBtn = null;
+      if (hasTutorial) {
+        tutBtn = document.createElement('button');
+        tutBtn.className = 'detail-action-btn' + (lessonLeads ? '' : ' secondary');
+        tutBtn.textContent = TUTORIALS[id].btnLabel || 'Learn: ' + (TUTORIALS[id].technique || 'Technique');
+        tutBtn.onclick = () => { closePanel(); startStory('_tutorial_' + id); };
       }
+
+      (lessonLeads ? [tutBtn, storyBtn] : [storyBtn, tutBtn])
+        .forEach(b => { if (b) actionsEl.appendChild(b); });
 
       loc.actions.forEach((a, i) => {
         // label/primary may be functions so state-dependent text is computed
@@ -6681,6 +6813,26 @@
 
       document.getElementById('detail-panel').classList.add('active');
       document.getElementById('detail-overlay').classList.add('active');
+
+      maybeAutoOpenLesson(id, hasTutorial, storyDone);
+    }
+
+    // First arrival at a location that teaches something: open the lesson for
+    // players who asked for that at the intro. Once per location, and never
+    // when the story is already done — the button is always there regardless.
+    const AUTO_LESSON_KEY = 'bcw_auto_lesson_seen';
+
+    function maybeAutoOpenLesson(id, hasTutorial, storyDone) {
+      if (!hasTutorial || storyDone) return;
+      if (typeof BCWSettings === 'undefined' || !BCWSettings.areAutoLessonsEnabled()) return;
+      let seen = [];
+      try { seen = JSON.parse(localStorage.getItem(AUTO_LESSON_KEY) || '[]'); } catch {}
+      if (!Array.isArray(seen)) seen = [];
+      if (seen.includes(id)) return;
+      seen.push(id);
+      try { localStorage.setItem(AUTO_LESSON_KEY, JSON.stringify(seen)); } catch {}
+      window.BCSync?.schedulePush('world');
+      setTimeout(() => { closePanel(); startStory('_tutorial_' + id); }, 600);
     }
 
     function closePanel() {
@@ -9249,6 +9401,7 @@
         if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.init();
         if (typeof BCWAchievements !== 'undefined') BCWAchievements.init();
         if (typeof BCWSettings !== 'undefined') BCWSettings.init();
+        syncHudToggles();
         if (typeof BCWTutorial !== 'undefined') BCWTutorial.init();
         if (typeof BCWDesigner !== 'undefined') BCWDesigner.init();
       } catch (e) {

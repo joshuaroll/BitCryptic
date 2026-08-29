@@ -59,6 +59,9 @@ const BCWClueAnatomy = (() => {
   // sits between straight quotes inside step.text) and wrap it in place.
   function annotate(containerEl) {
     if (!containerEl || typeof CLUE_ANNOTATIONS === 'undefined') return;
+    // Player can switch the highlighting off from the HUD pill or Settings
+    if (typeof BCWSettings !== 'undefined' && BCWSettings.isAnatomyEnabled
+        && !BCWSettings.isAnatomyEnabled()) return;
     if (containerEl.querySelector('.clue-line')) return; // already annotated
     const html = containerEl.innerHTML;
     for (const key in CLUE_ANNOTATIONS) {
@@ -163,6 +166,7 @@ const BCWClueAnatomy = (() => {
   return {
     annotate,
     renderClue,
+    wireInteraction, // used by the HUD toggle's live demo panel
     validateData
   };
 })();

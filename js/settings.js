@@ -8,6 +8,8 @@ const BCWSettings = (() => {
   let settings = {
     difficulty: 'normal', // easy, normal, hard
     tutorialsEnabled: true, // show technique tutorials at locations
+    autoLessonsEnabled: true, // open the lesson on first arrival at a location
+    anatomyEnabled: true, // per-word clue role highlighting
   };
 
   function init() {
@@ -106,6 +108,20 @@ const BCWSettings = (() => {
           </div>
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Show cryptic clue technique tutorials at each location</label>
+          </div>
+          <div class="settings-row">
+            <label>Lessons Before Stories</label>
+            <input type="checkbox" id="setting-auto-lessons" ${settings.autoLessonsEnabled ? 'checked' : ''} />
+          </div>
+          <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
+            <label>Open the lesson the first time you reach a location</label>
+          </div>
+          <div class="settings-row">
+            <label>Clue Anatomy</label>
+            <input type="checkbox" id="setting-anatomy" ${settings.anatomyEnabled ? 'checked' : ''} />
+          </div>
+          <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
+            <label>Tap a word in a clue to see the job it does</label>
           </div>
         </div>
 
@@ -214,6 +230,15 @@ const BCWSettings = (() => {
     bindSetting('setting-tutorials', 'change', (e) => {
       settings.tutorialsEnabled = e.target.checked;
       save();
+    });
+
+    // Route through the setters so the HUD pills relabel with the panel
+    bindSetting('setting-auto-lessons', 'change', (e) => {
+      setAutoLessonsEnabled(e.target.checked);
+    });
+
+    bindSetting('setting-anatomy', 'change', (e) => {
+      setAnatomyEnabled(e.target.checked);
     });
 
     bindSetting('setting-reduced-motion', 'change', (e) => {
@@ -475,6 +500,8 @@ const BCWSettings = (() => {
 
   function getDifficulty() { return settings.difficulty; }
   function areTutorialsEnabled() { return settings.tutorialsEnabled; }
+  function areAutoLessonsEnabled() { return settings.autoLessonsEnabled; }
+  function isAnatomyEnabled() { return settings.anatomyEnabled; }
 
   // Programmatic setter (used by the intro story choice) — persists through
   // the normal settings pipeline so the Settings checkbox stays in sync.
@@ -485,12 +512,35 @@ const BCWSettings = (() => {
     if (cb) cb.checked = settings.tutorialsEnabled;
   }
 
+  // The intro choice sets the initial auto-lesson state; the HUD pill overrides
+  // it from then on. Both routes land here so the panel checkbox, the HUD label
+  // and the cloud push never drift apart.
+  function setAutoLessonsEnabled(enabled) {
+    settings.autoLessonsEnabled = !!enabled;
+    save();
+    const cb = document.getElementById('setting-auto-lessons');
+    if (cb) cb.checked = settings.autoLessonsEnabled;
+    if (typeof window.syncHudToggles === 'function') window.syncHudToggles();
+  }
+
+  function setAnatomyEnabled(enabled) {
+    settings.anatomyEnabled = !!enabled;
+    save();
+    const cb = document.getElementById('setting-anatomy');
+    if (cb) cb.checked = settings.anatomyEnabled;
+    if (typeof window.syncHudToggles === 'function') window.syncHudToggles();
+  }
+
   return {
     init,
     open: openSettings,
     close: closeSettings,
     getDifficulty,
     areTutorialsEnabled,
-    setTutorialsEnabled
+    setTutorialsEnabled,
+    areAutoLessonsEnabled,
+    setAutoLessonsEnabled,
+    isAnatomyEnabled,
+    setAnatomyEnabled
   };
 })();

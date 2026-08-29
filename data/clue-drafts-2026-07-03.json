@@ -269,5 +269,8 @@
   ],
   "openQuestions": [
     "index.html's Town anagram tutorial still lists 'oddly' among anagram indicators ('broken', 'scrambled', ..., 'oddly', ...). Both clues that used it were changed; the teaching list itself still endorses it. Remove 'oddly' from the list (it conventionally means alternate letters)?"
+  ],
+  "newClues_approved_2026-08-29": [
+    { "clue": "Fine mast rebuilt: cargo list, plain to see (8)", "answer": "MANIFEST", "type": "anagram + double definition", "difficulty": "hard", "parse": "anagram ('rebuilt') of FINE MAST = MANIFEST; double definition 'cargo list' (noun) and 'plain to see' (adjectival)", "location": "Airship 'Simon's Collection' challenge (interactive challenge modal, post-story)", "approvedBy": "Joshua", "approvedOn": "2026-08-29", "replaces": "'Reward sent back: a place for socks (6)' = DRAWER, which moved to the intro worked example; a single-operation reversal was too easy for post-story content", "verification": "MANIFEST in game dictionary; letter-sort('fine mast') === letter-sort('manifest'); length 8 matches enumeration; fodder visible in clue (no indirect anagram); no collision with the 12 existing frozen answers", "rejectedDraft": "'Fine mast rebuilt, and the cargo list is obvious (8)' — vetoed by Joshua: 'is obvious' is not a valid definition (MANIFEST = obvious, not is obvious), so 'is' carried no cryptic role and was padding" }
   ]
 }
