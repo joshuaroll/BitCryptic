@@ -446,6 +446,200 @@
       transform: translate(-50%, 0);
     }
 
+    /* ═══════════════════════════════════
+       VERTICAL (9:8) MODE
+       The same shell Adventure uses, so a player who picks Vertical in one
+       game gets the same shape in the other. Everything is scoped under
+       body.vertical-mode — a landscape session is byte-for-byte unaffected.
+
+       The island map itself is NOT redrawn. #map-world stays 2400x2100 and
+       keeps its own pan/zoom; only the WINDOW onto it narrows, which is why
+       resetView() is re-run on entering the mode (it derives scale from the
+       container, so it re-frames the island to the new width by itself).
+       ═══════════════════════════════════ */
+    body.vertical-mode {
+      background: #05070F;
+    }
+
+    body.vertical-mode #vertical-shell {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      height: 100vh;
+      height: 100dvh;
+      width: min(100vw, calc((100vh - 2px) * 9 / 8));
+      width: min(100vw, calc((100dvh - 2px) * 9 / 8));
+      overflow: hidden;
+      outline: 1px solid rgba(242, 193, 78, 0.18);
+      z-index: 0;
+    }
+
+    /* Map and chrome fill the SHELL, not the viewport. Without this the
+       100vw/100vh rules above would keep sizing to the window and the map
+       would spill past the frame's edges. */
+    body.vertical-mode #map-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Fixed-position chrome anchors to the viewport, not the shell, so each
+       piece is re-anchored to the frame's width. */
+    body.vertical-mode .hud-top,
+    body.vertical-mode .toolbar,
+    body.vertical-mode .hud-notice {
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(100vw, calc((100dvh - 2px) * 9 / 8));
+      max-width: 100vw;
+    }
+
+    body.vertical-mode .hud-top {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+      padding: 10px 12px;
+    }
+
+    body.vertical-mode .hud-controls {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    body.vertical-mode .hud-btn {
+      padding: 6px 12px;
+      font-size: 0.72rem;
+    }
+
+    body.vertical-mode .hud-title {
+      font-size: 1.15rem;
+      text-align: center;
+    }
+
+    /* The minimap duplicates what a narrow frame already shows, and it costs
+       a corner of a small screen. */
+    body.vertical-mode .minimap,
+    body.vertical-mode .legend-scroll {
+      display: none;
+    }
+
+    body.vertical-mode .toolbar {
+      bottom: 0;
+      border-radius: 0;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding: 8px 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.vertical-mode .detail-panel,
+    body.vertical-mode .story-panel,
+    body.vertical-mode .terminal-panel,
+    body.vertical-mode .game-modal {
+      max-width: min(94vw, calc((100dvh - 2px) * 9 / 8 - 24px));
+    }
+
+    /* ─── Orientation picker (asked once, changeable in Settings) ─── */
+    .orientation-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(11, 16, 33, 0.94);
+      backdrop-filter: blur(4px);
+    }
+
+    .orientation-card {
+      width: 100%;
+      max-width: 420px;
+      padding: 22px 20px;
+      background: #161B2E;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .orientation-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      color: #E2E8F0;
+      margin: 0 0 6px;
+    }
+
+    .orientation-sub {
+      color: #94A3B8;
+      font-size: 0.85rem;
+      margin: 0 0 18px;
+      line-height: 1.5;
+    }
+
+    .orientation-options {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .orientation-option {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 16px 10px;
+      cursor: pointer;
+      color: #E2E8F0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .orientation-option:hover {
+      border-color: rgba(242, 193, 78, 0.5);
+      background: rgba(242, 193, 78, 0.08);
+    }
+
+    .orientation-option--recommended {
+      border-color: rgba(242, 193, 78, 0.45);
+    }
+
+    .orientation-shape {
+      display: block;
+      border: 2px solid #F2C14E;
+      border-radius: 3px;
+    }
+
+    .orientation-shape--portrait {
+      width: 27px;
+      height: 36px;
+    }
+
+    .orientation-shape--landscape {
+      width: 44px;
+      height: 28px;
+    }
+
+    .orientation-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .orientation-hint {
+      font-size: 0.72rem;
+      color: #94A3B8;
+      line-height: 1.35;
+    }
+
+    .orientation-note {
+      margin: 16px 0 0;
+      font-size: 0.72rem;
+      color: #64748B;
+    }
+
     /* ─── Legend Scroll ─── */
     .legend-scroll {
       position: fixed;
@@ -2268,6 +2462,11 @@
     <p>Pick a location and start solving. Drag to pan around the island.</p>
   </div>
 
+  <!-- Vertical (9:8) frame. Inert in landscape: with no .vertical-mode class
+       on <body> it has no size rules of its own and lays out as a plain
+       block, so the map fills the window exactly as before. -->
+  <div id="vertical-shell">
+
   <!-- Map Container -->
   <div id="map-container">
     <div id="map-world">
@@ -3446,6 +3645,8 @@
 
     </div><!-- /map-world -->
   </div>
+
+  </div><!-- /vertical-shell -->
 
   <!-- Minimap -->
   <div class="minimap" id="minimap">
@@ -6612,6 +6813,74 @@
       }
     }
 
+    // ═══════════════════════════════════
+    //  ORIENTATION — vertical (9:8) or landscape
+    //  Asked once on first visit, remembered, changeable in Settings. Mirrors
+    //  Adventure's OrientationPicker so a player meets the same question and
+    //  the same shape in both games. Vertical is preselected per Joshua.
+    // ═══════════════════════════════════
+    const ORIENTATION_KEY = 'bcw_orientation';
+
+    function getOrientation() {
+      try { return localStorage.getItem(ORIENTATION_KEY); } catch { return null; }
+    }
+
+    function applyOrientation(mode) {
+      document.body.classList.toggle('vertical-mode', mode === 'portrait');
+      // resetView derives scale from the container, so re-running it re-frames
+      // the island to the new width instead of leaving it clipped.
+      if (typeof resetView === 'function') requestAnimationFrame(resetView);
+      if (typeof updateMinimap === 'function') { try { updateMinimap(); } catch {} }
+    }
+
+    function setOrientation(mode) {
+      try { localStorage.setItem(ORIENTATION_KEY, mode); } catch {}
+      window.BCSync?.schedulePush('world');
+      applyOrientation(mode);
+      const cb = document.getElementById('setting-vertical');
+      if (cb) cb.checked = (mode === 'portrait');
+    }
+    window.setOrientation = setOrientation;
+    window.getOrientation = getOrientation;
+
+    function showOrientationPicker() {
+      if (getOrientation()) return;
+      const ov = document.createElement('div');
+      ov.className = 'orientation-overlay';
+      ov.innerHTML = `
+        <div class="orientation-card" role="dialog" aria-label="Choose a layout">
+          <h2 class="orientation-title">How do you want to play?</h2>
+          <p class="orientation-sub">Bit Cryptic World fits either shape. Pick whichever suits your screen.</p>
+          <div class="orientation-options">
+            <button class="orientation-option orientation-option--recommended" data-mode="portrait">
+              <span class="orientation-shape orientation-shape--portrait" aria-hidden="true"></span>
+              <span class="orientation-name">Vertical</span>
+              <span class="orientation-hint">Tall and narrow. Good for phones.</span>
+            </button>
+            <button class="orientation-option" data-mode="landscape">
+              <span class="orientation-shape orientation-shape--landscape" aria-hidden="true"></span>
+              <span class="orientation-name">Horizontal</span>
+              <span class="orientation-hint">Wide. Good for a desktop window.</span>
+            </button>
+          </div>
+          <p class="orientation-note">You can change this any time in Settings.</p>
+        </div>`;
+      ov.addEventListener('click', (e) => {
+        const btn = e.target.closest('.orientation-option');
+        if (!btn) return;
+        setOrientation(btn.dataset.mode);
+        if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+        ov.remove();
+      });
+      document.body.appendChild(ov);
+    }
+
+    function initOrientation() {
+      const saved = getOrientation();
+      if (saved) { applyOrientation(saved); return; }
+      showOrientationPicker();
+    }
+
     function toggleAutoLessons() {
       if (typeof BCWSettings === 'undefined') return;
       const next = !BCWSettings.areAutoLessonsEnabled();
@@ -6759,37 +7028,31 @@
       const actionsEl = document.getElementById('detail-actions');
       actionsEl.innerHTML = '';
 
-      // Story and lesson buttons. The lesson button is ALWAYS offered where a
-      // tutorial exists — the intro choice and the Lessons pill control whether
-      // it LEADS, never whether it exists.
+      // Story and lesson buttons. ORDER IS FIXED EVERYWHERE: lesson first, story
+      // second, on every location and in every state. A button that moves between
+      // panels costs the player a re-read each time, so the setting changes which
+      // one is EMPHASISED and never where either one sits. The lesson button is
+      // always offered where a tutorial exists.
       const hasTutorial = typeof TUTORIALS !== 'undefined' && !!TUTORIALS[id];
       const storyDone = isStoryComplete(id);
       const lessonLeads = hasTutorial && !storyDone
         && typeof BCWSettings !== 'undefined' && BCWSettings.areTutorialsEnabled();
 
-      let storyBtn = null;
-      if (STORIES[id] && !loc.customStoryBtn) {
-        storyBtn = document.createElement('button');
-        if (storyDone) {
-          storyBtn.className = 'detail-action-btn secondary';
-          storyBtn.textContent = 'Replay Story';
-        } else {
-          storyBtn.className = 'detail-action-btn' + (lessonLeads ? ' secondary' : '');
-          storyBtn.textContent = 'Begin Story';
-        }
-        storyBtn.onclick = () => { closePanel(); startStory(id); };
-      }
-
-      let tutBtn = null;
       if (hasTutorial) {
-        tutBtn = document.createElement('button');
+        const tutBtn = document.createElement('button');
         tutBtn.className = 'detail-action-btn' + (lessonLeads ? '' : ' secondary');
         tutBtn.textContent = TUTORIALS[id].btnLabel || 'Learn: ' + (TUTORIALS[id].technique || 'Technique');
         tutBtn.onclick = () => { closePanel(); startStory('_tutorial_' + id); };
+        actionsEl.appendChild(tutBtn);
       }
 
-      (lessonLeads ? [tutBtn, storyBtn] : [storyBtn, tutBtn])
-        .forEach(b => { if (b) actionsEl.appendChild(b); });
+      if (STORIES[id] && !loc.customStoryBtn) {
+        const storyBtn = document.createElement('button');
+        storyBtn.className = 'detail-action-btn' + (lessonLeads || storyDone ? ' secondary' : '');
+        storyBtn.textContent = storyDone ? 'Replay Story' : 'Begin Story';
+        storyBtn.onclick = () => { closePanel(); startStory(id); };
+        actionsEl.appendChild(storyBtn);
+      }
 
       loc.actions.forEach((a, i) => {
         // label/primary may be functions so state-dependent text is computed
@@ -9402,6 +9665,7 @@
         if (typeof BCWAchievements !== 'undefined') BCWAchievements.init();
         if (typeof BCWSettings !== 'undefined') BCWSettings.init();
         syncHudToggles();
+        initOrientation();
         if (typeof BCWTutorial !== 'undefined') BCWTutorial.init();
         if (typeof BCWDesigner !== 'undefined') BCWDesigner.init();
       } catch (e) {

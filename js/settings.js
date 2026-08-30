@@ -123,6 +123,13 @@ const BCWSettings = (() => {
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Tap a word in a clue to see the job it does</label>
           </div>
+          <div class="settings-row">
+            <label>Vertical Layout</label>
+            <input type="checkbox" id="setting-vertical" ${(() => { try { return localStorage.getItem('bcw_orientation') === 'portrait' ? 'checked' : ''; } catch { return ''; } })()} />
+          </div>
+          <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
+            <label>Tall and narrow, sized for a phone screen</label>
+          </div>
         </div>
 
         <div class="settings-section">
@@ -239,6 +246,14 @@ const BCWSettings = (() => {
 
     bindSetting('setting-anatomy', 'change', (e) => {
       setAnatomyEnabled(e.target.checked);
+    });
+
+    // Orientation lives in its own key (index.html owns the shell + picker),
+    // so this row routes to that setter rather than into `settings`.
+    bindSetting('setting-vertical', 'change', (e) => {
+      if (typeof window.setOrientation === 'function') {
+        window.setOrientation(e.target.checked ? 'portrait' : 'landscape');
+      }
     });
 
     bindSetting('setting-reduced-motion', 'change', (e) => {
