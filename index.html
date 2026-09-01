@@ -11558,6 +11558,16 @@
     function sellFish(index) {
       const bucket = getBucket();
       if (index < 0 || index >= bucket.length) return;
+      // Benson is not for sale. Guarding here rather than only in the markup
+      // means Sell All and any stale button both hit the same wall.
+      if (bucket[index] && bucket[index].benson) {
+        const res = document.getElementById('fish-result');
+        if (res) {
+          res.style.color = '#F2C14E';
+          res.textContent = 'He is not for sale. Take him home instead.';
+        }
+        return;
+      }
       const fish = bucket.splice(index, 1)[0];
       const price = getFishPrice(fish);
       addCoins(price);
@@ -11584,13 +11594,25 @@
     function sellAllFish() {
       const bucket = getBucket();
       if (bucket.length === 0) return;
+      // Sell All is the dangerous one: it would sweep him up with everything
+      // else and the player would never see it happen. He stays behind.
+      const keep = bucket.filter(f => f.benson);
+      const sell = bucket.filter(f => !f.benson);
+      if (sell.length === 0) {
+        const res0 = document.getElementById('fish-result');
+        if (res0) {
+          res0.style.color = '#F2C14E';
+          res0.textContent = 'Only Benson is in the bucket, and he is not for sale.';
+        }
+        return;
+      }
       let total = 0;
-      bucket.forEach(fish => {
+      sell.forEach(fish => {
         total += getFishPrice(fish);
         saveFishCatch(fish);
       });
       addCoins(total);
-      saveBucket([]);
+      saveBucket(keep);
       renderBucket();
       renderShop();
       renderSwagButton();
@@ -12790,24 +12812,31 @@
         bucket.forEach((fish, i) => {
           const price = getFishPrice(fish);
           // Benson gets returned, not mounted.
-          const mountBtn = fish.benson
-            ? '<button class="bucket-mount-btn" onclick="returnBenson(' + i + ')" title="Take him home instead of selling him">Return</button>'
+          // Benson has no price button at all. Offering a coin value for him
+          // and then refusing the click would be a worse answer than not
+          // offering it.
+          const actionBtn = fish.benson
+            ? '<button class="bucket-mount-btn" onclick="returnBenson(' + i + ')" title="Take him home">Return</button>'
             : (fish.rarity === 'legendary'
               ? '<button class="bucket-mount-btn" onclick="mountFish(' + i + ')" title="Hang it on your wall instead of selling">Mount</button>'
               : '');
+          const sellBtn = fish.benson
+            ? ''
+            : '<button onclick="sellFish(' + i + ')">🪙 ' + price + '</button>';
           html += '<div class="fish-bucket-entry"><span class="rarity-' + fish.rarity + '">' + fish.emoji + ' ' + fish.name + ' (' + fish.weight + ' kg)</span>' +
-            '<span class="bucket-entry-btns">' + mountBtn +
-            '<button onclick="sellFish(' + i + ')">🪙 ' + price + '</button></span></div>';
+            '<span class="bucket-entry-btns">' + actionBtn + sellBtn + '</span></div>';
         });
         container.innerHTML = html;
       }
       const sellAllBtn = document.getElementById('fish-sell-all-btn');
       if (sellAllBtn) {
-        if (bucket.length === 0) {
+        if (bucket.length === 0 || bucket.every(f => f.benson)) {
           sellAllBtn.style.display = 'none';
         } else {
           sellAllBtn.style.display = 'block';
-          const totalValue = bucket.reduce((sum, f) => sum + getFishPrice(f), 0);
+          // Quote only what will actually be sold, or the button promises
+          // coins for a cat it is not going to sell.
+          const totalValue = bucket.filter(f => !f.benson).reduce((sum, f) => sum + getFishPrice(f), 0);
           sellAllBtn.textContent = 'Sell All (🪙 ' + totalValue + ')';
         }
       }
