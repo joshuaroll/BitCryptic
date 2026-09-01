@@ -1529,7 +1529,10 @@
     .fish-cast-hint { text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
     .fish-btn { background: #F2C14E; border: none; border-radius: 8px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; color: #0B1021; cursor: pointer; margin: 6px; transition: transform 0.2s; box-shadow: 0 4px 20px rgba(242, 193, 78, 0.25); }
     .fish-btn:hover { transform: scale(1.05); }
-    .fish-btn.reel-btn { background: linear-gradient(135deg, #F2C14E, #FB923C); color: #161B2E; font-size: 1.1rem; padding: 12px 32px; animation: reelPulse 0.5s ease-in-out infinite; }
+    /* Fixed width because "Set the Hook" is a longer word than "Reel In!" and
+       a centred button would slide sideways between the two presses. The whole
+       point is that you press twice without moving. */
+    .fish-btn.reel-btn { background: linear-gradient(135deg, #F2C14E, #FB923C); color: #161B2E; font-size: 1.1rem; padding: 12px 20px; width: 190px; animation: reelPulse 0.5s ease-in-out infinite; }
     .fish-result { text-align: center; margin: 8px 0; min-height: 50px; font-size: 1.05rem; }
     .fish-equip { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 6px 0; }
     .fish-equip-slot { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 10px; font-size: 0.7rem; color: rgba(255,255,255,0.45); text-align: center; min-width: 60px; }
@@ -2238,7 +2241,7 @@
     .fish-tension {
       position: relative;
       width: min(92%, 340px);
-      height: 26px;
+      height: 32px;
       margin: 0 auto 8px;
       border-radius: 13px;
       background: linear-gradient(90deg, rgba(248,113,113,0.22), rgba(255,255,255,0.06) 50%, rgba(248,113,113,0.22));
@@ -2253,12 +2256,20 @@
       border-right: 1px solid rgba(242,193,78,0.8);
     }
 
+    /* Same box, nothing in it. Reserving the space is what keeps "Reel In!"
+       and "Set the Hook" on the same pixel, so the second press does not
+       need the mouse moved. */
+    .fish-tension.is-idle {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.07);
+    }
+
     .fish-tension-marker {
-      position: absolute; top: -2px; bottom: -2px;
-      width: 4px; margin-left: -2px;
-      background: #E2E8F0;
-      box-shadow: 0 0 10px rgba(226,232,240,0.9);
-      border-radius: 2px;
+      position: absolute; top: -3px; bottom: -3px;
+      width: 7px; margin-left: -3.5px;
+      background: linear-gradient(180deg, #ffffff, #CBD5E1);
+      box-shadow: 0 0 12px rgba(226,232,240,0.95), 0 0 3px rgba(0,0,0,0.5);
+      border-radius: 3px;
     }
 
     /* ═══ POND WEATHER ═══ */
@@ -2277,13 +2288,29 @@
     .fish-scene.weather-rain::after {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 8;
       background-image:
-        repeating-linear-gradient(74deg, rgba(226,240,255,0.55) 0 1.5px, transparent 1.5px 14px),
-        repeating-linear-gradient(74deg, rgba(226,240,255,0.30) 0 1px, transparent 1px 23px);
-      animation: fishRain 0.45s linear infinite;
+        repeating-linear-gradient(76deg, rgba(226,240,255,0.34) 0 1px, transparent 1px 46px);
+      /* Two motions at once: the streaks fall, and the whole sheet breathes
+         in and out, so a shower looks like it is passing rather than running
+         at one rate forever. */
+      animation: fishRain 0.62s linear infinite, fishRainGust 7s ease-in-out infinite;
     }
     @keyframes fishRain {
       from { background-position: 0 0; }
-      to   { background-position: -24px 84px; }
+      to   { background-position: -21px 88px; }
+    }
+    @keyframes fishRainGust {
+      0%, 100% { opacity: 0.55; }
+      50%      { opacity: 1; }
+    }
+
+    /* A shower ends. The class comes off after a couple of minutes and this
+       fades it rather than blinking it out. */
+    .fish-scene.weather-clearing::after {
+      animation: fishRain 0.62s linear infinite, fishRainStop 6s ease-out forwards;
+    }
+    @keyframes fishRainStop {
+      from { opacity: 0.8; }
+      to   { opacity: 0; }
     }
 
     .fish-scene.weather-mist::after {
@@ -11284,6 +11311,34 @@
       pondWeather = 'clear';
     }
 
+    // How long a shower lasts before it blows over, and the handles to cancel
+    // it: reopening the pond or rolling new weather must not leave an old
+    // timer running that clears a fresh rainstorm.
+    const WEATHER_DURATION_MS = 100000;   // a little over a minute and a half
+    const WEATHER_FADE_MS = 6000;
+    let weatherTimer = null, weatherFadeTimer = null;
+
+    function clearWeatherTimers() {
+      clearTimeout(weatherTimer); weatherTimer = null;
+      clearTimeout(weatherFadeTimer); weatherFadeTimer = null;
+    }
+
+    // Rain and mist pass; clear weather has nothing to pass into. Ending a
+    // shower sets the weather to clear for real, so the odds go back with the
+    // visuals rather than leaving an invisible rain bonus running.
+    function scheduleWeatherBreak() {
+      clearWeatherTimers();
+      if (pondWeather === 'clear') return;
+      weatherTimer = setTimeout(() => {
+        const scene = document.getElementById('fish-scene');
+        if (scene) scene.classList.add('weather-clearing');
+        weatherFadeTimer = setTimeout(() => {
+          pondWeather = 'clear';
+          renderWeather();
+        }, WEATHER_FADE_MS);
+      }, WEATHER_DURATION_MS);
+    }
+
     function renderWeather() {
       const el = document.getElementById('fish-weather');
       if (!el) return;
@@ -11293,9 +11348,11 @@
         '<span class="fish-weather-note">' + w.note + '</span>';
       const scene = document.getElementById('fish-scene');
       if (scene) {
+        scene.classList.remove('weather-clearing');
         scene.classList.toggle('weather-rain', pondWeather === 'rain');
         scene.classList.toggle('weather-mist', pondWeather === 'mist');
       }
+      scheduleWeatherBreak();
     }
 
     let sessionCatches = 0;
@@ -11561,6 +11618,7 @@
 
     function closeFishing() {
       document.getElementById('fishing-game').classList.remove('active');
+      clearWeatherTimers();
       cancelAnimationFrame(powerAnim); cancelAnimationFrame(aimAnim); cancelAnimationFrame(tensionAnim);
       clearTimeout(fishTimeout); clearTimeout(reelTimeout);
       resetFishingState();
@@ -11728,7 +11786,9 @@
         // Manual reel: show button, limited time window
         document.getElementById('fish-result').textContent = 'Something is biting! REEL IN!';
         document.getElementById('fish-result').style.color = '#F2C14E';
-        document.getElementById('fish-controls').innerHTML = '<button class="fish-btn reel-btn" onclick="reelIn()">Reel In!</button>';
+        document.getElementById('fish-controls').innerHTML =
+          '<div class="fish-tension is-idle"></div>' +
+          '<button class="fish-btn reel-btn" onclick="reelIn()">Reel In!</button>';
 
         reelTimeout = setTimeout(() => {
           clearInterval(ripInt);
@@ -12427,26 +12487,29 @@
     function tensionZoneFor(fish) {
       const owned = getUpgrades();
       // Base half-width of the safe zone, in percent.
-      let half = 13;
-      if (owned.includes('rod3')) half += 7;
-      else if (owned.includes('rod2')) half += 4.5;
-      else if (owned.includes('rod1')) half += 2.5;
-      // A better fish fights harder.
-      const fight = { common: 0, uncommon: 1.5, rare: 3, epic: 4.5, legendary: 6 }[fish.rarity] || 0;
-      half = Math.max(5, half - fight);
-      // Place it somewhere that is not always the middle.
-      const centre = 22 + Math.random() * 56;
-      return { lo: Math.max(0, centre - half), hi: Math.min(100, centre + half) };
+      let half = 19;
+      if (owned.includes('rod3')) half += 9;
+      else if (owned.includes('rod2')) half += 6;
+      else if (owned.includes('rod1')) half += 3;
+      // A better fish fights harder, but never to the point where landing it
+      // is luck: the floor is a zone you can still hit on purpose.
+      const fight = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 }[fish.rarity] || 0;
+      half = Math.max(11, half - fight);
+      // Keep the zone fully on the bar. Clamping the edges instead of the
+      // centre used to shave a zone that ran off the end, quietly making some
+      // casts harder than the numbers above say they are.
+      const centre = Math.min(100 - half, Math.max(half, 18 + Math.random() * 64));
+      return { lo: centre - half, hi: centre + half };
     }
 
     function tensionSpeedFor(fish) {
       const owned = getUpgrades();
-      let sp = 1.9;
-      if (owned.includes('rod3')) sp -= 0.55;
-      else if (owned.includes('rod2')) sp -= 0.35;
-      else if (owned.includes('rod1')) sp -= 0.18;
-      sp += ({ common: 0, uncommon: 0.15, rare: 0.35, epic: 0.55, legendary: 0.8 }[fish.rarity] || 0);
-      return sp;
+      let sp = 1.25;
+      if (owned.includes('rod3')) sp -= 0.45;
+      else if (owned.includes('rod2')) sp -= 0.28;
+      else if (owned.includes('rod1')) sp -= 0.14;
+      sp += ({ common: 0, uncommon: 0.1, rare: 0.22, epic: 0.35, legendary: 0.5 }[fish.rarity] || 0);
+      return Math.max(0.5, sp);
     }
 
     function reelIn() {
