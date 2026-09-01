@@ -2259,6 +2259,9 @@
     /* Same box, nothing in it. Reserving the space is what keeps "Reel In!"
        and "Set the Hook" on the same pixel, so the second press does not
        need the mouse moved. */
+    /* A hidden reward tile must not still hold a grid cell open. */
+    .palette-item[hidden], .wall-swatch[hidden], .palette-section[hidden] { display: none !important; }
+
     .fish-tension.is-idle {
       background: rgba(255,255,255,0.03);
       border-color: rgba(255,255,255,0.07);
@@ -4614,7 +4617,7 @@
           <div class="palette-item" onclick="addFurniture('kitchenCounter')"><span class="palette-icon">&#x1F3DA;</span><div class="palette-label">Counter<div class="palette-sublabel">Kitchen workspace</div></div></div>
           <div class="palette-item" onclick="addFurniture('toaster')"><span class="palette-icon">&#x1F35E;</span><div class="palette-label">Toaster<div class="palette-sublabel">For toast</div></div></div>
         </div>
-        <h3>Trophies</h3>
+        <h3 id="trophy-palette-heading">Trophies</h3>
         <div class="palette-section" id="trophy-palette">
           <div class="palette-item" onclick="addFurniture('mountedFish')"><span class="palette-icon">&#x1F3C6;</span><div class="palette-label">Mounted Fish<div class="palette-sublabel">Big Mouth Bass trophy</div></div></div>
           <div class="palette-item reward-item" id="reward-dragonScale" onclick="addRewardFurniture('dragonScale')"><span class="palette-icon">&#x1F432;</span><div class="palette-label">Dragon Scale<div class="palette-sublabel reward-lock-label">Complete Liam's Lair</div></div></div>
@@ -4622,6 +4625,7 @@
           <div class="palette-item reward-item" id="reward-lunarRock" onclick="addRewardFurniture('lunarRock')"><span class="palette-icon">&#x1FA78;</span><div class="palette-label">Lunar Rock<div class="palette-sublabel reward-lock-label">Complete The Moon</div></div></div>
           <div class="palette-item reward-item" id="reward-kaitFrog" onclick="addRewardFurniture('kaitFrog')"><span class="palette-icon">&#x1F438;</span><div class="palette-label">Kait's Cutie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
           <div class="palette-item reward-item" id="reward-goosePlushie" onclick="addRewardFurniture('goosePlushie')"><span class="palette-icon">&#x1F9A2;</span><div class="palette-label">Goose Plushie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
+          <div class="palette-item reward-item" id="reward-bensonCat" onclick="addRewardFurniture('bensonCat')"><span class="palette-icon">&#x1F408;</span><div class="palette-label">Benson<div class="palette-sublabel reward-lock-label">Found in the pond</div></div></div>
         </div>
         <h3>Object Colorway</h3>
         <div class="colorway-grid" id="colorway-grid"></div>
@@ -4849,7 +4853,15 @@
         desc: 'Captain Maddie runs a boat with more below deck than above it. She keeps the lower levels dark and the ladders where you would not expect them.',
         actions: [
           { label: 'Enter the Hold', onclick: () => openYachtMaze(), primary: true },
-          { label: 'Talk to Maddie', onclick: () => showGameModal('"Have you seen my right hand Benson around? He\'s supposed to be swabbing the deck."', 'Captain Maddie', '\u{1F9ED}') }
+          // Maddie stops asking after Benson once he is home.
+          { label: 'Talk to Maddie', onclick: () => showGameModal(
+            hasBenson()
+              ? '"So he was in the pond the whole time. That explains the swabbing."'
+              : '"Have you seen my right hand Benson around? He\'s supposed to be swabbing the deck."',
+            'Captain Maddie', '\u{1F9ED}') },
+          { label: 'Talk to Benson', when: () => hasBenson(), onclick: () => showGameModal(
+            'He is on a blanket in the sun, kneading it flat with both front paws. He does not stop when you sit down. He looks up, meows once, and goes back to the blanket.',
+            'Benson', '\u{1F408}') }
         ]
       },
       forest: {
@@ -8177,6 +8189,10 @@
       }
 
       loc.actions.forEach((a, i) => {
+        // An action may gate itself behind `when`. Absent beats present-and-
+        // disabled: a button you cannot press is a question the panel cannot
+        // answer.
+        if (typeof a.when === 'function' && !a.when()) return;
         // label/primary may be functions so state-dependent text is computed
         // when the panel opens, not once at parse time
         const label = typeof a.label === 'function' ? a.label() : a.label;
@@ -9752,6 +9768,46 @@
           '</svg>',
         zone: 'wall', cols: 1, rows: 1, reward: true
       },
+      bensonCat: {
+        svg: '<svg width="70" height="56" viewBox="0 0 70 56">' +
+          // The blanket he has claimed
+          '<ellipse cx="35" cy="47" rx="31" ry="8" fill="#4a6a8a"/>' +
+          '<ellipse cx="35" cy="45.5" rx="29" ry="7" fill="#5f83a8"/>' +
+          '<path d="M10,45 Q18,42 26,45 Q34,48 42,45 Q50,42 60,45" fill="none" stroke="#3d5a78" stroke-width="1.2" opacity="0.55"/>' +
+          // Tail, curled round the near side
+          '<path d="M54,44 Q64,42 62,35 Q60,29 54,31" fill="none" stroke="#8fd4a8" stroke-width="6" stroke-linecap="round"/>' +
+          '<path d="M54,44 Q64,42 62,35" fill="none" stroke="#a8e2bd" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>' +
+          // Body, sat in a loaf
+          '<ellipse cx="34" cy="36" rx="20" ry="12" fill="#8fd4a8"/>' +
+          '<ellipse cx="34" cy="34" rx="18" ry="10" fill="#a8e2bd" opacity="0.55"/>' +
+          // Front paws on the blanket, mid-knead: one forward, one back
+          '<ellipse cx="25" cy="44" rx="5.5" ry="3.5" fill="#c8f0d8"/>' +
+          '<ellipse cx="39" cy="45" rx="5.5" ry="3.5" fill="#c8f0d8"/>' +
+          '<path d="M22,44 L22,42 M25,44 L25,41.5 M28,44 L28,42" stroke="#7ab894" stroke-width="0.8" stroke-linecap="round"/>' +
+          '<path d="M36,45 L36,43 M39,45 L39,42.5 M42,45 L42,43" stroke="#7ab894" stroke-width="0.8" stroke-linecap="round"/>' +
+          // Head
+          '<circle cx="30" cy="20" r="13" fill="#8fd4a8"/>' +
+          '<circle cx="30" cy="19" r="11.5" fill="#a8e2bd" opacity="0.5"/>' +
+          // Ears
+          '<path d="M20,12 L18,2 L28,8 Z" fill="#8fd4a8"/>' +
+          '<path d="M40,12 L42,2 L32,8 Z" fill="#8fd4a8"/>' +
+          '<path d="M21,11 L20,5 L26,9 Z" fill="#f0a8b8" opacity="0.65"/>' +
+          '<path d="M39,11 L40,5 L34,9 Z" fill="#f0a8b8" opacity="0.65"/>' +
+          // Eyes, half shut the way a content cat sits
+          '<path d="M22,19 Q25.5,16 29,19" fill="none" stroke="#2a4a38" stroke-width="1.8" stroke-linecap="round"/>' +
+          '<path d="M33,19 Q36.5,16 40,19" fill="none" stroke="#2a4a38" stroke-width="1.8" stroke-linecap="round"/>' +
+          // Nose and mouth
+          '<path d="M29,23 L31,23 L30,24.5 Z" fill="#f0a8b8"/>' +
+          '<path d="M30,24.5 Q27.5,27 25.5,25" fill="none" stroke="#2a4a38" stroke-width="1" stroke-linecap="round"/>' +
+          '<path d="M30,24.5 Q32.5,27 34.5,25" fill="none" stroke="#2a4a38" stroke-width="1" stroke-linecap="round"/>' +
+          // Whiskers
+          '<path d="M22,23 L14,21 M22,25 L14,26" stroke="#e8f6ee" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>' +
+          '<path d="M38,23 L46,21 M38,25 L46,26" stroke="#e8f6ee" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>' +
+          // Blush, to match the house style
+          '<ellipse cx="20" cy="24" rx="3.5" ry="2" fill="#f0a0b0" opacity="0.3"/>' +
+          '<ellipse cx="40" cy="24" rx="3.5" ry="2" fill="#f0a0b0" opacity="0.3"/></svg>',
+        zone: 'floor', cols: 1, rows: 1
+      },
       kaitFrog: {
         svg: '<svg width="55" height="65" viewBox="0 0 55 65">' +
           // Body (round, squishy plushie shape)
@@ -10381,6 +10437,9 @@
           return state.completedStories.includes(storyId);
         }
       }
+      // Benson is earned by catching and returning him, not by a story or a
+      // code, so he answers to his own flag.
+      if (itemType === 'bensonCat') return typeof hasBenson === 'function' && hasBenson();
       // ANY code mapping to this item unlocks it. Returning on the first match
       // would mean a reward with several spellings only ever answered to one.
       const codes = getUnlockedCodes();
@@ -10439,33 +10498,35 @@
       grid.innerHTML = html;
     }
 
+    // One rule for every reward tile: if you have not earned it, it is not in
+    // the list. A row of locked tiles naming "Complete Liam's Lair" is a list
+    // of spoilers for stories the player has not reached, and it makes the
+    // palette read as mostly-unavailable forever.
+    function applyRewardTileState(item) {
+      const el = document.getElementById('reward-' + item);
+      if (!el) return;
+      const unlocked = isRewardUnlocked(item);
+      el.hidden = !unlocked;
+      el.classList.toggle('locked', !unlocked);
+      el.classList.toggle('unlocked', unlocked);
+      const sublabel = el.querySelector('.reward-lock-label');
+      if (sublabel) {
+        if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
+        sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText;
+      }
+    }
+
     function refreshTrophyPalette() {
-      for (const [storyId, reward] of Object.entries(REWARD_MAP)) {
-        const el = document.getElementById('reward-' + reward.item);
-        if (!el) continue;
-        const unlocked = isRewardUnlocked(reward.item);
-        el.classList.toggle('locked', !unlocked);
-        el.classList.toggle('unlocked', unlocked);
-        const sublabel = el.querySelector('.reward-lock-label');
-        if (sublabel) {
-          sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText || sublabel.textContent;
-          if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
-        }
+      for (const reward of Object.values(REWARD_MAP)) {
+        applyRewardTileState(reward.item);
       }
       // Several codes can map to one item, so walk the ITEMS, not the codes.
       const codeItems = [...new Set(Object.values(CODE_REWARD_MAP).map(r => r.item))];
       for (const item of codeItems) {
-        const el = document.getElementById('reward-' + item);
-        if (!el) continue;
-        const unlocked = isRewardUnlocked(item);
-        el.classList.toggle('locked', !unlocked);
-        el.classList.toggle('unlocked', unlocked);
-        const sublabel = el.querySelector('.reward-lock-label');
-        if (sublabel) {
-          sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText || sublabel.textContent;
-          if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
-        }
+        applyRewardTileState(item);
       }
+      // Benson is not a story or code reward: he is caught. Same rule though.
+      applyRewardTileState('bensonCat');
       // Wall colours that ride along with a code reward: swatch id -> the item
       // whose unlock also grants it.
       const REWARD_WALLS = {
@@ -10474,10 +10535,21 @@
       };
       renderColorwayPalette();
       applyColorway();
+      // A heading with nothing under it reads as a bug. The base Mounted Fish
+      // tile is always present, so the section only empties if that is gone
+      // too, but the check costs nothing and keeps the panel honest.
+      const trophySection = document.getElementById('trophy-palette');
+      if (trophySection) {
+        const anyVisible = [...trophySection.children].some(c => !c.hidden);
+        trophySection.hidden = !anyVisible;
+        const heading = document.getElementById('trophy-palette-heading');
+        if (heading) heading.hidden = !anyVisible;
+      }
       for (const [swatchId, item] of Object.entries(REWARD_WALLS)) {
         const sw = document.getElementById(swatchId);
         if (!sw) continue;
         const unlocked = isRewardUnlocked(item);
+        sw.hidden = !unlocked;
         sw.classList.toggle('locked', !unlocked);
         sw.classList.toggle('unlocked', unlocked);
       }
@@ -12717,9 +12789,12 @@
         let html = '';
         bucket.forEach((fish, i) => {
           const price = getFishPrice(fish);
-          const mountBtn = fish.rarity === 'legendary'
-            ? '<button class="bucket-mount-btn" onclick="mountFish(' + i + ')" title="Hang it on your wall instead of selling">Mount</button>'
-            : '';
+          // Benson gets returned, not mounted.
+          const mountBtn = fish.benson
+            ? '<button class="bucket-mount-btn" onclick="returnBenson(' + i + ')" title="Take him home instead of selling him">Return</button>'
+            : (fish.rarity === 'legendary'
+              ? '<button class="bucket-mount-btn" onclick="mountFish(' + i + ')" title="Hang it on your wall instead of selling">Mount</button>'
+              : '');
           html += '<div class="fish-bucket-entry"><span class="rarity-' + fish.rarity + '">' + fish.emoji + ' ' + fish.name + ' (' + fish.weight + ' kg)</span>' +
             '<span class="bucket-entry-btns">' + mountBtn +
             '<button onclick="sellFish(' + i + ')">🪙 ' + price + '</button></span></div>';
@@ -12762,6 +12837,39 @@
     function getMounts() {
       try { const v = JSON.parse(localStorage.getItem(MOUNTS_KEY)); return Array.isArray(v) ? v : []; }
       catch (e) { return []; }
+    }
+
+    // Benson lives in the house as a floor item and unlocks himself as
+    // someone to talk to on the yacht. Kept separate from the mounts list
+    // because a mount is a dead fish on a plaque and he is neither.
+    const BENSON_KEY = 'bitcryptic_benson';
+
+    function hasBenson() {
+      try { return localStorage.getItem(BENSON_KEY) === '1'; } catch (e) { return false; }
+    }
+
+    function returnBenson(index) {
+      const bucket = getBucket();
+      if (index < 0 || index >= bucket.length) return;
+      const fish = bucket[index];
+      if (!fish.benson) return;
+      bucket.splice(index, 1);
+      try { localStorage.setItem(BENSON_KEY, '1'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      saveBucket(bucket);
+      saveFishCatch(fish);
+      renderBucket();
+      renderFishLog();
+      renderBestiary();
+      if (typeof addFurniture === 'function') {
+        try { addFurniture('bensonCat'); } catch (e) {}
+      }
+      if (typeof refreshTrophyPalette === 'function') refreshTrophyPalette();
+      showGameModal(
+        'He is not a fish. He shakes the pond off, walks into your house, and picks a spot on the floor. Maddie will want to hear about this.',
+        'Benson Returned',
+        '\u{1F408}'
+      );
     }
 
     function mountFish(index) {
