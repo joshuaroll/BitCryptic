@@ -28,6 +28,17 @@ Guiding priority: **cryptic clue quality and game quality first**; development c
    one reward — a Goose Plushie for the house plus a baby blue wallpaper. No
    in-game breadcrumb by design; whichever the player finds first unlocks it and
    the other two then answer "The goose is already yours."
+   `BOSTON` (2026-09-01): every road resurfaces in red brick, and the Town Square
+   marker gains the title "Cambridge but not the one in Old England".
+   `POG` (2026-09-01): renames the Scramble Shores and Your Home MAP LABELS and
+   panel titles only — never story prose, so a completed story never contradicts
+   the map. Also lights the house walls with RGB, puts a GPU fan behind the
+   window, unlocks a gaming PC, and anchors Maddie's Yacht east of the island.
+   The yacht holds a boat-shaped maze: 31x41, 363 open cells, 77-move shortest
+   path, braided with 23 loops so wall-following does not solve it.
+   Swag fish (2026-09-01): ~5% of catches offer a spin for a cosmetic colorway
+   (gold / diamond / gamer RGB) that tints every placed object. Nothing is spent
+   and nothing is lost — declining keeps the fish, a duplicate just says so.
 6. Spare verified clue on the bench: SEDGE ("Marsh plant amused gentry somewhat (5)") — candidate for a pond or forest bonus.
 
 **Standing rule: no new or reworded clue ships without Joshua's explicit approval.**

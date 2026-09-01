@@ -2203,6 +2203,275 @@
       border-top: 1px solid rgba(242, 193, 78, 0.15);
     }
 
+    /* ═══════════════════════════════════
+       MADDIE'S YACHT — the maze overlay
+       ═══════════════════════════════════ */
+    /* A colorway tints every placed object. hue-rotate alone would leave
+       wood looking like wood, so gold and diamond also lift saturation and
+       brightness; RGB gets a live gradient overlay instead. */
+    #house-room.cw-gold .furniture-item { filter: sepia(0.85) saturate(2.4) hue-rotate(-14deg) brightness(1.12); }
+    #house-room.cw-diamond .furniture-item { filter: grayscale(0.55) brightness(1.45) hue-rotate(165deg) saturate(1.8); }
+    #house-room.cw-rgb .furniture-item { animation: bcw-cw-rgb 6s linear infinite; }
+
+    @keyframes bcw-cw-rgb {
+      0% { filter: hue-rotate(0deg) saturate(2.2) brightness(1.1); }
+      100% { filter: hue-rotate(360deg) saturate(2.2) brightness(1.1); }
+    }
+
+    /* ═══ SWAG FISH ═══ */
+    .swag-panel {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2600;
+      width: min(92vw, 330px);
+      background: #161B2E;
+      border: 1px solid #2A3553;
+      border-radius: 14px;
+      padding: 22px 20px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .swag-fish { font-size: 2.1rem; line-height: 1; margin-bottom: 8px; }
+
+    .swag-title {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: #E2E8F0;
+    }
+
+    .swag-text {
+      margin: 0 0 16px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      color: #94A3B8;
+    }
+
+    .swag-actions { display: flex; gap: 8px; }
+    .swag-actions .fish-btn { flex: 1; }
+
+    .fish-btn--ghost {
+      background: transparent !important;
+      border: 1px solid #2A3553 !important;
+      color: #94A3B8 !important;
+    }
+
+    .swag-wheelwrap {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin: 4px auto 16px;
+    }
+
+    .swag-wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid #2A3553;
+    }
+
+    .swag-pointer {
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      margin-left: -9px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 16px solid #F2C14E;
+      z-index: 2;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+    }
+
+    /* Colorway swatches in the house palette */
+    .colorway-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .colorway-swatch {
+      width: 44px;
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid #2A3553;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .colorway-swatch.locked {
+      opacity: 0.28;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+
+    .colorway-swatch.active { border-color: #F2C14E; box-shadow: 0 0 0 2px rgba(242, 193, 78, 0.35); }
+
+    .maze-panel {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2600;
+      width: min(94vw, 470px);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      background: #0f1424;
+      border: 1px solid #2A3553;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .maze-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .maze-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64D9A0;
+    }
+
+    .maze-sub {
+      font-size: 0.9rem;
+      color: #CBD5E1;
+      margin-top: 4px;
+    }
+
+    .maze-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .maze-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0B1021;
+      background: #F2C14E;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 14px;
+      min-height: 36px;
+      cursor: pointer;
+    }
+
+    .maze-btn--close {
+      background: transparent;
+      border: 1px solid #2A3553;
+      color: #94A3B8;
+    }
+
+    /* The maze scrolls inside its own box; the page never does. */
+    .maze-viewport {
+      overflow: auto;
+      border-radius: 8px;
+      border: 1px solid #2A3553;
+      background: #071018;
+      -webkit-overflow-scrolling: touch;
+      touch-action: none;
+    }
+
+    .maze-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #64748B;
+      margin-top: 9px;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════════════
+       BOSTON — every road turns red brick
+       ═══════════════════════════════════ */
+    /* The tag sits on the GROUP; the stroke it sets is inherited by the paths
+       inside it, so the selector has to match the group, not the path. */
+    body.boston-roads .island-svg g[data-road-stone] { stroke: #b8492f !important; }
+    body.boston-roads .island-svg g[data-road-border] { stroke: #6d2617 !important; }
+
+    /* ═══════════════════════════════════
+       POG — the house goes gamer
+       ═══════════════════════════════════ */
+    @keyframes bcw-rgb-run {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    body.pog-house #house-wall::before,
+    body.pog-house #house-wall::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff2e63, #ffd93d, #6bff8f, #4dd8ff, #b06bff, #ff2e63);
+      background-size: 200% 100%;
+      animation: bcw-rgb-run 5s linear infinite;
+      box-shadow: 0 0 10px 2px rgba(180, 120, 255, 0.55), 0 0 22px 6px rgba(80, 200, 255, 0.28);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    body.pog-house #house-wall::before { top: 6px; }
+    body.pog-house #house-wall::after { bottom: 4px; }
+
+    /* The strips WASH the wall; they do not replace whatever colour the
+       player chose, so a custom wallpaper still shows through. */
+    body.pog-house #house-wall {
+      position: relative;
+      box-shadow: inset 0 0 90px rgba(120, 90, 255, 0.28);
+    }
+
+    /* GPU fan behind the glass */
+    @keyframes bcw-fan-spin { to { transform: rotate(360deg); } }
+
+    body.pog-house .house-room-window {
+      display: block !important;
+      position: absolute;
+      left: 8%;
+      top: 14%;
+      width: 74px;
+      height: 62px;
+      border: 5px solid #8b6914;
+      border-radius: 3px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #16203a 0%, #0a0e1c 70%);
+      z-index: 2;
+    }
+
+    body.pog-house .house-room-window::before {
+      content: '';
+      display: block !important;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 46px;
+      height: 46px;
+      margin: -23px 0 0 -23px;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 0deg, #48557a 0 60deg, #2c3552 60deg 120deg,
+          #48557a 120deg 180deg, #2c3552 180deg 240deg,
+          #48557a 240deg 300deg, #2c3552 300deg 360deg);
+      animation: bcw-fan-spin 1.1s linear infinite;
+    }
+
+    body.pog-house .house-room-window::after {
+      content: '';
+      display: block !important;
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(107, 255, 143, 0.20), transparent 65%);
+    }
+
     .story-puzzle-input-wrap {
       display: flex;
       gap: 8px;
@@ -2990,13 +3259,13 @@
 
           <!-- ── COBBLESTONE: Town Square → Adventure Tower + Cafe→Tower + Tower→Peak ── -->
           <!-- Border -->
-          <g fill="none" stroke="#5a5050" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+          <g fill="none" stroke="#5a5050" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" data-road-border>
             <path d="M1200,685 Q1175,600 1140,510 Q1115,440 1100,385"></path>
             <path d="M835,505 Q925,448 1005,405 Q1055,382 1095,375"></path>
             <path d="M1108,362 Q1128,332 1158,302 Q1188,282 1200,272"></path>
           </g>
           <!-- Stone base -->
-          <g fill="none" stroke="#8a8078" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+          <g fill="none" stroke="#8a8078" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" data-road-stone>
             <path d="M1200,685 Q1175,600 1140,510 Q1115,440 1100,385"></path>
             <path d="M835,505 Q925,448 1005,405 Q1055,382 1095,375"></path>
             <path d="M1108,362 Q1128,332 1158,302 Q1188,282 1200,272"></path>
@@ -3836,7 +4105,7 @@
   <!-- House Editor -->
   <div id="house-editor">
     <div class="house-header">
-      <h2>Your Home</h2>
+      <h2 id="house-editor-title">Your Home</h2>
       <div class="house-header-actions">
         <button class="house-action-btn" onclick="houseUndo()" id="house-undo-btn" title="Undo (Ctrl+Z)" disabled>&#x21A9; Undo</button>
         <button class="house-action-btn" onclick="houseRedo()" id="house-redo-btn" title="Redo (Ctrl+Y)" disabled>&#x21AA; Redo</button>
@@ -3902,6 +4171,8 @@
           <div class="palette-item reward-item" id="reward-kaitFrog" onclick="addRewardFurniture('kaitFrog')"><span class="palette-icon">&#x1F438;</span><div class="palette-label">Kait's Cutie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
           <div class="palette-item reward-item" id="reward-goosePlushie" onclick="addRewardFurniture('goosePlushie')"><span class="palette-icon">&#x1F9A2;</span><div class="palette-label">Goose Plushie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
         </div>
+        <h3>Object Colorway</h3>
+        <div class="colorway-grid" id="colorway-grid"></div>
         <h3>Wall Color</h3>
         <div class="wall-color-grid">
           <div class="wall-swatch" style="background:#7a6a5a;" onclick="setWallColor('#7a6a5a')" title="Wood"></div>
@@ -4116,6 +4387,17 @@
               showGameModal('You peer through the great telescope. Stars wheel slowly overhead, and three dark patches of sky seem to be waiting for something. Somewhere in the dome, an astronomer hums quietly to herself. The Star Watcher will read the sky aloud with anyone patient enough to listen.', 'Stargaze', '\u2728');
             }
           } }
+        ]
+      },
+      yacht: {
+        title: "Maddie's Yacht",
+        subtitle: 'Anchored where the charts end',
+        icon: '&#x1F6E5;',
+        iconBg: 'linear-gradient(135deg, #1c3f63, #2d6b96)',
+        desc: 'Captain Maddie runs a boat with more below deck than above it. She keeps the lower levels dark and the ladders where you would not expect them.',
+        actions: [
+          { label: 'Enter the Hold', onclick: () => openYachtMaze(), primary: true },
+          { label: 'Talk to Maddie', onclick: () => showGameModal('"Get yourself down to the keel and find your way back up," she says. "Out through the mast. Nobody has done it quick."', "Captain Maddie", '&#x1F9ED;') }
         ]
       },
       forest: {
@@ -4393,6 +4675,7 @@
     // ═══════════════════════════════════
     const UNLOCK_CHAIN = {
       docks: { unlockedBy: null, reveals: ['forest'] },
+      yacht: { unlockedBy: null, reveals: [], secret: true },
       forest: { unlockedBy: 'docks', reveals: ['cafe'] },
       cafe: { unlockedBy: 'forest', reveals: ['town'] },
       town: { unlockedBy: 'cafe', reveals: ['adventure', 'library', 'workshop'] },
@@ -5899,6 +6182,228 @@
     };
 
     // ═══════════════════════════════════
+    //  MADDIE'S YACHT - the boat maze
+    //  Unlocked by the POG terminal code. The walkable region is a boat
+    //  silhouette: start in the keel, work up through hold and decks, out the
+    //  masthead. Carved as a randomised-DFS spanning tree over the hull mask,
+    //  then BRAIDED - 23 extra walls removed to create loops, because a
+    //  perfect maze falls to wall-following and this one should not.
+    //  Shortest path is 77 moves.
+    // ═══════════════════════════════════
+    const YACHT_MAZE = [
+      '###############E###############',
+      '#############  E  #############',
+      '################# #############',
+      '#############   # #############',
+      '############# # # #############',
+      '#############     #############',
+      '############# ### #############',
+      '#############     #############',
+      '############# ### #############',
+      '#############     #############',
+      '################# #############',
+      '#########         #   #########',
+      '########### # ### ### #########',
+      '#########   #   #     #########',
+      '######### ### # # ### #########',
+      '#####     # # #       #   #####',
+      '##### ##### # ######### # #####',
+      '##### #     #   #     #   #####',
+      '##### ### ##### ### # # # #####',
+      '#####           #       # #####',
+      '##### # ### ## ## ####### #####',
+      '#     #   #       #   #   #   #',
+      '# # ##### ##### ### ### # # # #',
+      '#   #   #     #       #     # #',
+      '### # # # ### ####### # # ### #',
+      '#   # #     #       # #     # #',
+      '# ### ##### # ##### # # ### # #',
+      '# #       #         # #   #   #',
+      '### # # # ######## ## ### #####',
+      '###   # # #         #       ###',
+      '##### ### # ### ##### # # #####',
+      '#####   #     #     # #   #####',
+      '####### # ##### ### # #########',
+      '#######         #   #   #######',
+      '######### # # ### ### #########',
+      '#########   #   #     #########',
+      '########### ### ### ###########',
+      '###########   #   # ###########',
+      '############# ### #############',
+      '############# #S  #############',
+      '###############################'
+    ];
+
+    let mazeState = null;
+
+    function openYachtMaze() {
+      closePanel();
+      // Read start out of the grid rather than hardcoding it, so the maze can
+      // be regenerated without touching this code.
+      let start = null;
+      YACHT_MAZE.forEach(function (row, y) {
+        const x = row.indexOf('S');
+        if (x !== -1) start = { x: x, y: y };
+      });
+      if (!start) return;
+      mazeState = { x: start.x, y: start.y, start: start, moves: 0, won: false };
+
+      const overlay = document.createElement('div');
+      overlay.className = 'detail-overlay active';
+      overlay.id = 'maze-overlay';
+      overlay.onclick = closeYachtMaze;
+
+      const panel = document.createElement('div');
+      panel.className = 'maze-panel';
+      panel.id = 'maze-panel';
+      panel.innerHTML =
+        '<div class="maze-head">' +
+          '<div>' +
+            '<div class="maze-title">Below Deck</div>' +
+            '<div class="maze-sub" id="maze-sub">Find your way up and out.</div>' +
+          '</div>' +
+          '<div class="maze-actions">' +
+            '<button class="maze-btn" onclick="resetYachtMaze()">Reset</button>' +
+            '<button class="maze-btn maze-btn--close" onclick="closeYachtMaze()">Close</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="maze-viewport" id="maze-viewport"></div>' +
+        '<div class="maze-hint">Arrow keys, WASD, or swipe.</div>';
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+      renderYachtMaze();
+      window.addEventListener('keydown', mazeKeyHandler);
+      attachMazeSwipe(document.getElementById('maze-viewport'));
+    }
+
+    function closeYachtMaze() {
+      window.removeEventListener('keydown', mazeKeyHandler);
+      const o = document.getElementById('maze-overlay');
+      if (o) o.remove();
+      const m = document.getElementById('maze-panel');
+      if (m) m.remove();
+      mazeState = null;
+    }
+
+    function resetYachtMaze() {
+      if (!mazeState) return;
+      mazeState.x = mazeState.start.x;
+      mazeState.y = mazeState.start.y;
+      mazeState.moves = 0;
+      mazeState.won = false;
+      const sub = document.getElementById('maze-sub');
+      if (sub) sub.textContent = 'Find your way up and out.';
+      renderYachtMaze();
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+    }
+
+    function mazeCell(x, y) {
+      if (y < 0 || y >= YACHT_MAZE.length) return '#';
+      const row = YACHT_MAZE[y];
+      if (x < 0 || x >= row.length) return '#';
+      return row[x];
+    }
+
+    function moveInMaze(dx, dy) {
+      if (!mazeState || mazeState.won) return;
+      const nx = mazeState.x + dx, ny = mazeState.y + dy;
+      if (mazeCell(nx, ny) === '#') return;
+      mazeState.x = nx;
+      mazeState.y = ny;
+      mazeState.moves++;
+      if (mazeCell(nx, ny) === 'E') {
+        mazeState.won = true;
+        const sub = document.getElementById('maze-sub');
+        if (sub) sub.textContent = 'Out through the masthead. ' + mazeState.moves + ' moves.';
+        if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+      }
+      renderYachtMaze();
+    }
+
+    function mazeKeyHandler(e) {
+      const map = {
+        ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+        w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0],
+        W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0]
+      };
+      const m = map[e.key];
+      if (!m) return;
+      e.preventDefault();
+      moveInMaze(m[0], m[1]);
+    }
+
+    function attachMazeSwipe(el) {
+      if (!el) return;
+      let sx = 0, sy = 0;
+      el.addEventListener('touchstart', function (e) {
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      }, { passive: true });
+      el.addEventListener('touchend', function (e) {
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = e.changedTouches[0].clientY - sy;
+        // A swipe must clear a threshold, or a tap registers as a move.
+        if (Math.abs(dx) < 24 && Math.abs(dy) < 24) return;
+        if (Math.abs(dx) > Math.abs(dy)) moveInMaze(dx > 0 ? 1 : -1, 0);
+        else moveInMaze(0, dy > 0 ? 1 : -1);
+      }, { passive: true });
+    }
+
+    function renderYachtMaze() {
+      const vp = document.getElementById('maze-viewport');
+      if (!vp || !mazeState) return;
+      const W = YACHT_MAZE[0].length, H = YACHT_MAZE.length;
+      const cell = 13;
+      let svg = '<svg viewBox="0 0 ' + (W * cell) + ' ' + (H * cell) + '" width="100%" style="display:block">' +
+        '<rect width="' + (W * cell) + '" height="' + (H * cell) + '" fill="#071018"/>';
+
+      // Floor tiles. The boat silhouette is simply whatever is not wall.
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const c = mazeCell(x, y);
+          if (c === '#') continue;
+          const fill = c === 'E' ? 'rgba(100,217,160,0.25)' : '#123048';
+          svg += '<rect x="' + (x * cell) + '" y="' + (y * cell) + '" width="' + cell +
+            '" height="' + cell + '" fill="' + fill + '"/>';
+        }
+      }
+
+      // Waterline: the depth cue the shape is built around.
+      const waterY = Math.round(H * 0.48) * cell;
+      svg += '<line x1="0" y1="' + waterY + '" x2="' + (W * cell) + '" y2="' + waterY +
+        '" stroke="#1d4a6b" stroke-width="1.5" stroke-dasharray="5,5" opacity="0.75"/>';
+
+      // Exit ring at the masthead.
+      const topExit = YACHT_MAZE[0].indexOf('E');
+      if (topExit !== -1) {
+        svg += '<circle cx="' + (topExit * cell + cell / 2) + '" cy="' + (cell / 2) +
+          '" r="' + (cell * 0.36) + '" fill="none" stroke="#64D9A0" stroke-width="1.6"/>';
+      }
+
+      // The deckhand.
+      const px = mazeState.x * cell, py = mazeState.y * cell;
+      const sc = cell / 40;
+      svg += '<g transform="translate(' + px + ',' + py + ') scale(' + sc + ')">' +
+        '<rect x="15.5" y="26" width="3.4" height="8" rx="1.4" fill="#24384f"/>' +
+        '<rect x="21.1" y="26" width="3.4" height="8" rx="1.4" fill="#24384f"/>' +
+        '<rect x="12.5" y="15" width="15" height="12" rx="4" fill="#f4f7fa"/>' +
+        '<rect x="12.5" y="17" width="15" height="2" fill="#1c3f63"/>' +
+        '<rect x="12.5" y="21" width="15" height="2" fill="#1c3f63"/>' +
+        '<rect x="12.5" y="25" width="15" height="2" fill="#1c3f63"/>' +
+        '<rect x="9.5" y="16" width="3.4" height="9" rx="1.7" fill="#f4f7fa"/>' +
+        '<rect x="27.1" y="16" width="3.4" height="9" rx="1.7" fill="#f4f7fa"/>' +
+        '<circle cx="20" cy="10.5" r="5.6" fill="#e8b892"/>' +
+        '<path d="M14.4,8.6 A5.6,5.6 0 0,1 25.6,8.6 Z" fill="#ffffff"/>' +
+        '<rect x="13.8" y="8.2" width="12.4" height="2" rx="1" fill="#1c3f63"/>' +
+        '<circle cx="18" cy="11.2" r="1" fill="#1b1b1b"/>' +
+        '<circle cx="22" cy="11.2" r="1" fill="#1b1b1b"/>' +
+        '</g>';
+
+      svg += '</svg>';
+      vp.innerHTML = svg;
+    }
+
+    // ═══════════════════════════════════
     //  LORE ARCHIVE
     // ═══════════════════════════════════
     function showLoreArchive() {
@@ -6741,6 +7246,9 @@
     // ═══════════════════════════════════
     function initGameState() {
       applyUnlockState();
+      // Redeemed codes are permanent, so their cosmetics have to be re-applied
+      // on every load rather than only at the moment the code is typed.
+      restoreCodeCosmetics();
     }
 
     function startIntroSequence() {
@@ -7794,6 +8302,17 @@
         addTerminalLine('Kait\'s Cutie has been added to your furniture collection.', 'info');
         addTerminalLine('A new wall color has been unlocked.', 'info');
         setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
+      } else if (normalized === 'BOSTON') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('Every road on the island resurfaces itself in red brick.', 'success');
+        setTimeout(() => { applyBostonRoads(); closeTerminal(); }, 1200);
+      } else if (normalized === 'POG') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('Fans spin up somewhere under the floor.', 'success');
+        addTerminalLine('A yacht drops anchor off the east coast.', 'info');
+        setTimeout(() => { applyPogMode(); spawnYacht(); closeTerminal(); }, 1200);
       } else if (normalized === 'PONDER' || normalized === 'CALLI' || normalized === 'EDEN') {
         // One reward, three ways in. If the goose is already home, say so
         // rather than handing it over twice under a different name.
@@ -7823,6 +8342,111 @@
     //  AIRSHIP
     // ═══════════════════════════════════
     let airshipSpawned = false;
+
+    // ═══════════════════════════════════
+    //  BOSTON + POG cosmetics
+    //  Both are pure presentation: a body class plus label swaps. Nothing
+    //  here touches story prose, so a player who reads "Scramble Shores" in
+    //  a completed story does not meet a contradiction. Map panel and marker
+    //  label only, per Joshua.
+    // ═══════════════════════════════════
+    const POG_LABELS = {
+      beach: 'Jersey Shore',
+      house: 'Gamer House'
+    };
+
+    function applyBostonRoads() {
+      document.body.classList.add('boston-roads');
+      const sq = document.getElementById('loc-town');
+      if (sq) sq.setAttribute('title', 'Cambridge but not the one in Old England');
+    }
+
+    function applyPogMode() {
+      document.body.classList.add('pog-house');
+      // Map marker labels
+      for (const id in POG_LABELS) {
+        const el = document.getElementById('loc-' + id);
+        if (!el) continue;
+        const label = el.querySelector('.loc-label');
+        if (label) label.textContent = POG_LABELS[id];
+        el.setAttribute('aria-label', POG_LABELS[id] + ' - click to explore');
+      }
+      // The decorate view carries its own heading, separate from the panel.
+      const editorTitle = document.getElementById('house-editor-title');
+      if (editorTitle) editorTitle.textContent = POG_LABELS.house;
+      // Panel titles. The object is `locations`, lowercase — guarding on the
+      // wrong name made this a silent no-op.
+      if (typeof locations !== 'undefined') {
+        if (locations.beach) locations.beach.title = POG_LABELS.beach;
+        if (locations.house) locations.house.title = POG_LABELS.house;
+        if (locations.library) locations.library.subtitle = 'Kylie keeps the shelves';
+      }
+      refreshTrophyPalette();
+    }
+
+    // Codes are permanent once redeemed, so their effects have to come back
+    // on every load, not just at the moment the code is typed.
+    function restoreCodeCosmetics() {
+      const codes = getUnlockedCodes();
+      if (codes.includes('BOSTON')) applyBostonRoads();
+      if (codes.includes('POG')) { applyPogMode(); spawnYacht(); }
+    }
+
+    let yachtSpawned = false;
+
+    // Maddie's yacht, out on the open water east of the island. Built in JS
+    // like the airship rather than sitting in the map markup, because a
+    // secret location should not be in the DOM before it is found.
+    function spawnYacht() {
+      if (yachtSpawned || document.getElementById('loc-yacht')) return;
+      yachtSpawned = true;
+      unlockLocation('yacht');
+
+      const el = document.createElement('div');
+      el.className = 'location';
+      el.id = 'loc-yacht';
+      el.style.left = '2020px';
+      el.style.top = '760px';
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', "Maddie's Yacht - click to explore");
+      el.onclick = () => openLocation('yacht');
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLocation('yacht'); } };
+
+      el.innerHTML =
+        '<div class="loc-label">Maddie\'s Yacht</div>' +
+        '<div class="loc-glow" style="background: radial-gradient(circle, rgba(242,193,78,0.28), transparent);"></div>' +
+        '<div class="loc-building" style="width:130px;height:80px;">' +
+        '<svg width="130" height="80" viewBox="0 0 130 80">' +
+        '<ellipse cx="65" cy="72" rx="60" ry="7" fill="#ffffff" opacity="0.14"/>' +
+        '<path d="M8,52 L122,52 L107,70 L23,70 Z" fill="#e9edf2"/>' +
+        '<path d="M8,52 L122,52 L120,56 L10,56 Z" fill="#ffffff"/>' +
+        '<path d="M23,70 L107,70 L103,74 L27,74 Z" fill="#1d3550"/>' +
+        '<rect x="12" y="57" width="106" height="3" fill="#1c3f63"/>' +
+        '<rect x="30" y="35" width="70" height="18" rx="3" fill="#f4f7fa"/>' +
+        '<rect x="35" y="39" width="12" height="9" rx="1.5" fill="#7fc4e8"/>' +
+        '<rect x="52" y="39" width="12" height="9" rx="1.5" fill="#7fc4e8"/>' +
+        '<rect x="69" y="39" width="12" height="9" rx="1.5" fill="#7fc4e8"/>' +
+        '<rect x="45" y="20" width="40" height="16" rx="3" fill="#ffffff"/>' +
+        '<rect x="50" y="24" width="11" height="8" rx="1.5" fill="#7fc4e8"/>' +
+        '<rect x="65" y="24" width="11" height="8" rx="1.5" fill="#7fc4e8"/>' +
+        '<line x1="65" y1="20" x2="65" y2="2" stroke="#c9d3dd" stroke-width="2"/>' +
+        '<path d="M65,3 L83,7 L65,11 Z" fill="#F2C14E"/>' +
+        '</svg>' +
+        '</div>';
+
+      const world = document.getElementById('map-world');
+      if (world) world.appendChild(el);
+
+      el.style.transform = 'scale(0)';
+      el.style.opacity = '0';
+      el.offsetHeight;
+      el.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+      el.style.transform = 'scale(1)';
+      el.style.opacity = '1';
+      spawnUnlockParticles(el);
+      showUnlockBanner("Maddie's Yacht");
+    }
 
     function spawnAirship() {
       if (airshipSpawned) return;
@@ -9204,6 +9828,50 @@
       addFurniture(type);
     }
 
+    // Colorways tint every placed object at once, which is why this is a
+    // single stored value rather than a per-item property: the wheel gives you
+    // a finish for the room, not for one chair.
+    const COLORWAY_ACTIVE_KEY = 'bitcryptic_colorway_active';
+
+    function getActiveColorway() {
+      try { return localStorage.getItem(COLORWAY_ACTIVE_KEY) || ''; }
+      catch (e) { return ''; }
+    }
+
+    function setActiveColorway(id) {
+      if (id && !getColorways().includes(id)) return;
+      try { localStorage.setItem(COLORWAY_ACTIVE_KEY, id || ''); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      applyColorway();
+      renderColorwayPalette();
+    }
+
+    function applyColorway() {
+      const room = document.getElementById('house-room');
+      if (!room) return;
+      room.classList.remove('cw-gold', 'cw-diamond', 'cw-rgb');
+      const id = getActiveColorway();
+      if (id) room.classList.add('cw-' + id);
+    }
+
+    function renderColorwayPalette() {
+      const grid = document.getElementById('colorway-grid');
+      if (!grid || typeof COLORWAYS === 'undefined') return;
+      const owned = getColorways();
+      const active = getActiveColorway();
+      let html = '<div class="colorway-swatch' + (active ? '' : ' active') +
+        '" style="background:#8b6914" title="Default" onclick="setActiveColorway(\'\')"></div>';
+      for (const id in COLORWAYS) {
+        const has = owned.includes(id);
+        html += '<div class="colorway-swatch' + (has ? '' : ' locked') +
+          (active === id ? ' active' : '') +
+          '" style="background:' + COLORWAYS[id].swatch + '" title="' +
+          (has ? COLORWAYS[id].label : COLORWAYS[id].label + ' (locked)') + '"' +
+          (has ? ' onclick="setActiveColorway(\'' + id + '\')"' : '') + '></div>';
+      }
+      grid.innerHTML = html;
+    }
+
     function refreshTrophyPalette() {
       for (const [storyId, reward] of Object.entries(REWARD_MAP)) {
         const el = document.getElementById('reward-' + reward.item);
@@ -9237,6 +9905,8 @@
         'reward-kaitWall': 'kaitFrog',
         'reward-gooseWall': 'goosePlushie'
       };
+      renderColorwayPalette();
+      applyColorway();
       for (const [swatchId, item] of Object.entries(REWARD_WALLS)) {
         const sw = document.getElementById(swatchId);
         if (!sw) continue;
@@ -10460,6 +11130,130 @@
       }
     }
 
+    // ═══════════════════════════════════
+    //  SWAG FISH — cosmetic colorways for house objects
+    //  Roughly one catch in twenty is a swag fish. It offers a spin for a
+    //  colorway. Nothing is spent and nothing is lost: declining keeps the
+    //  fish, and a duplicate colorway just says so. That is deliberate — a
+    //  wheel that can take something from you is a different kind of feature
+    //  than this one, and a worse fit for a 13+ game.
+    // ═══════════════════════════════════
+    const COLORWAYS_KEY = 'bitcryptic_colorways';
+    const SWAG_CHANCE = 0.05;
+
+    const COLORWAYS = {
+      gold:    { label: 'Gold',      swatch: 'linear-gradient(135deg,#f7d774,#b8860b 45%,#ffe9a3 60%,#a5720a)' },
+      diamond: { label: 'Diamond',   swatch: 'linear-gradient(135deg,#d8f3ff,#9fd8ee 40%,#ffffff 55%,#86c9e6)' },
+      rgb:     { label: 'Gamer RGB', swatch: 'linear-gradient(90deg,#ff2e63,#ffd93d,#6bff8f,#4dd8ff,#b06bff)' }
+    };
+
+    function getColorways() {
+      try { return JSON.parse(localStorage.getItem(COLORWAYS_KEY) || '[]'); }
+      catch (e) { return []; }
+    }
+
+    function saveColorway(id) {
+      const owned = getColorways();
+      if (owned.includes(id)) return false;
+      owned.push(id);
+      try { localStorage.setItem(COLORWAYS_KEY, JSON.stringify(owned)); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      return true;
+    }
+
+    function maybeSwagFish() {
+      if (Math.random() >= SWAG_CHANCE) return;
+      showSwagPrompt();
+    }
+
+    function showSwagPrompt() {
+      const overlay = document.createElement('div');
+      overlay.className = 'detail-overlay active';
+      overlay.id = 'swag-overlay';
+
+      const panel = document.createElement('div');
+      panel.className = 'swag-panel';
+      panel.id = 'swag-panel';
+      panel.innerHTML =
+        '<div class="swag-fish">\u2728\uD83D\uDC1F</div>' +
+        '<h3 class="swag-title">A swag fish</h3>' +
+        '<p class="swag-text">It glitters in a way a fish should not. Spin it for a colorway?</p>' +
+        '<div class="swag-actions">' +
+          '<button class="fish-btn" onclick="spinSwagWheel()">Spin</button>' +
+          '<button class="fish-btn fish-btn--ghost" onclick="closeSwag()">Keep the fish</button>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+    }
+
+    function closeSwag() {
+      const o = document.getElementById('swag-overlay');
+      if (o) o.remove();
+      const p = document.getElementById('swag-panel');
+      if (p) p.remove();
+    }
+
+    function spinSwagWheel() {
+      const panel = document.getElementById('swag-panel');
+      if (!panel) return;
+      const ids = Object.keys(COLORWAYS);
+      const wonId = ids[Math.floor(Math.random() * ids.length)];
+
+      // Land the pointer on the winning wedge: wedges are drawn in order, so
+      // the target angle is known before the animation starts. The spin is a
+      // reveal of a decided result, not the thing that decides it.
+      const wedge = 360 / ids.length;
+      const idx = ids.indexOf(wonId);
+      const target = 1080 + (360 - (idx * wedge + wedge / 2));
+
+      let wedges = '';
+      ids.forEach((id, i) => {
+        const a0 = (i * wedge - 90) * Math.PI / 180;
+        const a1 = ((i + 1) * wedge - 90) * Math.PI / 180;
+        const x0 = 50 + 48 * Math.cos(a0), y0 = 50 + 48 * Math.sin(a0);
+        const x1 = 50 + 48 * Math.cos(a1), y1 = 50 + 48 * Math.sin(a1);
+        const solid = { gold: '#d8a520', diamond: '#9fd8ee', rgb: '#b06bff' }[id];
+        wedges += '<path d="M50,50 L' + x0.toFixed(2) + ',' + y0.toFixed(2) +
+          ' A48,48 0 0,1 ' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' Z" fill="' + solid + '"/>';
+      });
+
+      panel.innerHTML =
+        '<div class="swag-wheelwrap">' +
+          '<div class="swag-pointer"></div>' +
+          '<svg class="swag-wheel" id="swag-wheel" viewBox="0 0 100 100">' + wedges +
+            '<circle cx="50" cy="50" r="9" fill="#161B2E" stroke="#F2C14E" stroke-width="2"/>' +
+          '</svg>' +
+        '</div>' +
+        '<p class="swag-text" id="swag-result">Spinning...</p>';
+
+      const wheel = document.getElementById('swag-wheel');
+      requestAnimationFrame(() => {
+        wheel.style.transition = 'transform 3.4s cubic-bezier(.15,.85,.2,1)';
+        wheel.style.transform = 'rotate(' + target + 'deg)';
+      });
+
+      setTimeout(() => {
+        const fresh = saveColorway(wonId);
+        const res = document.getElementById('swag-result');
+        if (res) {
+          res.innerHTML = fresh
+            ? '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> unlocked. Apply it from the house palette.'
+            : '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> again. You already have it.';
+        }
+        const p2 = document.getElementById('swag-panel');
+        if (p2) {
+          const btn = document.createElement('button');
+          btn.className = 'fish-btn';
+          btn.style.marginTop = '14px';
+          btn.textContent = 'Back to fishing';
+          btn.onclick = closeSwag;
+          p2.appendChild(btn);
+        }
+        if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+      }, 3500);
+    }
+
     function reelIn() {
       if (fishState !== 'biting') return;
       clearTimeout(reelTimeout); fishState = 'idle';
@@ -10506,6 +11300,7 @@
         document.getElementById('fish-controls').innerHTML = '<button class="fish-btn" onclick="startCast()">Cast Again</button>';
       }
       renderBucket();
+      maybeSwagFish();
     }
 
     // Keyboard support
