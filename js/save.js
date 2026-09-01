@@ -18,6 +18,7 @@ const BCWSave = (() => {
     'bitcryptic_unlocked_codes',
     'bitcryptic_house',
     'bitcryptic_colorways',
+    'bitcryptic_swag_tokens',
     'bitcryptic_fish',
     'bitcryptic_fish_stats',
     'bitcryptic_fish_coins',

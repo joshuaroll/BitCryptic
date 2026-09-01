@@ -2218,6 +2218,18 @@
       100% { filter: hue-rotate(360deg) saturate(2.2) brightness(1.1); }
     }
 
+    /* The Spin button sits with the coin counter, in the colourway gradient
+       so it reads as a cosmetic reward rather than another shop action. */
+    .fish-btn--wheel {
+      background: linear-gradient(90deg, #ff2e63, #ffd93d, #6bff8f, #4dd8ff, #b06bff);
+      background-size: 200% 100%;
+      animation: bcw-rgb-run 5s linear infinite;
+      color: #0B1021;
+      box-shadow: 0 4px 20px rgba(176, 107, 255, 0.3);
+    }
+
+    .fish-btn--wheel[hidden] { display: none; }
+
     /* ═══ SWAG FISH ═══ */
     .swag-panel {
       position: fixed;
@@ -10969,6 +10981,7 @@
       saveBucket([]);
       renderBucket();
       renderShop();
+      renderSwagButton();
       renderMoney();
       renderFishLog();
       document.getElementById('fish-result').textContent = 'Sold all fish for ' + total + ' coins!';
@@ -11046,6 +11059,7 @@
       renderEquipment();
       renderBucket();
       renderFishLog();
+      renderSwagButton();
     }
     function viewFishCatches() { openFishingGame(); setTimeout(() => document.getElementById('fish-log-section').scrollIntoView({ behavior: 'smooth' }), 300); }
 
@@ -11240,6 +11254,10 @@
     //  than this one, and a worse fit for a 13+ game.
     // ═══════════════════════════════════
     const COLORWAYS_KEY = 'bitcryptic_colorways';
+    // Spins you are holding. A swag fish you decline is not thrown away: it
+    // becomes a token you can spend later from the Spin button, so catching
+    // one is never a moment you can waste by picking the wrong option.
+    const SWAG_TOKENS_KEY = 'bitcryptic_swag_tokens';
 
     // Base rate, then better lures raise it. The Diamond Lure is the top tier
     // and the one that already removes common fish, so it is the natural home
@@ -11265,6 +11283,16 @@
       rgb:     { label: 'Gamer RGB', swatch: 'linear-gradient(90deg,#ff2e63,#ffd93d,#6bff8f,#4dd8ff,#b06bff)' }
     };
 
+    function getSwagTokens() {
+      return parseInt(localStorage.getItem(SWAG_TOKENS_KEY), 10) || 0;
+    }
+
+    function setSwagTokens(n) {
+      try { localStorage.setItem(SWAG_TOKENS_KEY, String(Math.max(0, n))); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      renderSwagButton();
+    }
+
     function getColorways() {
       try { return JSON.parse(localStorage.getItem(COLORWAYS_KEY) || '[]'); }
       catch (e) { return []; }
@@ -11284,6 +11312,31 @@
     // has to leave you with something, or "Keep the fish" would be a lie.
     const SWAG_FISH = { name: 'Swag Fish', emoji: '✨', rarity: 'legendary', color: '#b06bff' };
 
+    // The button only exists when you have something to spend. A permanently
+    // visible control that does nothing most of the time is worse than no
+    // control at all.
+    function renderSwagButton() {
+      const btn = document.getElementById('swag-spin-btn');
+      if (!btn) return;
+      const n = getSwagTokens();
+      btn.hidden = n <= 0;
+      btn.textContent = '\u2728 Spin (' + n + ')';
+    }
+
+    // Opened from the button rather than from a catch. Spends one token.
+    function openSwagWheel() {
+      if (getSwagTokens() <= 0) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'detail-overlay active';
+      overlay.id = 'swag-overlay';
+      const panel = document.createElement('div');
+      panel.className = 'swag-panel';
+      panel.id = 'swag-panel';
+      document.body.appendChild(overlay);
+      document.body.appendChild(panel);
+      spinSwagWheel();
+    }
+
     function maybeSwagFish() {
       if (Math.random() >= getSwagChance()) return;
       const bucket = getBucket();
@@ -11302,6 +11355,7 @@
       };
       saveBucket(bucket);
       renderBucket();
+      setSwagTokens(getSwagTokens() + 1);
       const result = document.getElementById('fish-result');
       if (result) {
         result.style.color = SWAG_FISH.color;
@@ -11324,10 +11378,10 @@
       panel.innerHTML =
         '<div class="swag-fish">\u2728\uD83D\uDC1F</div>' +
         '<h3 class="swag-title">A swag fish</h3>' +
-        '<p class="swag-text">It glitters in a way a fish should not. Spin it for a colorway?</p>' +
+        '<p class="swag-text">It glitters in a way a fish should not. Spin now, or keep the spin for later.</p>' +
         '<div class="swag-actions">' +
           '<button class="fish-btn" onclick="spinSwagWheel()">Spin</button>' +
-          '<button class="fish-btn fish-btn--ghost" onclick="closeSwag()">Keep the fish</button>' +
+          '<button class="fish-btn fish-btn--ghost" onclick="closeSwag()">Later</button>' +
         '</div>';
 
       document.body.appendChild(overlay);
@@ -11339,11 +11393,15 @@
       if (o) o.remove();
       const p = document.getElementById('swag-panel');
       if (p) p.remove();
+      // Declining keeps the token, so the Spin button has to appear now.
+      renderSwagButton();
     }
 
     function spinSwagWheel() {
       const panel = document.getElementById('swag-panel');
       if (!panel) return;
+      if (getSwagTokens() <= 0) { closeSwag(); return; }
+      setSwagTokens(getSwagTokens() - 1);
       const ids = Object.keys(COLORWAYS);
       const wonId = ids[Math.floor(Math.random() * ids.length)];
 
@@ -11475,7 +11533,9 @@
         { type: 'lure', label: 'Lure', none: 'None' },
         { type: 'bait', label: 'Bait', none: 'None' },
         { type: 'reel', label: 'Reel', none: 'None' },
-        { type: 'bucket', label: 'Bucket', none: 'Small (5)' }
+        // Reads the real base capacity: the label was hardcoded to 5 and went
+        // stale the moment the starting bucket changed.
+        { type: 'bucket', label: 'Bucket', none: 'Small (' + getBucketMax() + ')' }
       ];
       let html = '';
       slots.forEach(slot => {
@@ -11587,6 +11647,7 @@
     <button class="fish-close" onclick="closeFishing()">Close</button>
     <h2>Fishing Pond</h2>
     <div class="fish-money" id="fish-money">🪙 0 coins</div>
+    <button class="fish-btn fish-btn--wheel" id="swag-spin-btn" onclick="openSwagWheel()" hidden>✨ Spin (0)</button>
     <div class="fish-layout">
       <!-- LEFT: Shop -->
       <div class="fish-shop">
