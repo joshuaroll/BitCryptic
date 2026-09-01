@@ -9,11 +9,11 @@
  */
 
 const dailyClues = [
-  // ─── EASY (Difficulty 1-2) — Monday/Weekend clues ───
+  // ─── EASY (Difficulty 1) ───
 
   {
     id: 1,
-    clue: "Gaze produced by confused rates",
+    clue: "Gaze from confused rates",
     answer: "STARE",
     definition: "Gaze",
     clueType: "anagram",
@@ -28,7 +28,7 @@ const dailyClues = [
   },
   {
     id: 2,
-    clue: "Fire or old sweetheart",
+    clue: "Fire old sweetheart",
     answer: "FLAME",
     definition: "Fire",
     clueType: "double_definition",
@@ -56,7 +56,7 @@ const dailyClues = [
   },
   {
     id: 4,
-    clue: "Flower or flourish",
+    clue: "Flower flourish",
     answer: "BLOOM",
     definition: "Flower",
     clueType: "double_definition",
@@ -69,24 +69,99 @@ const dailyClues = [
   },
   {
     id: 5,
-    clue: "Royal headpiece from scarecrow nearby",
+    clue: "Bird brought north for the royal headpiece",
     answer: "CROWN",
-    definition: "Royal headpiece",
-    clueType: "hidden_word",
+    definition: "the royal headpiece",
+    clueType: "charade",
     difficulty: 1,
-    explanation: "'From' is the hidden-word indicator. CROWN is hidden inside 'scare-CROWN-earby'. Definition: 'Royal headpiece'.",
+    explanation: "CROW (bird) + N (north) = CROWN. Definition: 'the royal headpiece'.",
     author: "by Bit Cryptic",
     hints: [
-      { type: "definition", text: "The definition is 'Royal headpiece'" },
-      { type: "indicator", text: "'from' signals a hidden word" },
-      { type: "fodder", text: "The answer is hidden inside 'scarecrow nearby'" }
+      { type: "definition", text: "The definition is 'the royal headpiece'" },
+      { type: "fodder", text: "'Bird' gives CROW" },
+      { type: "fodder", text: "'north' gives N, added at the end" }
+    ]
+  },
+  {
+    id: 6,
+    clue: "Crest partly in hybrid gears",
+    answer: "RIDGE",
+    definition: "Crest",
+    clueType: "hidden_word",
+    difficulty: 1,
+    explanation: "'Partly in' is the hidden-word indicator. RIDGE is hidden across 'hyb-RIDGE-ars'. Definition: 'Crest'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'Crest'" },
+      { type: "indicator", text: "'partly in' signals a hidden word" },
+      { type: "fodder", text: "The answer is hidden across 'hybrid gears'" }
+    ]
+  },
+  {
+    id: 7,
+    clue: "Smile about a seed",
+    answer: "GRAIN",
+    definition: "seed",
+    clueType: "container",
+    difficulty: 1,
+    explanation: "GRIN (smile) placed about A gives GRAIN. Definition: 'seed'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'seed'" },
+      { type: "indicator", text: "'about' signals one word placed around another" },
+      { type: "fodder", text: "'Smile' gives GRIN, wrapped around A" }
+    ]
+  },
+  {
+    id: 8,
+    clue: "Pines, broken, form the backbone",
+    answer: "SPINE",
+    definition: "the backbone",
+    clueType: "anagram",
+    difficulty: 1,
+    explanation: "'Broken' is the anagram indicator. Rearrange PINES to get SPINE. Definition: 'the backbone'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'the backbone'" },
+      { type: "indicator", text: "'Broken' signals an anagram" },
+      { type: "fodder", text: "The letters in 'pines' are rearranged" }
+    ]
+  },
+  {
+    id: 9,
+    clue: "Damaged pears are extra",
+    answer: "SPARE",
+    definition: "extra",
+    clueType: "anagram",
+    difficulty: 1,
+    explanation: "'Damaged' is the anagram indicator. Rearrange PEARS to get SPARE. Definition: 'extra'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'extra'" },
+      { type: "indicator", text: "'Damaged' signals an anagram" },
+      { type: "fodder", text: "The letters in 'pears' are rearranged" }
+    ]
+  },
+  {
+    id: 10,
+    clue: "Cried, shattered, over the drink",
+    answer: "CIDER",
+    definition: "the drink",
+    clueType: "anagram",
+    difficulty: 1,
+    explanation: "'Shattered' is the anagram indicator. Rearrange CRIED to get CIDER. Definition: 'the drink'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'the drink'" },
+      { type: "indicator", text: "'Shattered' signals an anagram" },
+      { type: "fodder", text: "The letters in 'cried' are rearranged" }
     ]
   },
 
   // ─── EASY-MEDIUM (Difficulty 2) ───
 
   {
-    id: 6,
+    id: 11,
     clue: "Bared, oddly, the loaf",
     answer: "BREAD",
     definition: "the loaf",
@@ -101,7 +176,7 @@ const dailyClues = [
     ]
   },
   {
-    id: 7,
+    id: 12,
     clue: "Trial disrupted the path",
     answer: "TRAIL",
     definition: "the path",
@@ -116,20 +191,20 @@ const dailyClues = [
     ]
   },
   {
-    id: 8,
-    clue: "Paint tool or slight encounter",
+    id: 13,
+    clue: "Paint tool brief encounter",
     answer: "BRUSH",
     definition: "Paint tool",
     clueType: "double_definition",
     difficulty: 2,
-    explanation: "Double definition. BRUSH = a paint tool AND BRUSH = a slight encounter ('a brush with danger').",
+    explanation: "Double definition. BRUSH = a paint tool AND BRUSH = a brief encounter ('a brush with danger').",
     author: "by Bit Cryptic",
     hints: [
-      { type: "definition", text: "Both 'Paint tool' and 'slight encounter' are definitions of the answer" }
+      { type: "definition", text: "Both 'Paint tool' and 'brief encounter' are definitions of the answer" }
     ]
   },
   {
-    id: 9,
+    id: 14,
     clue: "Float aimlessly, getting the meaning",
     answer: "DRIFT",
     definition: "Float aimlessly",
@@ -142,7 +217,7 @@ const dailyClues = [
     ]
   },
   {
-    id: 10,
+    id: 15,
     clue: "Stride out in the third month",
     answer: "MARCH",
     definition: "Stride out",
@@ -154,11 +229,41 @@ const dailyClues = [
       { type: "definition", text: "Both 'Stride out' and 'the third month' are definitions of the answer" }
     ]
   },
+  {
+    id: 16,
+    clue: "Heats ruined, causing urgency",
+    answer: "HASTE",
+    definition: "urgency",
+    clueType: "anagram",
+    difficulty: 2,
+    explanation: "'Ruined' is the anagram indicator. Rearrange HEATS to get HASTE. Definition: 'urgency'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'urgency'" },
+      { type: "indicator", text: "'Ruined' signals an anagram" },
+      { type: "fodder", text: "The letters in 'heats' are rearranged" }
+    ]
+  },
+  {
+    id: 17,
+    clue: "Rats turned into a celestial body",
+    answer: "STAR",
+    definition: "a celestial body",
+    clueType: "reversal",
+    difficulty: 2,
+    explanation: "'Turned' is the reversal indicator. Reverse RATS to get STAR. Definition: 'a celestial body'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'a celestial body'" },
+      { type: "indicator", text: "'Turned' signals a reversal" },
+      { type: "fodder", text: "The letters in 'Rats' are reversed" }
+    ]
+  },
 
   // ─── MEDIUM (Difficulty 3) ───
 
   {
-    id: 11,
+    id: 18,
     clue: "Forts rebuilt in the cold snap",
     answer: "FROST",
     definition: "the cold snap",
@@ -173,37 +278,22 @@ const dailyClues = [
     ]
   },
   {
-    id: 12,
-    clue: "Good file gives a firm hold",
-    answer: "GRASP",
-    definition: "firm hold",
-    clueType: "charade",
-    difficulty: 3,
-    explanation: "G (good) + RASP (a file/tool) = GRASP. Definition: 'firm hold'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'firm hold'" },
-      { type: "fodder", text: "'Good' gives G (abbreviation)" },
-      { type: "fodder", text: "'file' gives RASP (a type of coarse file)" }
-    ]
-  },
-  {
-    id: 13,
-    clue: "Notes rearranged on the rock",
+    id: 19,
+    clue: "Notes rearranged on rock",
     answer: "STONE",
-    definition: "the rock",
+    definition: "rock",
     clueType: "anagram",
     difficulty: 3,
-    explanation: "'Rearranged' is the anagram indicator. Rearrange NOTES to get STONE. Definition: 'the rock'.",
+    explanation: "'Rearranged' is the anagram indicator. Rearrange NOTES to get STONE. Definition: 'rock'.",
     author: "by Bit Cryptic",
     hints: [
-      { type: "definition", text: "The definition is 'the rock'" },
+      { type: "definition", text: "The definition is 'rock'" },
       { type: "indicator", text: "'Rearranged' signals an anagram" },
       { type: "fodder", text: "The letters in 'notes' are rearranged" }
     ]
   },
   {
-    id: 14,
+    id: 20,
     clue: "Large, wild angry look",
     answer: "GLARE",
     definition: "angry look",
@@ -218,7 +308,7 @@ const dailyClues = [
     ]
   },
   {
-    id: 15,
+    id: 21,
     clue: "Enchantment found in march armour",
     answer: "CHARM",
     definition: "Enchantment",
@@ -233,7 +323,7 @@ const dailyClues = [
     ]
   },
   {
-    id: 16,
+    id: 22,
     clue: "Feats, unusually, make a banquet",
     answer: "FEAST",
     definition: "banquet",
@@ -248,8 +338,8 @@ const dailyClues = [
     ]
   },
   {
-    id: 17,
-    clue: "Create or counterfeit",
+    id: 23,
+    clue: "Create counterfeit",
     answer: "FORGE",
     definition: "Create",
     clueType: "double_definition",
@@ -260,132 +350,57 @@ const dailyClues = [
       { type: "definition", text: "Both 'Create' and 'counterfeit' are definitions of the answer" }
     ]
   },
-  {
-    id: 18,
-    clue: "Feather or column of smoke",
-    answer: "PLUME",
-    definition: "Feather",
-    clueType: "double_definition",
-    difficulty: 3,
-    explanation: "Double definition. PLUME = a large, conspicuous feather AND PLUME = a column of smoke rising.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "Both 'Feather' and 'column of smoke' are definitions of the answer" }
-    ]
-  },
-  {
-    id: 19,
-    clue: "Crest partly in hybrid gears",
-    answer: "RIDGE",
-    definition: "Crest",
-    clueType: "hidden_word",
-    difficulty: 3,
-    explanation: "'Partly in' is the hidden-word indicator. RIDGE is hidden across 'hyb-RIDGE-ars'. Definition: 'Crest'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'Crest'" },
-      { type: "indicator", text: "'partly in' signals a hidden word" },
-      { type: "fodder", text: "The answer is hidden across 'hybrid gears'" }
-    ]
-  },
-  {
-    id: 20,
-    clue: "Seed found in soaring rain",
-    answer: "GRAIN",
-    definition: "Seed",
-    clueType: "hidden_word",
-    difficulty: 3,
-    explanation: "'Found in' is the hidden-word indicator. GRAIN is hidden inside 'soarin-GRAIN'. Definition: 'Seed'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'Seed'" },
-      { type: "indicator", text: "'found in' signals a hidden word" },
-      { type: "fodder", text: "The answer is hidden inside 'soaring rain'" }
-    ]
-  },
 
   // ─── MEDIUM-HARD (Difficulty 4) ───
 
   {
-    id: 21,
-    clue: "Heats ruined, causing urgency",
-    answer: "HASTE",
-    definition: "urgency",
-    clueType: "anagram",
-    difficulty: 4,
-    explanation: "'Ruined' is the anagram indicator. Rearrange HEATS to get HASTE. Definition: 'urgency'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'urgency'" },
-      { type: "indicator", text: "'Ruined' signals an anagram" },
-      { type: "fodder", text: "The letters in 'heats' are rearranged" }
-    ]
-  },
-  {
-    id: 22,
-    clue: "Pines, broken, form the backbone",
-    answer: "SPINE",
-    definition: "the backbone",
-    clueType: "anagram",
-    difficulty: 4,
-    explanation: "'Broken' is the anagram indicator. Rearrange PINES to get SPINE. Definition: 'the backbone'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'the backbone'" },
-      { type: "indicator", text: "'Broken' signals an anagram" },
-      { type: "fodder", text: "The letters in 'pines' are rearranged" }
-    ]
-  },
-  {
-    id: 23,
-    clue: "Class tree makes a disguise",
-    answer: "CLOAK",
-    definition: "disguise",
-    clueType: "charade",
-    difficulty: 4,
-    explanation: "CL (class) + OAK (tree) = CLOAK. Definition: 'disguise'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'disguise'" },
-      { type: "fodder", text: "'Class' gives CL (abbreviation)" },
-      { type: "fodder", text: "'tree' gives OAK (a type of tree)" }
-    ]
-  },
-  {
     id: 24,
-    clue: "Delta, remodelled, was distributed",
-    answer: "DEALT",
-    definition: "was distributed",
-    clueType: "anagram",
+    clue: "Cape conceals",
+    answer: "CLOAK",
+    definition: "Cape",
+    clueType: "double_definition",
     difficulty: 4,
-    explanation: "'Remodelled' is the anagram indicator. Rearrange DELTA to get DEALT. Definition: 'was distributed'.",
+    explanation: "Double definition. CLOAK = a cape AND CLOAK = conceals/hides from view.",
     author: "by Bit Cryptic",
     hints: [
-      { type: "definition", text: "The definition is 'was distributed'" },
+      { type: "definition", text: "Both 'Cape' and 'conceals' are definitions of the answer" }
+    ]
+  },
+  {
+    id: 25,
+    clue: "Delta remodelled distribution",
+    answer: "DEALT",
+    definition: "distribution",
+    clueType: "anagram",
+    difficulty: 4,
+    explanation: "'Remodelled' is the anagram indicator. Rearrange DELTA to get DEALT. Definition: 'distribution'.",
+    author: "by Bit Cryptic",
+    hints: [
+      { type: "definition", text: "The definition is 'distribution'" },
       { type: "indicator", text: "'Remodelled' signals an anagram" },
       { type: "fodder", text: "The letters in 'delta' are rearranged" }
     ]
   },
   {
-    id: 25,
-    clue: "Pears, damaged, are extra",
-    answer: "SPARE",
-    definition: "extra",
+    id: 26,
+    clue: "Taros cooked for the mockery",
+    answer: "ROAST",
+    definition: "the mockery",
     clueType: "anagram",
     difficulty: 4,
-    explanation: "'Damaged' is the anagram indicator. Rearrange PEARS to get SPARE. Definition: 'extra'.",
+    explanation: "'Cooked' is the anagram indicator. Rearrange TAROS to get ROAST. Definition: 'the mockery'.",
     author: "by Bit Cryptic",
     hints: [
-      { type: "definition", text: "The definition is 'extra'" },
-      { type: "indicator", text: "'Damaged' signals an anagram" },
-      { type: "fodder", text: "The letters in 'pears' are rearranged" }
+      { type: "definition", text: "The definition is 'the mockery'" },
+      { type: "indicator", text: "'Cooked' signals an anagram" },
+      { type: "fodder", text: "The letters in 'taros' are rearranged" }
     ]
   },
 
   // ─── HARD (Difficulty 5) ───
 
   {
-    id: 26,
+    id: 27,
     clue: "Happiness curtailed before morning's shimmer",
     answer: "GLEAM",
     definition: "shimmer",
@@ -398,64 +413,6 @@ const dailyClues = [
       { type: "indicator", text: "'curtailed' signals removing the last letter" },
       { type: "fodder", text: "'Happiness' gives GLEE, curtailed to GLE" },
       { type: "fodder", text: "'morning' gives AM" }
-    ]
-  },
-  {
-    id: 27,
-    clue: "Cried, shattered, over the drink",
-    answer: "CIDER",
-    definition: "the drink",
-    clueType: "anagram",
-    difficulty: 5,
-    explanation: "'Shattered' is the anagram indicator. Rearrange CRIED to get CIDER. Definition: 'the drink'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'the drink'" },
-      { type: "indicator", text: "'Shattered' signals an anagram" },
-      { type: "fodder", text: "The letters in 'cried' are rearranged" }
-    ]
-  },
-  {
-    id: 28,
-    clue: "Lively weather, sharp and cold",
-    answer: "BRISK",
-    definition: "Lively",
-    clueType: "double_definition",
-    difficulty: 3,
-    explanation: "Double definition. BRISK = lively/energetic AND BRISK = sharp and cold (of weather).",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "Both 'Lively' and 'sharp and cold' are definitions of the answer" }
-    ]
-  },
-  {
-    id: 29,
-    clue: "Taros cooked for the Sunday joint",
-    answer: "ROAST",
-    definition: "the Sunday joint",
-    clueType: "anagram",
-    difficulty: 4,
-    explanation: "'Cooked' is the anagram indicator. Rearrange TAROS to get ROAST. Definition: 'the Sunday joint' (a roast dinner).",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'the Sunday joint'" },
-      { type: "indicator", text: "'Cooked' signals an anagram" },
-      { type: "fodder", text: "The letters in 'taros' are rearranged" }
-    ]
-  },
-  {
-    id: 30,
-    clue: "Vermin returned as a celestial body",
-    answer: "STAR",
-    definition: "celestial body",
-    clueType: "reversal",
-    difficulty: 3,
-    explanation: "'Returned' is the reversal indicator. Reverse RATS (vermin) to get STAR. Definition: 'celestial body'.",
-    author: "by Bit Cryptic",
-    hints: [
-      { type: "definition", text: "The definition is 'celestial body'" },
-      { type: "indicator", text: "'Returned' signals a reversal" },
-      { type: "fodder", text: "'Vermin' gives RATS, which is reversed" }
     ]
   }
 ];

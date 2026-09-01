@@ -171,7 +171,7 @@ const BCWAccount = (() => {
 
     if (state.signedIn) {
       btn.textContent = state.displayName || 'Account';
-      btn.title = 'Signed in as ' + (state.email || state.displayName) + ' — click to sign out';
+      btn.title = 'Signed in as ' + (state.email || state.displayName) + '. Click to sign out';
       btn.setAttribute('aria-label', 'Signed in. Open your account.');
       // Opens the shared account panel (rename / export / delete / sign out /
       // policy links) rather than signing out on the spot. A single click that

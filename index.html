@@ -998,6 +998,21 @@
       box-shadow: 0 6px 28px rgba(251, 146, 60, 0.35);
     }
 
+    /* The terminal is the one diegetic machine on the island, and mint is the
+       system colour everywhere else it appears (prompts, SOLVED, the terminal
+       panel itself). Amber is for clue actions. */
+    .detail-action-btn--terminal {
+      background: #64D9A0;
+      color: #05130C;
+      box-shadow: 0 4px 20px rgba(100, 217, 160, 0.25);
+    }
+
+    .detail-action-btn--terminal:hover {
+      background: #4ADE80;
+      color: #05130C;
+      box-shadow: 0 6px 28px rgba(100, 217, 160, 0.4);
+    }
+
     .detail-action-btn.secondary {
       border: 1px solid #2A3553;
       background: transparent;
@@ -2151,12 +2166,61 @@
     }
 
     /* ─── Puzzle Input ─── */
+    /* ═══════════════════════════════════
+       THE CLUE CARD
+       Clue, anatomy panel and answer box are ONE bordered card. They were
+       three loose blocks in two different containers, so the box a player
+       typed into did not visibly belong to the clue above it.
+       ═══════════════════════════════════ */
+    .clue-card {
+      background: rgba(11, 16, 33, 0.45);
+      border: 1px solid rgba(242, 193, 78, 0.22);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 14px 0;
+    }
+
+    /* Story text separates its beats with <br><br>, which lands either side of
+       a card and stacks on the card's own margin. A multi_puzzle shows three
+       cards in one beat, so that doubling pushed the answer box off-screen.
+       Only the breaks IMMEDIATELY touching a card are dropped: the card's
+       margin is already the gap. Paragraph breaks in ordinary narrative are
+       untouched. */
+    .clue-card + br {
+      display: none;
+    }
+
+    /* The clue sits at the top of its own card, so it needs no top margin. */
+    .clue-card .clue-line {
+      margin-top: 0;
+    }
+
+    /* Inside the card the input row is separated by a rule, not by its own
+       border: the card already draws the boundary. */
+    .clue-card .story-puzzle-input-wrap {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(242, 193, 78, 0.15);
+    }
+
     .story-puzzle-input-wrap {
       display: flex;
       gap: 8px;
       margin-top: 8px;
       padding-top: 12px;
       border-top: 1px solid rgba(242, 193, 78, 0.15);
+    }
+
+    @media (max-width: 480px) {
+      /* A half-width input beside a half-width button gives two cramped
+         targets instead of one good one. */
+      .story-puzzle-input-wrap {
+        flex-direction: column;
+      }
+
+      .story-puzzle-submit {
+        width: 100%;
+      }
     }
 
     .story-puzzle-input {
@@ -2178,6 +2242,15 @@
     .story-puzzle-input:focus {
       border-color: #F2C14E;
       box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.12);
+    }
+
+    /* The uppercase transform is for what the player TYPES. Applied to the
+       placeholder it turns a quiet prompt into shouting. */
+    .story-puzzle-input::placeholder {
+      text-transform: none;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: rgba(226, 232, 240, 0.38);
     }
 
     .story-puzzle-input.wrong {
@@ -3827,6 +3900,7 @@
           <div class="palette-item reward-item" id="reward-spyglass" onclick="addRewardFurniture('spyglass')"><span class="palette-icon">&#x1F52D;</span><div class="palette-label">Brass Spyglass<div class="palette-sublabel reward-lock-label">Complete Simon's Skyship</div></div></div>
           <div class="palette-item reward-item" id="reward-lunarRock" onclick="addRewardFurniture('lunarRock')"><span class="palette-icon">&#x1FA78;</span><div class="palette-label">Lunar Rock<div class="palette-sublabel reward-lock-label">Complete The Moon</div></div></div>
           <div class="palette-item reward-item" id="reward-kaitFrog" onclick="addRewardFurniture('kaitFrog')"><span class="palette-icon">&#x1F438;</span><div class="palette-label">Kait's Cutie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
+          <div class="palette-item reward-item" id="reward-goosePlushie" onclick="addRewardFurniture('goosePlushie')"><span class="palette-icon">&#x1F9A2;</span><div class="palette-label">Goose Plushie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
         </div>
         <h3>Wall Color</h3>
         <div class="wall-color-grid">
@@ -3840,6 +3914,7 @@
           <div class="wall-swatch" style="background:#4a5a6a;" onclick="setWallColor('#4a5a6a')" title="Slate"></div>
           <div class="wall-swatch" style="background:#6a6a5a;" onclick="setWallColor('#6a6a5a')" title="Olive"></div>
           <div class="wall-swatch reward-item" id="reward-kaitWall" style="background:#3cb371;" onclick="setRewardWallColor('#3cb371')" title="Kait's Green"></div>
+          <div class="wall-swatch reward-item" id="reward-gooseWall" style="background:#a8d8ea;" onclick="setRewardWallColor('#a8d8ea')" title="Baby Blue"></div>
         </div>
         <h3>Floor Style</h3>
         <div class="floor-color-grid">
@@ -4008,7 +4083,7 @@
         iconBg: 'linear-gradient(135deg, #8a9db3, #6a7d93)',
         desc: 'The bustling Town Square sits at the center of Bit Cryptic World. An old terminal hums near the fountain, cursor blinking. Rumor has it the right code will open doors all over the island.',
         actions: [
-          { label: 'Use Terminal', onclick: () => openTerminal(), primary: true },
+          { label: 'Use Terminal', onclick: () => openTerminal(), primary: true, variant: 'terminal' },
           { label: 'Bulletin Board', onclick: () => showGameModal('Community features coming soon!', 'Bulletin Board', '\u{1F4CB}') }
         ]
       },
@@ -4499,26 +4574,26 @@
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
-            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That last line looks like gibberish, I know. It isn\'t. The island likes to test new arrivals before it says hello properly."'
+            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That last line looks like gibberish, I know. Read it the other way and it says what the island is trying to say."'
           },
           {
             type: 'puzzle',
             speaker: 'Dock Keeper',
-            text: 'He holds the lantern closer so you can read the strange postscript:<br><br>"!EMOH EMOCLEW .S.P"<br><br>"Well then," he says, watching you with a small smile. "What does the message say?"',
-            answer: ['WELCOME HOME', 'PS WELCOME HOME', 'P.S. WELCOME HOME', 'P.S. WELCOME HOME!'],
+            text: '"That\'s the island\'s way of saying hello," he says, watching you with a small smile. He turns the note over. On the back, in a steadier hand, one line waits:<br><br>"Embracing towel comes with warm greeting (7)"',
+            answer: ['WELCOME'],
             placeholder: 'Solve the cryptic clue...',
-            hint: 'The .S.P is P.S. written backwards, and so is the rest of the line. Read the whole thing backwards, starting from the right.',
+            hint: 'The answer is not hiding behind the words. It is hiding INSIDE them. Read straight across "towel comes" and let the gap between the words disappear.',
             wrongReactions: [
-              '"Not quite. Take it letter by letter. EMOCLEW backwards is W-E-L-C-O-M-E. Now do the same for EMOH."',
-              '"You\'ve almost got it. EMOCLEW is WELCOME. EMOH is HOME. Put them together."',
-              'He smiles patiently and traces the letters in the air: "W-E-L-C-O-M-E H-O-M-E. Two words. Say it like you mean it."'
+              '"Not that one. Try reading the line letter by letter, straight through, and ignore where one word stops and the next starts."',
+              '"Closer. The word \'Embracing\' is the instruction: something in this line is holding the answer inside it. Look hard at towel comes."',
+              'He traces the letters on the wet plank: "to-W-E-L-C-O-M-E-s. It was sitting there the whole time. Seven letters."'
             ],
             next: 5
           },
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
-            text: '"Welcome home." He grins, and the lantern burns a little brighter. "That\'s what this island says to everyone who arrives. It means it, too." He nods toward the dark treeline. "When you\'re ready, the forest path will take you deeper. The trees have their own puzzles, but they\'re good company once you learn to listen."'
+            text: '"Welcome." He grins, and the lantern burns a little brighter. "That\'s what this island says to everyone who arrives. It means it, too." He nods toward the dark treeline. "When you\'re ready, the forest path will take you deeper. The trees have their own puzzles, but they\'re good company once you learn to listen."'
           },
           {
             type: 'complete',
@@ -4550,7 +4625,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The fox sits beside the stone and stares at you, tail flicking. The slab reads:<br><br>"Face remodelled into a place for coffee (4)"<br><br>The fox sniffs the air toward something warm and fragrant.',
+            text: 'The fox sits beside the stone, tail flicking, and sniffs the air toward something warm and fragrant. The slab reads:<br><br>"Face remodelled into a place for coffee (4)"',
             answer: 'CAFE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'The answer is an anagram. Look for a word whose letters can be rearranged.',
@@ -4591,7 +4666,7 @@
           {
             type: 'puzzle',
             speaker: 'Barista',
-            text: 'Written on the cup in looping script:<br><br>"Something instantly perky, starts a mouthful (3)"<br><br>She leans on the counter. "Take your time. The cup will wait."',
+            text: 'She leans on the counter. "Take your time. The cup will wait." Written on the cup in looping script:<br><br>"Something instantly perky, starts a mouthful (3)"',
             answer: 'SIP',
             placeholder: 'Solve the cryptic clue...',
             hint: 'That\'s an initial letters clue. "Starts" tells you to take the first letter of each word before it.',
@@ -4682,7 +4757,7 @@
           {
             type: 'puzzle',
             speaker: 'Tower Guardian',
-            text: 'Letters glow across the guardian\'s breastplate:<br><br>"Warrior seized by the road (4)"<br><br>It speaks without inflection. "Solve it. Or leave."',
+            text: 'It speaks without inflection. "Solve it. Or leave." Letters glow across the guardian\'s breastplate:<br><br>"Warrior seized by the road (4)"',
             answer: 'HERO',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A hidden word clue: the answer is concealed within the words of the clue themselves, spanning across them.',
@@ -4710,7 +4785,7 @@
           {
             type: 'puzzle',
             speaker: 'Tower Guardian',
-            text: 'The rune reshapes into glowing text:<br><br>"Eat in, embraced by Germany (4)"<br><br>The guardian waits, motionless.',
+            text: 'The guardian waits, motionless. The rune reshapes into glowing text:<br><br>"Eat in, embraced by Germany (4)"',
             answer: 'DINE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A container clue: one word placed inside another. DE (Germany) embraces IN. The definition is "Eat."',
@@ -4760,7 +4835,7 @@
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: 'She adjusts her glasses and smiles, then writes on a slip of paper:<br><br>"Chart or plan (3)"<br><br>"Take your time. The shelf has waited centuries; it can wait a little longer."',
+            text: 'She adjusts her glasses and smiles. "Take your time. The shelf has waited centuries; it can wait a little longer." She writes on a slip of paper:<br><br>"Chart or plan (3)"',
             answer: ['MAP', 'A MAP'],
             placeholder: 'Solve the cryptic clue...',
             hint: 'A double definition clue: two separate definitions, both pointing to the same three-letter answer. A chart is one. A plan is the other.',
@@ -4779,7 +4854,7 @@
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: 'She opens a leather-bound volume and points to an inscription:<br><br>"New book (5)"<br><br>"Short and sly, this one," she whispers.',
+            text: '"Short and sly, this one," she whispers, opening a leather-bound volume and pointing to an inscription:<br><br>"New book (5)"',
             answer: 'NOVEL',
             placeholder: 'Solve the cryptic clue...',
             hint: 'Two words, two definitions, one answer. What word means "new" (as in a novel idea) AND is also a type of book?',
@@ -4792,7 +4867,7 @@
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: 'She turns to another page:<br><br>"Departs or pages (6)"<br><br>"The old setters were fond of this one," she murmurs, smoothing the page flat.',
+            text: '"The old setters were fond of this one," she murmurs, smoothing another page flat:<br><br>"Departs or pages (6)"',
             answer: 'LEAVES',
             placeholder: 'Solve the cryptic clue...',
             hint: 'Same idea: two separate definitions pointing to the same word. What word means "departs" (she leaves) AND also means "pages" (leaves of a book)?',
@@ -4832,7 +4907,7 @@
           {
             type: 'puzzle',
             speaker: 'Cryptic Croc',
-            text: 'He leads you to a brass machine covered in letter wheels. "This is the Anagram Engine. One of her gears has jammed." He taps a brass plate on the machine:<br><br>"Ache stirred after beginning of boating for a sandy shore (5)"<br><br>"Solve the plate and she should tick over again. Gently does it."',
+            text: 'He leads you to a brass machine covered in letter wheels. "This is the Anagram Engine. One of her gears has jammed." He taps a brass plate on the machine:<br><br>"Ache stirred after beginning of boating for a sandy shore (5)"',
             answer: 'BEACH',
             placeholder: 'Solve the cryptic clue...',
             hint: '\'Stirred\' tells you the letters of \'ache\' are jumbled. \'Beginning of boating\' means take the first letter of \'boating\'. The stirred letters come after it.',
@@ -4851,7 +4926,7 @@
           {
             type: 'puzzle',
             speaker: 'Cryptic Croc',
-            text: 'A card slides out of the machine:<br><br>"Rages shattered these cogs (5)"<br><br>"Go on. Give it a spin."',
+            text: '"Go on. Give it a spin." A card slides out of the machine:<br><br>"Rages shattered these cogs (5)"',
             answer: 'GEARS',
             placeholder: 'Solve the cryptic clue...',
             hint: '\'Shattered\' means rearrange. Rearrange R-A-G-E-S into a word meaning cogs.',
@@ -4864,7 +4939,7 @@
           {
             type: 'puzzle',
             speaker: 'Cryptic Croc',
-            text: 'Another card slides out:<br><br>"Traps reworked become components (5)"<br><br>He drums his claws on the workbench, waiting.',
+            text: 'He drums his claws on the workbench. Another card slides out:<br><br>"Traps reworked become components (5)"',
             answer: 'PARTS',
             placeholder: 'Solve the cryptic clue...',
             hint: '\'Reworked\' is an anagram indicator. Rearrange T-R-A-P-S into a word meaning components.',
@@ -4904,7 +4979,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The shells spell out a cryptic clue:<br><br>"Horse, broken, on the coastline (5)"<br><br>The crab taps a claw against one of the shells, waiting.',
+            text: 'The crab taps a claw against one of the shells. They spell out a cryptic clue:<br><br>"Horse, broken, on the coastline (5)"',
             answer: 'SHORE',
             placeholder: 'Solve the cryptic clue...',
             hint: '"Broken" is the anagram indicator. Rearrange the letters of HORSE. The definition is "coastline."',
@@ -4960,7 +5035,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The chest\'s lock glows. The inscription reads:<br><br>"Shelter endlessly is a bay (4)"<br><br>The tidal pool laps quietly at the base of the chest.',
+            text: 'The tidal pool laps quietly at the base of the chest. Its lock glows, and the inscription reads:<br><br>"Shelter endlessly is a bay (4)"',
             answer: 'COVE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A deletion clue: "endlessly" tells you to remove the last letter. What word for "shelter" loses its final letter to become a bay?',
@@ -4979,7 +5054,7 @@
           {
             type: 'puzzle',
             speaker: null,
-            text: 'The second chest has a simpler lock. The inscription reads:<br><br>"Sculpt without right makes a hollow (4)"<br><br>The algae light flickers across the letters as you read.',
+            text: 'The second chest has a simpler lock. Algae light flickers across the inscription:<br><br>"Sculpt without right makes a hollow (4)"',
             answer: 'CAVE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'Another deletion clue: "without right" means remove the letter R. What word for "sculpt" loses an R to become a hollow?',
@@ -5183,7 +5258,7 @@
           {
             type: 'puzzle',
             speaker: 'Star Watcher',
-            text: 'She traces a finger across the glass and two constellations ignite. "This one is gentle." Her voice is barely above a whisper:<br><br>"Celebrity\'s heavenly body (4)"<br><br>She waits, perfectly still, her eyes on the sky.',
+            text: 'She traces a finger across the glass and two constellations ignite. "This one is gentle." Her voice is barely above a whisper:<br><br>"Celebrity\'s heavenly body (4)"',
             answer: 'STAR',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A double definition: two meanings, one word. Both "Celebrity" and "heavenly body" are separate definitions of the same four-letter word.',
@@ -5202,7 +5277,7 @@
           {
             type: 'puzzle',
             speaker: 'Star Watcher',
-            text: 'She adjusts the telescope lens and an inscription appears etched into the brass eyepiece:<br><br>"Stellar explosion in casino vault (4)"<br><br>"Some lights only appear when you stop searching for them," she murmurs.',
+            text: '"Some lights only appear when you stop searching for them," she murmurs. She adjusts the lens, and an inscription appears etched into the brass eyepiece:<br><br>"Stellar explosion in casino vault (4)"',
             answer: 'NOVA',
             placeholder: 'Solve the cryptic clue...',
             hint: '"In" is the hidden-word indicator: the answer is hiding inside the clue itself. The definition is "Stellar explosion." Read straight across the boundary of \'casino vault\'.',
@@ -5221,7 +5296,7 @@
           {
             type: 'puzzle',
             speaker: 'Star Watcher',
-            text: 'She chalks a clue onto the dark observatory floor, each letter catching the starlight:<br><br>"Company encountered celestial visitor (5)"<br><br>She steps back from the letters and watches you in silence.',
+            text: 'She chalks a clue onto the dark observatory floor, each letter catching the starlight, then steps back and watches you in silence:<br><br>"Company encountered celestial visitor (5)"',
             answer: 'COMET',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A charade: each part of the clue gives you a fragment to assemble. "Company" is a common abbreviation (2 letters). "Encountered" is a synonym (3 letters). Put them together. The definition is "celestial visitor."',
@@ -5313,7 +5388,7 @@
           {
             type: 'puzzle',
             speaker: 'Simon',
-            text: 'He holds the logbook open for you to read:<br><br>"Savoy agent conceals a journey (6)"<br><br>He taps the page and waits.',
+            text: 'He taps the page and holds the logbook open for you to read:<br><br>"Savoy agent conceals a journey (6)"',
             answer: 'VOYAGE',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A hidden word clue: the answer is tucked inside the surrounding words, spanning the gap between them. Look at where "savoy" ends and "agent" begins.',
@@ -5332,7 +5407,7 @@
           {
             type: 'puzzle',
             speaker: 'Simon',
-            text: 'He points to a sun-bleached entry:<br><br>"Tacos, adrift, along the shoreline (5)"<br><br>"Salt got into the ink, but the clue survived. Go on, give it a go."',
+            text: '"Salt got into the ink, but the clue survived." He points to a sun-bleached entry:<br><br>"Tacos, adrift, along the shoreline (5)"',
             answer: 'COAST',
             placeholder: 'Solve the cryptic clue...',
             hint: '\'Adrift\' tells you to rearrange the letters of \'tacos.\' The definition is "shoreline."',
@@ -5350,7 +5425,7 @@
           {
             type: 'puzzle',
             speaker: 'Simon',
-            text: 'The entry reads:<br><br>"Mum\'s street pole (4)"<br><br>He leans back against the rail, arms folded, watching you work.',
+            text: 'He leans back against the rail, arms folded. The entry reads:<br><br>"Mum\'s street pole (4)"',
             answer: 'MAST',
             placeholder: 'Solve the cryptic clue...',
             hint: 'A charade: build the answer out of pieces, front to back. "Mum" gives a two-letter word for mother. "Street" has a standard two-letter abbreviation. Bolt them together. The definition is "pole."',
@@ -6199,7 +6274,12 @@
         submitBtn.textContent = 'Submit';
         wrap.appendChild(input);
         wrap.appendChild(submitBtn);
-        choicesEl.appendChild(wrap);
+        // Into the clue's own card when this step has an annotated clue, so the
+        // answer box is visibly part of the clue rather than a detached control
+        // below it. Falls back to the choices row for steps with no annotation,
+        // which is every step that is not a cryptic clue.
+        const clueCard = document.querySelector('#story-text [data-clue-card]');
+        (clueCard || choicesEl).appendChild(wrap);
 
         // Single progressive hint button: step.hint first, then wrong-answer
         // nudges — excluding any entry that spells out the answer, and always
@@ -6463,8 +6543,7 @@
     // point (wx, wy) while interpolating zoom to targetScale.
     function smoothZoomTo(wx, wy, targetScale, duration, callback) {
       isPanning = true;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const { vw, vh } = viewportSize();
       const startScale = scale;
       // World coords currently at the viewport center
       const cx0 = (vw / 2 - panX) / startScale;
@@ -6665,8 +6744,7 @@
     }
 
     function startIntroSequence() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const { vw, vh } = viewportSize();
 
       // Reduced motion: no storm, no camera dive — straight to the docks
       if (document.body.classList.contains('reduced-motion')) {
@@ -6710,14 +6788,27 @@
     let isDragging = false;
     let dragStartX, dragStartY, panStartX, panStartY;
 
+    // The window onto the map is #map-container, which is NOT the window in
+    // vertical mode: the 9:8 shell is narrower than the viewport on any screen
+    // wider than it is tall. Every piece of camera math below reads the real
+    // container, or the clamp decides the map already fills the width and
+    // pins panX, leaving no left/right pan at all.
+    function viewportSize() {
+      const el = document.getElementById('map-container');
+      const r = el ? el.getBoundingClientRect() : null;
+      return {
+        vw: (r && r.width) || window.innerWidth,
+        vh: (r && r.height) || window.innerHeight
+      };
+    }
+
     function updateTransform() {
       world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
       updateMinimap();
     }
 
     function clampPan() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const { vw, vh } = viewportSize();
       const worldW = 2400 * scale;
       const worldH = 2100 * scale;
 
@@ -6735,8 +6826,7 @@
     }
 
     function resetView() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const { vw, vh } = viewportSize();
       scale = Math.max(vw / 2400, vh / 2100);
       const progress = getProgress();
       if (!progress.introComplete || !progress.unlockedLocations.includes('town')) {
@@ -6795,8 +6885,35 @@
       const next = !BCWSettings.isAnatomyEnabled();
       BCWSettings.setAnatomyEnabled(next);
       if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
-      if (!next) { hudNotice('anatomy off'); return; }
+      // A clue already on screen re-renders in place, so the toggle acts on the
+      // clue the player is looking at instead of only the next one they meet.
+      refreshOpenClue();
+      if (!next) { hudNotice('anatomy off · clue words are not tappable'); return; }
       showAnatomyDemo();
+    }
+
+    // Re-run the anatomy pass over an open story clue. The card itself never
+    // changes; only whether its words are tappable does.
+    function refreshOpenClue() {
+      if (typeof BCWClueAnatomy === 'undefined') return;
+      const textEl = document.getElementById('story-text');
+      const card = textEl && textEl.querySelector('[data-clue-card]');
+      if (!card) return;
+      // The answer box lives inside the card and must survive the re-render, so
+      // it is parked outside it and put back once the new card exists.
+      const wrap = card.querySelector('.story-puzzle-input-wrap');
+      const parked = wrap ? wrap.parentNode.removeChild(wrap) : null;
+      const key = card.querySelector('.clue-line')?.dataset.clueKey;
+      if (!key) return;
+      // Put the raw quoted clue back as a TEXT node. Assigning outerHTML would
+      // re-parse the key as markup, so a clue containing & or < would come back
+      // mangled and annotate() would then fail to find it.
+      card.replaceWith(document.createTextNode('"' + key + '"'));
+      BCWClueAnatomy.annotate(textEl);
+      if (parked) {
+        const fresh = textEl.querySelector('[data-clue-card]');
+        (fresh || document.getElementById('story-choices')).appendChild(parked);
+      }
     }
 
     function showAnatomyDemo() {
@@ -6978,8 +7095,7 @@
     // ═══════════════════════════════════
     function updateMinimap() {
       const vp = document.getElementById('minimap-vp');
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const { vw, vh } = viewportSize();
       const mmW = 180, mmH = 120;
 
       const vpLeft = (-panX / (2400 * scale)) * mmW;
@@ -7059,15 +7175,19 @@
         // when the panel opens, not once at parse time
         const label = typeof a.label === 'function' ? a.label() : a.label;
         const primary = typeof a.primary === 'function' ? a.primary() : a.primary;
+        // An action may name a colour variant (currently only 'terminal',
+        // which takes the mint system colour instead of clue amber).
+        const variant = a.variant ? ' detail-action-btn--' + a.variant : '';
+        const cls = 'detail-action-btn' + (primary ? '' : ' secondary') + variant;
         if (a.href) {
           const link = document.createElement('a');
-          link.className = 'detail-action-btn' + (primary ? '' : ' secondary');
+          link.className = cls;
           link.href = a.href;
           link.textContent = label;
           actionsEl.appendChild(link);
         } else {
           const btn = document.createElement('button');
-          btn.className = 'detail-action-btn' + (primary ? '' : ' secondary');
+          btn.className = cls;
           btn.textContent = label;
           btn.onclick = a.onclick;
           actionsEl.appendChild(btn);
@@ -7421,7 +7541,7 @@
         <div id="help-anatomy-section"></div>
         <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin-top:12px;line-height:1.6;">
           Every unlocked location has a <span style="color:#64D9A0;">Learn</span> lesson teaching one
-          clue technique — look for it on the location's panel. The Skill Guide scroll on the left
+          clue technique. Look for it on the location's panel. The Skill Guide scroll on the left
           edge of the map tracks which techniques you've met.
         </div>
         <div style="font-family:monospace;font-size:0.72rem;letter-spacing:0.08em;color:rgba(255,255,255,0.45);margin-top:16px;text-transform:uppercase;">Keyboard shortcuts</div>
@@ -7673,6 +7793,20 @@
         addTerminalLine('Something soft and green tumbles out of the terminal...', 'success');
         addTerminalLine('Kait\'s Cutie has been added to your furniture collection.', 'info');
         addTerminalLine('A new wall color has been unlocked.', 'info');
+        setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
+      } else if (normalized === 'PONDER' || normalized === 'CALLI' || normalized === 'EDEN') {
+        // One reward, three ways in. If the goose is already home, say so
+        // rather than handing it over twice under a different name.
+        if (isRewardUnlocked('goosePlushie')) {
+          saveUnlockedCode(normalized);
+          addTerminalLine('The goose is already yours.', 'info');
+          return;
+        }
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('A small honk echoes somewhere behind the screen...', 'success');
+        addTerminalLine('A Goose Plushie has been added to your furniture collection.', 'info');
+        addTerminalLine('Baby blue wallpaper has been unlocked.', 'info');
         setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
       } else {
         addTerminalLine('Code not accepted.', 'error');
@@ -8509,6 +8643,38 @@
           '<path d="M25,40 Q25,38 27,37 Q29,38 29,40 Q27,43 25,40 Z" fill="#e85a7a" opacity="0.6"/>' +
           '</svg>',
         zone: 'floor', cols: 1, rows: 1, reward: true
+      },
+      goosePlushie: {
+        svg: '<svg width="52" height="66" viewBox="0 0 52 66">' +
+          // Body
+          '<ellipse cx="26" cy="46" rx="18" ry="16" fill="#fbfbf7"/>' +
+          '<ellipse cx="26" cy="46" rx="16" ry="14" fill="#ffffff" opacity="0.7"/>' +
+          // Wing
+          '<path d="M12,44 Q18,38 24,44 Q19,52 12,50 Z" fill="#eceae2"/>' +
+          '<path d="M14,45 Q18,41 22,45" fill="none" stroke="#d8d5c8" stroke-width="0.8"/>' +
+          // Neck
+          '<path d="M23,34 Q21,22 26,16" fill="none" stroke="#fbfbf7" stroke-width="9" stroke-linecap="round"/>' +
+          // Head
+          '<ellipse cx="27" cy="14" rx="10" ry="9" fill="#fbfbf7"/>' +
+          '<ellipse cx="27" cy="13" rx="8" ry="7" fill="#ffffff" opacity="0.6"/>' +
+          // Eyes
+          '<circle cx="23" cy="12" r="2" fill="#222"/>' +
+          '<circle cx="31" cy="12" r="2" fill="#222"/>' +
+          '<circle cx="23.6" cy="11.4" r="0.7" fill="#fff"/>' +
+          '<circle cx="31.6" cy="11.4" r="0.7" fill="#fff"/>' +
+          // Beak
+          '<path d="M34,14 Q41,15 34,18 Z" fill="#f2a63c"/>' +
+          '<path d="M34,15.5 L38,16" fill="none" stroke="#d98c22" stroke-width="0.6"/>' +
+          // Blush
+          '<ellipse cx="20" cy="17" rx="3" ry="1.8" fill="#f0a0b0" opacity="0.35"/>' +
+          '<ellipse cx="34" cy="18" rx="3" ry="1.8" fill="#f0a0b0" opacity="0.3"/>' +
+          // Feet
+          '<path d="M20,60 L16,64 L24,64 Z" fill="#f2a63c"/>' +
+          '<path d="M32,60 L28,64 L36,64 Z" fill="#f2a63c"/>' +
+          // Stitch line
+          '<path d="M26,42 L26,58" fill="none" stroke="#e2dfd2" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>' +
+          '</svg>',
+        zone: 'floor', cols: 1, rows: 1, reward: true
       }
     };
 
@@ -8854,8 +9020,17 @@
       });
     }
 
+    // Which reward each locked wall colour rides along with. Checking the item
+    // rather than one hardcoded code lets a reward answer to several spellings,
+    // and lets a second colour exist at all.
+    const REWARD_WALL_ITEMS = {
+      '#3cb371': 'kaitFrog',
+      '#a8d8ea': 'goosePlushie'
+    };
+
     function setRewardWallColor(color) {
-      if (!getUnlockedCodes().includes('KAIT')) return;
+      const item = REWARD_WALL_ITEMS[String(color).toLowerCase()];
+      if (!item || !isRewardUnlocked(item)) return;
       setWallColor(color);
     }
 
@@ -8992,7 +9167,13 @@
 
     // ─── Code Reward Items (unlocked via terminal codes) ───
     const CODE_REWARD_MAP = {
-      KAIT: { item: 'kaitFrog', label: 'Kait\'s Cutie' }
+      KAIT: { item: 'kaitFrog', label: 'Kait\'s Cutie' },
+      // Three spellings, one reward: whichever the player finds first unlocks
+      // the goose and the baby blue wallpaper, and the other two then report as
+      // already redeemed.
+      PONDER: { item: 'goosePlushie', label: 'Goose Plushie' },
+      CALLI: { item: 'goosePlushie', label: 'Goose Plushie' },
+      EDEN: { item: 'goosePlushie', label: 'Goose Plushie' }
     };
 
     function isRewardUnlocked(itemType) {
@@ -9002,11 +9183,11 @@
           return state.completedStories.includes(storyId);
         }
       }
+      // ANY code mapping to this item unlocks it. Returning on the first match
+      // would mean a reward with several spellings only ever answered to one.
       const codes = getUnlockedCodes();
       for (const [code, reward] of Object.entries(CODE_REWARD_MAP)) {
-        if (reward.item === itemType) {
-          return codes.includes(code);
-        }
+        if (reward.item === itemType && codes.includes(code)) return true;
       }
       return false;
     }
@@ -9029,10 +9210,12 @@
           if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
         }
       }
-      for (const [code, reward] of Object.entries(CODE_REWARD_MAP)) {
-        const el = document.getElementById('reward-' + reward.item);
+      // Several codes can map to one item, so walk the ITEMS, not the codes.
+      const codeItems = [...new Set(Object.values(CODE_REWARD_MAP).map(r => r.item))];
+      for (const item of codeItems) {
+        const el = document.getElementById('reward-' + item);
         if (!el) continue;
-        const unlocked = isRewardUnlocked(reward.item);
+        const unlocked = isRewardUnlocked(item);
         el.classList.toggle('locked', !unlocked);
         el.classList.toggle('unlocked', unlocked);
         const sublabel = el.querySelector('.reward-lock-label');
@@ -9041,12 +9224,18 @@
           if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
         }
       }
-      // Kait wall color swatch
-      const kaitWall = document.getElementById('reward-kaitWall');
-      if (kaitWall) {
-        const kaitUnlocked = getUnlockedCodes().includes('KAIT');
-        kaitWall.classList.toggle('locked', !kaitUnlocked);
-        kaitWall.classList.toggle('unlocked', kaitUnlocked);
+      // Wall colours that ride along with a code reward: swatch id -> the item
+      // whose unlock also grants it.
+      const REWARD_WALLS = {
+        'reward-kaitWall': 'kaitFrog',
+        'reward-gooseWall': 'goosePlushie'
+      };
+      for (const [swatchId, item] of Object.entries(REWARD_WALLS)) {
+        const sw = document.getElementById(swatchId);
+        if (!sw) continue;
+        const unlocked = isRewardUnlocked(item);
+        sw.classList.toggle('locked', !unlocked);
+        sw.classList.toggle('unlocked', unlocked);
       }
     }
 

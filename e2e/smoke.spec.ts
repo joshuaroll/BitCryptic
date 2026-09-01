@@ -32,6 +32,12 @@ function watchConsole(page: Page): string[] {
 async function skipTutorial(page: Page) {
   await page.addInitScript(() => {
     localStorage.setItem('bcw_tutorial_complete', '1');
+    // The orientation picker is a once-ever modal over the map, so a fresh
+    // profile has it open and it swallows every click aimed at a location.
+    // Real players answer it once; these tests are not about that choice, so
+    // they answer it up front. e2e/lessons-and-anatomy.spec.ts covers the
+    // picker itself, including the first-visit path that DOES show it.
+    localStorage.setItem('bcw_orientation', 'landscape');
   });
 }
 

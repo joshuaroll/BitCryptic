@@ -1036,6 +1036,18 @@ body.designer-mode .location:hover { transform: none; filter: none; }
   border-bottom-color: #94A3B8;
 }
 
+/* A double definition is one segment spanning the whole clue, so it takes the
+   definition amber: both halves of the clue are definitions. */
+.anatomy-word.revealed-double {
+  color: #F2C14E;
+  border-bottom-color: #F2C14E;
+}
+
+/* .clue-line is already `display: block` where it is defined above, which is
+   what lets the info box sit directly beneath the clue rather than being pushed
+   past the surrounding narrative. No second rule needed here; an earlier one
+   silently overrode the clue's own margin. */
+
 .anatomy-info {
   display: none;
   font-size: 0.85rem;
@@ -1045,7 +1057,9 @@ body.designer-mode .location:hover { transform: none; filter: none; }
   border-left: 2px solid #2A3553;
   border-radius: 0 6px 6px 0;
   padding: 8px 12px;
-  margin: 4px 0 10px;
+  /* Tight to the clue above it, roomier below, so it reads as belonging to
+     the clue rather than floating between two paragraphs. */
+  margin: 2px 0 12px;
 }
 
 .anatomy-info.visible {
@@ -1067,6 +1081,8 @@ body.designer-mode .location:hover { transform: none; filter: none; }
 .anatomy-info--fodder b { color: #D9B48A; }
 .anatomy-info--link { border-left-color: #94A3B8; }
 .anatomy-info--link b { color: #94A3B8; }
+.anatomy-info--double { border-left-color: #F2C14E; }
+.anatomy-info--double b { color: #F2C14E; }
 
 .anatomy-teach {
   font-size: 0.82rem;

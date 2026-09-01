@@ -60,7 +60,7 @@ const BCWDesigner = (() => {
       <div class="designer-props" id="designer-props"></div>
 
       <div class="designer-coords" id="designer-coords">
-        <span id="designer-mouse-coords">Mouse: —</span>
+        <span id="designer-mouse-coords">Mouse: ...</span>
       </div>
 
       <div class="designer-section-label">Actions</div>

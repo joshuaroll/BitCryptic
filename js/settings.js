@@ -401,7 +401,7 @@ const BCWSettings = (() => {
     legal.appendChild(privacy);
     legal.appendChild(document.createTextNode(' · '));
     legal.appendChild(terms);
-    legal.appendChild(document.createTextNode(' · Accounts are for players 13 and up. Younger puzzlers are welcome to play as guests — nothing is collected.'));
+    legal.appendChild(document.createTextNode(' · Accounts are for players 13 and up. Younger puzzlers are welcome to play as guests, and nothing is collected.'));
     wrap.appendChild(legal);
 
     host.appendChild(wrap);
@@ -486,7 +486,7 @@ const BCWSettings = (() => {
       // could catch by trying to sign in again.
       if (result && result.authRowDeleted === false) {
         showGameModal(
-          'Your data is deleted and you are signed out. The login itself is still being removed on our side — it will not give anyone access to anything.',
+          'Your data is deleted and you are signed out. The login itself is still being removed on our side, and it will not give anyone access to anything.',
           'Account Deleted',
           '✅'
         );

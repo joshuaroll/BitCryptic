@@ -24,6 +24,10 @@ Guiding priority: **cryptic clue quality and game quality first**; development c
 3. bark/leaf/pine terminal easter eggs (ideasforreview.txt has the design).
 4. Phase 3 daily-game retention loop (share/streak/countdown) — on hold with daily clues.
 5. Phase 4 leftovers: Tailwind purge for the React app, minimap dots for secret locations, UK/US spelling pass, KAIT easter egg remains undocumented by design.
+   Same for `PONDER` / `CALLI` / `EDEN` (added 2026-09-01, Joshua): three spellings,
+   one reward — a Goose Plushie for the house plus a baby blue wallpaper. No
+   in-game breadcrumb by design; whichever the player finds first unlocks it and
+   the other two then answer "The goose is already yours."
 6. Spare verified clue on the bench: SEDGE ("Marsh plant amused gentry somewhat (5)") — candidate for a pond or forest bonus.
 
 **Standing rule: no new or reworded clue ships without Joshua's explicit approval.**
