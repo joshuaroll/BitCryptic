@@ -8069,8 +8069,16 @@
     // Back-compat alias (old name)
     function showKeyboardHelp() { showHelpOverlay(); }
 
-    // ─── Debug Mode (disabled for production) ───
-    const debugModeActive = false;
+    // ─── Debug Mode ───
+    // Off unless the URL asks for it. A normal visit never has ?debug=1, so
+    // production is unchanged and this is not a live cheat surface; a preview
+    // link can carry it to open everything up for review. Deliberately NOT
+    // stored: a flag that persisted would follow a player around after one
+    // visit to a shared link.
+    const debugModeActive = (() => {
+      try { return new URLSearchParams(location.search).get('debug') === '1'; }
+      catch (e) { return false; }
+    })();
     try { localStorage.removeItem('bcw_debug_mode'); } catch {}
 
     function injectDebugSettings() {
@@ -8251,7 +8259,15 @@
         });
         saveProgress(state);
         applyUnlockState();
-        addTerminalLine('All locations unlocked!', 'success');
+        // The secret places are gated on CODES, not on the unlock chain, so
+        // redeeming them is what actually makes them appear. Without this the
+        // house, pond, lair, moon, airship and yacht stay hidden even though
+        // every ordinary location just opened.
+        ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'KAIT', 'PONDER', 'BOSTON', 'POG']
+          .forEach(saveUnlockedCode);
+        spawnHouse(); spawnPond(); spawnLair(); spawnMoon(); spawnAirship();
+        restoreCodeCosmetics();
+        addTerminalLine('All locations unlocked, secrets included.', 'success');
         return;
       }
 
