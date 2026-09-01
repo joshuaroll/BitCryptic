@@ -8644,35 +8644,42 @@
           '</svg>',
         zone: 'floor', cols: 1, rows: 1, reward: true
       },
+      // Body A + face 5 (Joshua, 2026-09-01). Drawn from the reference plush:
+      // wings spread forward, and a TRUE PROFILE head — one eye, set high and
+      // about a bill's length back, with a broad wedge bill angled down. Two
+      // front-facing eyes and a flat bill read as a duck, which the first draft
+      // did. The eye carries a white ring so the face survives being rendered
+      // at ~60px, where a bare pupil disappears.
+      // Palette sampled from the reference: #F8F8F8 body, #E8912B bill/feet.
       goosePlushie: {
-        svg: '<svg width="52" height="66" viewBox="0 0 52 66">' +
+        svg: '<svg width="62" height="76" viewBox="0 0 62 76">' +
+          // Contact shadow
+          '<ellipse cx="31" cy="72" rx="17" ry="3" fill="#000" opacity="0.18"/>' +
+          // Webbed feet
+          '<path d="M20,62 Q14,66 13,70 L26,70 Q25,65 24,62 Z" fill="#E8912B"/>' +
+          '<path d="M42,62 Q48,66 49,70 L36,70 Q37,65 38,62 Z" fill="#E8912B"/>' +
+          '<path d="M15,69 L24,69 M17,66 L23,66" stroke="#C97621" stroke-width="1" opacity="0.45"/>' +
           // Body
-          '<ellipse cx="26" cy="46" rx="18" ry="16" fill="#fbfbf7"/>' +
-          '<ellipse cx="26" cy="46" rx="16" ry="14" fill="#ffffff" opacity="0.7"/>' +
-          // Wing
-          '<path d="M12,44 Q18,38 24,44 Q19,52 12,50 Z" fill="#eceae2"/>' +
-          '<path d="M14,45 Q18,41 22,45" fill="none" stroke="#d8d5c8" stroke-width="0.8"/>' +
+          '<ellipse cx="31" cy="52" rx="19" ry="15" fill="#F8F8F8"/>' +
+          '<ellipse cx="31" cy="55" rx="15" ry="10" fill="#EDEBE7" opacity="0.55"/>' +
+          // Wings, spread forward like the reference
+          '<path d="M13,48 Q6,52 8,60 Q14,62 19,56 Q17,50 13,48 Z" fill="#FFFFFF"/>' +
+          '<path d="M49,48 Q56,52 54,60 Q48,62 43,56 Q45,50 49,48 Z" fill="#FFFFFF"/>' +
+          '<path d="M10,53 Q13,55 16,57 M11,57 Q14,58 17,59" stroke="#DAD6D0" stroke-width="0.9" fill="none"/>' +
+          '<path d="M52,53 Q49,55 46,57 M51,57 Q48,58 45,59" stroke="#DAD6D0" stroke-width="0.9" fill="none"/>' +
           // Neck
-          '<path d="M23,34 Q21,22 26,16" fill="none" stroke="#fbfbf7" stroke-width="9" stroke-linecap="round"/>' +
+          '<path d="M29,40 Q27,26 32,17" stroke="#F8F8F8" stroke-width="11" stroke-linecap="round" fill="none"/>' +
           // Head
-          '<ellipse cx="27" cy="14" rx="10" ry="9" fill="#fbfbf7"/>' +
-          '<ellipse cx="27" cy="13" rx="8" ry="7" fill="#ffffff" opacity="0.6"/>' +
-          // Eyes
-          '<circle cx="23" cy="12" r="2" fill="#222"/>' +
-          '<circle cx="31" cy="12" r="2" fill="#222"/>' +
-          '<circle cx="23.6" cy="11.4" r="0.7" fill="#fff"/>' +
-          '<circle cx="31.6" cy="11.4" r="0.7" fill="#fff"/>' +
-          // Beak
-          '<path d="M34,14 Q41,15 34,18 Z" fill="#f2a63c"/>' +
-          '<path d="M34,15.5 L38,16" fill="none" stroke="#d98c22" stroke-width="0.6"/>' +
-          // Blush
-          '<ellipse cx="20" cy="17" rx="3" ry="1.8" fill="#f0a0b0" opacity="0.35"/>' +
-          '<ellipse cx="34" cy="18" rx="3" ry="1.8" fill="#f0a0b0" opacity="0.3"/>' +
-          // Feet
-          '<path d="M20,60 L16,64 L24,64 Z" fill="#f2a63c"/>' +
-          '<path d="M32,60 L28,64 L36,64 Z" fill="#f2a63c"/>' +
-          // Stitch line
-          '<path d="M26,42 L26,58" fill="none" stroke="#e2dfd2" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>' +
+          '<ellipse cx="33" cy="14" rx="8.8" ry="7.5" fill="#F8F8F8"/>' +
+          // Bill: broad at the base, tapering, angled down
+          '<path d="M41,12 Q51,14.5 41,17.5 Q39.5,14.8 41,12 Z" fill="#E8912B"/>' +
+          '<path d="M41,14.8 L47,15.2" stroke="#C97621" stroke-width="0.7"/>' +
+          // One eye, in profile, with a white ring so it holds at small sizes
+          '<circle cx="34" cy="11.6" r="2.6" fill="#fff"/>' +
+          '<circle cx="34" cy="11.6" r="2.1" fill="#1b1b1b"/>' +
+          '<circle cx="34.8" cy="10.8" r="0.8" fill="#fff"/>' +
+          // Stitch line (the plushie tell, same language as the frog)
+          '<path d="M31,48 L31,62" fill="none" stroke="#E2DFD2" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>' +
           '</svg>',
         zone: 'floor', cols: 1, rows: 1, reward: true
       }
