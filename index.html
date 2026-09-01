@@ -2381,6 +2381,32 @@
       touch-action: none;
     }
 
+    .maze-win {
+      text-align: center;
+      padding: 26px 18px 18px;
+    }
+
+    .maze-win-mark {
+      font-size: 2.4rem;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .maze-win-title {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #E2E8F0;
+      margin-bottom: 6px;
+    }
+
+    .maze-win-sub {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #94A3B8;
+      margin-bottom: 18px;
+    }
+
     .maze-hint {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
@@ -3285,12 +3311,12 @@
 
           <!-- ── PAVED: Town Square → Library + Tower→Library ── -->
           <!-- Border -->
-          <g fill="none" stroke="#4a4448" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+          <g fill="none" stroke="#4a4448" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" data-road-border>
             <path d="M1235,680 Q1340,610 1440,510 Q1510,450 1560,425"></path>
             <path d="M1138,375 Q1260,355 1390,385 Q1485,415 1545,435"></path>
           </g>
           <!-- Pavement base (blue-grey) -->
-          <g fill="none" stroke="#707888" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+          <g fill="none" stroke="#707888" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" data-road-stone>
             <path d="M1235,680 Q1340,610 1440,510 Q1510,450 1560,425"></path>
             <path d="M1138,375 Q1260,355 1390,385 Q1485,415 1545,435"></path>
           </g>
@@ -3307,7 +3333,7 @@
 
           <!-- ── DARK DIRT: Town→Cove + Workshop→Cove + Workshop→Beach + Beach→Cove + Town→Forest + Forest→Cafe + Docks→Forest ── -->
           <!-- Border -->
-          <g fill="none" stroke="#3a2a18" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+          <g fill="none" stroke="#3a2a18" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" data-road-border>
             <path d="M1260,720 Q1400,732 1530,748 Q1640,760 1730,770"></path>
             <path d="M1400,960 Q1500,910 1580,870 Q1650,830 1720,780"></path>
             <path d="M1420,979 Q1540,1019 1660,1059 Q1780,1099 1880,1139"></path>
@@ -3317,7 +3343,7 @@
             <path d="M542,952 Q535,858 545,768 Q555,708 572,672"></path>
           </g>
           <!-- Dark earth fill -->
-          <g fill="none" stroke="#6a5030" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+          <g fill="none" stroke="#6a5030" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" data-road-stone>
             <path d="M1260,720 Q1400,732 1530,748 Q1640,760 1730,770"></path>
             <path d="M1400,960 Q1500,910 1580,870 Q1650,830 1720,780"></path>
             <path d="M1420,979 Q1540,1019 1660,1059 Q1780,1099 1880,1139"></path>
@@ -3339,13 +3365,13 @@
 
           <!-- ── STANDARD DIRT: Cafe, Docks, Workshop paths ── -->
           <!-- Border -->
-          <g fill="none" stroke="#6b5a3a" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+          <g fill="none" stroke="#6b5a3a" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" data-road-border>
             <path d="M1165,690 Q1040,630 900,565 Q830,535 780,515"></path>
             <path d="M1250,730 Q1300,800 1340,870 Q1360,920 1370,950"></path>
             <path d="M1152,742 Q1010,835 820,925 Q670,975 535,985"></path>
           </g>
           <!-- Dirt fill -->
-          <g fill="none" stroke="#b8a070" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+          <g fill="none" stroke="#b8a070" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" data-road-stone>
             <path d="M1165,690 Q1040,630 900,565 Q830,535 780,515"></path>
             <path d="M1250,730 Q1300,800 1340,870 Q1360,920 1370,950"></path>
             <path d="M1152,742 Q1010,835 820,925 Q670,975 535,985"></path>
@@ -4397,7 +4423,7 @@
         desc: 'Captain Maddie runs a boat with more below deck than above it. She keeps the lower levels dark and the ladders where you would not expect them.',
         actions: [
           { label: 'Enter the Hold', onclick: () => openYachtMaze(), primary: true },
-          { label: 'Talk to Maddie', onclick: () => showGameModal('"Get yourself down to the keel and find your way back up," she says. "Out through the mast. Nobody has done it quick."', "Captain Maddie", '&#x1F9ED;') }
+          { label: 'Talk to Maddie', onclick: () => showGameModal('"Have you seen my right hand Benson around? He\'s supposed to be swabbing the deck."', 'Captain Maddie', '\u{1F9ED}') }
         ]
       },
       forest: {
@@ -5118,7 +5144,7 @@
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: 'She adjusts her glasses and smiles. "Take your time. The shelf has waited centuries; it can wait a little longer." She writes on a slip of paper:<br><br>"Chart or plan (3)"',
+            text: 'She adjusts her glasses and smiles. "Take your time. The shelf has waited centuries; it can wait a little longer." She writes on a slip of paper:<br><br>"Chart plan (3)"',
             answer: ['MAP', 'A MAP'],
             placeholder: 'Solve the cryptic clue...',
             hint: 'A double definition clue: two separate definitions, both pointing to the same three-letter answer. A chart is one. A plan is the other.',
@@ -5150,7 +5176,7 @@
           {
             type: 'puzzle',
             speaker: 'Head Librarian',
-            text: '"The old setters were fond of this one," she murmurs, smoothing another page flat:<br><br>"Departs or pages (6)"',
+            text: '"The old setters were fond of this one," she murmurs, smoothing another page flat:<br><br>"Departs pages (6)"',
             answer: 'LEAVES',
             placeholder: 'Solve the cryptic clue...',
             hint: 'Same idea: two separate definitions pointing to the same word. What word means "departs" (she leaves) AND also means "pages" (leaves of a book)?',
@@ -5650,6 +5676,28 @@
           }
         ]
       },
+      yacht: {
+        title: 'Above Deck',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: 'Captain Maddie',
+            text: 'You come out at the top of the mast with the wind going straight through you. Maddie is already there, sitting on the crosstrees like she has been waiting a while.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Captain Maddie',
+            text: '"Benson took two days," she says. "He is still down there somewhere, if you hear splashing."'
+          },
+          {
+            type: 'complete',
+            speaker: 'Captain Maddie',
+            text: '"Anyway. You are crew now, whether you wanted it or not." She hands you a compass with no needle. "It points at whatever you are looking for. You will work it out."',
+            btnText: 'Back to the island'
+          }
+        ]
+      },
+
       airship: {
         title: 'The Sky Captain\'s Collection',
         steps: [
@@ -6317,8 +6365,32 @@
         const sub = document.getElementById('maze-sub');
         if (sub) sub.textContent = 'Out through the masthead. ' + mazeState.moves + ' moves.';
         if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+        renderYachtMaze();
+        showMazeWin(mazeState.moves);
+        return;
       }
       renderYachtMaze();
+    }
+
+    // A congratulation of its own, then the story. Dropping the player
+    // straight into narrative would make the maze feel like a loading screen
+    // rather than something they beat.
+    function showMazeWin(moves) {
+      const panel = document.getElementById('maze-panel');
+      if (!panel) return;
+      window.removeEventListener('keydown', mazeKeyHandler);
+      panel.innerHTML =
+        '<div class="maze-win">' +
+          '<div class="maze-win-mark">\u2693</div>' +
+          '<div class="maze-win-title">You made it out</div>' +
+          '<div class="maze-win-sub">Up through the hold and out the masthead in ' + moves + ' moves.</div>' +
+          '<button class="maze-btn" id="maze-win-go">Climb out</button>' +
+        '</div>';
+      const go = document.getElementById('maze-win-go');
+      if (go) go.onclick = function () {
+        closeYachtMaze();
+        startStory('yacht');
+      };
     }
 
     function mazeKeyHandler(e) {
@@ -7751,7 +7823,14 @@
       }
       const iconEl = overlay.querySelector('#game-modal-icon');
       const titleEl = overlay.querySelector('#game-modal-title');
-      iconEl.textContent = icon || '';
+      // Icons are normally a literal emoji, but a caller passing an HTML
+      // entity used to get the entity printed as raw text above the message.
+      // Decode it instead, so the same mistake cannot resurface.
+      if (icon && /^&#[0-9A-Za-z]+;$/.test(icon)) {
+        iconEl.innerHTML = icon;
+      } else {
+        iconEl.textContent = icon || '';
+      }
       iconEl.style.display = icon ? 'block' : 'none';
       titleEl.textContent = title || '';
       titleEl.style.display = title ? 'block' : 'none';
@@ -10715,9 +10794,8 @@
     const SELL_PRICES = { common: 5, uncommon: 12, rare: 25, epic: 50, legendary: 100 };
 
     const FISH_UPGRADES = [
-      { id: 'bucket1', name: 'Bigger Bucket', desc: '10 fish capacity', cost: 50, type: 'bucket', value: 10 },
-      { id: 'bucket2', name: 'Large Bucket', desc: '20 fish capacity', cost: 200, type: 'bucket', value: 20 },
-      { id: 'bucket3', name: 'Huge Bucket', desc: '50 fish capacity', cost: 800, type: 'bucket', value: 50 },
+      { id: 'bucket1', name: 'Bigger Bucket', desc: '2 fish capacity', cost: 50, type: 'bucket', value: 2 },
+      { id: 'bucket2', name: 'Large Bucket', desc: '5 fish capacity', cost: 200, type: 'bucket', value: 5 },
       { id: 'rod1', name: 'Oak Rod', desc: 'Slower power meter', cost: 100, type: 'rod', effect: 'slowPower' },
       { id: 'rod2', name: 'Steel Rod', desc: 'Even slower meters', cost: 400, type: 'rod', effect: 'slowerAll' },
       { id: 'rod3', name: 'Golden Rod', desc: 'Slowest meters, best control', cost: 1500, type: 'rod', effect: 'slowest' },
@@ -10748,7 +10826,9 @@
     function getBucketMax() {
       const owned = getUpgrades();
       const bucketUpgrades = FISH_UPGRADES.filter(u => u.type === 'bucket' && owned.includes(u.id));
-      if (bucketUpgrades.length === 0) return 5;
+      // One fish to start: the bucket is the early progression, so it has to
+      // begin somewhere that makes the first upgrade feel like something.
+      if (bucketUpgrades.length === 0) return 1;
       return Math.max(...bucketUpgrades.map(u => u.value));
     }
 
@@ -10863,6 +10943,10 @@
       renderBucket();
       renderMoney();
       renderFishLog();
+      // Affordability is baked into the shop markup, so a coin change has to
+      // redraw it. Without this the shop reads "cannot afford" until the next
+      // purchase, which is exactly when you no longer need to be told.
+      renderShop();
       // Re-enable cast button if we were full
       if (fishState === 'idle') {
         const controls = document.getElementById('fish-controls');
@@ -10884,6 +10968,7 @@
       addCoins(total);
       saveBucket([]);
       renderBucket();
+      renderShop();
       renderMoney();
       renderFishLog();
       document.getElementById('fish-result').textContent = 'Sold all fish for ' + total + ' coins!';
@@ -11155,7 +11240,24 @@
     //  than this one, and a worse fit for a 13+ game.
     // ═══════════════════════════════════
     const COLORWAYS_KEY = 'bitcryptic_colorways';
-    const SWAG_CHANCE = 0.05;
+
+    // Base rate, then better lures raise it. The Diamond Lure is the top tier
+    // and the one that already removes common fish, so it is the natural home
+    // for the big jump.
+    const SWAG_CHANCE_BY_LURE = {
+      none: 0.05,
+      lure1: 0.10,   // Silver
+      lure2: 0.18,   // Gold
+      lure3: 0.30    // Diamond
+    };
+
+    function getSwagChance() {
+      const owned = getUpgrades();
+      if (owned.includes('lure3')) return SWAG_CHANCE_BY_LURE.lure3;
+      if (owned.includes('lure2')) return SWAG_CHANCE_BY_LURE.lure2;
+      if (owned.includes('lure1')) return SWAG_CHANCE_BY_LURE.lure1;
+      return SWAG_CHANCE_BY_LURE.none;
+    }
 
     const COLORWAYS = {
       gold:    { label: 'Gold',      swatch: 'linear-gradient(135deg,#f7d774,#b8860b 45%,#ffe9a3 60%,#a5720a)' },
@@ -11177,8 +11279,37 @@
       return true;
     }
 
+    // The swag fish is a real fish in the bucket, not just a prompt: it sells
+    // at legendary rate whether or not the player spins. Declining the spin
+    // has to leave you with something, or "Keep the fish" would be a lie.
+    const SWAG_FISH = { name: 'Swag Fish', emoji: '✨', rarity: 'legendary', color: '#b06bff' };
+
     function maybeSwagFish() {
-      if (Math.random() >= SWAG_CHANCE) return;
+      if (Math.random() >= getSwagChance()) return;
+      const bucket = getBucket();
+      if (bucket.length === 0) return;          // nothing to upgrade
+      if (bucket[bucket.length - 1].swag) return;
+      // Replace the catch that just landed, keeping its weight so the price
+      // still varies. Rarity carries the value: SELL_PRICES['legendary'].
+      const last = bucket[bucket.length - 1];
+      bucket[bucket.length - 1] = {
+        name: SWAG_FISH.name,
+        emoji: SWAG_FISH.emoji,
+        rarity: SWAG_FISH.rarity,
+        color: SWAG_FISH.color,
+        weight: last.weight,
+        swag: true
+      };
+      saveBucket(bucket);
+      renderBucket();
+      const result = document.getElementById('fish-result');
+      if (result) {
+        result.style.color = SWAG_FISH.color;
+        result.innerHTML = SWAG_FISH.emoji + ' <strong>' + SWAG_FISH.name + '</strong> (' +
+          last.weight + ' kg) <span class="rarity-legendary" style="font-size:0.8em;">[LEGENDARY]</span> ' +
+          '<span style="color:#ffd700;font-size:0.8em;">Worth ' +
+          getFishPrice(bucket[bucket.length - 1]) + ' coins</span>';
+      }
       showSwagPrompt();
     }
 

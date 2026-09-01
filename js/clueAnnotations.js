@@ -233,11 +233,11 @@ var CLUE_ANNOTATIONS = {
   },
 
   // 08. MAP: The Forbidden Shelf (library story, step 3)
-  'Chart or plan (3)': {
+  'Chart plan (3)': {
     tutorial: 'library',
     segments: [
       {
-        text: 'Chart or plan (3)',
+        text: 'Chart plan (3)',
         role: 'double'
       }
     ]
@@ -255,11 +255,11 @@ var CLUE_ANNOTATIONS = {
   },
 
   // 10. LEAVES: The Forbidden Shelf (library story, step 5)
-  'Departs or pages (6)': {
+  'Departs pages (6)': {
     tutorial: 'library',
     segments: [
       {
-        text: 'Departs or pages (6)',
+        text: 'Departs pages (6)',
         role: 'double'
       }
     ]

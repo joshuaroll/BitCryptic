@@ -218,12 +218,12 @@ tutorial: adventure
 Notes/flags: **already approved and shipping**. This block is the live `CLUE_ANNOTATIONS` entry, verbatim, per drafts decision "DINE: APPROVED option A". Listed for completeness; no action needed.
 
 ### 08. MAP: The Forbidden Shelf (library story, step 3)
-Clue (key, verbatim): `Chart or plan (3)`
+Clue (key, verbatim): `Chart plan (3)`
 tutorial: library
 
 | segment | role | usage/operation | L2 info |
 |---|---|---|---|
-| Chart or plan (3) | double | - | Two definitions of the same answer. |
+| Chart plan (3) | double | - | Two definitions of the same answer. |
 
 Notes/flags: double definition per hint ("A chart is one. A plan is the other.").
 
@@ -238,12 +238,12 @@ tutorial: library
 Notes/flags: double definition per hint; also recorded in drafts newGuideSections (reused from Library story).
 
 ### 10. LEAVES: The Forbidden Shelf (library story, step 5)
-Clue (key, verbatim): `Departs or pages (6)`
+Clue (key, verbatim): `Departs pages (6)`
 tutorial: library
 
 | segment | role | usage/operation | L2 info |
 |---|---|---|---|
-| Departs or pages (6) | double | - | Two definitions of the same answer. |
+| Departs pages (6) | double | - | Two definitions of the same answer. |
 
 Notes/flags: double definition per hint; also in drafts newGuideSections.
 
