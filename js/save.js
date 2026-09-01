@@ -24,6 +24,7 @@ const BCWSave = (() => {
     'bitcryptic_fish_coins',
     'bitcryptic_fish_bucket',
     'bitcryptic_fish_upgrades',
+    'bitcryptic_fish_mounts',
     'bitcryptic_cheese',
     'bitcryptic_cheese_cooldown',
     'bcw_audio_settings',

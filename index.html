@@ -1501,7 +1501,9 @@
     .fish-shop-item.locked { opacity: 0.6; cursor: not-allowed; }
     .fish-shop-item.locked .item-cost { color: #e85050; }
     .fish-bucket { margin-bottom: 10px; }
-    .fish-bucket-entry { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 3px; font-size: 0.8rem; }
+    .fish-bucket-entry { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 6px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 3px; font-size: 0.8rem; }
+    .fish-bucket-entry > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fish-bucket-entry .bucket-entry-btns { flex: none; }
     .fish-bucket-entry button { background: #388a50; border: none; border-radius: 5px; color: #E2E8F0; padding: 2px 8px; font-size: 0.72rem; cursor: pointer; font-family: 'Inter', sans-serif; }
     .fish-bucket-entry button:hover { background: #4aaa66; }
     .fish-sell-btn { background: rgba(100, 217, 160, 0.08); border: 1px solid rgba(100, 217, 160, 0.3); border-radius: 8px; padding: 8px 16px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; color: #64D9A0; cursor: pointer; width: 100%; margin-top: 6px; transition: transform 0.15s; }
@@ -2229,6 +2231,390 @@
     }
 
     .fish-btn--wheel[hidden] { display: none; }
+
+    /* ═══ ROD TENSION ═══
+       The catch is a skill check now. The zone is amber because amber is what
+       this game uses for "the thing you are aiming at". */
+    .fish-tension {
+      position: relative;
+      width: min(92%, 340px);
+      height: 26px;
+      margin: 0 auto 8px;
+      border-radius: 13px;
+      background: linear-gradient(90deg, rgba(248,113,113,0.22), rgba(255,255,255,0.06) 50%, rgba(248,113,113,0.22));
+      border: 1px solid #2A3553;
+      overflow: hidden;
+    }
+
+    .fish-tension-zone {
+      position: absolute; top: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(242,193,78,0.45), rgba(242,193,78,0.22));
+      border-left: 1px solid rgba(242,193,78,0.8);
+      border-right: 1px solid rgba(242,193,78,0.8);
+    }
+
+    .fish-tension-marker {
+      position: absolute; top: -2px; bottom: -2px;
+      width: 4px; margin-left: -2px;
+      background: #E2E8F0;
+      box-shadow: 0 0 10px rgba(226,232,240,0.9);
+      border-radius: 2px;
+    }
+
+    /* ═══ POND WEATHER ═══ */
+    .fish-weather {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 0.8rem; color: #94A3B8;
+      margin: 2px 0 6px;
+      font-family: 'Inter', sans-serif;
+    }
+    .fish-weather-icon { font-size: 1rem; }
+    .fish-weather-label { color: #CBD5E1; font-weight: 600; }
+    .fish-weather-note { color: #64748B; }
+
+    /* Rain falls over the pond; mist sits on it. Both are overlays on the
+       scene, so no island art is recoloured. */
+    .fish-scene.weather-rain::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 8;
+      background-image:
+        repeating-linear-gradient(74deg, rgba(226,240,255,0.55) 0 1.5px, transparent 1.5px 14px),
+        repeating-linear-gradient(74deg, rgba(226,240,255,0.30) 0 1px, transparent 1px 23px);
+      animation: fishRain 0.45s linear infinite;
+    }
+    @keyframes fishRain {
+      from { background-position: 0 0; }
+      to   { background-position: -24px 84px; }
+    }
+
+    .fish-scene.weather-mist::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 8;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(226,232,240,0.20), transparent 55%),
+        radial-gradient(ellipse at 72% 35%, rgba(226,232,240,0.16), transparent 55%);
+      animation: fishMist 12s ease-in-out infinite;
+    }
+    @keyframes fishMist {
+      0%, 100% { transform: translateX(-12px); }
+      50%      { transform: translateX(14px); }
+    }
+
+    /* ═══ BESTIARY ═══ */
+    .bestiary-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem; color: #94A3B8; margin-bottom: 6px;
+    }
+    .bestiary-done { color: #64D9A0; font-weight: 700; }
+
+    .bestiary-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+      gap: 5px; margin-bottom: 10px;
+    }
+
+    .bestiary-slot {
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      padding: 6px 3px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      text-align: center;
+    }
+
+    /* An empty slot is deliberately legible as a gap rather than dimmed to
+       nothing: it is a thing to go and find. */
+    .bestiary-slot .bestiary-emoji { font-size: 1.15rem; filter: grayscale(1); opacity: 0.35; }
+    .bestiary-slot .bestiary-name  { font-size: 0.6rem; color: #64748B; }
+    .bestiary-slot .bestiary-best  { font-size: 0.55rem; color: #64748B; }
+
+    .bestiary-slot.found {
+      border-color: rgba(242,193,78,0.28);
+      background: rgba(242,193,78,0.05);
+    }
+    .bestiary-slot.found .bestiary-emoji { filter: none; opacity: 1; }
+    .bestiary-slot.found .bestiary-name  { color: #CBD5E1; }
+    .bestiary-slot.found .bestiary-best  { color: #F2C14E; }
+
+    /* ═══ MOUNTS ═══ */
+    .bucket-entry-btns { display: flex; gap: 4px; align-items: center; }
+    .bucket-mount-btn {
+      background: rgba(242,193,78,0.12);
+      border: 1px solid rgba(242,193,78,0.4);
+      border-radius: 5px;
+      color: #F2C14E;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+    .bucket-mount-btn:hover { background: rgba(242,193,78,0.2); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fish-scene.weather-rain::after, .fish-scene.weather-mist::after { animation: none !important; }
+    }
+
+    /* ═══ BLACKJACK ═══
+       The room sits under the pond, so the water is a ceiling: light comes
+       down in shafts from the top edge, bubbles go up, and the felt is the
+       only warm thing in the frame. */
+    #bj-game {
+      display: none; position: fixed; inset: 0; z-index: 10000;
+      background: linear-gradient(180deg, #0d3550 0%, #0a2438 35%, #071726 70%, #050f1c 100%);
+      flex-direction: column; align-items: center;
+      padding: 20px; overflow-y: auto;
+      font-family: 'Inter', sans-serif; color: #E2E8F0;
+    }
+    #bj-game.active { display: flex; }
+    #bj-game h2 {
+      font-family: 'Space Grotesk', sans-serif; color: #E2E8F0;
+      font-size: 1.6rem; margin-bottom: 4px; position: relative; z-index: 2;
+    }
+    #bj-game .fish-money { position: relative; z-index: 2; }
+    #bj-game .fish-close { z-index: 3; }
+
+    .bj-underwater { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+    /* The underside of the pond surface, seen from below. */
+    .bj-surface {
+      position: absolute; top: 0; left: -10%; width: 120%; height: 90px;
+      background: linear-gradient(180deg, rgba(120, 200, 235, 0.30), rgba(120, 200, 235, 0));
+      filter: blur(2px);
+      animation: bjSurface 7s ease-in-out infinite;
+    }
+    @keyframes bjSurface {
+      0%, 100% { transform: translateX(0) scaleY(1); }
+      50%      { transform: translateX(-16px) scaleY(1.12); }
+    }
+
+    .bj-shaft {
+      position: absolute; top: -40px; width: 130px; height: 150%;
+      background: linear-gradient(180deg, rgba(160, 220, 250, 0.13), rgba(160, 220, 250, 0));
+      transform-origin: top center;
+      filter: blur(6px);
+    }
+    .bj-shaft--1 { left: 12%; transform: rotate(9deg);  animation: bjShaft 11s ease-in-out infinite; }
+    .bj-shaft--2 { left: 46%; transform: rotate(-5deg); animation: bjShaft 14s ease-in-out infinite 2s; }
+    .bj-shaft--3 { left: 76%; transform: rotate(13deg); animation: bjShaft 9s  ease-in-out infinite 4s; }
+    @keyframes bjShaft {
+      0%, 100% { opacity: 0.55; }
+      50%      { opacity: 1; }
+    }
+
+    .bj-bubble {
+      position: absolute; bottom: -30px;
+      border-radius: 50%;
+      background: rgba(200, 240, 255, 0.16);
+      border: 1px solid rgba(200, 240, 255, 0.2);
+    }
+    .bj-bubble--1 { left: 8%;  width: 9px;  height: 9px;  animation: bjBubble 13s linear infinite; }
+    .bj-bubble--2 { left: 63%; width: 6px;  height: 6px;  animation: bjBubble 17s linear infinite 3s; }
+    .bj-bubble--3 { left: 88%; width: 12px; height: 12px; animation: bjBubble 15s linear infinite 7s; }
+    @keyframes bjBubble {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-105vh) translateX(22px); opacity: 0; }
+    }
+
+    .bj-table {
+      position: relative; z-index: 2;
+      width: min(96vw, 720px);
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 140px 140px 22px 22px;
+      background: linear-gradient(180deg, #4a3418, #2e2010);
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Green felt with a soft spot-lit centre, so the cards read against it. */
+    .bj-table-felt {
+      border-radius: 128px 128px 14px 14px;
+      padding: 22px 18px 18px;
+      background:
+        radial-gradient(ellipse at 50% 38%, rgba(255, 255, 255, 0.09), transparent 62%),
+        linear-gradient(180deg, #1d6b45, #145033 60%, #103f28);
+      border: 2px solid rgba(242, 193, 78, 0.25);
+      min-height: 380px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    .bj-row { text-align: center; }
+
+    .bj-seat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px;
+      color: rgba(255, 255, 255, 0.5); margin-bottom: 7px;
+    }
+    .bj-score {
+      color: #F2C14E; font-weight: 700; letter-spacing: 0;
+      background: rgba(0, 0, 0, 0.28); border-radius: 5px; padding: 1px 7px; margin-left: 4px;
+    }
+
+    .bj-hand { display: flex; gap: 7px; justify-content: center; min-height: 96px; }
+
+    .bj-card {
+      position: relative;
+      width: 66px; height: 94px;
+      border-radius: 7px;
+      background: linear-gradient(160deg, #FBFAF6, #E8E4DA);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.45);
+      color: #0B1021;
+      font-family: 'JetBrains Mono', monospace;
+      flex: none;
+      animation: bjDeal 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    }
+    @keyframes bjDeal {
+      from { transform: translateY(-26px) rotate(-7deg); opacity: 0; }
+      to   { transform: translateY(0) rotate(0); opacity: 1; }
+    }
+    .bj-card--red { color: #c0392b; }
+
+    .bj-card-corner {
+      position: absolute; font-size: 0.68rem; font-weight: 700; line-height: 1.05;
+    }
+    .bj-card-corner--tl { top: 5px; left: 6px; }
+    .bj-card-corner--br { bottom: 5px; right: 6px; transform: rotate(180deg); }
+    .bj-card-pip {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem; opacity: 0.9;
+    }
+
+    .bj-card--back {
+      background: linear-gradient(160deg, #1e3a5f, #14263f);
+      border: 1px solid rgba(242, 193, 78, 0.3);
+    }
+    .bj-card-back-art {
+      position: absolute; inset: 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(242, 193, 78, 0.28);
+      background:
+        repeating-linear-gradient(45deg, rgba(242, 193, 78, 0.14) 0 4px, transparent 4px 8px),
+        repeating-linear-gradient(-45deg, rgba(242, 193, 78, 0.1) 0 4px, transparent 4px 8px);
+    }
+
+    .bj-card--empty {
+      background: transparent;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      box-shadow: none; animation: none;
+    }
+
+    .bj-felt-line {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.62);
+      min-height: 22px;
+      padding: 6px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      margin: 10px 0;
+    }
+
+    .bj-controls { text-align: center; }
+    .bj-chips { display: flex; gap: 10px; justify-content: center; margin-bottom: 8px; }
+
+    .bj-chip {
+      width: 54px; height: 54px; border-radius: 50%;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;
+      color: #0B1021; cursor: pointer;
+      border: 3px dashed rgba(255, 255, 255, 0.75);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s;
+    }
+    .bj-chip:hover { transform: translateY(-3px); }
+    .bj-chip--50  { background: linear-gradient(160deg, #cfd6e0, #97a3b4); }
+    .bj-chip--100 { background: linear-gradient(160deg, #F2C14E, #c9931f); }
+    .bj-chip--250 { background: linear-gradient(160deg, #FB923C, #c05f18); }
+    .bj-chip.disabled { opacity: 0.32; pointer-events: none; }
+
+    .bj-bet-line {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.75); margin: 4px 0 2px;
+    }
+    .bj-bet-line b { color: #F2C14E; }
+    .bj-outcome-win  { color: #64D9A0; font-weight: 700; }
+    .bj-outcome-lose { color: #F87171; font-weight: 700; }
+    .bj-outcome-push { color: #94A3B8; font-weight: 700; }
+
+    .bj-actions { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .bj-waiting {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5); padding: 12px 0; display: inline-block;
+    }
+
+    .fish-header-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .fish-btn--cards {
+      background: linear-gradient(135deg, #1d6b45, #145033);
+      color: #E2E8F0;
+      border: 1px solid rgba(242, 193, 78, 0.35);
+      box-shadow: 0 4px 20px rgba(29, 107, 69, 0.35);
+    }
+    .fish-btn--cards[hidden] { display: none; }
+
+    @media (max-width: 620px) {
+      .bj-card { width: 52px; height: 74px; }
+      .bj-card-pip { font-size: 1.4rem; }
+      .bj-table { border-radius: 90px 90px 18px 18px; }
+      .bj-table-felt { border-radius: 80px 80px 12px 12px; padding: 16px 10px 14px; }
+      .bj-chip { width: 46px; height: 46px; font-size: 0.74rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bj-card, .bj-surface, .bj-shaft, .bj-bubble { animation: none !important; }
+    }
+
+    /* Floor tabs only appear once there is a second floor to switch to. */
+    .house-floor-tabs {
+      display: flex;
+      gap: 6px;
+      margin-left: 14px;
+    }
+
+    .house-floor-tabs[hidden] { display: none; }
+
+    .house-floor-tab {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #94A3B8;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .house-floor-tab:hover { color: #CBD5E1; border-color: #3A4563; }
+
+    .house-floor-tab.active {
+      background: rgba(242, 193, 78, 0.1);
+      border-color: rgba(242, 193, 78, 0.45);
+      color: #F2C14E;
+    }
+
+    /* The attic is under the roof, so the ceiling slopes and the light is
+       poorer. Pure decoration over the existing room, which keeps every
+       furniture coordinate valid on both floors. */
+    .house-room.is-attic::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      background:
+        linear-gradient(200deg, rgba(11, 16, 33, 0.85) 0 12%, transparent 12.6%),
+        linear-gradient(160deg, rgba(11, 16, 33, 0.85) 0 12%, transparent 12.6%);
+    }
+
+    .house-room.is-attic::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      background: radial-gradient(ellipse at 50% 0%, rgba(242, 193, 78, 0.08), transparent 60%);
+    }
 
     /* ═══ SWAG FISH ═══ */
     .swag-panel {
@@ -4144,6 +4530,7 @@
   <div id="house-editor">
     <div class="house-header">
       <h2 id="house-editor-title">Your Home</h2>
+      <div class="house-floor-tabs" id="house-floor-tabs" hidden></div>
       <div class="house-header-actions">
         <button class="house-action-btn" onclick="houseUndo()" id="house-undo-btn" title="Undo (Ctrl+Z)" disabled>&#x21A9; Undo</button>
         <button class="house-action-btn" onclick="houseRedo()" id="house-redo-btn" title="Redo (Ctrl+Y)" disabled>&#x21AA; Redo</button>
@@ -9426,12 +9813,38 @@
     let houseLighting = 'day';       // day, warm, night
     const FREE_STEP = 5;             // pixel step in free mode
 
-    function getHouseState() {
+    // Which floor the editor is showing. Not persisted: you always open on
+    // the ground floor, because that is the room the front door leads to.
+    let houseFloor = 'ground';
+
+    // The whole saved object, both floors. Only the attic plumbing needs this;
+    // everything else wants the open floor.
+    function getHouseRoot() {
       try {
         const raw = localStorage.getItem(HOUSE_STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
       } catch (e) { }
       return { wallColor: '#7a6a5a', floorColor: '#8b7355', items: [] };
+    }
+
+    function defaultAtticState() {
+      return { wallColor: '#6a5f70', floorColor: '#7a6248', items: [] };
+    }
+
+    // Reads the floor currently open in the editor. The ground floor still
+    // lives at the top level of the saved object, so every save written before
+    // the attic existed loads unchanged.
+    function getHouseState() {
+      const root = getHouseRoot();
+      if (houseFloor === 'attic') {
+        return (root.attic && typeof root.attic === 'object' && Array.isArray(root.attic.items))
+          ? root.attic
+          : defaultAtticState();
+      }
+      return root;
     }
 
     function saveHouseState(state, pushUndo) {
@@ -9445,7 +9858,19 @@
         } catch (e) { }
         houseRedoStack = [];
       }
-      localStorage.setItem(HOUSE_STORAGE_KEY, JSON.stringify(state));
+      // Writing the attic must not drop the ground floor, so an attic save
+      // is merged back into the root rather than replacing it.
+      if (houseFloor === 'attic') {
+        const root = getHouseRoot();
+        root.attic = state;
+        localStorage.setItem(HOUSE_STORAGE_KEY, JSON.stringify(root));
+      } else {
+        // Preserve any attic that already exists: `state` here is the ground
+        // floor, and it has no idea the attic is there.
+        const prevRoot = getHouseRoot();
+        if (prevRoot.attic && !state.attic) state.attic = prevRoot.attic;
+        localStorage.setItem(HOUSE_STORAGE_KEY, JSON.stringify(state));
+      }
       window.BCSync?.schedulePush('world');
       updateUndoRedoButtons();
     }
@@ -9714,6 +10139,11 @@
 
     function openHouseEditor() {
       closePanel();
+      // Always open downstairs. Opening on whichever floor you last used means
+      // clicking your house and landing in a room with no door out of it.
+      houseFloor = 'ground';
+      const room0 = document.getElementById('house-room');
+      if (room0) room0.classList.remove('is-attic');
       ensureDefaultWindow();
       houseUndoStack = [];
       houseRedoStack = [];
@@ -9730,6 +10160,9 @@
       applyRoomLighting();
       updateUndoRedoButtons();
       refreshTrophyPalette();
+      renderFloorTabs();
+      const t0 = document.getElementById('house-editor-title');
+      if (t0) t0.textContent = groundTitle();
     }
 
     function closeHouseEditor() {
@@ -10798,6 +11231,12 @@
       { name: 'Swordfish', emoji: '⚔', rarity: 'epic', weight: [5.0, 15.0], color: '#4a6aa0' },
       { name: 'Golden Koi', emoji: '✨', rarity: 'legendary', weight: [0.5, 2.0], color: '#ffd700' }
     ];
+
+    // Maddie asks after Benson at the yacht. He is in the pond, and he is not
+    // a fish, which is why he is not in the table above: he is rolled
+    // separately so he cannot crowd out a legendary.
+    const BENSON = { name: 'Benson', emoji: '\uD83E\uDDA6', rarity: 'legendary', weight: [70, 90], color: '#8fd4a8' };
+    const BENSON_CHANCE = 0.02;
     const BASE_RARITY_WEIGHTS = { common: 50, uncommon: 25, rare: 15, epic: 8, legendary: 2 };
     const FISH_STORAGE_KEY = 'bitcryptic_fish';
     const FISH_COINS_KEY = 'bitcryptic_fish_coins';
@@ -10819,7 +11258,45 @@
       { id: 'reel1', name: 'Quick Reel', desc: '4 second reel window', cost: 120, type: 'reel', effect: 'reelWindow4' },
       { id: 'reel2', name: 'Auto Reel', desc: 'Reels in automatically', cost: 5000, type: 'reel', effect: 'autoReel' },
       { id: 'trophy1', name: 'Mounted Fish Trophy', desc: 'A big mouth bass for your wall', cost: 10000, type: 'trophy', effect: 'trophy' },
+      { id: 'blackjack', name: 'Card Table', desc: 'Play blackjack under the pond', cost: 1000, type: 'table', effect: 'blackjack' },
+      // The long game. At legendary rates this is a genuine grind, which is the
+      // point: the attic is what you are still fishing for once every rod and
+      // lure is bought.
+      { id: 'attic', name: 'Build an Attic', desc: 'A second floor for your house', cost: 100000, type: 'attic', effect: 'attic' },
     ];
+
+    // Weather is rolled once per visit, not per cast, so it reads as a
+    // condition of the day rather than a slot machine between casts. Rain is
+    // the good one, which gives a reason to come back to the pond rather than
+    // fish it out in a single sitting.
+    const WEATHER = {
+      clear: { label: 'Clear',  icon: '\u2600\uFE0F', note: 'Still water. Nothing special biting.', rareBoost: 0,  biteMult: 1.0 },
+      rain:  { label: 'Rain',   icon: '\uD83C\uDF27\uFE0F', note: 'The rare fish come up in the rain.',   rareBoost: 12, biteMult: 0.85 },
+      mist:  { label: 'Mist',   icon: '\uD83C\uDF2B\uFE0F', note: 'Hard to see. The fish are bolder.',    rareBoost: 5,  biteMult: 0.7 }
+    };
+    const WEATHER_ODDS = [['clear', 55], ['rain', 25], ['mist', 20]];
+    let pondWeather = 'clear';
+
+    function rollWeather() {
+      const total = WEATHER_ODDS.reduce((a, w) => a + w[1], 0);
+      let roll = Math.random() * total;
+      for (const [id, w] of WEATHER_ODDS) { roll -= w; if (roll <= 0) { pondWeather = id; return; } }
+      pondWeather = 'clear';
+    }
+
+    function renderWeather() {
+      const el = document.getElementById('fish-weather');
+      if (!el) return;
+      const w = WEATHER[pondWeather];
+      el.innerHTML = '<span class="fish-weather-icon">' + w.icon + '</span>' +
+        '<span class="fish-weather-label">' + w.label + '</span>' +
+        '<span class="fish-weather-note">' + w.note + '</span>';
+      const scene = document.getElementById('fish-scene');
+      if (scene) {
+        scene.classList.toggle('weather-rain', pondWeather === 'rain');
+        scene.classList.toggle('weather-mist', pondWeather === 'mist');
+      }
+    }
 
     let sessionCatches = 0;
     let fishState = 'idle';
@@ -10861,6 +11338,11 @@
       if (id === 'trophy1' && typeof addFurniture === 'function') {
         try { addFurniture('mountedFish'); } catch(e) {}
       }
+      if (id === 'blackjack') renderTableButton();
+      // Buying the attic with no house would leave you holding a second floor
+      // for a building that does not exist. So it grants the house first,
+      // exactly as the COME IN code would have.
+      if (id === 'attic') grantAttic();
       renderShop();
       renderEquipment();
       renderMoney();
@@ -10955,6 +11437,7 @@
       renderBucket();
       renderMoney();
       renderFishLog();
+      renderBestiary();
       // Affordability is baked into the shop markup, so a coin change has to
       // redraw it. Without this the shop reads "cannot afford" until the next
       // purchase, which is exactly when you no longer need to be told.
@@ -10984,6 +11467,7 @@
       renderSwagButton();
       renderMoney();
       renderFishLog();
+      renderBestiary();
       document.getElementById('fish-result').textContent = 'Sold all fish for ' + total + ' coins!';
       document.getElementById('fish-result').style.color = '#F2C14E';
       // Re-enable cast button
@@ -11023,6 +11507,14 @@
         weights.epic += 12;
         weights.legendary += 8;
       }
+      // Weather. Rain is the reason to fish on a rainy day.
+      const wx = WEATHER[pondWeather] || WEATHER.clear;
+      if (wx.rareBoost) {
+        weights.rare += wx.rareBoost;
+        weights.epic += Math.round(wx.rareBoost * 0.5);
+        weights.legendary += Math.round(wx.rareBoost * 0.2);
+        weights.common = Math.max(0, weights.common - wx.rareBoost);
+      }
       // Power-based rarity boost: higher cast power = better fish
       const powerBonus = currentPower / 100;
       weights.rare += Math.round(powerBonus * 10);
@@ -11059,20 +11551,25 @@
       renderEquipment();
       renderBucket();
       renderFishLog();
+      renderBestiary();
       renderSwagButton();
+      renderTableButton();
+      rollWeather();
+      renderWeather();
     }
     function viewFishCatches() { openFishingGame(); setTimeout(() => document.getElementById('fish-log-section').scrollIntoView({ behavior: 'smooth' }), 300); }
 
     function closeFishing() {
       document.getElementById('fishing-game').classList.remove('active');
-      cancelAnimationFrame(powerAnim); cancelAnimationFrame(aimAnim);
+      cancelAnimationFrame(powerAnim); cancelAnimationFrame(aimAnim); cancelAnimationFrame(tensionAnim);
       clearTimeout(fishTimeout); clearTimeout(reelTimeout);
       resetFishingState();
     }
 
     function resetFishingState() {
       fishState = 'idle'; currentPower = 0; currentAngle = 0;
-      cancelAnimationFrame(powerAnim); cancelAnimationFrame(aimAnim);
+      pendingFish = null;
+      cancelAnimationFrame(powerAnim); cancelAnimationFrame(aimAnim); cancelAnimationFrame(tensionAnim);
       clearTimeout(fishTimeout); clearTimeout(reelTimeout);
       const scene = document.getElementById('fish-scene');
       scene.querySelectorAll('.fish-bobber, .fish-line, .fish-ripple, .fish-splash').forEach(e => e.remove());
@@ -11195,7 +11692,8 @@
         document.getElementById('fish-result').textContent = 'Waiting for a bite...';
         document.getElementById('fish-result').style.color = 'rgba(255,255,255,0.5)';
         const baseWait = 2000 + Math.random() * 4000;
-        const wait = baseWait * effects.biteMultiplier;
+        const wx = WEATHER[pondWeather] || WEATHER.clear;
+        const wait = baseWait * effects.biteMultiplier * wx.biteMult;
         fishTimeout = setTimeout(() => fishBite(bobber, landX, landY), wait);
       }, 700);
     }
@@ -11243,6 +11741,465 @@
           document.getElementById('fish-controls').innerHTML = '<button class="fish-btn" onclick="startCast()">Try Again</button>';
         }, effects.reelWindow);
       }
+    }
+
+
+    // ═══════════════════════════════════
+    //  BLACKJACK — the card table under the pond
+    //
+    //  Bought from the fishing shop, and it plays for the same coins you
+    //  fish for: there is one balance, so a good night at the table buys a
+    //  rod and a bad one costs you a bucket. Single deck, reshuffled every
+    //  hand, so there is nothing to count and nothing to balance around
+    //  counting.
+    //
+    //  Money rule: the stake leaves your balance the moment the hand starts
+    //  and the payout returns on settle. A hand can therefore never be
+    //  abandoned mid-way in a state where you have both the coins and the
+    //  cards — closing the panel refunds an unsettled bet as a push.
+    // ═══════════════════════════════════
+    const BJ_CHIPS = [50, 100, 250];
+    const BJ_SUITS = [
+      { s: '\u2660', red: false },
+      { s: '\u2665', red: true  },
+      { s: '\u2666', red: true  },
+      { s: '\u2663', red: false }
+    ];
+    const BJ_RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+    let bjState = null;
+
+    function hasCardTable() {
+      return getUpgrades().includes('blackjack');
+    }
+
+    function renderTableButton() {
+      const btn = document.getElementById('bj-open-btn');
+      if (!btn) return;
+      btn.hidden = !hasCardTable();
+    }
+
+    function bjFreshDeck() {
+      const deck = [];
+      BJ_SUITS.forEach(su => {
+        BJ_RANKS.forEach(r => deck.push({ rank: r, suit: su.s, red: su.red }));
+      });
+      // Fisher-Yates. A biased shuffle in a gambling game is the one bug a
+      // player would eventually feel without being able to name it.
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+      }
+      return deck;
+    }
+
+    // Aces count 11 until that would bust, then 1. Returning the soft flag
+    // lets the dealer rule read the way the rule is actually written.
+    function bjScore(hand) {
+      let total = 0, aces = 0;
+      hand.forEach(c => {
+        if (c.rank === 'A') { total += 11; aces++; }
+        else if (c.rank === 'J' || c.rank === 'Q' || c.rank === 'K') total += 10;
+        else total += parseInt(c.rank, 10);
+      });
+      while (total > 21 && aces > 0) { total -= 10; aces--; }
+      const soft = aces > 0 && total <= 21;
+      return { total: total, soft: soft };
+    }
+
+    function bjIsBlackjack(hand) {
+      return hand.length === 2 && bjScore(hand).total === 21;
+    }
+
+    function openBlackjack() {
+      if (!hasCardTable()) return;
+      bjState = {
+        deck: [],
+        player: [],
+        dealer: [],
+        bet: 0,
+        staked: 0,       // coins already taken from the balance for this hand
+        phase: 'betting',
+        message: '',
+        outcome: null,
+        revealed: false
+      };
+      const el = document.getElementById('bj-game');
+      if (el) el.classList.add('active');
+      renderBlackjack();
+    }
+
+    function closeBlackjack() {
+      // An unsettled hand returns its stake. Closing the table is not a
+      // forfeit, and a refresh mid-hand must not be able to cost coins.
+      if (bjState && bjState.staked > 0 && bjState.phase !== 'settled') {
+        addCoins(bjState.staked);
+        bjState.staked = 0;
+      }
+      bjState = null;
+      const el = document.getElementById('bj-game');
+      if (el) el.classList.remove('active');
+      renderMoney();
+      renderShop();
+      renderBucket();
+    }
+
+    function bjAddChip(v) {
+      if (!bjState || bjState.phase !== 'betting') return;
+      // You can only stake coins you hold. Without this the table would let
+      // you bet a balance you do not have and then take it on the deal.
+      if (bjState.bet + v > getCoins()) {
+        bjState.message = 'Not enough coins for that chip.';
+        renderBlackjack();
+        return;
+      }
+      bjState.bet += v;
+      bjState.message = '';
+      renderBlackjack();
+    }
+
+    function bjClearBet() {
+      if (!bjState || bjState.phase !== 'betting') return;
+      bjState.bet = 0;
+      bjState.message = '';
+      renderBlackjack();
+    }
+
+    function bjAllIn() {
+      if (!bjState || bjState.phase !== 'betting') return;
+      // Round down to a whole chip so the stake is always something the chip
+      // buttons could have built.
+      const coins = getCoins();
+      bjState.bet = Math.floor(coins / BJ_CHIPS[0]) * BJ_CHIPS[0];
+      bjState.message = '';
+      renderBlackjack();
+    }
+
+    function bjDeal() {
+      if (!bjState || bjState.phase !== 'betting') return;
+      if (bjState.bet <= 0) { bjState.message = 'Place a bet first.'; renderBlackjack(); return; }
+      if (bjState.bet > getCoins()) { bjState.message = 'Not enough coins.'; renderBlackjack(); return; }
+
+      addCoins(-bjState.bet);
+      bjState.staked = bjState.bet;
+      bjState.deck = bjFreshDeck();
+      bjState.player = [bjState.deck.pop(), bjState.deck.pop()];
+      bjState.dealer = [bjState.deck.pop(), bjState.deck.pop()];
+      bjState.phase = 'player';
+      bjState.revealed = false;
+      bjState.message = '';
+      renderMoney();
+      renderShop();
+
+      // A natural settles immediately, and against a dealer natural it pushes.
+      if (bjIsBlackjack(bjState.player) || bjIsBlackjack(bjState.dealer)) {
+        bjState.revealed = true;
+        bjSettle();
+        return;
+      }
+      renderBlackjack();
+    }
+
+    function bjHit() {
+      if (!bjState || bjState.phase !== 'player') return;
+      bjState.player.push(bjState.deck.pop());
+      if (bjScore(bjState.player).total > 21) {
+        bjState.revealed = true;
+        bjSettle();
+        return;
+      }
+      renderBlackjack();
+    }
+
+    function bjStand() {
+      if (!bjState || bjState.phase !== 'player') return;
+      bjState.phase = 'dealer';
+      bjState.revealed = true;
+      bjDealerPlay();
+    }
+
+    function bjDouble() {
+      if (!bjState || bjState.phase !== 'player') return;
+      if (bjState.player.length !== 2) return;
+      if (bjState.bet > getCoins()) {
+        bjState.message = 'Not enough coins to double.';
+        renderBlackjack();
+        return;
+      }
+      addCoins(-bjState.bet);
+      bjState.staked += bjState.bet;
+      bjState.bet *= 2;
+      bjState.player.push(bjState.deck.pop());
+      bjState.revealed = true;
+      renderMoney();
+      renderShop();
+      if (bjScore(bjState.player).total > 21) { bjSettle(); return; }
+      bjState.phase = 'dealer';
+      bjDealerPlay();
+    }
+
+    // Dealer draws to 16 and stands on all 17s, including soft 17. Dealt one
+    // card at a time so you can watch the hand build rather than have a
+    // finished total appear.
+    function bjDealerPlay() {
+      renderBlackjack();
+      const step = () => {
+        if (!bjState || bjState.phase !== 'dealer') return;
+        const sc = bjScore(bjState.dealer);
+        if (sc.total < 17) {
+          bjState.dealer.push(bjState.deck.pop());
+          renderBlackjack();
+          setTimeout(step, 620);
+        } else {
+          bjSettle();
+        }
+      };
+      setTimeout(step, 620);
+    }
+
+    function bjSettle() {
+      const p = bjScore(bjState.player).total;
+      const d = bjScore(bjState.dealer).total;
+      const pBJ = bjIsBlackjack(bjState.player);
+      const dBJ = bjIsBlackjack(bjState.dealer);
+      let payout = 0, outcome, message;
+
+      if (pBJ && dBJ)      { payout = bjState.bet;                    outcome = 'push'; message = 'Both blackjack. Push.'; }
+      else if (pBJ)        { payout = Math.floor(bjState.bet * 2.5);  outcome = 'win';  message = 'Blackjack. Pays three to two.'; }
+      else if (dBJ)        { payout = 0;                              outcome = 'lose'; message = 'Dealer blackjack.'; }
+      else if (p > 21)     { payout = 0;                              outcome = 'lose'; message = 'Bust at ' + p + '.'; }
+      else if (d > 21)     { payout = bjState.bet * 2;                outcome = 'win';  message = 'Dealer busts at ' + d + '.'; }
+      else if (p > d)      { payout = bjState.bet * 2;                outcome = 'win';  message = p + ' beats ' + d + '.'; }
+      else if (p < d)      { payout = 0;                              outcome = 'lose'; message = d + ' beats ' + p + '.'; }
+      else                 { payout = bjState.bet;                    outcome = 'push'; message = 'Push at ' + p + '.'; }
+
+      if (payout > 0) addCoins(payout);
+      const net = payout - bjState.staked;
+      bjState.staked = 0;
+      bjState.phase = 'settled';
+      bjState.revealed = true;
+      bjState.outcome = outcome;
+      bjState.message = message + (net > 0 ? ' You win ' + net + ' coins.' : (net < 0 ? ' You lose ' + Math.abs(net) + ' coins.' : ''));
+
+      renderMoney();
+      renderShop();
+      renderBucket();
+      if (typeof BCWAudio !== 'undefined') {
+        if (outcome === 'win' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+        else if (outcome === 'lose' && BCWAudio.playError) BCWAudio.playError();
+      }
+      renderBlackjack();
+    }
+
+    // Keeps the same stake if you can still cover it, so a run of hands is a
+    // sequence of clicks rather than a rebuild of the bet every time.
+    function bjNextHand() {
+      if (!bjState) return;
+      const keep = Math.min(bjState.bet, Math.floor(getCoins() / BJ_CHIPS[0]) * BJ_CHIPS[0]);
+      bjState.player = [];
+      bjState.dealer = [];
+      bjState.bet = keep;
+      bjState.staked = 0;
+      bjState.phase = 'betting';
+      bjState.outcome = null;
+      bjState.revealed = false;
+      bjState.message = '';
+      renderBlackjack();
+    }
+
+    // Test seam. The fishing and blackjack state are module-scoped `let`s, so
+    // they are invisible to anything outside this script block; these give the
+    // E2E suite a way to read and drive them without making the state itself
+    // global and writable from the console.
+    // Gated on ?debug=1 (and the Playwright harness, which sets it) so the
+    // live page never carries a handle that can drive the pond from a console.
+    if (debugModeActive || navigator.webdriver) window.bcwTest = {
+      weather: () => pondWeather,
+      setWeather: (w) => { pondWeather = w; },
+      fishState: () => fishState,
+      setTensionPos: (p) => { tensionPos = p; },
+      tensionPos: () => tensionPos
+    };
+
+    // A read-only view of the hand for tests and the debug console. Returns a
+    // copy, so nothing outside this module can reach in and set the deck.
+    function bjPeek() {
+      return bjState ? JSON.parse(JSON.stringify(bjState)) : null;
+    }
+
+    function bjCardHtml(card, faceDown) {
+      if (faceDown) {
+        return '<div class="bj-card bj-card--back"><div class="bj-card-back-art"></div></div>';
+      }
+      const cls = 'bj-card' + (card.red ? ' bj-card--red' : '');
+      return '<div class="' + cls + '">' +
+        '<span class="bj-card-corner bj-card-corner--tl">' + card.rank + '<br>' + card.suit + '</span>' +
+        '<span class="bj-card-pip">' + card.suit + '</span>' +
+        '<span class="bj-card-corner bj-card-corner--br">' + card.rank + '<br>' + card.suit + '</span>' +
+        '</div>';
+    }
+
+    function bjHandHtml(hand, hideSecond) {
+      return hand.map((c, i) => bjCardHtml(c, hideSecond && i === 1)).join('');
+    }
+
+    function renderBlackjack() {
+      const el = document.getElementById('bj-body');
+      if (!el || !bjState) return;
+      const st = bjState;
+      const betting = st.phase === 'betting';
+      const hideHole = !st.revealed && st.dealer.length > 0;
+
+      const pScore = st.player.length ? bjScore(st.player).total : 0;
+      const dScore = st.dealer.length
+        ? (hideHole ? bjScore([st.dealer[0]]).total : bjScore(st.dealer).total)
+        : 0;
+
+      let html = '';
+
+      html += '<div class="bj-row">' +
+        '<div class="bj-seat-label">Dealer' +
+          (st.dealer.length ? ' <span class="bj-score">' + dScore + (hideHole ? '+' : '') + '</span>' : '') +
+        '</div>' +
+        '<div class="bj-hand">' + (st.dealer.length ? bjHandHtml(st.dealer, hideHole) : '<div class="bj-card bj-card--empty"></div><div class="bj-card bj-card--empty"></div>') + '</div>' +
+      '</div>';
+
+      html += '<div class="bj-felt-line"><span>' + (st.message || (betting ? 'Blackjack pays 3 to 2. Dealer stands on all 17s.' : '')) + '</span></div>';
+
+      html += '<div class="bj-row">' +
+        '<div class="bj-seat-label">You' +
+          (st.player.length ? ' <span class="bj-score">' + pScore + '</span>' : '') +
+        '</div>' +
+        '<div class="bj-hand">' + (st.player.length ? bjHandHtml(st.player, false) : '<div class="bj-card bj-card--empty"></div><div class="bj-card bj-card--empty"></div>') + '</div>' +
+      '</div>';
+
+      // ─── Controls ───
+      html += '<div class="bj-controls">';
+      if (betting) {
+        html += '<div class="bj-chips">';
+        BJ_CHIPS.forEach(v => {
+          const afford = getCoins() >= st.bet + v;
+          html += '<button class="bj-chip bj-chip--' + v + (afford ? '' : ' disabled') + '" ' +
+            'onclick="bjAddChip(' + v + ')">' + v + '</button>';
+        });
+        html += '</div>';
+        html += '<div class="bj-bet-line">Bet <b>' + st.bet + '</b></div>';
+        html += '<div class="bj-actions">' +
+          '<button class="fish-btn" onclick="bjDeal()">Deal</button>' +
+          '<button class="fish-btn fish-btn--ghost" onclick="bjAllIn()">Max</button>' +
+          '<button class="fish-btn fish-btn--ghost" onclick="bjClearBet()">Clear</button>' +
+        '</div>';
+      } else if (st.phase === 'player') {
+        const canDouble = st.player.length === 2 && getCoins() >= st.bet;
+        html += '<div class="bj-bet-line">Bet <b>' + st.bet + '</b></div>';
+        html += '<div class="bj-actions">' +
+          '<button class="fish-btn" onclick="bjHit()">Hit</button>' +
+          '<button class="fish-btn" onclick="bjStand()">Stand</button>' +
+          (canDouble ? '<button class="fish-btn fish-btn--ghost" onclick="bjDouble()">Double</button>' : '') +
+        '</div>';
+      } else if (st.phase === 'dealer') {
+        html += '<div class="bj-bet-line">Bet <b>' + st.bet + '</b></div>';
+        html += '<div class="bj-actions"><span class="bj-waiting">Dealer plays...</span></div>';
+      } else {
+        html += '<div class="bj-bet-line bj-outcome-' + st.outcome + '">' +
+          (st.outcome === 'win' ? 'You win' : st.outcome === 'lose' ? 'Dealer wins' : 'Push') + '</div>';
+        html += '<div class="bj-actions">' +
+          '<button class="fish-btn" onclick="bjNextHand()">Next Hand</button>' +
+        '</div>';
+      }
+      html += '</div>';
+
+      el.innerHTML = html;
+
+      const purse = document.getElementById('bj-purse');
+      if (purse) purse.innerHTML = '\uD83E\uDE99 ' + getCoins() + ' coins';
+    }
+
+    // ═══════════════════════════════════
+    //  THE ATTIC
+    //  A second room in the house, bought from the fishing shop. It carries
+    //  the house with it: someone who never found COME IN can still buy their
+    //  way in, and gets every part of the house, not a bare attic.
+    // ═══════════════════════════════════
+    function hasAttic() {
+      return getUpgrades().includes('attic');
+    }
+
+    function grantAttic() {
+      const codes = getUnlockedCodes();
+      const hadHouse = codes.includes('COME IN') || codes.includes('WELCOME HOME');
+      if (!hadHouse) {
+        // Record the code itself, so everything gated on it agrees: the map
+        // pin, the minimap dot, and the reload path in checkHouseOnLoad.
+        try {
+          const updated = getUnlockedCodes();
+          if (!updated.includes('COME IN')) {
+            updated.push('COME IN');
+            localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify(updated));
+            window.BCSync?.schedulePush('world');
+          }
+        } catch (e) {}
+        if (typeof spawnHouse === 'function') spawnHouse();
+      }
+      const root = getHouseRoot();
+      if (!root.attic) {
+        root.attic = defaultAtticState();
+        try {
+          localStorage.setItem(HOUSE_STORAGE_KEY, JSON.stringify(root));
+          window.BCSync?.schedulePush('world');
+        } catch (e) {}
+      }
+      renderFloorTabs();
+      showGameModal(
+        hadHouse
+          ? 'The ladder drops out of the ceiling. There is a whole floor up there and it is empty.'
+          : 'You buy an attic and find a house attached to it. The key is under the mat, where it has always been.',
+        'Attic Built',
+        '\u{1F3E0}'
+      );
+    }
+
+    function switchHouseFloor(floor) {
+      if (floor === 'attic' && !hasAttic()) return;
+      if (houseFloor === floor) return;
+      houseFloor = floor;
+      houseSelectedIdx = -1;
+      // The undo stacks hold whole-house blobs, so they stay valid across a
+      // floor change. Clearing them anyway keeps undo meaning "undo what I
+      // just did in this room", which is what a player expects.
+      houseUndoStack = [];
+      houseRedoStack = [];
+      if (floor === 'ground') ensureDefaultWindow();
+      renderHouse();
+      applyRoomLighting();
+      updateUndoRedoButtons();
+      renderFloorTabs();
+      const room = document.getElementById('house-room');
+      if (room) room.classList.toggle('is-attic', floor === 'attic');
+      const title = document.getElementById('house-editor-title');
+      if (title) title.textContent = floor === 'attic' ? atticTitle() : groundTitle();
+    }
+
+    // POG renames the house, so the floor headings follow the body class
+    // rather than hardcoding "Your Home".
+    function groundTitle() {
+      return document.body.classList.contains('pog-house') ? POG_LABELS.house : 'Your Home';
+    }
+
+    function atticTitle() {
+      return groundTitle() + ': Attic';
+    }
+
+    function renderFloorTabs() {
+      const wrap = document.getElementById('house-floor-tabs');
+      if (!wrap) return;
+      if (!hasAttic()) { wrap.hidden = true; return; }
+      wrap.hidden = false;
+      wrap.innerHTML =
+        '<button class="house-floor-tab' + (houseFloor === 'ground' ? ' active' : '') + '" ' +
+          'onclick="switchHouseFloor(\'ground\')">Ground Floor</button>' +
+        '<button class="house-floor-tab' + (houseFloor === 'attic' ? ' active' : '') + '" ' +
+          'onclick="switchHouseFloor(\'attic\')">Attic</button>';
     }
 
     // ═══════════════════════════════════
@@ -11459,20 +12416,120 @@
       }, 3500);
     }
 
+    // ─── Rod tension ───
+    // Pressing "Reel In" used to be the whole catch. Now it starts a tension
+    // bar: a marker runs back and forth and you have to stop it in the amber
+    // zone. Miss and the fish is gone. The zone is wider for a better rod, so
+    // the upgrades buy control rather than just slower meters, and a rarer
+    // fish fights harder.
+    let tensionAnim = null, tensionPos = 0, tensionDir = 1, tensionZone = null, pendingFish = null;
+
+    function tensionZoneFor(fish) {
+      const owned = getUpgrades();
+      // Base half-width of the safe zone, in percent.
+      let half = 13;
+      if (owned.includes('rod3')) half += 7;
+      else if (owned.includes('rod2')) half += 4.5;
+      else if (owned.includes('rod1')) half += 2.5;
+      // A better fish fights harder.
+      const fight = { common: 0, uncommon: 1.5, rare: 3, epic: 4.5, legendary: 6 }[fish.rarity] || 0;
+      half = Math.max(5, half - fight);
+      // Place it somewhere that is not always the middle.
+      const centre = 22 + Math.random() * 56;
+      return { lo: Math.max(0, centre - half), hi: Math.min(100, centre + half) };
+    }
+
+    function tensionSpeedFor(fish) {
+      const owned = getUpgrades();
+      let sp = 1.9;
+      if (owned.includes('rod3')) sp -= 0.55;
+      else if (owned.includes('rod2')) sp -= 0.35;
+      else if (owned.includes('rod1')) sp -= 0.18;
+      sp += ({ common: 0, uncommon: 0.15, rare: 0.35, epic: 0.55, legendary: 0.8 }[fish.rarity] || 0);
+      return sp;
+    }
+
     function reelIn() {
       if (fishState !== 'biting') return;
-      clearTimeout(reelTimeout); fishState = 'idle';
+      clearTimeout(reelTimeout);
       const scene = document.getElementById('fish-scene');
       scene.querySelectorAll('.fish-bobber, .fish-line, .fish-ripple').forEach(e => e.remove());
       document.getElementById('fish-rod').style.display = 'none';
 
-      const fish = pickFish();
+      // Decide the fish now, so its rarity can set how hard it fights, but do
+      // not land it until the tension check is passed.
+      pendingFish = pickFish();
+
+      // Auto Reel is bought precisely to skip this, so it skips this.
+      if (getActiveEffects().autoReel) { landFish(pendingFish); return; }
+
+      fishState = 'tension';
+      tensionZone = tensionZoneFor(pendingFish);
+      tensionPos = 0; tensionDir = 1;
+      const speed = tensionSpeedFor(pendingFish);
+
+      document.getElementById('fish-result').textContent = 'It is fighting. Stop the marker in the zone.';
+      document.getElementById('fish-result').style.color = '#F2C14E';
+      document.getElementById('fish-controls').innerHTML =
+        '<div class="fish-tension" id="fish-tension">' +
+          '<div class="fish-tension-zone" style="left:' + tensionZone.lo + '%;width:' + (tensionZone.hi - tensionZone.lo) + '%"></div>' +
+          '<div class="fish-tension-marker" id="fish-tension-marker"></div>' +
+        '</div>' +
+        '<button class="fish-btn reel-btn" onclick="setHook()">Set the Hook</button>';
+
+      function animTension() {
+        if (fishState !== 'tension') return;
+        tensionPos += tensionDir * speed;
+        if (tensionPos >= 100) { tensionPos = 100; tensionDir = -1; }
+        if (tensionPos <= 0) { tensionPos = 0; tensionDir = 1; }
+        const m = document.getElementById('fish-tension-marker');
+        if (m) m.style.left = tensionPos + '%';
+        tensionAnim = requestAnimationFrame(animTension);
+      }
+      tensionAnim = requestAnimationFrame(animTension);
+    }
+
+    function setHook() {
+      if (fishState !== 'tension') return;
+      cancelAnimationFrame(tensionAnim);
+      const hit = tensionPos >= tensionZone.lo && tensionPos <= tensionZone.hi;
+      if (!hit) {
+        fishState = 'idle';
+        pendingFish = null;
+        document.getElementById('fish-result').textContent = 'The line went slack. It got away.';
+        document.getElementById('fish-result').style.color = 'rgba(255,100,100,0.7)';
+        document.getElementById('fish-controls').innerHTML =
+          '<button class="fish-btn" onclick="startCast()">Try Again</button>';
+        if (typeof BCWAudio !== 'undefined' && BCWAudio.playError) BCWAudio.playError();
+        return;
+      }
+      landFish(pendingFish);
+      pendingFish = null;
+    }
+
+    function landFish(fish) {
+      fishState = 'idle';
+      const scene2 = document.getElementById('fish-scene');
+      if (scene2) scene2.querySelectorAll('.fish-bobber, .fish-line, .fish-ripple').forEach(e => e.remove());
+      const rodEl = document.getElementById('fish-rod');
+      if (rodEl) rodEl.style.display = 'none';
+
       const bucket = getBucket();
       if (bucket.length >= getBucketMax()) {
         document.getElementById('fish-result').textContent = 'Bucket full! Sell fish first.';
         document.getElementById('fish-result').style.color = '#e85050';
         document.getElementById('fish-controls').innerHTML = '<button class="fish-btn" disabled style="opacity:0.5;">Bucket full!</button>';
         return;
+      }
+      // Benson is rolled here so he cannot displace a rarity tier, and only
+      // once: a second Benson would undercut the joke.
+      if (Math.random() < BENSON_CHANCE && !hasCaughtBenson()) {
+        fish = {
+          name: BENSON.name, emoji: BENSON.emoji, rarity: BENSON.rarity,
+          color: BENSON.color,
+          weight: +(BENSON.weight[0] + Math.random() * (BENSON.weight[1] - BENSON.weight[0])).toFixed(1),
+          benson: true
+        };
       }
       bucket.push(fish);
       saveBucket(bucket);
@@ -11516,6 +12573,7 @@
         if (fishState === 'aim') lockAim();
         else if (fishState === 'power') lockPower();
         else if (fishState === 'biting') reelIn();
+        else if (fishState === 'tension') setHook();
       }
     });
 
@@ -11557,9 +12615,9 @@
       const owned = getUpgrades();
       const coins = getCoins();
       // Group upgrades by type, show only the next unowned tier per category
-      const types = ['bucket', 'rod', 'lure', 'bait', 'reel', 'trophy'];
-      const typeLabels = { bucket: 'Bucket', rod: 'Rod', lure: 'Lure', bait: 'Bait', reel: 'Reel', trophy: 'Decor' };
-      const typeIcons = { bucket: '\u{1F9FA}', rod: '\u{1FA9D}', lure: '\u{1FA9D}', bait: '\u{1FAB1}', reel: '\u{2699}', trophy: '\u{1F3C6}' };
+      const types = ['bucket', 'rod', 'lure', 'bait', 'reel', 'trophy', 'table', 'attic'];
+      const typeLabels = { bucket: 'Bucket', rod: 'Rod', lure: 'Lure', bait: 'Bait', reel: 'Reel', trophy: 'Decor', table: 'Games', attic: 'Home' };
+      const typeIcons = { bucket: '\u{1F9FA}', rod: '\u{1FA9D}', lure: '\u{1FA9D}', bait: '\u{1FAB1}', reel: '\u{2699}', trophy: '\u{1F3C6}', table: '\u{1F0CF}', attic: '\u{1F3E0}' };
       let html = '';
       types.forEach(type => {
         const tiers = FISH_UPGRADES.filter(u => u.type === type);
@@ -11596,7 +12654,12 @@
         let html = '';
         bucket.forEach((fish, i) => {
           const price = getFishPrice(fish);
-          html += '<div class="fish-bucket-entry"><span class="rarity-' + fish.rarity + '">' + fish.emoji + ' ' + fish.name + ' (' + fish.weight + ' kg)</span><button onclick="sellFish(' + i + ')">🪙 ' + price + '</button></div>';
+          const mountBtn = fish.rarity === 'legendary'
+            ? '<button class="bucket-mount-btn" onclick="mountFish(' + i + ')" title="Hang it on your wall instead of selling">Mount</button>'
+            : '';
+          html += '<div class="fish-bucket-entry"><span class="rarity-' + fish.rarity + '">' + fish.emoji + ' ' + fish.name + ' (' + fish.weight + ' kg)</span>' +
+            '<span class="bucket-entry-btns">' + mountBtn +
+            '<button onclick="sellFish(' + i + ')">🪙 ' + price + '</button></span></div>';
         });
         container.innerHTML = html;
       }
@@ -11619,6 +12682,81 @@
           }
         }
       }
+    }
+
+    // ─── Benson ───
+    function hasCaughtBenson() {
+      if (getBucket().some(f => f.benson)) return true;
+      return !!getFishSummary().species[BENSON.name];
+    }
+
+    // ─── Trophy mounts ───
+    // A legendary can go on the wall instead of into the till. Selling is
+    // still the only way to make coins from it, so mounting costs you
+    // something real, which is what makes keeping one mean anything.
+    const MOUNTS_KEY = 'bitcryptic_fish_mounts';
+
+    function getMounts() {
+      try { const v = JSON.parse(localStorage.getItem(MOUNTS_KEY)); return Array.isArray(v) ? v : []; }
+      catch (e) { return []; }
+    }
+
+    function mountFish(index) {
+      const bucket = getBucket();
+      if (index < 0 || index >= bucket.length) return;
+      const fish = bucket[index];
+      if (fish.rarity !== 'legendary') return;
+      const mounts = getMounts();
+      if (mounts.length >= 6) {
+        showGameModal('The wall is full. Six is as many as it holds.', 'No Room', '\u{1F3C6}');
+        return;
+      }
+      bucket.splice(index, 1);
+      mounts.push({ name: fish.name, emoji: fish.emoji, weight: fish.weight, color: fish.color });
+      try { localStorage.setItem(MOUNTS_KEY, JSON.stringify(mounts)); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      saveBucket(bucket);
+      saveFishCatch(fish);
+      renderBucket();
+      renderFishLog();
+      if (typeof addFurniture === 'function') {
+        try { addFurniture('mountedFish'); } catch (e) {}
+      }
+      const res = document.getElementById('fish-result');
+      if (res) {
+        res.style.color = '#F2C14E';
+        res.textContent = fish.name + ' is on the wall at home.';
+      }
+    }
+
+    // ─── Bestiary ───
+    // The log was a list of what you had sold. The bestiary is a list of what
+    // exists, so an empty slot is a thing to go and find rather than an
+    // absence you cannot see.
+    function renderBestiary() {
+      const el = document.getElementById('fish-bestiary');
+      if (!el) return;
+      const summary = getFishSummary();
+      const bucketNames = new Set(getBucket().map(f => f.name));
+      const all = FISH_TYPES.concat([SWAG_FISH, BENSON]);
+      let found = 0;
+      let html = '';
+      all.forEach(f => {
+        const seen = !!summary.species[f.name] || bucketNames.has(f.name);
+        if (seen) found++;
+        const best = summary.species[f.name] ? summary.species[f.name].bestWeight : null;
+        html += '<div class="bestiary-slot' + (seen ? ' found' : '') + '" title="' +
+          (seen ? f.name : 'Not yet caught') + '">' +
+          '<span class="bestiary-emoji">' + (seen ? f.emoji : '?') + '</span>' +
+          '<span class="bestiary-name">' + (seen ? f.name : '\u2014') + '</span>' +
+          (seen && best ? '<span class="bestiary-best">' + best + ' kg</span>' : '') +
+          '</div>';
+      });
+      const complete = found === all.length;
+      el.innerHTML =
+        '<div class="bestiary-head">' + found + ' of ' + all.length + ' species' +
+          (complete ? ' <span class="bestiary-done">Complete</span>' : '') + '</div>' +
+        '<div class="bestiary-grid">' + html + '</div>';
     }
 
     function renderFishLog() {
@@ -11647,7 +12785,10 @@
     <button class="fish-close" onclick="closeFishing()">Close</button>
     <h2>Fishing Pond</h2>
     <div class="fish-money" id="fish-money">🪙 0 coins</div>
-    <button class="fish-btn fish-btn--wheel" id="swag-spin-btn" onclick="openSwagWheel()" hidden>✨ Spin (0)</button>
+    <div class="fish-header-btns">
+      <button class="fish-btn fish-btn--wheel" id="swag-spin-btn" onclick="openSwagWheel()" hidden>✨ Spin (0)</button>
+      <button class="fish-btn fish-btn--cards" id="bj-open-btn" onclick="openBlackjack()" hidden>🃏 Card Table</button>
+    </div>
     <div class="fish-layout">
       <!-- LEFT: Shop -->
       <div class="fish-shop">
@@ -11738,6 +12879,7 @@
           <button class="fish-btn" id="castBtn" onclick="startCast()">Cast Line</button>
         </div>
         <div class="fish-result" id="fish-result"></div>
+        <div class="fish-weather" id="fish-weather"></div>
         <div class="fish-equip" id="fish-equip"></div>
         <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);">Session: <span id="session-count">0</span> fish</div>
       </div>
@@ -11747,6 +12889,8 @@
         <div class="fish-bucket" id="fish-bucket"></div>
         <h3>Sell Fish</h3>
         <button class="fish-sell-all" id="fish-sell-all-btn" onclick="sellAllFish()" style="display:none;">Sell All</button>
+        <h3>Bestiary</h3>
+        <div id="fish-bestiary"></div>
         <h3>Fish Log</h3>
         <div class="fish-log" id="fish-log-section">
           <div id="fish-log"></div>
@@ -11754,6 +12898,26 @@
       </div>
     </div>
   </div>
+
+<!-- Blackjack: an under-the-pond card room. The water is above you, so the
+     light falls from the top of the frame and the felt sits in the dark. -->
+<div id="bj-game">
+  <div class="bj-underwater">
+    <div class="bj-surface"></div>
+    <div class="bj-shaft bj-shaft--1"></div>
+    <div class="bj-shaft bj-shaft--2"></div>
+    <div class="bj-shaft bj-shaft--3"></div>
+    <div class="bj-bubble bj-bubble--1"></div>
+    <div class="bj-bubble bj-bubble--2"></div>
+    <div class="bj-bubble bj-bubble--3"></div>
+  </div>
+  <button class="fish-close" onclick="closeBlackjack()">Back to the pond</button>
+  <h2>Card Table</h2>
+  <div class="fish-money" id="bj-purse">🪙 0 coins</div>
+  <div class="bj-table">
+    <div class="bj-table-felt" id="bj-body"></div>
+  </div>
+</div>
 
 <div id="fridge-overlay">
   <button style="position:absolute;top:12px;right:16px;background:none;border:1px solid #2A3553;border-radius:8px;color:#94A3B8;padding:5px 12px;font-family:Inter,sans-serif;font-weight:600;cursor:pointer;z-index:10001;font-size:0.85rem;" onclick="closeFridge()">Close</button>
