@@ -2117,6 +2117,23 @@
       flex-shrink: 0;
     }
 
+    /* Each revealed unit fades and lifts into place. Transitioning opacity
+       and transform keeps this off the layout path entirely, so the sentences
+       already on screen never move while a new one arrives. */
+    .story-text .story-reveal {
+      opacity: 0;
+      display: inline;
+      /* Opacity only. A translateY on an inline span shifts the whole line
+         box it shares, so a sentence would visibly nudge as the next one
+         lifted into place — which is the jolt this was meant to remove. The
+         fade alone reads as smooth and never moves text under the reader. */
+      transition: opacity 420ms ease-out;
+    }
+
+    .story-text .story-reveal.is-in { opacity: 1; }
+
+    body.reduced-motion .story-text .story-reveal { transition: opacity 200ms ease-out; }
+
     .story-text .typewriter-cursor {
       display: inline-block;
       width: 2px;
@@ -7040,16 +7057,40 @@
     let typewriterInterval = null;
     let typewriterDone = false;
 
+    // The reveal handle is a setInterval id for the letter pace and a
+    // requestAnimationFrame handle for the others. Several places outside the
+    // renderer stop the reveal (skip-click, story close, step change) and
+    // none of them should have to know which kind it is. Cancelling both is
+    // safe: an id from one pool is simply not present in the other.
+    function stopTextReveal() {
+      if (typewriterInterval === null) return;
+      clearInterval(typewriterInterval);
+      cancelAnimationFrame(typewriterInterval);
+      typewriterInterval = null;
+    }
+
     // How story text arrives. Sentence is the default because a whole
     // sentence can be read as a unit, where a letter crawl makes you wait
     // on the animation rather than read.
     const TEXT_PACE_KEY = 'bcw_text_pace';
     const TEXT_PACES = {
-      sentence: { label: 'By sentence', delay: 520 },
-      word:     { label: 'By word',     delay: 90 },
-      letter:   { label: 'By letter',   delay: 25 },
-      instant:  { label: 'All at once', delay: 0 }
+      // `delay` is the beat between units. For sentences it is a floor: the
+      // real pause scales with how long the sentence is, because holding a
+      // three-word line as long as a thirty-word one is what makes a paced
+      // reveal feel lurching rather than read.
+      sentence: { label: 'By sentence', delay: 260, perChar: 13, max: 1500 },
+      word:     { label: 'By word',     delay: 78,  perChar: 0,  max: 78 },
+      letter:   { label: 'By letter',   delay: 25,  perChar: 0,  max: 25 },
+      instant:  { label: 'All at once', delay: 0,   perChar: 0,  max: 0 }
     };
+
+    // How long to hold before revealing the unit AFTER this one.
+    function paceDelayFor(pace, unitText) {
+      const cfg = TEXT_PACES[pace];
+      if (!cfg.perChar) return cfg.delay;
+      const len = (unitText || '').replace(/<[^>]*>/g, '').trim().length;
+      return Math.min(cfg.max, cfg.delay + len * cfg.perChar);
+    }
 
     function getTextPace() {
       try {
@@ -7228,7 +7269,7 @@
       // Review mode (stepped back): instant text, read-only controls,
       // no typewriter, no analytics re-count.
       if (reviewMode) {
-        if (typewriterInterval) { clearInterval(typewriterInterval); typewriterInterval = null; }
+        stopTextReveal();
         typewriterDone = true;
         textEl.innerHTML = step.text;
         showStoryControlsReview(step);
@@ -7240,7 +7281,7 @@
       let isTransitioning = false; // Guard against rapid clicks
       const fullText = step.text;
 
-      if (typewriterInterval) clearInterval(typewriterInterval);
+      stopTextReveal();
 
       const pace = getTextPace();
       // Reduced motion used to force instant text here. That was wrong twice
@@ -7257,23 +7298,18 @@
         typewriterDone = true;
         textEl.innerHTML = fullText;
         showStoryControls(step);
-      } else {
+      } else if (pace === 'letter') {
+        // The letter crawl is a genuine typewriter and looks right as one:
+        // one character per tick, cursor trailing. Left as it was.
         const stops = textRevealStops(fullText, pace);
         let stopIndex = 0;
         typewriterInterval = setInterval(() => {
           if (stopIndex < stops.length) {
             textEl.innerHTML = fullText.substring(0, stops[stopIndex]) + '<span class="typewriter-cursor"></span>';
             stopIndex++;
-            // The click sound was tuned to fire every N characters. On the
-            // slower paces one unit is many characters, so it fires once per
-            // unit instead of turning into a burst.
             if (typeof BCWAudio !== 'undefined' && BCWAudio.playTypewriter) {
-              if (pace === 'letter') {
-                const freq = BCWAudio.getTextSoundFrequency ? BCWAudio.getTextSoundFrequency() : 3;
-                if (stopIndex % freq === 0) BCWAudio.playTypewriter();
-              } else {
-                BCWAudio.playTypewriter();
-              }
+              const freq = BCWAudio.getTextSoundFrequency ? BCWAudio.getTextSoundFrequency() : 3;
+              if (stopIndex % freq === 0) BCWAudio.playTypewriter();
             }
           } else {
             clearInterval(typewriterInterval);
@@ -7283,6 +7319,66 @@
             showStoryControls(step);
           }
         }, TEXT_PACES[pace].delay);
+      } else {
+        // Sentence and word: each unit arrives in its own span and fades up.
+        //
+        // Two things make this smooth where the first attempt was not. The
+        // whole block is built ONCE, so nothing already on screen is ever
+        // re-rendered or re-laid-out; only the new span's opacity changes.
+        // And the reveal is driven off rAF against a real clock rather than
+        // setInterval, so the beat does not drift against the frame rate.
+        const stops = textRevealStops(fullText, pace);
+
+        // Pre-build every unit as a hidden span, in one pass. Slicing the
+        // original string by the same character counts keeps any markup
+        // intact, exactly as the stops guarantee.
+        let html = '', from = 0;
+        stops.forEach((to, i) => {
+          html += '<span class="story-reveal" data-unit="' + i + '">' +
+            fullText.substring(from, to) + '</span>';
+          from = to;
+        });
+        textEl.innerHTML = html + '<span class="typewriter-cursor"></span>';
+
+        const units = textEl.querySelectorAll('.story-reveal');
+        const cursor = textEl.querySelector('.typewriter-cursor');
+        let shown = 0, last = 0, wait = 0;
+
+        const tick = (now) => {
+          if (typewriterDone) return;
+          if (!last) last = now;
+          // Catch up if a frame was dropped, so a slow device gets the same
+          // pacing rather than a slower story.
+          while (shown < units.length && now - last >= wait) {
+            units[shown].classList.add('is-in');
+            last += wait;
+            // The next pause is set by the unit just revealed, so a long
+            // sentence is given time to be read and a short one is not held
+            // for no reason.
+            wait = paceDelayFor(pace, units[shown].textContent);
+            shown++;
+            if (typeof BCWAudio !== 'undefined' && BCWAudio.playTypewriter) BCWAudio.playTypewriter();
+          }
+          if (shown >= units.length) {
+            typewriterDone = true;
+            if (cursor) cursor.remove();
+            showStoryControls(step);
+            return;
+          }
+          typewriterInterval = requestAnimationFrame(tick);
+        };
+        // The first unit lands immediately: waiting a beat before any text
+        // appears reads as a stall, not as pacing.
+        units[0].classList.add('is-in');
+        wait = paceDelayFor(pace, units[0].textContent);
+        shown = 1;
+        if (units.length === 1) {
+          typewriterDone = true;
+          if (cursor) cursor.remove();
+          showStoryControls(step);
+        } else {
+          typewriterInterval = requestAnimationFrame(tick);
+        }
       }
 
       // Click to skip typewriter - uses a single handler on the panel
@@ -7301,9 +7397,10 @@
 
         if (!typewriterDone && typewriterInterval && !isTransitioning) {
           isTransitioning = true;
-          clearInterval(typewriterInterval);
-          typewriterInterval = null;
+          stopTextReveal();
           typewriterDone = true;
+          // Replacing the markup drops the reveal spans, so a skip cannot
+          // leave a half-faded unit behind.
           textEl.innerHTML = fullText;
           showStoryControls(step);
           // Brief cooldown to prevent double-advance
@@ -7605,7 +7702,7 @@
     }
 
     function closeStory() {
-      if (typewriterInterval) { clearInterval(typewriterInterval); typewriterInterval = null; }
+      stopTextReveal();
       if (typeof BCWHints !== 'undefined') BCWHints.clearAllTimers();
       document.getElementById('story-overlay').classList.remove('active');
       document.getElementById('story-panel').classList.remove('active');
