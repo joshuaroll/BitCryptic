@@ -7243,13 +7243,17 @@
       if (typewriterInterval) clearInterval(typewriterInterval);
 
       const pace = getTextPace();
-      // Reduced motion means someone has already asked for less movement on
-      // screen. Animating text a letter at a time is exactly that, so honour
-      // the request rather than making them find a second setting.
+      // Reduced motion used to force instant text here. That was wrong twice
+      // over: Windows and macOS both turn "reduce motion" on for reasons that
+      // have nothing to do with reading speed, and it silently overrode the
+      // pace the player had chosen in Settings, so the dropdown looked broken.
+      // Reduced motion now only drops the paces that genuinely animate
+      // per-character; sentence and word are discrete reveals, not motion,
+      // and are exactly what a reader who needs longer asked for.
       const reduceMotion = (typeof BCWAccessibility !== 'undefined' &&
         BCWAccessibility.getSettings && BCWAccessibility.getSettings().reducedMotion);
 
-      if (pace === 'instant' || reduceMotion) {
+      if (pace === 'instant' || (reduceMotion && pace === 'letter')) {
         typewriterDone = true;
         textEl.innerHTML = fullText;
         showStoryControls(step);
