@@ -38,6 +38,7 @@ const BCWSave = (() => {
     'bcw_tutorial_p2',
     'bcw_anatomy_taught',
     'bcw_auto_lesson_seen',
+    'bcw_text_pace',
     'bcw_orientation'
   ];
 

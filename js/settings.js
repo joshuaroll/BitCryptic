@@ -149,6 +149,18 @@ const BCWSettings = (() => {
             </div>
           </div>
           <div class="settings-row">
+            <label>Story Text</label>
+            <select id="setting-text-pace" class="settings-select">
+              ${['sentence','word','letter','instant'].map(v =>
+                `<option value="${v}"${(typeof getTextPace === 'function' && getTextPace() === v) ? ' selected' : ''}>${
+                  { sentence: 'A sentence at a time', word: 'A word at a time', letter: 'A letter at a time', instant: 'All at once' }[v]
+                }</option>`).join('')}
+            </select>
+          </div>
+          <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
+            <label>How story text appears. Click the text to show it all.</label>
+          </div>
+          <div class="settings-row">
             <label>Font Size</label>
             <input type="range" id="setting-font-size" class="settings-slider" min="80" max="150" value="${Math.round(BCWAccessibility.getSettings().fontSize * 100)}">
           </div>
@@ -262,6 +274,13 @@ const BCWSettings = (() => {
 
     bindSetting('setting-high-contrast', 'change', (e) => {
       BCWAccessibility.setHighContrast(e.target.checked);
+    });
+
+    bindSetting('setting-text-pace', 'change', (e) => {
+      // The pace model lives in the monolith with the story renderer, so this
+      // guards rather than assumes: settings.js is also loaded by pages that
+      // have no story panel.
+      if (typeof setTextPace === 'function') setTextPace(e.target.value);
     });
 
     bindSetting('setting-font-size', 'input', (e) => {

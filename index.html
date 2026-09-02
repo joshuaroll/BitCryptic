@@ -7039,6 +7039,74 @@
     let currentStepIndex = 0;
     let typewriterInterval = null;
     let typewriterDone = false;
+
+    // How story text arrives. Sentence is the default because a whole
+    // sentence can be read as a unit, where a letter crawl makes you wait
+    // on the animation rather than read.
+    const TEXT_PACE_KEY = 'bcw_text_pace';
+    const TEXT_PACES = {
+      sentence: { label: 'By sentence', delay: 520 },
+      word:     { label: 'By word',     delay: 90 },
+      letter:   { label: 'By letter',   delay: 25 },
+      instant:  { label: 'All at once', delay: 0 }
+    };
+
+    function getTextPace() {
+      try {
+        const v = localStorage.getItem(TEXT_PACE_KEY);
+        if (v && TEXT_PACES[v]) return v;
+      } catch (e) {}
+      return 'sentence';
+    }
+
+    function setTextPace(v) {
+      if (!TEXT_PACES[v]) return;
+      try { localStorage.setItem(TEXT_PACE_KEY, v); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+    }
+
+    // Split into reveal units for the chosen pace. Every unit is a character
+    // COUNT into the original string, never a rebuilt string, so the markup
+    // inside step.text is never cut through the middle of a tag.
+    function textRevealStops(text, pace) {
+      if (pace === 'instant') return [text.length];
+      if (pace === 'letter') {
+        const stops = [];
+        for (let i = 1; i <= text.length; i++) stops.push(i);
+        return stops;
+      }
+
+      // Walk the string once, tracking whether we are inside a tag or an
+      // entity so a break never lands inside either.
+      const stops = [];
+      let inTag = false, inEntity = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (c === '<') { inTag = true; continue; }
+        if (inTag) { if (c === '>') inTag = false; continue; }
+        if (c === '&') { inEntity = true; continue; }
+        if (inEntity) { if (c === ';' || c === ' ') inEntity = false; if (c === ';') continue; }
+        if (inEntity) continue;
+
+        if (pace === 'word') {
+          // Break after whitespace, so a word appears complete rather than
+          // growing a letter at a time.
+          if (/\s/.test(c) && i + 1 < text.length && !/\s/.test(text[i + 1])) stops.push(i + 1);
+        } else {
+          // Sentence: break after . ! ? followed by a space, and after a
+          // paragraph break, so dialogue lines land one at a time.
+          if ((c === '.' || c === '!' || c === '?') &&
+              i + 1 < text.length && /[\s"'\u201D\u2019]/.test(text[i + 1])) {
+            // Skip the closing quote so "...home." lands with its quote.
+            let j = i + 1;
+            while (j < text.length && /["'\u201D\u2019]/.test(text[j])) j++;
+            stops.push(j);
+          }
+        }
+      }
+      if (!stops.length || stops[stops.length - 1] !== text.length) stops.push(text.length);
+      return stops;
+    }
     // Beat history for back/forward. visitedSteps is the ordered list of step
     // indices actually seen (branching makes index-- wrong); viewPos points at
     // the beat being displayed. viewPos === visitedSteps.length - 1 => at the
@@ -7170,24 +7238,48 @@
       // Typewriter effect
       typewriterDone = false;
       let isTransitioning = false; // Guard against rapid clicks
-      let charIndex = 0;
       const fullText = step.text;
 
       if (typewriterInterval) clearInterval(typewriterInterval);
 
-      typewriterInterval = setInterval(() => {
-        if (charIndex < fullText.length) {
-          textEl.innerHTML = fullText.substring(0, charIndex + 1) + '<span class="typewriter-cursor"></span>';
-          charIndex++;
-          if (typeof BCWAudio !== 'undefined' && charIndex % (BCWAudio.getTextSoundFrequency ? BCWAudio.getTextSoundFrequency() : 3) === 0) BCWAudio.playTypewriter();
-        } else {
-          clearInterval(typewriterInterval);
-          typewriterInterval = null;
-          typewriterDone = true;
-          textEl.innerHTML = fullText;
-          showStoryControls(step);
-        }
-      }, 25);
+      const pace = getTextPace();
+      // Reduced motion means someone has already asked for less movement on
+      // screen. Animating text a letter at a time is exactly that, so honour
+      // the request rather than making them find a second setting.
+      const reduceMotion = (typeof BCWAccessibility !== 'undefined' &&
+        BCWAccessibility.getSettings && BCWAccessibility.getSettings().reducedMotion);
+
+      if (pace === 'instant' || reduceMotion) {
+        typewriterDone = true;
+        textEl.innerHTML = fullText;
+        showStoryControls(step);
+      } else {
+        const stops = textRevealStops(fullText, pace);
+        let stopIndex = 0;
+        typewriterInterval = setInterval(() => {
+          if (stopIndex < stops.length) {
+            textEl.innerHTML = fullText.substring(0, stops[stopIndex]) + '<span class="typewriter-cursor"></span>';
+            stopIndex++;
+            // The click sound was tuned to fire every N characters. On the
+            // slower paces one unit is many characters, so it fires once per
+            // unit instead of turning into a burst.
+            if (typeof BCWAudio !== 'undefined' && BCWAudio.playTypewriter) {
+              if (pace === 'letter') {
+                const freq = BCWAudio.getTextSoundFrequency ? BCWAudio.getTextSoundFrequency() : 3;
+                if (stopIndex % freq === 0) BCWAudio.playTypewriter();
+              } else {
+                BCWAudio.playTypewriter();
+              }
+            }
+          } else {
+            clearInterval(typewriterInterval);
+            typewriterInterval = null;
+            typewriterDone = true;
+            textEl.innerHTML = fullText;
+            showStoryControls(step);
+          }
+        }, TEXT_PACES[pace].delay);
+      }
 
       // Click to skip typewriter - uses a single handler on the panel
       // that only fires for the text area, NOT for choices/inputs/buttons
