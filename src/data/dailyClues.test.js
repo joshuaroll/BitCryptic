@@ -40,8 +40,13 @@ describe('dailyClues data integrity', () => {
     });
   });
 
+  // `hidden`, not `hidden_word`: clueType was normalized to the shared
+  // vocabulary in /shared/learn/bc-taxonomy.js on 2026-09-02 so mastery can be
+  // aggregated across World, Adventure and the Daily. The
+  // `toBeGreaterThan(0)` guard below is what caught the rename — without it a
+  // stale filter matches nothing and the suite passes while checking nothing.
   test('every hidden-word clue contains its answer contiguously in the clue text', () => {
-    const hiddens = dailyClues.filter((c) => c.clueType === 'hidden_word');
+    const hiddens = dailyClues.filter((c) => c.clueType === 'hidden');
     expect(hiddens.length).toBeGreaterThan(0);
     hiddens.forEach((clue) => {
       expect(lettersOnly(clue.clue)).toContain(lettersOnly(clue.answer));

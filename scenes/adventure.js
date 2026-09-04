@@ -124,10 +124,12 @@ STORY_SCENES['adventure_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="ht
   <text x="250" y="135" text-anchor="middle" fill="#ffd700" font-size="10" opacity="0.8" filter="url(#advGlow1)"><animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>&#x2721;</text>
   <text x="238" y="152" text-anchor="middle" fill="#ffd700" font-size="8" opacity="0.7" filter="url(#advGlow1)"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.5s" repeatCount="indefinite" begin="0.3s"/>&#x2727;</text>
   <text x="262" y="152" text-anchor="middle" fill="#ffd700" font-size="8" opacity="0.7" filter="url(#advGlow1)"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.2s" repeatCount="indefinite" begin="0.8s"/>&#x2726;</text>
-  <text x="250" y="168" text-anchor="middle" fill="#ffd700" font-size="9" opacity="0.6" filter="url(#advGlow1)"><animate attributeName="opacity" values="0.3;0.85;0.3" dur="4s" repeatCount="indefinite" begin="1.2s"/>&#x2738;</text>
+  <!-- The plate tapers to x=229..271 by y=170, so a glyph baselined at 168 hung
+       over its lower edge. Lifted to sit inside the taper. -->
+  <text x="250" y="163" text-anchor="middle" fill="#ffd700" font-size="9" opacity="0.6" filter="url(#advGlow1)"><animate attributeName="opacity" values="0.3;0.85;0.3" dur="4s" repeatCount="indefinite" begin="1.2s"/>&#x2738;</text>
   <!-- Symbol glow halos -->
   <circle cx="250" cy="132" r="8" fill="url(#runeGlow1)" opacity="0.25"><animate attributeName="opacity" values="0.1;0.35;0.1" dur="3s" repeatCount="indefinite"/></circle>
-  <circle cx="250" cy="165" r="7" fill="url(#runeGlow1)" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite" begin="1.2s"/></circle>
+  <circle cx="250" cy="160" r="7" fill="url(#runeGlow1)" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite" begin="1.2s"/></circle>
   <!-- Arms -->
   <rect x="205" y="110" width="14" height="60" rx="5" fill="#5a5a7a" opacity="0.6"/>
   <rect x="281" y="110" width="14" height="60" rx="5" fill="#5a5a7a" opacity="0.6"/>
@@ -187,20 +189,27 @@ STORY_SCENES['adventure_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="ht
   <!-- Breastplate — prominent, with glowing HERO letters -->
   <path d="M218,108 L282,108 L278,185 Q250,194 222,185 Z" fill="#5a5a7a" opacity="0.7"/>
   <path d="M222,112 L278,112 L274,180 Q250,188 226,180 Z" fill="#6a6a8a" opacity="0.55"/>
-  <!-- Glowing cryptic runes on breastplate (the clue is spoken, never shown solved) -->
+  <!-- Glowing cryptic runes on breastplate (the clue is spoken, never shown solved)
+       The plate runs x=222..278 and tapers to x=226..274 by y=180. These runes
+       had no text-anchor, so each was drawn RIGHTWARD from its x: the row began
+       at 234 and the last glyph ended near 294, well past the armour, and the
+       flanking pair at 225/290 sat off the plate entirely. Anchored and pulled
+       inside the taper. -->
   <g filter="url(#letterBloom)">
-    <text x="234" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>&#x2727;</text>
-    <text x="248" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.2s"/>&#x2738;</text>
-    <text x="262" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.4s"/>&#x2726;</text>
-    <text x="276" y="150" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="18" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>&#x2740;</text>
+    <text x="232" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>&#x2727;</text>
+    <text x="244" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.2s"/>&#x2738;</text>
+    <text x="256" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.4s"/>&#x2726;</text>
+    <text x="268" y="150" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="16" font-weight="bold" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>&#x2740;</text>
   </g>
-  <!-- Letter glow halos -->
-  <circle cx="250" cy="145" r="28" fill="url(#letterGlow)" opacity="0.25"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="2s" repeatCount="indefinite"/></circle>
-  <!-- Smaller cryptic symbols flanking letters -->
-  <text x="225" y="135" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.5">&#x2727;</text>
-  <text x="290" y="135" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.5">&#x2726;</text>
-  <text x="225" y="168" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.4">&#x2738;</text>
-  <text x="290" y="168" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.4">&#x2740;</text>
+  <!-- Letter glow halos. r=28 from cy=145 reached y=117..173 and x=222..278,
+       i.e. the full width of the plate and past its top edge; r=20 keeps the
+       bloom on the armour. -->
+  <circle cx="250" cy="146" r="20" fill="url(#letterGlow)" opacity="0.25"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="2s" repeatCount="indefinite"/></circle>
+  <!-- Smaller cryptic symbols, kept inside the plate edges -->
+  <text x="232" y="128" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.5">&#x2727;</text>
+  <text x="268" y="128" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.5">&#x2726;</text>
+  <text x="236" y="171" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.4">&#x2738;</text>
+  <text x="264" y="171" text-anchor="middle" fill="#ffd700" font-size="7" opacity="0.4">&#x2740;</text>
   <!-- Arms -->
   <rect x="200" y="108" width="15" height="60" rx="5" fill="#5a5a7a" opacity="0.6"/>
   <rect x="285" y="108" width="15" height="60" rx="5" fill="#5a5a7a" opacity="0.6"/>

@@ -28,7 +28,8 @@ const BCWAchievements = (() => {
     first_fish: { title: 'Gone Fishing', desc: 'Catch your first fish', icon: '🐟', category: 'fishing' },
     big_catch: { title: 'Big Catch', desc: 'Catch a fish over 5 lbs', icon: '🐋', category: 'fishing' },
     legendary_catch: { title: 'Legendary Angler', desc: 'Catch a legendary fish', icon: '👑', category: 'fishing' },
-    fish_collection: { title: 'Ichthyologist', desc: 'Catch 10 unique fish species', icon: '🏅', category: 'fishing' },
+    fish_collection: { title: 'Ichthyologist', desc: 'Catch 5 unique fish species', icon: '🏅', category: 'fishing' },
+    fish_complete: { title: 'The Full Shoal', desc: 'Catch every species in the pond', icon: '🎣', category: 'fishing' },
 
     // House
     decorator: { title: 'Interior Designer', desc: 'Place 5 items in your house', icon: '🏠', category: 'house' },
@@ -161,7 +162,10 @@ const BCWAchievements = (() => {
     if (fishData.caught) unlock('first_fish');
     if (fishData.weight > 5) unlock('big_catch');
     if (fishData.rarity === 'legendary') unlock('legendary_catch');
-    if (fishData.uniqueSpecies >= 10) unlock('fish_collection');
+    if (fishData.uniqueSpecies >= 5) unlock('fish_collection');
+    // Every species in the table. Was unreachable: the old bar was 10 and
+    // there are 9 fish, so the achievement could never fire.
+    if (fishData.totalSpecies && fishData.uniqueSpecies >= fishData.totalSpecies) unlock('fish_complete');
   }
 
   function checkHouseItems(count) {

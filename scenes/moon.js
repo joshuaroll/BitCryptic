@@ -94,15 +94,30 @@ STORY_SCENES['moon_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <ellipse cx="325" cy="215" rx="2.5" ry="4.5" transform="rotate(-5,325,215)"/>
   <ellipse cx="342" cy="208" rx="2.5" ry="4.5" transform="rotate(8,342,208)"/>
   <ellipse cx="358" cy="200" rx="2" ry="4" transform="rotate(-5,358,200)"/>
-  <ellipse cx="372" cy="192" rx="2" ry="4" transform="rotate(5,372,192)"/>
+  <ellipse cx="371" cy="194" rx="2" ry="4" transform="rotate(5,371,194)"/>
+  <!-- The last two land at the airlock rather than stopping short of it. -->
+  <ellipse cx="382" cy="190" rx="1.8" ry="3.6" transform="rotate(-4,382,190)"/>
+  <ellipse cx="391" cy="188" rx="1.6" ry="3.2" transform="rotate(6,391,188)"/>
 </g>
-<!-- Dome -->
-<path d="M380,185 Q395,145 410,185" fill="#2a2820" stroke="#d4d0c0" stroke-width="1" opacity="0.8"/>
-<ellipse cx="395" cy="185" rx="15" ry="3" fill="#2a2820" stroke="#d4d0c0" stroke-width="0.5" opacity="0.6"/>
-<!-- Dome warm glow -->
-<path d="M383,183 Q395,155 407,183" fill="#ffe880" opacity="0.12">
-  <animate attributeName="opacity" values="0.08;0.16;0.08" dur="4s" repeatCount="indefinite"/>
+<!-- Mark's dome.
+     Was two quadratic curves, which draw a narrow parabolic tent rather than a
+     hemisphere: the peak rose to y=145 over a 30px base, and the footprints
+     walked up to a spike. An elliptical arc gives an actual dome that sits on
+     its own base ellipse, and it is drawn bigger so it reads as somewhere a
+     person lives. Habitat first, glow second, so the light comes from inside. -->
+<ellipse cx="398" cy="186" rx="26" ry="4.5" fill="#5f5d55"/>
+<path d="M372,186 A26,23 0 0,1 424,186 Z" fill="#33312a" stroke="#d4d0c0" stroke-width="1" opacity="0.92"/>
+<!-- Lit interior showing through the glass -->
+<path d="M377,186 A21,18.5 0 0,1 419,186 Z" fill="#ffe27a" opacity="0.2">
+  <animate attributeName="opacity" values="0.14;0.26;0.14" dur="4s" repeatCount="indefinite"/>
 </path>
+<!-- Glazing bars, following the curve so the dome reads as glass -->
+<path d="M398,163 L398,186 M381,171 L381,186 M415,171 L415,186" stroke="#d4d0c0" stroke-width="0.6" opacity="0.4" fill="none"/>
+<path d="M377.5,180 A22,20 0 0,1 418.5,180" stroke="#d4d0c0" stroke-width="0.5" opacity="0.3" fill="none"/>
+<!-- Airlock, so there is a way in -->
+<path d="M392,186 L392,176 A6,6 0 0,1 404,176 L404,186 Z" fill="#26241e" stroke="#d4d0c0" stroke-width="0.7" opacity="0.85"/>
+<!-- Base seal -->
+<ellipse cx="398" cy="186" rx="26" ry="4.5" fill="none" stroke="#d4d0c0" stroke-width="0.7" opacity="0.55"/>
 <rect x="0" y="0" width="500" height="260" fill="url(#m1DomeGlow)"/>
 </svg>`;
 

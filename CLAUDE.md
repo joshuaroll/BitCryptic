@@ -178,6 +178,27 @@ containing answers or secret codes — **never remove those exclusions**; it is 
 only thing keeping puzzle answers off the live site, and `check:spoilers` fails
 CI if any of the 8 go missing.
 
+## Pets
+
+`js/pets.js` (`BCWPets`) — five creatures, one per clue device, caught by solving
+and housed in the cottage. Puffle-shaped (caught not bought, live at home, light
+care, they *do* something) with Neopets species identity.
+
+Three rules, all enforced by `npm run check:pets`:
+
+1. **A hinted solve never earns a pet.** Same rule as mastery and the Menagerie:
+   hinted is exposure, not understanding.
+2. **Feeding never says "wrong".** Each pet's device cheese delights it; any
+   other is eaten politely with a nudge naming the device. The pairing is the
+   lesson, not a test.
+3. **No neglect mechanic, ever.** No hunger bar, no decay, no timer. A pet must
+   never punish a player for putting the game down.
+
+Pets are not furniture: no snap cell, no drag, no save position, ground floor
+only. `renderPets()` runs inside `renderHouse()`. There is deliberately **no
+homophone pet** (cut by Joshua). Adding a species means adding its device cheese
+to `CHEESE_TYPES` too, or `check:pets` fails.
+
 ## Bonus Challenge System
 
 `showClueChallenge(opts)` (index.html, near showGameModal) renders a solvable clue inside a modal: brand-styled input, stepped "Need a hint?" reveals, parse shown only on solving. Every post-story location action uses it — no action may print a clue's answer outright. The observatory's Stargaze challenge also embeds a draggable telescope sky (`telescopeHtml()` + `initTelescope()`).

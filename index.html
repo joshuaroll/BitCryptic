@@ -191,6 +191,49 @@
       transform: scale(1.02) translateY(-2px);
     }
 
+    /* Completion state on the pin itself. Until now the only place the game
+       told you a location was finished was a 4px minimap dot, and the minimap
+       is display:none in vertical mode — so on a phone there was no completion
+       feedback anywhere. The state rides on the label rather than the building
+       art: every pin draws its own hand-made SVG, and none of them should have
+       to know about progress.
+
+       Amber = open, something left to do. Mint = story done. Mint filled =
+       cleared, secrets included. */
+    .loc-label::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      margin-top: -3.5px;
+      border-radius: 50%;
+      border: 1.5px solid #2A3553;
+      background: transparent;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .location.is-open .loc-label::after {
+      border-color: #F2C14E;
+      box-shadow: 0 0 6px rgba(242, 193, 78, 0.45);
+    }
+
+    .location.is-done .loc-label::after {
+      border-color: #64D9A0;
+      box-shadow: 0 0 6px rgba(100, 217, 160, 0.45);
+    }
+
+    .location.is-cleared .loc-label::after {
+      border-color: #64D9A0;
+      background: #64D9A0;
+      box-shadow: 0 0 8px rgba(100, 217, 160, 0.7);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loc-label::after { transition: none; }
+    }
+
     /* Building visuals */
     .loc-building {
       position: relative;
@@ -1387,6 +1430,296 @@
       color: #F2C14E;
     }
 
+    /* The daily-clue button. Sits above the code input because it is the thing
+       a player can always do here, where a code is something they must first
+       have found. Revealed only when BCW_DAILY_TERMINAL is on. */
+    /* The harbour master's sheet. A survey record, not a progress bar: it says
+       what is outstanding without naming which story or which code, because
+       finding those is the game. */
+    /* ═══════════ THE NOTEBOOK ═══════════
+       A solver's working, kept. The canvas over each page is the point: cryptic
+       working is spatial, and a textarea cannot hold a circled indicator. */
+    .nb-shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .nb-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 12px;
+      min-height: 88px;
+      text-align: left;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-left: 2px solid #64D9A0;
+      border-radius: 8px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .nb-card--clue { border-left-color: #F2C14E; }
+    .nb-card--picture { border-left-color: #6FC3E0; }
+    .nb-card:hover, .nb-card:focus-visible { border-color: #F2C14E; }
+
+    .nb-card__shot {
+      width: 100%;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    .nb-card__kind {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #64748B;
+    }
+
+    .nb-card__title {
+      font-size: 13px;
+      color: #E2E8F0;
+      line-height: 1.4;
+    }
+
+    .nb-card__when {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #64748B;
+      margin-top: auto;
+    }
+
+    .nb-empty {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #94A3B8;
+      margin: 0 0 18px;
+    }
+
+    .nb-title {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      color: #E2E8F0;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid #2A3553;
+      padding: 8px 2px;
+      margin-bottom: 12px;
+    }
+
+    .nb-title:focus-visible { outline: none; border-bottom-color: #F2C14E; }
+
+    .nb-clue {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      color: #F2C14E;
+      margin: 0 0 12px;
+    }
+
+    /* The canvas sits over the page, whether the page is a screenshot or blank
+       paper. touch-action is scoped here so drawing never steals page scroll. */
+    .nb-canvas-wrap {
+      position: relative;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .nb-shot { display: block; width: 100%; }
+
+    .nb-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .nb-canvas-wrap:has(.nb-shot) .nb-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .nb-tools {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .nb-pen {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94A3B8;
+      background: transparent;
+      border: 1px solid #2A3553;
+      border-left: 3px solid var(--pen, #2A3553);
+      border-radius: 6px;
+      padding: 0 12px;
+      min-height: 44px;
+      cursor: pointer;
+    }
+
+    .nb-pen.is-on { color: #E2E8F0; border-color: var(--pen, #F2C14E); }
+    .nb-pen--clear { border-left-color: #2A3553; }
+    .nb-pen:hover { color: #E2E8F0; }
+
+    .nb-text {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 90px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #E2E8F0;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .nb-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .nb-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #94A3B8;
+      background: transparent;
+      border: 1px solid #2A3553;
+      border-radius: 6px;
+      padding: 0 14px;
+      min-height: 44px;
+      cursor: pointer;
+    }
+
+    .nb-btn:hover, .nb-btn:focus-visible { color: #E2E8F0; border-color: #64D9A0; }
+    .nb-btn--drop:hover { color: #F87171; border-color: #F87171; }
+
+    /* Material earned, said quietly under the solve. */
+    .mat-drop {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #64D9A0;
+    }
+
+    .grad-sheet {
+      margin: 16px 0;
+      padding: 14px 16px;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+    }
+
+    .grad-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .grad-label { color: #94A3B8; }
+    .grad-value { color: #E2E8F0; }
+
+    .grad-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .grad-bar:last-child { margin-bottom: 0; }
+
+    .grad-pip {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #2A3553;
+    }
+
+    .grad-pip.is-on { background: #64D9A0; }
+
+    .grad-note {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #94A3B8;
+      margin: 14px 0 0;
+    }
+
+    .grad-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .grad-stay {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #94A3B8;
+      background: transparent;
+      border: 1px solid #2A3553;
+      border-radius: 6px;
+      padding: 0 14px;
+      min-height: 44px;
+      cursor: pointer;
+    }
+
+    .grad-stay:hover,
+    .grad-stay:focus-visible {
+      color: #E2E8F0;
+      border-color: #64D9A0;
+    }
+
+    .terminal-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px 0;
+      background: #0B1021;
+    }
+
+    .terminal-action {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #64D9A0;
+      background: transparent;
+      border: 1px solid rgba(100, 217, 160, 0.35);
+      border-radius: 6px;
+      padding: 0 14px;
+      min-height: 44px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .terminal-action:hover,
+    .terminal-action:focus-visible {
+      color: #F2C14E;
+      border-color: #F2C14E;
+    }
+
+    .terminal-action[disabled] {
+      opacity: 0.5;
+      cursor: default;
+    }
+
     .terminal-input-row {
       display: flex;
       align-items: center;
@@ -1634,6 +1967,126 @@
       flex: 1;
       overflow: hidden;
     }
+
+    /* ═══ COSMETIC TOGGLES ═══ */
+    /* Per-item colour picker */
+    .item-cw { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px 0 2px; }
+    .item-cw__swatch { width:42px; height:42px; border-radius:9px; border:2px solid #2A3553; cursor:pointer; padding:0; }
+    .item-cw__swatch.active { border-color:#F2C14E; box-shadow:0 0 0 2px rgba(242,193,78,0.35); }
+    .item-cw__note { color:#94A3B8; font-size:0.78rem; margin:12px 0 0; }
+
+    .cosmetic-note {
+      color: #94A3B8;
+      font-size: 0.8rem;
+      margin: 0 0 12px;
+    }
+    .cosmetic-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 9px 0;
+      cursor: pointer;
+    }
+    .cosmetic-row input { margin-top: 3px; flex-shrink: 0; accent-color: #F2C14E; }
+    .cosmetic-row__text { display: flex; flex-direction: column; gap: 2px; }
+    .cosmetic-row__text b { color: #E2E8F0; font-size: 0.9rem; font-weight: 600; }
+    .cosmetic-row__text em {
+      color: #94A3B8;
+      font-style: normal;
+      font-size: 0.78rem;
+    }
+
+    /* ═══ PETS ═══
+       A pet sits on the floor of the room and breathes. It is not furniture:
+       no snap cell, no drag handle, no z-index fight with the sofa. */
+    .house-pet {
+      position: absolute;
+      z-index: 6;
+      cursor: pointer;
+      transform-origin: 50% 100%;
+      animation: pet-breathe 3.4s ease-in-out infinite;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .house-pet:hover,
+    .house-pet:focus-visible {
+      transform: scale(1.12) translateY(-3px);
+      outline: none;
+    }
+
+    .house-pet:focus-visible svg {
+      filter: drop-shadow(0 0 6px rgba(242, 193, 78, 0.9));
+    }
+
+    @keyframes pet-breathe {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-2px) scale(1.03); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .house-pet { animation: none; }
+      .house-pet:hover, .house-pet:focus-visible { transform: none; }
+    }
+
+    .pet-panel { text-align: center; }
+    .pet-panel__sprite { transform: scale(1.7); margin: 6px 0 18px; }
+    .pet-panel__idle {
+      color: #E2E8F0;
+      font-size: 0.95rem;
+      margin: 0 0 6px;
+    }
+    .pet-panel__quirk {
+      color: #94A3B8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      margin: 0 0 16px;
+    }
+    .pet-panel__empty {
+      color: #94A3B8;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+    .pet-panel__feed-label {
+      display: block;
+      color: #64748B;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .pet-panel__cheeses {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .pet-cheese {
+      background: rgba(242, 193, 78, 0.1);
+      border: 1px solid rgba(242, 193, 78, 0.4);
+      color: #F2C14E;
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .pet-cheese:hover {
+      background: rgba(242, 193, 78, 0.22);
+      transform: translateY(-1px);
+    }
+    .pet-cheese__n { opacity: 0.6; font-size: 0.72rem; }
+    .pet-cheese.is-on { background: rgba(100,217,160,0.18); border-color: #64D9A0; color: #64D9A0; }
+    .pet-panel__reaction {
+      min-height: 1.3em;
+      margin: 16px 0 0;
+      color: #CBD5E1;
+      font-size: 0.88rem;
+    }
+    .pet-panel__reaction.is-match { color: #64D9A0; }
 
     .house-room {
       flex: 1;
@@ -2228,12 +2681,24 @@
     /* ═══════════════════════════════════
        MADDIE'S YACHT — the maze overlay
        ═══════════════════════════════════ */
-    /* A colorway tints every placed object. hue-rotate alone would leave
-       wood looking like wood, so gold and diamond also lift saturation and
-       brightness; RGB gets a live gradient overlay instead. */
-    #house-room.cw-gold .furniture-item { filter: sepia(0.85) saturate(2.4) hue-rotate(-14deg) brightness(1.12); }
-    #house-room.cw-diamond .furniture-item { filter: grayscale(0.55) brightness(1.45) hue-rotate(165deg) saturate(1.8); }
-    #house-room.cw-rgb .furniture-item { animation: bcw-cw-rgb 6s linear infinite; }
+    /* Colorways. hue-rotate alone would leave wood looking like wood, so gold
+       and diamond also lift saturation and brightness; RGB gets a live
+       gradient cycle instead.
+
+       Two levels, and the per-item one wins. The room class is the "paint
+       everything" default; an item carrying its own cw-* class overrides it,
+       so a single gold lamp can stand in an otherwise untinted room. Before
+       this, one colourway repainted every object you owned and there was no
+       way to tint just one. */
+    #house-room.cw-gold .furniture-item,
+    .furniture-item.cw-gold { filter: sepia(0.85) saturate(2.4) hue-rotate(-14deg) brightness(1.12); }
+    #house-room.cw-diamond .furniture-item,
+    .furniture-item.cw-diamond { filter: grayscale(0.55) brightness(1.45) hue-rotate(165deg) saturate(1.8); }
+    #house-room.cw-rgb .furniture-item,
+    .furniture-item.cw-rgb { animation: bcw-cw-rgb 6s linear infinite; }
+
+    /* An item set to Default must shake off whatever the room is doing. */
+    #house-room .furniture-item.cw-none { filter: none; animation: none; }
 
     @keyframes bcw-cw-rgb {
       0% { filter: hue-rotate(0deg) saturate(2.2) brightness(1.1); }
@@ -2664,12 +3129,23 @@
     }
 
     /* ═══ SWAG FISH ═══ */
+    /* The swag wheel is opened FROM the fishing screen, which sits at 9999.
+       At 2600 the panel and its overlay both rendered underneath the thing
+       that opened them, so the spin appeared to do nothing. */
+    .swag-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10040;
+      background: rgba(5, 10, 24, 0.72);
+      backdrop-filter: blur(2px);
+    }
+
     .swag-panel {
       position: fixed;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2600;
+      z-index: 10041;
       width: min(92vw, 330px);
       background: #161B2E;
       border: 1px solid #2A3553;
@@ -3622,6 +4098,14 @@
             <circle cx="240" cy="95" r="1.5" fill="#a09060" opacity="0.15" />
             <ellipse cx="100" cy="110" rx="8" ry="2" fill="#8a7a55" opacity="0.15" />
           </g>
+          <!-- The wreck's name, hidden until the player has actually been down
+               there. Outside the rotated group so the text stays level. -->
+          <g id="map-wreck-label" hidden>
+            <text x="320" y="1300" text-anchor="middle" font-family="Inter, sans-serif"
+                  font-size="19" font-weight="600" fill="#bfe4f2" opacity="0.62">The Fishington Wreck</text>
+            <text x="320" y="1322" text-anchor="middle" font-family="JetBrains Mono, monospace"
+                  font-size="13" fill="#8fd4ee" opacity="0.42">somebody lives down there</text>
+          </g>
 
           <!-- Underwater rocks near Decoder Docks -->
           <!-- Large submerged rock cluster SW of dock -->
@@ -4565,6 +5049,14 @@
       <div class="term-line">Codes hide in the world's puzzles. Bring what you find here.</div>
       <div class="term-line system"> </div>
     </div>
+    <!-- The daily clue is a button, not a word to be told about. A typed
+         command is a secret; the notice board is public, and this is the
+         island's public machine. Hidden until BCW_DAILY_TERMINAL is on. -->
+    <div class="terminal-actions" id="terminal-actions" hidden>
+      <button type="button" class="terminal-action" onclick="showDailyClue()">
+        Read today's clue
+      </button>
+    </div>
     <div class="terminal-input-row">
       <span class="terminal-prompt">&gt;&gt;&gt;</span>
       <input type="text" class="terminal-input" id="terminal-input" placeholder="enter code..." autocomplete="off"
@@ -4584,6 +5076,7 @@
         <button class="house-action-btn" onclick="toggleSnapMode()" id="house-snap-btn" title="Toggle free placement">&#x1F4CC; Grid Snap</button>
         <button class="house-action-btn" onclick="toggleScaleMode()" id="house-scale-btn" title="Scale objects by dragging corners">&#x2922; Scale</button>
         <button class="house-action-btn" onclick="cycleRoomLighting()" id="house-light-btn" title="Change room lighting">&#x2600; Day</button>
+        <button class="house-action-btn" onclick="saveHouseImage()" id="house-save-img-btn" title="Save a PNG of your home">&#x1F4F7; Save Image</button>
         <button class="house-action-btn house-clear-btn" onclick="houseClearAll()" title="Clear All">&#x1F5D1; Clear All</button>
         <button class="house-close-btn" onclick="closeHouseEditor()">Back to Island</button>
       </div>
@@ -4636,12 +5129,13 @@
         </div>
         <h3 id="trophy-palette-heading">Trophies</h3>
         <div class="palette-section" id="trophy-palette">
-          <div class="palette-item" onclick="addFurniture('mountedFish')"><span class="palette-icon">&#x1F3C6;</span><div class="palette-label">Mounted Fish<div class="palette-sublabel">Big Mouth Bass trophy</div></div></div>
+          <div class="palette-item reward-item" id="reward-mountedFish" onclick="addRewardFurniture('mountedFish')"><span class="palette-icon">&#x1F3C6;</span><div class="palette-label">Mounted Fish<div class="palette-sublabel reward-lock-label">Buy the trophy at the pond</div></div></div>
           <div class="palette-item reward-item" id="reward-dragonScale" onclick="addRewardFurniture('dragonScale')"><span class="palette-icon">&#x1F432;</span><div class="palette-label">Dragon Scale<div class="palette-sublabel reward-lock-label">Complete Liam's Lair</div></div></div>
           <div class="palette-item reward-item" id="reward-spyglass" onclick="addRewardFurniture('spyglass')"><span class="palette-icon">&#x1F52D;</span><div class="palette-label">Brass Spyglass<div class="palette-sublabel reward-lock-label">Complete Simon's Skyship</div></div></div>
           <div class="palette-item reward-item" id="reward-lunarRock" onclick="addRewardFurniture('lunarRock')"><span class="palette-icon">&#x1FA78;</span><div class="palette-label">Lunar Rock<div class="palette-sublabel reward-lock-label">Complete The Moon</div></div></div>
           <div class="palette-item reward-item" id="reward-kaitFrog" onclick="addRewardFurniture('kaitFrog')"><span class="palette-icon">&#x1F438;</span><div class="palette-label">Kait's Cutie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
           <div class="palette-item reward-item" id="reward-goosePlushie" onclick="addRewardFurniture('goosePlushie')"><span class="palette-icon">&#x1F9A2;</span><div class="palette-label">Goose Plushie<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
+          <div class="palette-item reward-item" id="reward-minuteClock" onclick="addRewardFurniture('minuteClock')"><span class="palette-icon">&#x231A;</span><div class="palette-label">The Minute Watch<div class="palette-sublabel reward-lock-label">Secret code</div></div></div>
           <div class="palette-item reward-item" id="reward-bensonCat" onclick="addRewardFurniture('bensonCat')"><span class="palette-icon">&#x1F408;</span><div class="palette-label">Benson<div class="palette-sublabel reward-lock-label">Found in the pond</div></div></div>
         </div>
         <h3>Object Colorway</h3>
@@ -4794,8 +5288,8 @@
           // TODO: restore { label: 'Enter Workshop', href: <deployed Bit Cryptic Adventure URL>, primary: true }
           // once the Adventure game has a production URL. The old relative link
           // ('../Bit_Cryptic_Adventure/index.html') 404s in production.
-          { label: 'Enter Workshop', onclick: () => showGameModal('Cryptic Croc taps a "CLOSED FOR CALIBRATION" sign on the workbench. "The Anagram Engine\'s getting a full tune-up. Come back soon. Fresh puzzles are on the way!"', 'Workshop Closed (For Now)', '\u{1F527}'), primary: true },
-          { label: 'Share', onclick: () => { if (typeof BCWSharing !== 'undefined') BCWSharing.shareProgress(); else showGameModal('Sharing coming soon!', 'Coming Soon', '\u{1F3C6}'); } }
+          { label: 'The Anagram Engine', onclick: () => showAnagramEngine(), primary: true },
+          { label: 'Workbench', onclick: () => showGameModal('Croc waves a claw at the far bench. "That is cottage work. Take it home with you."', 'Workbench', '🔨') }
         ]
       },
       library: {
@@ -4806,7 +5300,8 @@
         desc: 'Every clue, relic, and secret you\'ve found is catalogued here. Browse your collection, or study the lore of Bit Cryptic World; there are achievements for the thorough. The Head Librarian asks only that you whisper.',
         actions: [
           { label: 'Achievements', onclick: () => showAchievementsPanel(), primary: true },
-          { label: 'Lore Archive', onclick: () => showLoreArchive() }
+          { label: 'Lore Archive', onclick: () => showLoreArchive() },
+          { label: 'Notebook', onclick: () => BCWNotebookUI.showShelf() }
         ]
       },
       docks: {
@@ -4817,7 +5312,13 @@
         desc: 'The Decoder Docks jut out from the island\'s south-west shore. Ships put in carrying visitors and cargo nobody remembers ordering. The stranger dispatches end up pinned to the notice board.',
         actions: [
           { label: 'Notice Board', onclick: () => showGameModal('Faded dispatches cover the board, but one scrap in an angler\'s scrawl catches your eye: "The town terminal listens, you know. I told it FISH and something rippled by the water ever since."', 'Notice Board', '\u{1F4CC}') },
-          { label: 'Set Sail', onclick: () => showGameModal('New destinations coming in future updates!', 'Set Sail', '\u26F5') }
+          // The wreck is offshore and needs no code. Before the first visit
+          // this is the only thing that names it, and the map shows nothing.
+          { label: () => hasVisitedWreck() ? 'Back Down to the Wreck' : 'Visit the Wreck',
+            onclick: () => visitWreck() },
+          { label: () => (typeof BCWGraduation !== 'undefined' && BCWGraduation.progress().ready) ? 'The Transport' : 'Set Sail',
+            primary: () => typeof BCWGraduation !== 'undefined' && BCWGraduation.progress().ready,
+            onclick: () => showSetSail() }
         ]
       },
       town: {
@@ -4869,7 +5370,9 @@
         iconBg: 'linear-gradient(135deg, #1c3f63, #2d6b96)',
         desc: 'Captain Maddie runs a boat with more below deck than above it. She keeps the lower levels dark and the ladders where you would not expect them.',
         actions: [
-          { label: 'Enter the Hold', onclick: () => openYachtMaze(), primary: true },
+          { label: () => isStoryComplete('yacht') ? 'Back Into the Hold' : 'Enter the Hold',
+            onclick: () => openYachtMaze(),
+            primary: () => !isStoryComplete('yacht') },
           // Maddie stops asking after Benson once he is home.
           { label: 'Talk to Maddie', onclick: () => showGameModal(
             hasBenson()
@@ -5122,11 +5625,11 @@
               showClueChallenge({
                 title: 'Simon\'s Collection', icon: '\u{1F4D5}',
                 intro: 'Simon flips to a dog-eared page near the back. "Traded a whole afternoon of stories for this one, off a freight captain who couldn\'t spell. Six years I\'ve carried it and it still gets me."',
-                clue: 'Fine mast rebuilt: cargo list, plain to see (8)',
+                clue: 'Fine mast rebuilt: cargo list (8)',
                 answer: 'MANIFEST',
                 hints: [
-                  'The definition is doing double duty. Both "cargo list" and "plain to see" describe the answer.',
                   '"Rebuilt" signals an anagram.',
+                  'The definition is "cargo list".',
                   'The letters in "fine mast" are rearranged.'
                 ],
                 successLine: 'Correct!',
@@ -5213,6 +5716,10 @@
       delete state.storyProgress[id];
       if (isNew) state.completedStories.push(id);
       saveProgress(state);
+      // Repaint the rings now. A story that reveals nothing never reaches
+      // applyUnlockState, so without this the pin you just finished stays amber
+      // until the next reload.
+      updateLocationStates();
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackStoryComplete(id);
       if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkStoryComplete(state.completedStories);
       // Trigger chain unlocks. After the very first story (docks), the reveal
@@ -5292,6 +5799,13 @@
 
       // Roads
       applyRoadState(state);
+
+      // The wreck's name, if it has been earned. Restored here so it survives
+      // a reload rather than only appearing on the visit that granted it.
+      if (hasVisitedWreck()) labelWreckOnMap();
+
+      // Completion rings. Last, so it reads the unlock flags this pass just set.
+      updateLocationStates();
     }
 
     function applyRoadState(state) {
@@ -6827,24 +7341,66 @@
       renderYachtMaze();
     }
 
+    // The best run through the hold, kept so a repeat visit has a stake. Its
+    // own key rather than a field on progress: the maze is replayable forever
+    // and the story is not, so they do not share a lifetime.
+    const MAZE_BEST_KEY = 'bcw_yacht_best';
+
+    function getMazeBest() {
+      const raw = parseInt(localStorage.getItem(MAZE_BEST_KEY), 10);
+      return Number.isFinite(raw) && raw > 0 ? raw : null;
+    }
+
+    function saveMazeBest(moves) {
+      const prev = getMazeBest();
+      if (prev !== null && prev <= moves) return { best: prev, beaten: false };
+      try { localStorage.setItem(MAZE_BEST_KEY, String(moves)); } catch {}
+      if (typeof BCSync !== 'undefined' && BCSync.schedulePush) BCSync.schedulePush('world');
+      return { best: moves, beaten: prev !== null };
+    }
+
     // A congratulation of its own, then the story. Dropping the player
     // straight into narrative would make the maze feel like a loading screen
     // rather than something they beat.
+    //
+    // The story runs once. Every run after that is against the clock instead:
+    // replaying Maddie's scene verbatim taught the player their second win did
+    // not register, which is the opposite of what a personal best is for.
     function showMazeWin(moves) {
       const panel = document.getElementById('maze-panel');
       if (!panel) return;
       window.removeEventListener('keydown', mazeKeyHandler);
+
+      const firstRun = !isStoryComplete('yacht');
+      const record = saveMazeBest(moves);
+
+      let title, sub, btnLabel;
+      if (firstRun) {
+        title = 'You made it out';
+        sub = 'Up through the hold and out the masthead in ' + moves + ' moves.';
+        btnLabel = 'Climb out';
+      } else if (record.beaten) {
+        title = 'A new best';
+        sub = 'Out in ' + moves + ' moves. Your fastest yet.';
+        btnLabel = 'Back on deck';
+      } else {
+        title = 'Out again';
+        sub = 'Out in ' + moves + ' moves. Your best is ' + record.best + '.';
+        btnLabel = 'Back on deck';
+      }
+
       panel.innerHTML =
         '<div class="maze-win">' +
           '<div class="maze-win-mark">\u2693</div>' +
-          '<div class="maze-win-title">You made it out</div>' +
-          '<div class="maze-win-sub">Up through the hold and out the masthead in ' + moves + ' moves.</div>' +
-          '<button class="maze-btn" id="maze-win-go">Climb out</button>' +
+          '<div class="maze-win-title">' + title + '</div>' +
+          '<div class="maze-win-sub">' + sub + '</div>' +
+          '<button class="maze-btn" id="maze-win-go">' + btnLabel + '</button>' +
         '</div>';
+
       const go = document.getElementById('maze-win-go');
       if (go) go.onclick = function () {
         closeYachtMaze();
-        startStory('yacht');
+        if (firstRun) startStory('yacht');
       };
     }
 
@@ -8319,18 +8875,55 @@
       vp.style.width = Math.min(mmW, vpWidth) + 'px';
       vp.style.height = Math.min(mmH, vpHeight) + 'px';
 
-      // Update minimap dots to show visited/completed state
+      // Update minimap dots to show visited/completed state. Mint, not the
+      // off-palette #27c93f this used to draw, so the dot and the pin ring
+      // agree with each other and with every other success colour in the game.
       const state = getProgress();
       document.querySelectorAll('.minimap-dot').forEach(dot => {
         const locId = dot.getAttribute('data-location');
         if (state.completedStories.includes(locId)) {
-          dot.style.background = '#27c93f'; // Green for completed
-          dot.style.boxShadow = '0 0 4px rgba(39,201,63,0.5)';
+          dot.style.background = '#64D9A0';
+          dot.style.boxShadow = '0 0 4px rgba(100,217,160,0.5)';
         } else if (state.unlockedLocations.includes(locId)) {
           dot.style.background = '#F2C14E'; // Gold for unlocked
           dot.style.boxShadow = '0 0 4px rgba(242,193,78,0.5)';
         }
       });
+    }
+
+    // Paint completion onto the map pins. Called wherever progress can change:
+    // the pin is the only completion readout a phone player ever sees, so it
+    // must not wait for a reload to catch up.
+    function updateLocationStates() {
+      const state = getProgress();
+      document.querySelectorAll('.location').forEach((el) => {
+        const id = (el.id || '').replace(/^loc-/, '');
+        if (!id) return;
+        el.classList.remove('is-open', 'is-done', 'is-cleared');
+
+        const chain = UNLOCK_CHAIN[id];
+        const secret = chain && chain.secret;
+        // A secret place is reachable at all only once its code is redeemed,
+        // so arriving there IS the achievement; ordinary places go by unlock.
+        const reachable = secret ? true : (!chain || isUnlocked(id));
+        if (!reachable) return;
+
+        const done = state.completedStories.includes(id);
+        if (!done) { el.classList.add('is-open'); return; }
+
+        // Cleared means the story is done and nothing optional is outstanding.
+        el.classList.add(isLocationCleared(id, state) ? 'is-cleared' : 'is-done');
+      });
+    }
+
+    // Everything a location can still owe the player beyond its story. Kept in
+    // one place so the ring and any later roster cannot disagree about what
+    // "finished" means.
+    function isLocationCleared(id, state) {
+      if (!state.completedStories.includes(id)) return false;
+      const tut = typeof TUTORIALS !== 'undefined' && TUTORIALS[id];
+      if (tut && !state.completedStories.includes('_tutorial_' + id)) return false;
+      return true;
     }
 
     // ═══════════════════════════════════
@@ -8409,10 +9002,31 @@
         }
       });
 
+      // Every panel gets exactly one amber anchor. Emphasis was hand-flagged
+      // per action, so six locations (observatory, cove, cafe, beach, moon,
+      // airship) had none at all and rendered entirely grey, and the yacht kept
+      // a permanent amber on a maze the player had already beaten. Amber means
+      // "the thing to do here, not yet done", so it is derived from state
+      // rather than set at parse time: the first undone action wins it, and a
+      // finished location keeps a quieter one so the panel never goes flat.
+      anchorPanelActions(actionsEl);
+
       document.getElementById('detail-panel').classList.add('active');
       document.getElementById('detail-overlay').classList.add('active');
 
       maybeAutoOpenLesson(id, hasTutorial, storyDone);
+    }
+
+    // Promote one button per panel. Runs after all buttons exist, so it can see
+    // what the panel actually offers rather than guessing per action.
+    function anchorPanelActions(actionsEl) {
+      if (!actionsEl) return;
+      const btns = Array.from(actionsEl.children);
+      if (!btns.length) return;
+      // A terminal-variant button is already its own colour; it anchors itself.
+      if (btns.some((b) => b.classList.contains('detail-action-btn--terminal'))) return;
+      if (btns.some((b) => !b.classList.contains('secondary'))) return;
+      btns[0].classList.remove('secondary');
     }
 
     // First arrival at a location that teaches something: open the lesson for
@@ -8604,18 +9218,287 @@
     // ─── Bonus clue challenges: a solvable clue inside a modal, with stepped hints ───
     let activeChallenge = null;
 
+    // THE DAILY, served through the terminal. Reuses showClueChallenge so it
+    // inherits the island's hint component, clue anatomy and styling rather
+    // than growing a second look for the same job.
+    //
+    // Gated by BCW_DAILY_TERMINAL. Nothing here is timed and no streak is
+    // kept: a player who misses a day finds the island exactly as they left it.
+    // ═══════════ GRADUATION, AT THE DOCKS ═══════════
+    //
+    // The docks are where the player washed up in a tattered red boat, so they
+    // are where a proper vessel arriving means something. Two states:
+    //
+    //   not ready  a survey sheet showing what is still outstanding
+    //   ready      the transport, and a choice about boarding
+    //
+    // Boarding is never forced and never closes the island. A player who leaves
+    // can come straight back, because everything else here is still playable
+    // and an ending that locks the door would be punishing completion.
+    // ═══════════ THE ANAGRAM ENGINE ═══════════
+    //
+    // The Workshop said "CLOSED FOR CALIBRATION" and apologised. It was the one
+    // place on the island the fiction already described as a machine for taking
+    // letters apart, and it did nothing.
+    //
+    // Now it does the thing it always said it did. The engine practises on
+    // clues the player HAS ALREADY SOLVED, which is what makes it safe: it can
+    // never spoil what it draws from, and it gives the island's own clues a
+    // second life instead of retiring them the moment they are read once.
+    //
+    // Solving here pays material, same as anywhere. Croc runs the workshop, so
+    // Croc says what the engine turned up.
+    function showAnagramEngine() {
+      const solved = (typeof collectSolvedClues === 'function') ? collectSolvedClues() : [];
+
+      if (!solved.length) {
+        showGameModal(
+          'Cryptic Croc pats the Anagram Engine, which is warm and doing nothing. ' +
+          '"She runs on clues you have already cracked. Go and crack some, and ' +
+          'then we will have something to feed her."',
+          'The Anagram Engine', '\u{1F40A}'
+        );
+        return;
+      }
+
+      const pick = solved[Math.floor(Math.random() * solved.length)];
+      const remark = (typeof BCWIslanders !== 'undefined') ? BCWIslanders.remark('croc') : null;
+
+      showClueChallenge({
+        title: 'The Anagram Engine',
+        icon: '\u{1F40A}',
+        intro: (remark ? remark + '<br><br>' : '') +
+          'The engine turns over and sets a clue you have met before on the ' +
+          'plate. "Again," says Croc. "Knowing it once is not the same as ' +
+          'knowing it."',
+        clue: pick.clue,
+        answer: pick.answer,
+        explanation: pick.parse || '',
+        successLine: 'The engine settles.',
+        hints: pick.hints || [],
+        device: pick.device,
+        source: 'clue'
+      });
+    }
+
+    // Every clue the player has solved, gathered from the stories they have
+    // finished. Reads the story data rather than keeping a second list, so it
+    // can never disagree with what the player actually did.
+    function collectSolvedClues() {
+      const out = [];
+      let done = [];
+      try {
+        const state = (typeof getProgress === 'function') ? getProgress() : {};
+        done = Array.isArray(state.completedStories) ? state.completedStories : [];
+      } catch (e) { return out; }
+
+      for (const id of done) {
+        const story = (typeof STORIES !== 'undefined') ? STORIES[id] : null;
+        if (!story || !Array.isArray(story.steps)) continue;
+        for (const step of story.steps) {
+          if (step.type !== 'puzzle' || !step.answer) continue;
+          const answer = Array.isArray(step.answer) ? step.answer[0] : step.answer;
+          const clue = (step.clue || step.text || '').replace(/^"|"$/g, '');
+          if (!clue || !answer) continue;
+          out.push({
+            clue: clue,
+            answer: answer,
+            parse: step.parse || '',
+            hints: step.hints || [],
+            // The annotation file knows the device where it has one. An
+            // untagged clue still practises; it just pays the default material.
+            device: lookupDevice(clue)
+          });
+        }
+      }
+      return out;
+    }
+
+    // The device for a clue, from the anatomy annotations. Returns null when
+    // the clue carries no annotation, which is honest: a clue we cannot name
+    // should not be filed under a device it might not be.
+    function lookupDevice(clue) {
+      try {
+        if (typeof CLUE_ANNOTATIONS === 'undefined') return null;
+        const ann = CLUE_ANNOTATIONS[clue];
+        if (!ann || !Array.isArray(ann.segments)) return null;
+        const ind = ann.segments.find(s => s.role === 'indicator' && s.operation);
+        if (ind) return ind.operation;
+        return ann.segments.some(s => s.role === 'double') ? 'double' : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+
+    function showSetSail() {
+      if (typeof BCWGraduation === 'undefined') {
+        showGameModal('The water is quiet today.', 'Set Sail', '⛵');
+        return;
+      }
+
+      const p = BCWGraduation.progress();
+
+      if (!p.ready) {
+        // A survey sheet, not a checklist. It says what remains without naming
+        // which stories or which codes, because the finding is the game.
+        const left = p.storiesNeeded - p.stories;
+        const missing = p.secretsNeeded - p.secrets;
+        showGameModal(
+          'The Dock Keeper looks out past the breakwater and shakes his head. ' +
+          '"Nothing scheduled. They send a transport when a survey is finished, ' +
+          'not when a surveyor gets restless."<br><br>' +
+          'He turns over a damp sheet of paper and reads it like a tide table.' +
+          '<div class="grad-sheet">' +
+          '<div class="grad-row"><span class="grad-label">Locations surveyed</span>' +
+          '<span class="grad-value">' + p.stories + ' of ' + p.storiesNeeded + '</span></div>' +
+          '<div class="grad-bar" role="img" aria-label="' + p.stories + ' of ' +
+          p.storiesNeeded + ' locations surveyed">' +
+          Array.from({ length: p.storiesNeeded }, (_, i) =>
+            '<span class="grad-pip' + (i < p.stories ? ' is-on' : '') + '"></span>').join('') +
+          '</div>' +
+          '<div class="grad-row"><span class="grad-label">Codes recovered</span>' +
+          '<span class="grad-value">' + p.secrets + ' of ' + p.secretsNeeded + '</span></div>' +
+          '<div class="grad-bar" role="img" aria-label="' + p.secrets + ' of ' +
+          p.secretsNeeded + ' codes recovered">' +
+          Array.from({ length: p.secretsNeeded }, (_, i) =>
+            '<span class="grad-pip' + (i < p.secrets ? ' is-on' : '') + '"></span>').join('') +
+          '</div>' +
+          '</div>' +
+          '<p class="grad-note">' +
+          (left > 0
+            ? 'There are places on this island you have not finished reading.'
+            : 'Every location is surveyed.') +
+          ' ' +
+          (missing > 0
+            ? 'And the island keeps ' + missing + ' more ' +
+              (missing === 1 ? 'word' : 'words') + ' it has not given you.'
+            : 'Every code is recovered.') +
+          '</p>',
+          'The Harbour Master’s Sheet', '\u{1F4C4}'
+        );
+        return;
+      }
+
+      // Ready. Called once, remembered after.
+      const firstTime = BCWGraduation.markCalled();
+      const gone = BCWGraduation.departed();
+
+      showGameModal(
+        (firstTime
+          ? 'The Dock Keeper is already looking at the horizon when you arrive, ' +
+            'as though he heard it before you did. A shape resolves out of the ' +
+            'haze past the breakwater: a real ship, riding high and lit along ' +
+            'its rail, nothing like the tattered red boat still tied at the end ' +
+            'of the pier.<br><br>' +
+            '"That will be for you," he says. "They send one when a survey is ' +
+            'finished." He does not look surprised, and he does not look pleased.'
+          : gone
+            ? 'The transport rides at anchor where it always is now, lit along ' +
+              'the rail, patient as furniture. The tattered red boat is still ' +
+              'tied at the end of the pier.'
+            : 'The transport is still waiting past the breakwater. It has not ' +
+              'moved, and nobody has asked you to hurry.') +
+        '<br><br>' +
+        'You surveyed every location on this island and recovered every word it ' +
+        'was keeping. The Dock Keeper hands you a folded sheet with your own ' +
+        'name on it, spelled the way the island spells things.' +
+        (gone
+          ? '<br><br><em>You have boarded once already. The island did not mind.</em>'
+          : '<div class="grad-actions">' +
+            '<button type="button" class="story-puzzle-submit" onclick="departIsland()">' +
+            'Board the transport</button>' +
+            '<button type="button" class="grad-stay" onclick="closeGameModal()">' +
+            'Stay a while longer</button>' +
+            '</div>'),
+        'The Transport', '\u{1F6A2}'
+      );
+
+      if (firstTime && typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+    }
+
+    // Boarding. The island stays exactly as it was, because a player who
+    // finished everything should not be locked out of the thing they finished.
+    function departIsland() {
+      if (typeof BCWGraduation !== 'undefined') BCWGraduation.markDeparted();
+      showGameModal(
+        'The gangway is shorter than you expect. From the rail the island reads ' +
+        'differently: the forest is a shape, the tower is a line, and the lantern ' +
+        'at the end of the pier is one small warm point that does not go out.<br><br>' +
+        'The Dock Keeper does not wave. He watches, the way someone watches a ' +
+        'thing they have seen before and would rather not have seen again.<br><br>' +
+        'Somewhere ahead there is another island nobody has written down.' +
+        '<p class="grad-note">Your survey is filed. The island is still here, and ' +
+        'so is everything in it, whenever you want to come back.</p>',
+        'Departure', '\u{1F30A}'
+      );
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+      if (typeof BCWAchievements !== 'undefined' && BCWAchievements.check) {
+        try { BCWAchievements.check(); } catch (e) { /* never block the ending */ }
+      }
+    }
+
+
+    function showDailyClue() {
+      const pickResult = BCWDailyTerminal.pick();
+      const clue = pickResult.clue;
+      const done = BCWDailyTerminal.isSolved(pickResult.date);
+
+      // The button press is its own confirmation, so the terminal does not
+      // narrate what just happened. Which device was chosen, and why, belongs
+      // in the panel the player is about to be looking at.
+      closeTerminal();
+
+      showClueChallenge({
+        title: 'Today in the Square',
+        icon: '🗞',
+        intro: (done
+          ? 'The notice board still carries this morning’s clue, and your chalk answer beside it.'
+          : 'A fresh clue is chalked on the notice board in the town square.') +
+          (pickResult.byMastery
+            ? '<br><br><em>Chosen for the trick you have met least.</em>'
+            : ''),
+        clue: clue.clue,
+        answer: clue.answer,
+        explanation: clue.parse,
+        successLine: 'Chalked in beside the others.',
+        hints: [
+          'The definition is "' + clue.definition + '".',
+          'This one is a ' + clue.type.replace(/-/g, ' ') + '.'
+        ]
+      });
+
+      // Credit the device the same way every other drill does, and only for an
+      // unaided solve. The Academy's whole rule is that hinted is not learned.
+      const record = () => {
+        BCWDailyTerminal.markSolved(pickResult.date);
+        try {
+          if (typeof BCMastery !== 'undefined' && BCMastery.record) {
+            BCMastery.record(clue.type, { solved: true, hints: 0 });
+          }
+        } catch (e) { /* mastery is optional here */ }
+      };
+      if (activeChallenge) activeChallenge.onSolved = done ? null : record;
+    }
+
     function showClueChallenge(opts) {
       activeChallenge = {
         answers: (Array.isArray(opts.answer) ? opts.answer : [opts.answer]).map(a => a.toUpperCase()),
         explanation: opts.explanation || '',
         successLine: opts.successLine || 'Solved!',
-        wrongCount: 0
+        // Carried so a solve can pay the right material. A challenge with no
+        // device still pays; it just pays the default.
+        device: opts.device || null,
+        source: opts.source || 'bonus',
+        wrongCount: 0,
+        hinted: false
       };
       showGameModal(
         opts.intro + (opts.beforeClue ? '<br><br>' + opts.beforeClue : '') + '<br><br><em>"' + opts.clue + '"</em><br><br>' +
         '<input id="challenge-input" class="story-puzzle-input" style="width:100%;box-sizing:border-box;margin-bottom:8px;" placeholder="Solve the cryptic clue..." autocomplete="off" onkeydown="if(event.key===\'Enter\'){event.preventDefault();checkChallenge();}">' +
         '<div style="display:flex;gap:8px;">' +
         '<button type="button" class="story-puzzle-submit" onclick="checkChallenge()">Solve</button>' +
+        '<button type="button" class="nb-btn" onclick="BCWNotebookUI.copyClue(' + JSON.stringify(opts.clue).replace(/"/g, '&quot;') + ')">Copy to notebook</button>' +
         '</div>' +
         '<div id="challenge-hint-area"></div>' +
         '<div id="challenge-feedback" style="margin-top:10px;min-height:1.3em;color:#F2C14E;"></div>' +
@@ -8625,6 +9508,12 @@
       // Same hint component as story puzzles — one look, one behavior, always visible
       const hintArea = document.getElementById('challenge-hint-area');
       if (hintArea && (opts.hints || []).length && typeof BCWHints !== 'undefined') {
+        // A taken hint means this solve no longer counts as unaided, which is
+        // what gates a pet. Recorded here because the hint component owns the
+        // click and does not report a count back.
+        hintArea.addEventListener('click', () => {
+          if (activeChallenge) activeChallenge.hinted = true;
+        }, true);
         BCWHints.createHintButton(opts.hints, hintArea, 'challenge_' + (opts.title || 'untitled').replace(/\W+/g, '_').toLowerCase());
       }
       // Anatomy on the challenge clue too (no-op unless annotated)
@@ -8646,6 +9535,24 @@
           (activeChallenge.explanation ? '<br>' + activeChallenge.explanation : '');
         input.disabled = true;
         if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
+        // A challenge may ask to be told when it is solved. Used by the daily
+        // clue to record the date and credit the device; wrapped because a
+        // throwing callback must never cost the player their solve.
+        // Solving leaves material behind. The sediment principle, made
+        // literal: the island builds from what a solved clue drops.
+        if (typeof BCWMaterials !== 'undefined' && activeChallenge.device) {
+          const got = BCWMaterials.award(activeChallenge.device, activeChallenge.source || 'bonus');
+          if (got) {
+            feedback.innerHTML += '<br><span class="mat-drop">+' + got.amount + ' ' +
+              (BCWMaterials.KINDS[got.kind] ? BCWMaterials.KINDS[got.kind].label.toLowerCase() : got.kind) +
+              '</span>';
+          }
+        }
+        if (typeof activeChallenge.onSolved === 'function') {
+          try { activeChallenge.onSolved(); } catch (e) { /* the solve still stands */ }
+          activeChallenge.onSolved = null;
+        }
+        maybeOfferPet(activeChallenge);
       } else {
         activeChallenge.wrongCount++;
         feedback.textContent = 'Not quite. Try again, or take a hint.';
@@ -8929,6 +9836,20 @@
       document.getElementById('terminal-panel').classList.add('active');
       document.getElementById('terminal-overlay').classList.add('active');
       renderUnlockedList();
+
+      // The daily-clue button appears only once the feature is on. Until then
+      // the terminal looks and behaves exactly as it always has.
+      const actions = document.getElementById('terminal-actions');
+      if (actions) {
+        const live = BCW_DAILY_TERMINAL && typeof BCWDailyTerminal !== 'undefined';
+        actions.hidden = !live;
+        if (live) {
+          const btn = actions.querySelector('.terminal-action');
+          const done = BCWDailyTerminal.isSolved(BCWDailyTerminal.today());
+          if (btn) btn.textContent = done ? 'Today’s clue, already solved' : 'Read today’s clue';
+        }
+      }
+
       setTimeout(() => document.getElementById('terminal-input').focus(), 300);
     }
 
@@ -8977,7 +9898,7 @@
         // redeeming them is what actually makes them appear. Without this the
         // house, pond, lair, moon, airship and yacht stay hidden even though
         // every ordinary location just opened.
-        ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'KAIT', 'PONDER', 'BOSTON', 'POG']
+        ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'KAIT', 'PONDER', 'BOSTON', 'POG', 'ANGAS']
           .forEach(saveUnlockedCode);
         spawnHouse(); spawnPond(); spawnLair(); spawnMoon(); spawnAirship();
         restoreCodeCosmetics();
@@ -9032,6 +9953,13 @@
         addTerminalLine('Kait\'s Cutie has been added to your furniture collection.', 'info');
         addTerminalLine('A new wall color has been unlocked.', 'info');
         setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
+      } else if (normalized === 'ANGAS') {
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('Something small and gold turns over in the dark.', 'success');
+        addTerminalLine('A watch has been added to your furniture collection.', 'info');
+        addTerminalLine('It keeps perfect time. It has stopped at one minute to.', 'info');
+        setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
       } else if (normalized === 'BOSTON') {
         saveUnlockedCode(normalized);
         addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
@@ -9085,13 +10013,74 @@
       house: 'Gamer House'
     };
 
+    // ── Cosmetic codes: unlocked once, switchable forever ─────────────────
+    //
+    // A code you redeem is a thing you own, not a thing you are stuck with.
+    // Both of these repaint the whole island, and a player who wants the
+    // yacht but not gamer-green had no way back. The switches only appear
+    // once the matching code is redeemed, so the settings panel never
+    // advertises a secret.
+    //
+    // Turning POG off does NOT take the yacht away. The yacht is content the
+    // code unlocked; only the paint is cosmetic.
+    const COSMETIC_KEY = 'bcw_cosmetics_off';
+
+    function getCosmeticsOff() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(COSMETIC_KEY) || '[]');
+        return Array.isArray(raw) ? raw : [];
+      } catch (e) { return []; }
+    }
+
+    function isCosmeticOn(id) {
+      return !getCosmeticsOff().includes(id);
+    }
+
+    function setCosmeticOn(id, on) {
+      const off = getCosmeticsOff().filter((x) => x !== id);
+      if (!on) off.push(id);
+      try { localStorage.setItem(COSMETIC_KEY, JSON.stringify(off)); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      restoreCodeCosmetics();
+      renderCosmeticToggles();
+    }
+
     function applyBostonRoads() {
       document.body.classList.add('boston-roads');
       const sq = document.getElementById('loc-town');
       if (sq) sq.setAttribute('title', 'Cambridge but not the one in Old England');
     }
 
+    function removeBostonRoads() {
+      document.body.classList.remove('boston-roads');
+      const sq = document.getElementById('loc-town');
+      if (sq) sq.removeAttribute('title');
+    }
+
+    // POG renames things in place, so the original text has to be captured
+    // before the first repaint or there is nothing to switch back to.
+    let pogOriginals = null;
+
+    function capturePogOriginals() {
+      if (pogOriginals) return;
+      pogOriginals = { labels: {}, titles: {}, editorTitle: null, librarySub: null };
+      for (const id in POG_LABELS) {
+        const el = document.getElementById('loc-' + id);
+        if (!el) continue;
+        const label = el.querySelector('.loc-label');
+        pogOriginals.labels[id] = label ? label.textContent : null;
+      }
+      if (typeof locations !== 'undefined') {
+        if (locations.beach) pogOriginals.titles.beach = locations.beach.title;
+        if (locations.house) pogOriginals.titles.house = locations.house.title;
+        if (locations.library) pogOriginals.librarySub = locations.library.subtitle;
+      }
+      const editorTitle = document.getElementById('house-editor-title');
+      pogOriginals.editorTitle = editorTitle ? editorTitle.textContent : null;
+    }
+
     function applyPogMode() {
+      capturePogOriginals();
       document.body.classList.add('pog-house');
       // Map marker labels
       for (const id in POG_LABELS) {
@@ -9114,12 +10103,76 @@
       refreshTrophyPalette();
     }
 
+    function removePogMode() {
+      document.body.classList.remove('pog-house');
+      if (!pogOriginals) { refreshTrophyPalette(); return; }
+      for (const id in pogOriginals.labels) {
+        const el = document.getElementById('loc-' + id);
+        if (!el) continue;
+        const original = pogOriginals.labels[id];
+        const label = el.querySelector('.loc-label');
+        if (label && original !== null) label.textContent = original;
+        if (original !== null) el.setAttribute('aria-label', original + ' - click to explore');
+      }
+      const editorTitle = document.getElementById('house-editor-title');
+      if (editorTitle && pogOriginals.editorTitle !== null) {
+        editorTitle.textContent = pogOriginals.editorTitle;
+      }
+      if (typeof locations !== 'undefined') {
+        if (locations.beach && pogOriginals.titles.beach) locations.beach.title = pogOriginals.titles.beach;
+        if (locations.house && pogOriginals.titles.house) locations.house.title = pogOriginals.titles.house;
+        if (locations.library) locations.library.subtitle = pogOriginals.librarySub;
+      }
+      refreshTrophyPalette();
+    }
+
     // Codes are permanent once redeemed, so their effects have to come back
     // on every load, not just at the moment the code is typed.
     function restoreCodeCosmetics() {
       const codes = getUnlockedCodes();
-      if (codes.includes('BOSTON')) applyBostonRoads();
-      if (codes.includes('POG')) { applyPogMode(); spawnYacht(); }
+
+      if (codes.includes('BOSTON') && isCosmeticOn('boston')) applyBostonRoads();
+      else removeBostonRoads();
+
+      if (codes.includes('POG')) {
+        // The yacht is content, not paint: it stays whether or not the look
+        // is switched on.
+        spawnYacht();
+        if (isCosmeticOn('pog')) applyPogMode();
+        else { capturePogOriginals(); removePogMode(); }
+      }
+    }
+
+    // Which cosmetic codes this player actually holds. The settings section
+    // renders nothing at all until at least one is redeemed, so the panel
+    // never hints that a secret exists.
+    const COSMETIC_DEFS = [
+      { id: 'pog', code: 'POG', label: 'Gamer mode', desc: 'The island goes neon. The yacht stays either way.' },
+      { id: 'boston', code: 'BOSTON', label: 'Red brick roads', desc: 'Every road on the island resurfaces itself.' }
+    ];
+
+    function ownedCosmetics() {
+      const codes = getUnlockedCodes();
+      return COSMETIC_DEFS.filter((c) => codes.includes(c.code));
+    }
+
+    function renderCosmeticToggles() {
+      const host = document.getElementById('cosmetics-section');
+      if (!host) return;
+      const owned = ownedCosmetics();
+      if (!owned.length) { host.hidden = true; host.innerHTML = ''; return; }
+      host.hidden = false;
+      let html = '<h3>Unlocked Looks</h3>' +
+        '<p class="cosmetic-note">Codes you have redeemed. Switching one off keeps the code.</p>';
+      owned.forEach((c) => {
+        const on = isCosmeticOn(c.id);
+        html += '<label class="cosmetic-row">' +
+          '<input type="checkbox" ' + (on ? 'checked' : '') +
+          ' onchange="setCosmeticOn(\'' + c.id + '\', this.checked)">' +
+          '<span class="cosmetic-row__text"><b>' + c.label + '</b><em>' + c.desc + '</em></span>' +
+          '</label>';
+      });
+      host.innerHTML = html;
     }
 
     let yachtSpawned = false;
@@ -9365,6 +10418,10 @@
     // ═══════════════════════════════════
     //  HOUSE EDITOR
     // ═══════════════════════════════════
+    // THE DAILY IN THE TOWN SQUARE. Off until after the M6 cutover: World
+    // ships first and this is a new interactive surface, so the launch build
+    // behaves exactly as it does today. Flip to true post-cutover.
+    const BCW_DAILY_TERMINAL = false;
     const HOUSE_STORAGE_KEY = 'bitcryptic_house';
 
     // Snap grid: 10 columns x 6 rows
@@ -9506,12 +10563,12 @@
         svg: '<svg width="160" height="120" viewBox="0 0 160 120">' +
           '<defs><linearGradient id="winSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a5a"/><stop offset="40%" stop-color="#2a5a7a"/><stop offset="80%" stop-color="#5a9aba"/><stop offset="100%" stop-color="#8ac4e4"/></linearGradient></defs>' +
           '<!-- Left curtain -->' +
-          '<rect x="8" y="8" width="22" height="110" rx="0 0 6 6" fill="#7a3030"/>' +
-          '<rect x="10" y="8" width="18" height="110" rx="0 0 4 4" fill="#8a4040" opacity="0.7"/>' +
+          '<path d="M8,8 h22 v104 a6,6 0 0,1 -6,6 h-10 a6,6 0 0,1 -6,-6 z" fill="#7a3030"/>' +
+          '<path d="M10,8 h18 v106 a4,4 0 0,1 -4,4 h-10 a4,4 0 0,1 -4,-4 z" fill="#8a4040" opacity="0.7"/>' +
           '<path d="M8,100 Q14,95 18,100 Q22,95 26,100 L30,118 Q24,115 19,118 Q14,115 8,118 Z" fill="#6a2828"/>' +
           '<!-- Right curtain -->' +
-          '<rect x="130" y="8" width="22" height="110" rx="0 0 6 6" fill="#7a3030"/>' +
-          '<rect x="132" y="8" width="18" height="110" rx="0 0 4 4" fill="#8a4040" opacity="0.7"/>' +
+          '<path d="M130,8 h22 v104 a6,6 0 0,1 -6,6 h-10 a6,6 0 0,1 -6,-6 z" fill="#7a3030"/>' +
+          '<path d="M132,8 h18 v106 a4,4 0 0,1 -4,4 h-10 a4,4 0 0,1 -4,-4 z" fill="#8a4040" opacity="0.7"/>' +
           '<path d="M130,100 Q136,95 140,100 Q144,95 148,100 L152,118 Q146,115 141,118 Q136,115 130,118 Z" fill="#6a2828"/>' +
           '<!-- Curtain rod -->' +
           '<rect x="2" y="2" width="156" height="6" rx="3" fill="#a07828"/>' +
@@ -10000,6 +11057,47 @@
           '<ellipse cx="20" cy="24" rx="3.5" ry="2" fill="#f0a0b0" opacity="0.3"/>' +
           '<ellipse cx="40" cy="24" rx="3.5" ry="2" fill="#f0a0b0" opacity="0.3"/></svg>',
         zone: 'floor', cols: 1, rows: 1
+      },
+      // A wristwatch hung on the wall and used as a clock: the strap is still
+      // on it, buckled around the hook. Angas's, from the ANGAS code.
+      minuteClock: {
+        svg: '<svg width="52" height="82" viewBox="0 0 52 82">' +
+          // Wall hook
+          '<path d="M26,2 q-6,0 -6,6 q0,4 6,4" fill="none" stroke="#8a7a5a" stroke-width="2" stroke-linecap="round"/>' +
+          // Strap, upper half, threaded over the hook
+          '<path d="M20,10 q0,-2 3,-2 h6 q3,0 3,2 L34,30 h-16 Z" fill="#5a3a24"/>' +
+          '<path d="M21,12 h10 L33,29 h-14 Z" fill="#6b4830"/>' +
+          '<g stroke="#4a2e1c" stroke-width="0.7" opacity="0.7">' +
+            '<path d="M20.5,17 h11 M20.4,22 h11.2 M20.3,27 h11.4"/></g>' +
+          // Strap, lower half
+          '<path d="M18,54 h16 L32,74 q0,2 -3,2 h-6 q-3,0 -3,-2 Z" fill="#5a3a24"/>' +
+          '<path d="M19,55 h14 L31,72 h-10 Z" fill="#6b4830"/>' +
+          '<g stroke="#4a2e1c" stroke-width="0.7" opacity="0.7">' +
+            '<path d="M19.6,60 h12.8 M19.9,65 h12.2 M20.2,70 h11.6"/></g>' +
+          // Lugs
+          '<rect x="16" y="28" width="20" height="4" rx="1.6" fill="#b9a24a"/>' +
+          '<rect x="16" y="52" width="20" height="4" rx="1.6" fill="#b9a24a"/>' +
+          // Case
+          '<circle cx="26" cy="42" r="17" fill="#d8c268"/>' +
+          '<circle cx="26" cy="42" r="14.6" fill="#f0dd90"/>' +
+          '<circle cx="26" cy="42" r="12.8" fill="#1a2033"/>' +
+          '<circle cx="26" cy="42" r="12.8" fill="none" stroke="#b9a24a" stroke-width="0.8"/>' +
+          // Crown
+          '<rect x="42" y="40" width="4" height="5" rx="1.4" fill="#b9a24a"/>' +
+          // Hour ticks
+          '<g stroke="#F2C14E" stroke-width="1.3" stroke-linecap="round">' +
+            '<path d="M26,32 v2.6 M26,49.4 v2.6 M16,42 h2.6 M33.4,42 H36"/></g>' +
+          '<g stroke="#F2C14E" stroke-width="0.8" opacity="0.55" stroke-linecap="round">' +
+            '<path d="M31,33.3 l0.9,-1.6 M34.7,37 l1.6,-0.9 M34.7,47 l1.6,0.9 M31,50.7 l0.9,1.6 ' +
+            'M21,50.7 l-0.9,1.6 M17.3,47 l-1.6,0.9 M17.3,37 l-1.6,-0.9 M21,33.3 l-0.9,-1.6"/></g>' +
+          // Hands, sitting at one minute to
+          '<path d="M26,42 L26,34.5" stroke="#F2C14E" stroke-width="1.8" stroke-linecap="round"/>' +
+          '<path d="M26,42 L24.7,31.6" stroke="#64D9A0" stroke-width="1.2" stroke-linecap="round"/>' +
+          '<circle cx="26" cy="42" r="1.5" fill="#F2C14E"/>' +
+          // Glass highlight
+          '<path d="M18,36 q6,-5 13,-3" stroke="#ffffff" stroke-width="1.6" fill="none" opacity="0.16" stroke-linecap="round"/>' +
+          '</svg>',
+        zone: 'wall', cols: 1, rows: 1, reward: true
       },
       kaitFrog: {
         svg: '<svg width="55" height="65" viewBox="0 0 55 65">' +
@@ -10574,7 +11672,650 @@
         createFurnitureElement(item, idx);
       });
 
+      renderPets(room);
+
       applyRoomLighting();
+    }
+
+    // ═══════════════════════════════════
+    //  PETS AT HOME
+    // ═══════════════════════════════════
+    //
+    // Pets are NOT furniture: they are not saved with a position, cannot be
+    // dragged, and do not occupy the snap grid. A pet you arrange is an
+    // ornament; a pet that has picked its own corner is a pet. They live only
+    // on the ground floor, so the attic stays the quiet room.
+    function renderPets(room) {
+      if (!room) return;
+      room.querySelectorAll('.house-pet').forEach((el) => el.remove());
+      if (typeof BCWPets === 'undefined') return;
+      if (houseFloor === 'attic') return;
+
+      const living = BCWPets.adopted();
+      if (!living.length) return;
+
+      living.forEach((pet, i) => {
+        const el = document.createElement('div');
+        el.className = 'house-pet';
+        el.dataset.pet = pet.id;
+        // Spread along the floor, away from the walls, deterministic per pet so
+        // a pet keeps its spot between visits instead of teleporting on reload.
+        const slot = (i + 1) / (living.length + 1);
+        el.style.left = (10 + slot * 76) + '%';
+        el.style.bottom = (6 + ((pet.id.length * 7) % 9)) + '%';
+        el.style.animationDelay = (i * 0.7) + 's';
+        el.innerHTML = petSprite(pet);
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('aria-label', pet.name + ' - click to visit');
+        el.title = pet.name;
+        el.onclick = (e) => { e.stopPropagation(); openPetPanel(pet.id); };
+        el.onkeydown = (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPetPanel(pet.id); }
+        };
+        room.appendChild(el);
+      });
+    }
+
+    // Pets are drawn in the CROC PLUSHIE's language, not as one recoloured
+    // blob. That vocabulary, taken from FURNITURE_DEFS.crocPlush and the
+    // Benson plush: a squat body ellipse with a lighter belly patch, a
+    // SEPARATE head sitting on it, big cream eyes with dark pupils and a
+    // highlight dot, stubby rotated arms, and a dashed stitch line, which is
+    // the tell that says "this is a plush toy" rather than an animal.
+    //
+    // Each species then gets exactly one silhouette-changing feature, so it
+    // reads at 46px without relying on colour.
+    function petSprite(pet) {
+      const c = pet.colour;
+      const dark = shadePetColour(c, -30);
+      const light = shadePetColour(c, 30);
+      const belly = shadePetColour(c, 62);
+      // The Ram faces left because he only ever walks backwards.
+      const flip = pet.id === 'ram' ? ' transform="translate(46,0) scale(-1,1)"' : '';
+      const f = petParts(pet, c, dark, light);
+
+      return '<svg width="46" height="44" viewBox="0 0 46 44" aria-hidden="true">' +
+        '<ellipse cx="23" cy="41" rx="13" ry="2.2" fill="rgba(0,0,0,0.26)"/>' +
+        '<g' + flip + '>' +
+          (f.behind || '') +
+          // Body, with the lighter belly the plushies all have
+          '<ellipse cx="23" cy="31" rx="12.5" ry="9" fill="' + c + '"/>' +
+          '<ellipse cx="23" cy="32" rx="10.5" ry="7.2" fill="' + light + '"/>' +
+          '<ellipse cx="23" cy="34" rx="7" ry="4.4" fill="' + belly + '"/>' +
+          // Stubby arms, angled the way the croc's are
+          '<ellipse cx="10.5" cy="31" rx="3.6" ry="2.7" fill="' + c + '" transform="rotate(-20,10.5,31)"/>' +
+          '<ellipse cx="35.5" cy="31" rx="3.6" ry="2.7" fill="' + c + '" transform="rotate(20,35.5,31)"/>' +
+          // The stitch line: the plushie tell
+          '<path d="M23,36 L23,39.5" stroke="' + dark + '" stroke-width="0.8" stroke-dasharray="1.6,1.6" opacity="0.65" fill="none"/>' +
+          // Head, a separate mass rather than part of the body
+          '<ellipse cx="23" cy="17" rx="9.5" ry="8.5" fill="' + c + '"/>' +
+          (f.head || '') +
+          // Eyes: cream white, dark pupil, highlight. Same build as the croc.
+          '<circle cx="18.6" cy="16" r="3.4" fill="#f0ece0"/>' +
+          '<circle cx="27.4" cy="16" r="3.4" fill="#f0ece0"/>' +
+          '<circle cx="18.6" cy="16.3" r="1.7" fill="#2c3e50"/>' +
+          '<circle cx="27.4" cy="16.3" r="1.7" fill="#2c3e50"/>' +
+          '<circle cx="18" cy="15.4" r="0.65" fill="#fff"/>' +
+          '<circle cx="26.8" cy="15.4" r="0.65" fill="#fff"/>' +
+          (f.front || '') +
+        '</g></svg>';
+    }
+
+    // One silhouette-changing feature per species, in three slots: behind the
+    // body, on the head under the eyes, and in front of everything.
+    function petParts(pet, c, dark, light) {
+      switch (pet.id) {
+        case 'croc':
+          return {
+            // Long snout below the eyes, teeth along the top edge, and the
+            // mascot's tweed-waistcoat hat brim.
+            head: '<ellipse cx="23" cy="21.5" rx="7.5" ry="4.2" fill="' + light + '"/>',
+            front:
+              '<ellipse cx="23" cy="22.6" rx="6" ry="2.6" fill="' + shadePetColour(c, 55) + '"/>' +
+              // Peaks along the snout ridge, in his own green rather than
+              // cream: they are scutes, not teeth, and cream read as a mouth
+              // in the wrong place.
+              '<path d="M18,20.6 l1.6,-2 l1.6,2 M22,20.4 l1.6,-2 l1.6,2 M26,20.6 l1.6,-2 l1.6,2" stroke="' + dark + '" stroke-width="1.1" fill="none" stroke-linejoin="round" stroke-linecap="round"/>' +
+              '<circle cx="20.4" cy="22.4" r="0.7" fill="' + dark + '"/>' +
+              '<circle cx="25.6" cy="22.4" r="0.7" fill="' + dark + '"/>' +
+              // The detective hat, straight from the plushie
+              '<rect x="15.5" y="9.2" width="15" height="2.6" rx="1.2" fill="#2c3e50"/>' +
+              '<rect x="18" y="4.6" width="10" height="5.2" rx="1.2" fill="#2c3e50"/>' +
+              '<rect x="18.8" y="6.4" width="8.4" height="1" fill="#c0a040"/>'
+          };
+        case 'hedgehog':
+          return {
+            // Quills sit BEHIND as a solid mantle, so she reads as a hedgehog
+            // in silhouette instead of a ball with sticks glued on.
+            behind: hedgehogQuills(dark, c),
+            front: '<ellipse cx="23" cy="20.6" rx="3.2" ry="2.2" fill="' + shadePetColour(c, -10) + '"/>' +
+              '<circle cx="23" cy="20.2" r="1.15" fill="#2c3e50"/>'
+          };
+        case 'ram':
+          return {
+            // Curled horns, drawn as a spiral pair with a lighter inner turn.
+            // Horn, not shadow. These were drawn in the body's dark shade,
+            // which made them read as a hole rather than something growing
+            // out of him. Pale bone with a warmer ridge line inside the curl.
+            head:
+              '<path d="M14.5,13.5 q-5,0.5 -5,5 q0,3.6 3.4,3.6 q2.6,0 2.6,-2.4" fill="none" stroke="#e8e2d2" stroke-width="2.9" stroke-linecap="round"/>' +
+              '<path d="M31.5,13.5 q5,0.5 5,5 q0,3.6 -3.4,3.6 q-2.6,0 -2.6,-2.4" fill="none" stroke="#e8e2d2" stroke-width="2.9" stroke-linecap="round"/>' +
+              '<path d="M13.6,15.6 q-3.6,1 -3.6,3.4" fill="none" stroke="#bfb69f" stroke-width="0.9" stroke-linecap="round"/>' +
+              '<path d="M32.4,15.6 q3.6,1 3.6,3.4" fill="none" stroke="#bfb69f" stroke-width="0.9" stroke-linecap="round"/>',
+            front: '<ellipse cx="23" cy="21" rx="4" ry="3" fill="' + shadePetColour(c, 50) + '"/>' +
+              '<path d="M21.4,20.4 l1.6,1.2 l1.6,-1.2" stroke="' + dark + '" stroke-width="0.9" fill="none" stroke-linecap="round"/>'
+          };
+        case 'chameleon':
+          return {
+            // A curled tail behind, and the body split down the middle so he
+            // is visibly two things joined front to back.
+            // The tail curls UP and inward, the way a chameleon actually
+            // carries it. It used to hang down and coil at the bottom, which
+            // read as a tail that had given up.
+            behind: '<path d="M34,32 q7.5,-1.5 8.5,-8 q0.6,-4.2 -2.8,-4.2 q-2.8,0 -2.8,2.8 q0,2.4 2.4,2.4" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>',
+            head: '<path d="M23,8.5 a9.5,8.5 0 0,1 0,17 z" fill="' + light + '"/>' +
+              '<path d="M15,11 q4,-3.5 8,-2.4" fill="none" stroke="' + dark + '" stroke-width="1.6" stroke-linecap="round"/>',
+            front: '<path d="M23,22.2 h0.01" stroke="' + dark + '" stroke-width="2" stroke-linecap="round"/>' +
+              '<ellipse cx="23" cy="22" rx="2.6" ry="1.7" fill="' + shadePetColour(c, 48) + '"/>'
+          };
+        case 'nesting-doll':
+          return {
+            // Cat ears, a tail, and a visible smaller shape inside the belly:
+            // one thing inside another, which is the device.
+            behind: '<path d="M35,33 q7,-1 7,-7" fill="none" stroke="' + c + '" stroke-width="3" stroke-linecap="round"/>',
+            head:
+              '<path d="M15.6,11.4 l1.4,-5.4 l4.6,3.4 z" fill="' + c + '"/>' +
+              '<path d="M30.4,11.4 l-1.4,-5.4 l-4.6,3.4 z" fill="' + c + '"/>' +
+              '<path d="M16.8,10.6 l0.8,-3 l2.5,1.9 z" fill="' + shadePetColour(c, 45) + '"/>' +
+              '<path d="M29.2,10.6 l-0.8,-3 l-2.5,1.9 z" fill="' + shadePetColour(c, 45) + '"/>',
+            front:
+              '<path d="M21.6,21 l1.4,1.4 l1.4,-1.4 z" fill="' + dark + '"/>' +
+              '<path d="M23,22.4 v1.2 M23,23.6 q-1.8,0 -2.4,-1 M23,23.6 q1.8,0 2.4,-1" stroke="' + dark + '" stroke-width="0.7" fill="none" stroke-linecap="round"/>' +
+              // The smaller self, nested
+              '<ellipse cx="23" cy="33.6" rx="3.4" ry="2.6" fill="none" stroke="' + dark + '" stroke-width="0.9" opacity="0.5"/>'
+          };
+        default:
+          return {};
+      }
+    }
+
+    // ── Hedgehog quills ───────────────────────────────────────────────────
+    //
+    // The quills were five loose strokes radiating off a circle, which read as
+    // a startled sun rather than a hedgehog. Three styles, all built as a
+    // solid mantle behind the body so the silhouette is right first. The
+    // player picks; the choice rides on the pet.
+    const QUILL_STYLES = {
+      mantle: {
+        label: 'Mantle',
+        desc: 'A solid cape of spines. Reads clearest at a glance.'
+      },
+      tufted: {
+        label: 'Tufted',
+        desc: 'Softer, clustered spines with gaps. Friendlier.'
+      },
+      bristled: {
+        label: 'Bristled',
+        desc: 'Sharp individual quills over a low mantle. Spikiest.'
+      }
+    };
+
+    function getQuillStyle() {
+      try { return localStorage.getItem('bcw_quill_style') || 'mantle'; }
+      catch (e) { return 'mantle'; }
+    }
+
+    function setQuillStyle(id) {
+      if (!QUILL_STYLES[id]) return;
+      try { localStorage.setItem('bcw_quill_style', id); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      const room = document.getElementById('house-room');
+      if (room) renderPets(room);
+    }
+
+    function hedgehogQuills(dark, base) {
+      const mid = shadePetColour(base, -14);
+      const style = getQuillStyle();
+
+      if (style === 'tufted') {
+        // The same mantle with rounded tips instead of points: scalloped, not
+        // spiky. Kept as the soft option.
+        return '<path d="' + scallopMantle(9.5, 30.5, 36.5, 13, 7) + '" fill="' + mid + '"/>' +
+          '<path d="' + scallopMantle(13, 30.5, 33, 17, 5) + '" fill="' + dark + '" opacity="0.38"/>';
+      }
+
+      if (style === 'bristled') {
+        // More teeth, taller and narrower: the same shape sharpened.
+        return '<path d="' + sawtoothMantle(8.5, 30.5, 37.5, 8.5, 15) + '" fill="' + mid + '"/>' +
+          '<path d="' + sawtoothMantle(12, 30.5, 34, 13.5, 11) + '" fill="' + dark + '" opacity="0.42"/>';
+      }
+
+      // Default: the spikes ARE the outline.
+      //
+      // The mantle used to be a smooth dome with thin strokes poking out past
+      // it, which reads as a hairstyle. On a real hedgehog the spines are the
+      // silhouette: one solid mass whose own upper edge is a run of triangular
+      // points. Drawn as a single filled sawtooth so the shape survives at
+      // 46px, with a second darker row inside for depth.
+      return '<path d="' + sawtoothMantle(9, 30.5, 37, 11.5, 11) + '" fill="' + mid + '"/>' +
+        '<path d="' + sawtoothMantle(12.5, 30.5, 33.5, 15.5, 8) + '" fill="' + dark + '" opacity="0.42"/>';
+    }
+
+    // The tufted variant: same construction, arcs instead of points.
+    function scallopMantle(x0, baseY, x1, topY, bumps) {
+      // Odd, for the same reason as the sawtooth: an even count puts a dip on
+      // the centre line and the halves stop reading as a pair.
+      const n = bumps % 2 === 0 ? bumps + 1 : bumps;
+      const span = x1 - x0;
+      const step = span / n;
+      let d = 'M' + x0 + ',' + baseY;
+      for (let i = 0; i < n; i++) {
+        const lx = x0 + i * step;
+        const rx = lx + step;
+        const mx = lx + step / 2;
+        const t = Math.abs(mx - (x0 + span / 2)) / (span / 2);
+        const drop = (baseY - topY) * (1 - t * t * 0.78);
+        const tipY = baseY - drop;
+        const valleyY = baseY - drop * 0.5;
+        d += ' L' + lx.toFixed(1) + ',' + valleyY.toFixed(1) +
+             ' Q' + mx.toFixed(1) + ',' + (tipY - 1.4).toFixed(1) +
+             ' ' + rx.toFixed(1) + ',' + valleyY.toFixed(1);
+      }
+      d += ' L' + x1 + ',' + baseY + ' Z';
+      return d;
+    }
+
+    // A dome whose top edge is a row of spikes, returned as one closed path.
+    // x0..x1 is the base, baseY the bottom, topY the height the tallest point
+    // reaches. Points are tallest in the middle and shorten toward the sides,
+    // which is what stops it looking like a saw blade.
+    function sawtoothMantle(x0, baseY, x1, topY, teeth) {
+      // Always an ODD number of teeth. With an even count there is no tooth at
+      // the middle of the span, so a VALLEY lands on the centre line and the
+      // two sides mirror around a dip instead of a spine — which is what made
+      // the quills look lopsided even though the maths was symmetric.
+      const n = teeth % 2 === 0 ? teeth + 1 : teeth;
+      const span = x1 - x0;
+      const step = span / n;
+      let d = 'M' + x0 + ',' + baseY;
+      for (let i = 0; i < n; i++) {
+        const lx = x0 + i * step;
+        const rx = lx + step;
+        const mx = lx + step / 2;
+        // Distance from the centre, 0 at the middle and 1 at either edge.
+        const t = Math.abs(mx - (x0 + span / 2)) / (span / 2);
+        // Shorten toward the edges so the mantle curves down to the body.
+        const drop = (baseY - topY) * (1 - t * t * 0.82);
+        const tipY = baseY - drop;
+        // Valleys sit part-way down, so the teeth stay joined as one mass.
+        const valleyY = baseY - drop * 0.42;
+        d += ' L' + lx.toFixed(1) + ',' + valleyY.toFixed(1) +
+             ' L' + mx.toFixed(1) + ',' + tipY.toFixed(1) +
+             ' L' + rx.toFixed(1) + ',' + valleyY.toFixed(1);
+      }
+      d += ' L' + x1 + ',' + baseY + ' Z';
+      return d;
+    }
+
+    function shadePetColour(hex, amt) {
+      const n = parseInt(String(hex).replace('#', ''), 16);
+      if (!Number.isFinite(n)) return hex;
+      const clamp = (v) => Math.max(0, Math.min(255, v));
+      const r = clamp(((n >> 16) & 255) + amt);
+      const g = clamp(((n >> 8) & 255) + amt);
+      const b = clamp((n & 255) + amt);
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    // ═══════════════════════════════════
+    //  SAVE THE HOUSE AS A PNG
+    // ═══════════════════════════════════
+    //
+    // The room is DOM plus inline SVG, so it is captured by rebuilding it as
+    // one SVG (a foreignObject carrying a clone of the room, with the computed
+    // colours inlined) and painting that onto a canvas.
+    //
+    // Two constraints shaped this. The site's CSP is script-src 'self', so no
+    // html2canvas and no CDN of any kind: it has to be hand-rolled. And an SVG
+    // drawn to a canvas taints it unless everything inside is inline, which is
+    // why the furniture is safe (hand-written SVG paths) and why nothing here
+    // may reference an external image.
+    function saveHouseImage() {
+      const room = document.getElementById('house-room');
+      if (!room) return;
+
+      const btn = document.getElementById('house-save-img-btn');
+      const restore = btn ? btn.innerHTML : null;
+      if (btn) { btn.disabled = true; btn.innerHTML = '\u{1F4F7} Saving...'; }
+
+      const done = (msg, ok) => {
+        if (btn) { btn.disabled = false; btn.innerHTML = restore; }
+        if (msg) showGameModal(msg, ok ? 'Saved' : 'Could not save', ok ? '\u{1F4F7}' : '\u{26A0}');
+      };
+
+      try {
+        const rect = room.getBoundingClientRect();
+        const w = Math.max(1, Math.round(rect.width));
+        const h = Math.max(1, Math.round(rect.height));
+        // 2x so the picture is worth keeping rather than a screenshot of a
+        // small box.
+        const scale = 2;
+
+        const clone = room.cloneNode(true);
+        // Editor furniture, not house furniture: selection outlines, snap
+        // cells, drag handles and per-item toolbars are UI and must not be in
+        // the picture.
+        clone.querySelectorAll('.house-snap-cell, .house-item-toolbar, .scale-handle').forEach((el) => el.remove());
+        clone.querySelectorAll('.selected').forEach((el) => el.classList.remove('selected'));
+        clone.classList.remove('scale-mode');
+
+        // The clone leaves the cascade behind, so every visual property it
+        // relied on has to be written onto it. Walked in step with the
+        // original because a clone has no layout of its own.
+        inlineComputedStyle(room, clone);
+
+        const xml = new XMLSerializer().serializeToString(clone);
+        const svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+          '<foreignObject width="100%" height="100%">' +
+          '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px;height:' + h + 'px">' +
+          xml +
+          '</div></foreignObject></svg>';
+
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = w * scale;
+            canvas.height = h * scale;
+            const ctx = canvas.getContext('2d');
+            // A flat backdrop first: a transparent PNG of a room reads as a
+            // broken export in most viewers.
+            ctx.fillStyle = '#0B1021';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob((blob) => {
+              if (!blob) { done('The picture could not be encoded on this browser.', false); return; }
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = houseImageName();
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              setTimeout(() => URL.revokeObjectURL(url), 30000);
+              done(null, true);
+              const t = document.getElementById('house-editor-title');
+              if (t && typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+            }, 'image/png');
+          } catch (e) {
+            done('This browser blocked the export. Try a different browser.', false);
+          }
+        };
+        img.onerror = () => done('The room could not be drawn to an image on this browser.', false);
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      } catch (e) {
+        done('Something went wrong taking the picture.', false);
+      }
+    }
+
+    function houseImageName() {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      const floor = houseFloor === 'attic' ? '-attic' : '';
+      return 'bit-cryptic-home' + floor + '-' +
+        d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' +
+        p(d.getHours()) + p(d.getMinutes()) + '.png';
+    }
+
+    // Copy the computed look of every node onto its clone. Only the properties
+    // that actually draw: copying all of them makes the serialized SVG large
+    // enough to stall on a phone.
+    const CAPTURE_PROPS = [
+      'position', 'left', 'top', 'right', 'bottom', 'width', 'height',
+      'display', 'flex-direction', 'align-items', 'justify-content', 'gap',
+      'background', 'background-color', 'background-image', 'background-size',
+      'background-position', 'background-repeat',
+      'border', 'border-radius', 'box-shadow', 'opacity', 'overflow',
+      'color', 'font-family', 'font-size', 'font-weight', 'text-align',
+      'transform', 'transform-origin', 'filter', 'z-index', 'padding', 'margin'
+    ];
+
+    function inlineComputedStyle(src, dest) {
+      const from = src.querySelectorAll('*');
+      const to = dest.querySelectorAll('*');
+      applyComputed(src, dest);
+      // The clone had UI nodes removed, so the two lists can differ in length.
+      // Walk the shorter one and match by index, which holds because removal
+      // only ever happened at the leaves.
+      const n = Math.min(from.length, to.length);
+      for (let i = 0; i < n; i++) applyComputed(from[i], to[i]);
+    }
+
+    function applyComputed(src, dest) {
+      if (!src || !dest || dest.nodeType !== 1) return;
+      // Leave SVG alone. The furniture is hand-written SVG that already
+      // carries its own fills and geometry, and copying CSS box properties
+      // onto it actively breaks the drawing: border-radius computes to
+      // "0 0 6 6", which <rect rx> rejects outright, and the shape vanishes.
+      if (dest.namespaceURI === 'http://www.w3.org/2000/svg') return;
+      const cs = window.getComputedStyle(src);
+      let css = '';
+      for (const p of CAPTURE_PROPS) {
+        const v = cs.getPropertyValue(p);
+        if (v && v !== 'none' && v !== 'auto' && v !== 'normal') css += p + ':' + v + ';';
+      }
+      // Animations freeze at whatever frame the capture caught, which is the
+      // honest thing for a photograph.
+      dest.setAttribute('style', css);
+    }
+
+    // Visiting a pet: what it is doing, and the cheeses you could offer it.
+    // There is no hunger bar and no timer. You feed a pet because you want to
+    // see what it does, which is the only reason that survives contact with a
+    // player who put the game down for a month.
+    function openPetPanel(id) {
+      if (typeof BCWPets === 'undefined') return;
+      const pet = BCWPets.byId(id);
+      if (!pet || !BCWPets.isAdopted(id)) return;
+
+      const cheeses = (typeof getCheeseCollection === 'function' ? getCheeseCollection() : []) || [];
+      // Group by name so five cheddars are one button reading "x5".
+      const counts = {};
+      cheeses.forEach((c) => {
+        const name = c && c.name ? c.name : String(c);
+        counts[name] = (counts[name] || 0) + 1;
+      });
+      const names = Object.keys(counts).sort();
+
+      let body =
+        '<div class="pet-panel">' +
+        '<div class="pet-panel__sprite">' + petSprite(pet) + '</div>' +
+        '<p class="pet-panel__idle">' + BCWPets.idleLine(id) + '</p>' +
+        '<p class="pet-panel__quirk">' + pet.quirk + '</p>';
+
+      if (!names.length) {
+        body +=
+          '<p class="pet-panel__empty">No cheese in the pantry. The cheese board at the ' +
+          'Cryptic Cafe restocks as you solve.</p>';
+      } else {
+        body += '<div class="pet-panel__feed"><span class="pet-panel__feed-label">Offer a cheese</span><div class="pet-panel__cheeses">';
+        names.forEach((name) => {
+          body +=
+            '<button class="pet-cheese" data-cheese="' + escapeAttr(name) + '" data-pet="' + escapeAttr(id) + '">' +
+            escapeHtml(name) + (counts[name] > 1 ? ' <span class="pet-cheese__n">x' + counts[name] + '</span>' : '') +
+            '</button>';
+        });
+        body += '</div></div>';
+      }
+
+      // The hedgehog's quills are hers to choose, offered where she is rather
+      // than buried in settings.
+      if (id === 'hedgehog') {
+        const current = getQuillStyle();
+        body += '<div class="pet-panel__feed"><span class="pet-panel__feed-label">Quills</span>' +
+          '<div class="pet-panel__cheeses">';
+        for (const q in QUILL_STYLES) {
+          body += '<button class="pet-cheese' + (q === current ? ' is-on' : '') +
+            '" data-quill="' + q + '" title="' + escapeAttr(QUILL_STYLES[q].desc) + '">' +
+            escapeHtml(QUILL_STYLES[q].label) + '</button>';
+        }
+        body += '</div></div>';
+      }
+
+      body += '<p class="pet-panel__reaction" id="pet-reaction" aria-live="polite"></p></div>';
+
+      // showGameModal sets its body with innerHTML, so the markup above renders
+      // as markup. Every value interpolated into it is escaped at the source.
+      showGameModal(body, pet.name, '');
+
+      document.querySelectorAll('.pet-cheese[data-cheese]').forEach((btn) => {
+        btn.onclick = () => feedPetFromPanel(btn.dataset.pet, btn.dataset.cheese, btn);
+      });
+      document.querySelectorAll('.pet-cheese[data-quill]').forEach((btn) => {
+        btn.onclick = () => {
+          setQuillStyle(btn.dataset.quill);
+          openPetPanel(id);
+        };
+      });
+    }
+
+    function feedPetFromPanel(id, cheeseName, btn) {
+      const result = BCWPets.feed(id, cheeseName);
+      if (!result) return;
+
+      // Spend the cheese. A pet that eats for free makes the collection
+      // meaningless, and the cheese board already restocks through play.
+      if (typeof getCheeseCollection === 'function' && typeof saveCheeseCollection === 'function') {
+        const bag = getCheeseCollection();
+        const i = bag.findIndex((c) => (c && c.name ? c.name : String(c)) === cheeseName);
+        if (i !== -1) { bag.splice(i, 1); saveCheeseCollection(bag); }
+      }
+
+      const out = document.getElementById('pet-reaction');
+      if (out) {
+        out.textContent = result.reaction + (result.hint ? ' ' + result.hint : '');
+        out.classList.toggle('is-match', result.match);
+      }
+      if (typeof BCWAudio !== 'undefined') {
+        if (result.match && BCWAudio.playSuccess) BCWAudio.playSuccess();
+        else if (BCWAudio.playClick) BCWAudio.playClick();
+      }
+
+      // Redraw the button row so the count drops and an emptied cheese leaves.
+      if (btn) {
+        const n = btn.querySelector('.pet-cheese__n');
+        if (n) {
+          const left = parseInt(n.textContent.replace('x', ''), 10) - 1;
+          if (left > 1) n.textContent = 'x' + left;
+          else n.remove();
+        } else {
+          btn.remove();
+        }
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function escapeAttr(s) { return escapeHtml(s); }
+
+    // ── Catching a pet ────────────────────────────────────────────────────
+    //
+    // Solve a clue unaided and, if that device has a creature you have not met,
+    // it turns up. The offer waits until the solve modal is dismissed: two
+    // modals stacked on one another would bury the thing worth seeing.
+    // ═══════════════════════════════════
+    //  THE WRECK
+    // ═══════════════════════════════════
+    //
+    // Already drawn on the map as scenery, southwest of the docks, on the
+    // seabed. It takes no code: the boat down is at the docks and anybody can
+    // take it. Until you have, the wreck has no label, so the first visit
+    // turns a shape in the water into a place with a name.
+    const WRECK_KEY = 'bcw_wreck_seen';
+
+    function hasVisitedWreck() {
+      try { return localStorage.getItem(WRECK_KEY) === '1'; }
+      catch (e) { return false; }
+    }
+
+    function visitWreck() {
+      const first = !hasVisitedWreck();
+      if (first) {
+        try { localStorage.setItem(WRECK_KEY, '1'); } catch (e) {}
+        window.BCSync?.schedulePush('world');
+        labelWreckOnMap();
+      }
+      closePanel();
+      startStory(first ? 'wreck' : 'wreck_return');
+    }
+
+    // The label rides on the wreck art that is already in the map SVG, so
+    // nothing new is drawn: it just stops being anonymous.
+    function labelWreckOnMap() {
+      const el = document.getElementById('map-wreck-label');
+      if (el) el.removeAttribute('hidden');
+    }
+
+    // Pets need two things before one will follow you home: somewhere to live,
+    // and a way to catch it. The second is the point of Canon's quest — you
+    // cannot take a creature off this island by wanting to, and Fredward is
+    // the one who tells you to go and ask about it.
+    const PET_CATCH_KEY = 'bcw_pet_catcher';
+
+    function hasPetCatcher() {
+      try { return localStorage.getItem(PET_CATCH_KEY) === '1'; }
+      catch (e) { return false; }
+    }
+
+    function grantPetCatcher() {
+      try { localStorage.setItem(PET_CATCH_KEY, '1'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+    }
+
+    function maybeOfferPet(challenge) {
+      if (typeof BCWPets === 'undefined' || !challenge || !challenge.device) return;
+      // Check the gates BEFORE asking BCWPets, because onSolve() marks a
+      // species as seen and it would burn the one-time offer on a player who
+      // cannot act on it yet.
+      if (!hasHouse()) return;
+      if (!hasPetCatcher()) return;
+      const species = BCWPets.onSolve(challenge.device, { unaided: !challenge.hinted });
+      if (!species) return;
+      setTimeout(() => showPetOffer(species), 900);
+    }
+
+    function hasHouse() {
+      try {
+        const codes = getUnlockedCodes();
+        return codes.includes('COME IN') || codes.includes('WELCOME HOME');
+      } catch (e) { return false; }
+    }
+
+    function showPetOffer(species) {
+      const body =
+        '<div class="pet-panel">' +
+        '<div class="pet-panel__sprite">' + petSprite(species) + '</div>' +
+        '<p class="pet-panel__idle">' + escapeHtml(species.blurb) + '</p>' +
+        '<p class="pet-panel__quirk">' + escapeHtml(species.quirk) + '</p>' +
+        '<div class="pet-panel__cheeses">' +
+        '<button class="pet-cheese" id="pet-take">Take them home</button>' +
+        '</div>' +
+        '<p class="pet-panel__reaction">They followed you out of the clue.</p>' +
+        '</div>';
+      showGameModal(body, species.name + ' is here', '');
+      const take = document.getElementById('pet-take');
+      if (take) take.onclick = () => {
+        BCWPets.adopt(species.id);
+        if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+        closeGameModal();
+        // If the player is standing in the house, they should see it arrive.
+        const room = document.getElementById('house-room');
+        if (room) renderPets(room);
+      };
     }
 
     function addFurniture(type) {
@@ -10620,7 +12361,8 @@
       // already redeemed.
       PONDER: { item: 'goosePlushie', label: 'Goose Plushie' },
       CALLI: { item: 'goosePlushie', label: 'Goose Plushie' },
-      EDEN: { item: 'goosePlushie', label: 'Goose Plushie' }
+      EDEN: { item: 'goosePlushie', label: 'Goose Plushie' },
+      ANGAS: { item: 'minuteClock', label: 'The Minute Watch' }
     };
 
     function isRewardUnlocked(itemType) {
@@ -10633,6 +12375,12 @@
       // Benson is earned by catching and returning him, not by a story or a
       // code, so he answers to his own flag.
       if (itemType === 'bensonCat') return typeof hasBenson === 'function' && hasBenson();
+      // The Mounted Fish is bought, not found: it belongs to the 10,000-coin
+      // trophy at the pond shop. It used to sit in the palette ungated, so
+      // anyone could place a trophy they had never paid for.
+      if (itemType === 'mountedFish') {
+        return typeof getUpgrades === 'function' && getUpgrades().includes('trophy1');
+      }
       // ANY code mapping to this item unlocks it. Returning on the first match
       // would mean a reward with several spellings only ever answered to one.
       const codes = getUnlockedCodes();
@@ -10671,6 +12419,54 @@
       room.classList.remove('cw-gold', 'cw-diamond', 'cw-rgb');
       const id = getActiveColorway();
       if (id) room.classList.add('cw-' + id);
+    }
+
+    // ── Per-object colour ─────────────────────────────────────────────────
+    //
+    // The room palette paints everything at once, which is the right default
+    // and the wrong ceiling: there was no way to gild one lamp. Each item can
+    // now carry its own choice, stored on the item so it moves, duplicates
+    // and saves with the object rather than in a parallel list that could
+    // drift out of step with it.
+    function openItemColorway(idx) {
+      const state = getHouseState();
+      const item = state.items[idx];
+      if (!item) return;
+      const owned = getColorways();
+      const current = item.cw || '';
+
+      let html = '<div class="item-cw">';
+      html += '<button class="item-cw__swatch' + (current === '' ? ' active' : '') +
+        '" style="background:#8b6914" title="Match the room" data-cw=""></button>';
+      html += '<button class="item-cw__swatch' + (current === 'none' ? ' active' : '') +
+        '" style="background:repeating-linear-gradient(45deg,#2A3553,#2A3553 4px,#161B2E 4px,#161B2E 8px)" title="No tint" data-cw="none"></button>';
+      for (const id in COLORWAYS) {
+        if (!owned.includes(id)) continue;
+        html += '<button class="item-cw__swatch' + (current === id ? ' active' : '') +
+          '" style="background:' + COLORWAYS[id].swatch + '" title="' + COLORWAYS[id].label +
+          '" data-cw="' + id + '"></button>';
+      }
+      html += '</div>';
+      if (owned.length === 0) {
+        html += '<p class="item-cw__note">Colourways come from the Swag Fish wheel at the pond.</p>';
+      }
+
+      showGameModal(html, 'Colour this piece', '\u{1F3A8}');
+
+      document.querySelectorAll('.item-cw__swatch').forEach((btn) => {
+        btn.onclick = () => {
+          const fresh = getHouseState();
+          if (!fresh.items[idx]) return;
+          const val = btn.dataset.cw;
+          if (val) fresh.items[idx].cw = val;
+          else delete fresh.items[idx].cw;
+          saveHouseState(fresh, true);
+          renderHouse();
+          houseSelectedIdx = idx;
+          selectHouseItem(idx);
+          closeGameModal();
+        };
+      });
     }
 
     function renderColorwayPalette() {
@@ -10720,6 +12516,9 @@
       }
       // Benson is not a story or code reward: he is caught. Same rule though.
       applyRewardTileState('bensonCat');
+      // The Mounted Fish is bought at the pond shop, so its tile has to be
+      // refreshed here too or it would stay locked after the purchase.
+      applyRewardTileState('mountedFish');
       // Wall colours that ride along with a code reward: swatch id -> the item
       // whose unlock also grants it.
       const REWARD_WALLS = {
@@ -10755,6 +12554,9 @@
       const room = document.getElementById('house-room');
       const el = document.createElement('div');
       el.className = 'furniture-item';
+      // Per-object colourway. 'none' is a real choice, not an absence: it
+      // means "leave this one alone" even when the room is tinted.
+      if (item.cw) el.classList.add('cw-' + item.cw);
       el.dataset.idx = idx;
 
       const colSpan = def.cols || 1;
@@ -10793,6 +12595,7 @@
           '<button class="item-tool-btn" title="Bring Forward" data-action="fwd">&#x25B2;</button>' +
           '<button class="item-tool-btn" title="Send Back" data-action="back">&#x25BC;</button>' +
           '<button class="item-tool-btn" title="Reset Size" data-action="resetsize">&#x21BA;</button>' +
+          '<button class="item-tool-btn" title="Colour" data-action="paint">&#x1F3A8;</button>' +
           '<button class="item-tool-btn tool-delete" title="Delete" data-action="del">&#x2716;</button>' +
         '</div>' +
         '<div class="scale-handle"></div>';
@@ -10814,6 +12617,7 @@
       el.style.zIndex = baseZ + posRow + idx + (def.zOffset || 0);
 
       // ─── Toolbar button clicks ───
+      el.querySelector('[data-action="paint"]').addEventListener('click', (e) => { e.stopPropagation(); openItemColorway(idx); });
       el.querySelector('[data-action="flip"]').addEventListener('click', (e) => { e.stopPropagation(); houseFlipItem(idx); });
       el.querySelector('[data-action="dup"]').addEventListener('click', (e) => { e.stopPropagation(); houseDuplicateItem(idx); });
       el.querySelector('[data-action="fwd"]').addEventListener('click', (e) => { e.stopPropagation(); houseBringForward(idx); });
@@ -11537,8 +13341,16 @@
     const SELL_PRICES = { common: 5, uncommon: 12, rare: 25, epic: 50, legendary: 100 };
 
     const FISH_UPGRADES = [
-      { id: 'bucket1', name: 'Bigger Bucket', desc: '2 fish capacity', cost: 50, type: 'bucket', value: 2 },
-      { id: 'bucket2', name: 'Large Bucket', desc: '5 fish capacity', cost: 200, type: 'bucket', value: 5 },
+      // Six tiers, not two. The shop shows only the NEXT unowned tier per
+      // category, so at two tiers the bucket vanished from the shop entirely
+      // once you owned the second one, and 5 was a permanent ceiling that
+      // read as the bucket having shrunk. The ladder now runs to 40.
+      { id: 'bucket1', name: 'Bigger Bucket', desc: '3 fish capacity', cost: 50, type: 'bucket', value: 3 },
+      { id: 'bucket2', name: 'Large Bucket', desc: '6 fish capacity', cost: 200, type: 'bucket', value: 6 },
+      { id: 'bucket3', name: 'Creel Basket', desc: '10 fish capacity', cost: 600, type: 'bucket', value: 10 },
+      { id: 'bucket4', name: 'Livewell', desc: '16 fish capacity', cost: 1600, type: 'bucket', value: 16 },
+      { id: 'bucket5', name: 'Cold Store', desc: '25 fish capacity', cost: 4000, type: 'bucket', value: 25 },
+      { id: 'bucket6', name: 'Harbour Hold', desc: '40 fish capacity', cost: 9000, type: 'bucket', value: 40 },
       { id: 'rod1', name: 'Oak Rod', desc: 'Slower power meter', cost: 100, type: 'rod', effect: 'slowPower' },
       { id: 'rod2', name: 'Steel Rod', desc: 'Even slower meters', cost: 400, type: 'rod', effect: 'slowerAll' },
       { id: 'rod3', name: 'Golden Rod', desc: 'Slowest meters, best control', cost: 1500, type: 'rod', effect: 'slowest' },
@@ -11637,9 +13449,10 @@
     function getBucketMax() {
       const owned = getUpgrades();
       const bucketUpgrades = FISH_UPGRADES.filter(u => u.type === 'bucket' && owned.includes(u.id));
-      // One fish to start: the bucket is the early progression, so it has to
-      // begin somewhere that makes the first upgrade feel like something.
-      if (bucketUpgrades.length === 0) return 1;
+      // Two to start. At one, the bucket was full after a single catch and
+      // every cast forced a sell, which read as the bucket being broken
+      // rather than as early progression.
+      if (bucketUpgrades.length === 0) return 2;
       return Math.max(...bucketUpgrades.map(u => u.value));
     }
 
@@ -11656,9 +13469,16 @@
       owned.push(id);
       localStorage.setItem(FISH_UPGRADES_KEY, JSON.stringify(owned));
       window.BCSync?.schedulePush('world');
-      // Trophy unlocks the mounted fish wall decoration in your home
-      if (id === 'trophy1' && typeof addFurniture === 'function') {
-        try { addFurniture('mountedFish'); } catch(e) {}
+      // Trophy unlocks the mounted fish wall decoration in your home, and
+      // places one straight away. The palette tile has to be refreshed too or
+      // it stays greyed out until some other redraw happens to run.
+      if (id === 'trophy1') {
+        if (typeof refreshTrophyPalette === 'function') {
+          try { refreshTrophyPalette(); } catch (e) {}
+        }
+        if (typeof addFurniture === 'function') {
+          try { addFurniture('mountedFish'); } catch(e) {}
+        }
       }
       if (id === 'blackjack') renderTableButton();
       // Buying the attic with no house would leave you holding a second floor
@@ -11761,6 +13581,16 @@
         }
         return;
       }
+      // The Swag Fish is a spin, not stock. Same guard placement as Benson,
+      // so Sell All and any stale button both hit the same wall.
+      if (isSwagFish(bucket[index])) {
+        const res = document.getElementById('fish-result');
+        if (res) {
+          res.style.color = SWAG_FISH.color;
+          res.textContent = 'The Swag Fish is not for sale. Spin it instead.';
+        }
+        return;
+      }
       const fish = bucket.splice(index, 1)[0];
       const price = getFishPrice(fish);
       addCoins(price);
@@ -11789,13 +13619,13 @@
       if (bucket.length === 0) return;
       // Sell All is the dangerous one: it would sweep him up with everything
       // else and the player would never see it happen. He stays behind.
-      const keep = bucket.filter(f => f.benson);
-      const sell = bucket.filter(f => !f.benson);
+      const keep = bucket.filter(f => f.benson || isSwagFish(f));
+      const sell = bucket.filter(f => !f.benson && !isSwagFish(f));
       if (sell.length === 0) {
         const res0 = document.getElementById('fish-result');
         if (res0) {
           res0.style.color = '#F2C14E';
-          res0.textContent = 'Only Benson is in the bucket, and he is not for sale.';
+          res0.textContent = 'Nothing in the bucket is for sale.';
         }
         return;
       }
@@ -12115,6 +13945,10 @@
     const BJ_RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
     let bjState = null;
+    // The pending dealer-draw timer, and a counter that makes every hand
+    // distinguishable so a stale chain can tell it no longer owns the table.
+    let bjTimer = null;
+    let bjHandSeq = 0;
 
     function hasCardTable() {
       return getUpgrades().includes('blackjack');
@@ -12144,10 +13978,18 @@
     // lets the dealer rule read the way the rule is actually written.
     function bjScore(hand) {
       let total = 0, aces = 0;
-      hand.forEach(c => {
+      (hand || []).forEach(c => {
+        // A missing or unrecognised card contributes nothing rather than NaN.
+        // One NaN anywhere in a hand makes the whole total NaN, and every
+        // comparison against it goes false, so the game stops being able to
+        // tell a bust from a blackjack.
+        if (!c || !c.rank) return;
         if (c.rank === 'A') { total += 11; aces++; }
         else if (c.rank === 'J' || c.rank === 'Q' || c.rank === 'K') total += 10;
-        else total += parseInt(c.rank, 10);
+        else {
+          const pip = parseInt(c.rank, 10);
+          if (Number.isFinite(pip)) total += pip;
+        }
       });
       while (total > 21 && aces > 0) { total -= 10; aces--; }
       const soft = aces > 0 && total <= 21;
@@ -12160,6 +14002,7 @@
 
     function openBlackjack() {
       if (!hasCardTable()) return;
+      bjCancelTimer();
       bjState = {
         deck: [],
         player: [],
@@ -12169,7 +14012,12 @@
         phase: 'betting',
         message: '',
         outcome: null,
-        revealed: false
+        revealed: false,
+        // What the player chose before any double, so the next hand can go
+        // back to it rather than inheriting the doubled figure.
+        baseBet: 0,
+        doubled: false,
+        handId: ++bjHandSeq
       };
       const el = document.getElementById('bj-game');
       if (el) el.classList.add('active');
@@ -12177,6 +14025,9 @@
     }
 
     function closeBlackjack() {
+      // Stop any dealer draw still in flight before the state it belongs to
+      // disappears out from under it.
+      bjCancelTimer();
       // An unsettled hand returns its stake. Closing the table is not a
       // forfeit, and a refresh mid-hand must not be able to cost coins.
       if (bjState && bjState.staked > 0 && bjState.phase !== 'settled') {
@@ -12249,7 +14100,12 @@
 
     function bjHit() {
       if (!bjState || bjState.phase !== 'player') return;
-      bjState.player.push(bjState.deck.pop());
+      const card = bjState.deck.pop();
+      // Never push a card that is not there. An undefined in the hand makes
+      // bjScore read .rank off nothing, and the total becomes NaN — which is
+      // what "the numbers go weird" looked like.
+      if (!card) { bjStand(); return; }
+      bjState.player.push(card);
       if (bjScore(bjState.player).total > 21) {
         bjState.revealed = true;
         bjSettle();
@@ -12273,13 +14129,23 @@
         renderBlackjack();
         return;
       }
+      const card = bjState.deck.pop();
+      // Never take the second stake for a card that is not there.
+      if (!card) { bjStand(); return; }
       addCoins(-bjState.bet);
       bjState.staked += bjState.bet;
+      // Remember what the hand was originally worth. Doubling used to raise
+      // `bet` permanently, and bjNextHand carries `bet` forward as the next
+      // default stake — so the hand AFTER a double silently wagered twice what
+      // the player had chosen, and again after the next double.
+      bjState.baseBet = bjState.baseBet || bjState.bet;
       bjState.bet *= 2;
-      bjState.player.push(bjState.deck.pop());
+      bjState.doubled = true;
+      bjState.player.push(card);
       bjState.revealed = true;
       renderMoney();
       renderShop();
+      // A doubled hand takes exactly one card, then stands. Busting settles.
       if (bjScore(bjState.player).total > 21) { bjSettle(); return; }
       bjState.phase = 'dealer';
       bjDealerPlay();
@@ -12288,20 +14154,37 @@
     // Dealer draws to 16 and stands on all 17s, including soft 17. Dealt one
     // card at a time so you can watch the hand build rather than have a
     // finished total appear.
+    //
+    // The chain is tagged with the hand it belongs to. Closing the table and
+    // reopening it inside the 620ms gap used to leave the old timer running:
+    // the `!bjState` guard passed, because a NEW bjState existed by then, and
+    // the stale chain dealt extra cards into the new hand. Two chains against
+    // one hand is what made the score jump around.
     function bjDealerPlay() {
       renderBlackjack();
+      const hand = bjState.handId;
       const step = () => {
-        if (!bjState || bjState.phase !== 'dealer') return;
+        if (!bjState || bjState.handId !== hand || bjState.phase !== 'dealer') return;
+        const card = bjState.deck.pop();
+        // A deck that cannot deal is a bug, not a game state. Settle on what
+        // is on the table rather than pushing undefined into the hand, where
+        // it would turn the total into NaN and print nothing at all.
+        if (!card && bjScore(bjState.dealer).total < 17) { bjSettle(); return; }
         const sc = bjScore(bjState.dealer);
         if (sc.total < 17) {
-          bjState.dealer.push(bjState.deck.pop());
+          bjState.dealer.push(card);
           renderBlackjack();
-          setTimeout(step, 620);
+          bjTimer = setTimeout(step, 620);
         } else {
+          if (card) bjState.deck.push(card);
           bjSettle();
         }
       };
-      setTimeout(step, 620);
+      bjTimer = setTimeout(step, 620);
+    }
+
+    function bjCancelTimer() {
+      if (bjTimer) { clearTimeout(bjTimer); bjTimer = null; }
     }
 
     function bjSettle() {
@@ -12312,7 +14195,7 @@
       let payout = 0, outcome, message;
 
       if (pBJ && dBJ)      { payout = bjState.bet;                    outcome = 'push'; message = 'Both blackjack. Push.'; }
-      else if (pBJ)        { payout = Math.floor(bjState.bet * 2.5);  outcome = 'win';  message = 'Blackjack. Pays three to two.'; }
+      else if (pBJ)        { payout = bjState.bet * 2;                outcome = 'win';  message = 'Blackjack.'; }
       else if (dBJ)        { payout = 0;                              outcome = 'lose'; message = 'Dealer blackjack.'; }
       else if (p > 21)     { payout = 0;                              outcome = 'lose'; message = 'Bust at ' + p + '.'; }
       else if (d > 21)     { payout = bjState.bet * 2;                outcome = 'win';  message = 'Dealer busts at ' + d + '.'; }
@@ -12342,10 +14225,14 @@
     // sequence of clicks rather than a rebuild of the bet every time.
     function bjNextHand() {
       if (!bjState) return;
-      const keep = Math.min(bjState.bet, Math.floor(getCoins() / BJ_CHIPS[0]) * BJ_CHIPS[0]);
+      // Carry forward what the player actually chose, not the doubled figure.
+      const want = bjState.baseBet || bjState.bet;
+      const keep = Math.min(want, Math.floor(getCoins() / BJ_CHIPS[0]) * BJ_CHIPS[0]);
       bjState.player = [];
       bjState.dealer = [];
       bjState.bet = keep;
+      bjState.baseBet = 0;
+      bjState.doubled = false;
       bjState.staked = 0;
       bjState.phase = 'betting';
       bjState.outcome = null;
@@ -12411,7 +14298,7 @@
         '<div class="bj-hand">' + (st.dealer.length ? bjHandHtml(st.dealer, hideHole) : '<div class="bj-card bj-card--empty"></div><div class="bj-card bj-card--empty"></div>') + '</div>' +
       '</div>';
 
-      html += '<div class="bj-felt-line"><span>' + (st.message || (betting ? 'Blackjack pays 3 to 2. Dealer stands on all 17s.' : '')) + '</span></div>';
+      html += '<div class="bj-felt-line"><span>' + (st.message || (betting ? 'Dealer stands on all 17s.' : '')) + '</span></div>';
 
       html += '<div class="bj-row">' +
         '<div class="bj-seat-label">You' +
@@ -12553,9 +14440,15 @@
     //  SWAG FISH — cosmetic colorways for house objects
     //  Roughly one catch in twenty is a swag fish. It offers a spin for a
     //  colorway. Nothing is spent and nothing is lost: declining keeps the
-    //  fish, and a duplicate colorway just says so. That is deliberate — a
+    //  spin, and a duplicate colorway just says so. That is deliberate: a
     //  wheel that can take something from you is a different kind of feature
     //  than this one, and a worse fit for a 13+ game.
+    //
+    //  The Swag Fish is NOT sellable (Joshua, 2026-09-04). It is a spin, not
+    //  stock, so it carries no price and no Sell All value. Once every
+    //  colorway is owned the wheel pays coins instead (500/1000/2500/5000),
+    //  because a wheel whose only remaining outcome is "you already have it"
+    //  is worse than no wheel.
     // ═══════════════════════════════════
     const COLORWAYS_KEY = 'bitcryptic_colorways';
     // Spins you are holding. A swag fish you decline is not thrown away: it
@@ -12627,18 +14520,50 @@
       btn.textContent = '\u2728 Spin (' + n + ')';
     }
 
-    // Opened from the button rather than from a catch. Spends one token.
-    function openSwagWheel() {
-      if (getSwagTokens() <= 0) return;
+    // One place that builds the overlay, because there were two and neither
+    // cleared what the other had left. Opening the wheel twice appended a
+    // second overlay and panel under the SAME ids, closeSwag() removed one of
+    // each, and the leftovers stacked up over the screen.
+    function mountSwagPanel() {
+      closeSwag();
       const overlay = document.createElement('div');
-      overlay.className = 'detail-overlay active';
+      overlay.className = 'swag-overlay';
       overlay.id = 'swag-overlay';
       const panel = document.createElement('div');
       panel.className = 'swag-panel';
       panel.id = 'swag-panel';
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-modal', 'true');
       document.body.appendChild(overlay);
       document.body.appendChild(panel);
+      return panel;
+    }
+
+    // Opened from the button rather than from a catch. Spends one token.
+    function openSwagWheel() {
+      if (getSwagTokens() <= 0) return;
+      mountSwagPanel();
       spinSwagWheel();
+    }
+
+    // Spinning a swag fish straight out of the bucket. The fish is consumed:
+    // it was never stock, so there is nothing to sell afterwards.
+    function spinSwagFromBucket(index) {
+      const bucket = getBucket();
+      if (index < 0 || index >= bucket.length) return;
+      if (!isSwagFish(bucket[index])) return;
+      if (getSwagTokens() <= 0) return;
+      const fish = bucket.splice(index, 1)[0];
+      saveBucket(bucket);
+      saveFishCatch(fish);
+      renderBucket();
+      renderFishLog();
+      mountSwagPanel();
+      spinSwagWheel();
+    }
+
+    function isSwagFish(fish) {
+      return !!(fish && (fish.swag || fish.name === SWAG_FISH.name));
     }
 
     function maybeSwagFish() {
@@ -12672,13 +14597,7 @@
     }
 
     function showSwagPrompt() {
-      const overlay = document.createElement('div');
-      overlay.className = 'detail-overlay active';
-      overlay.id = 'swag-overlay';
-
-      const panel = document.createElement('div');
-      panel.className = 'swag-panel';
-      panel.id = 'swag-panel';
+      const panel = mountSwagPanel();
       panel.innerHTML =
         '<div class="swag-fish">\u2728\uD83D\uDC1F</div>' +
         '<h3 class="swag-title">A swag fish</h3>' +
@@ -12687,9 +14606,6 @@
           '<button class="fish-btn" onclick="spinSwagWheel()">Spin</button>' +
           '<button class="fish-btn fish-btn--ghost" onclick="closeSwag()">Later</button>' +
         '</div>';
-
-      document.body.appendChild(overlay);
-      document.body.appendChild(panel);
     }
 
     function closeSwag() {
@@ -12701,12 +14617,24 @@
       renderSwagButton();
     }
 
+    // Once every colorway is owned the wheel has nothing left to give, and a
+    // wheel that can only ever say "you already have it" is worse than no
+    // wheel. So it becomes a coin wheel instead.
+    const SWAG_COIN_PRIZES = [500, 1000, 2500, 5000];
+
+    function swagPrizesExhausted() {
+      const owned = getColorways();
+      return Object.keys(COLORWAYS).every((id) => owned.includes(id));
+    }
+
     function spinSwagWheel() {
       const panel = document.getElementById('swag-panel');
       if (!panel) return;
       if (getSwagTokens() <= 0) { closeSwag(); return; }
       setSwagTokens(getSwagTokens() - 1);
-      const ids = Object.keys(COLORWAYS);
+
+      const coinMode = swagPrizesExhausted();
+      const ids = coinMode ? SWAG_COIN_PRIZES.map(String) : Object.keys(COLORWAYS);
       const wonId = ids[Math.floor(Math.random() * ids.length)];
 
       // Land the pointer on the winning wedge: wedges are drawn in order, so
@@ -12716,13 +14644,19 @@
       const idx = ids.indexOf(wonId);
       const target = 1080 + (360 - (idx * wedge + wedge / 2));
 
+      // Coin wedges climb amber to orange with the prize, so the wheel reads
+      // at a glance without needing the numbers printed on it.
+      const COIN_FILL = { '500': '#8a6a1e', '1000': '#b8901f', '2500': '#F2C14E', '5000': '#FB923C' };
+
       let wedges = '';
       ids.forEach((id, i) => {
         const a0 = (i * wedge - 90) * Math.PI / 180;
         const a1 = ((i + 1) * wedge - 90) * Math.PI / 180;
         const x0 = 50 + 48 * Math.cos(a0), y0 = 50 + 48 * Math.sin(a0);
         const x1 = 50 + 48 * Math.cos(a1), y1 = 50 + 48 * Math.sin(a1);
-        const solid = { gold: '#d8a520', diamond: '#9fd8ee', rgb: '#b06bff' }[id];
+        const solid = coinMode
+          ? COIN_FILL[id]
+          : { gold: '#d8a520', diamond: '#9fd8ee', rgb: '#b06bff' }[id];
         wedges += '<path d="M50,50 L' + x0.toFixed(2) + ',' + y0.toFixed(2) +
           ' A48,48 0 0,1 ' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' Z" fill="' + solid + '"/>';
       });
@@ -12743,12 +14677,23 @@
       });
 
       setTimeout(() => {
-        const fresh = saveColorway(wonId);
         const res = document.getElementById('swag-result');
-        if (res) {
-          res.innerHTML = fresh
-            ? '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> unlocked. Apply it from the house palette.'
-            : '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> again. You already have it.';
+        if (coinMode) {
+          const amount = parseInt(wonId, 10);
+          addCoins(amount);
+          renderMoney();
+          renderShop();
+          if (res) {
+            res.innerHTML = '<b style="color:#F2C14E">' + amount.toLocaleString() +
+              ' coins</b> into the tin.';
+          }
+        } else {
+          const fresh = saveColorway(wonId);
+          if (res) {
+            res.innerHTML = fresh
+              ? '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> unlocked. Apply it from the house palette.'
+              : '<b style="color:#F2C14E">' + COLORWAYS[wonId].label + '</b> again. You already have it.';
+          }
         }
         const p2 = document.getElementById('swag-panel');
         if (p2) {
@@ -12892,12 +14837,17 @@
         // most.
         const seen = new Set(Object.keys(getFishSummary().species));
         bucket.forEach(f => seen.add(f.name));
-        const uniqueSpecies = seen.size;
+        // Count only what is actually in the table. Benson is not a fish and
+        // the Swag Fish is a reskin of whatever you just caught, so counting
+        // them made "unique species" exceed the number of species that exist.
+        const realNames = new Set(FISH_TYPES.map(f => f.name));
+        const uniqueSpecies = [...seen].filter(n => realNames.has(n)).length;
         BCWAchievements.checkFishing({
           caught: true,
           weight: fish.weight,
           rarity: fish.rarity,
-          uniqueSpecies: uniqueSpecies
+          uniqueSpecies: uniqueSpecies,
+          totalSpecies: FISH_TYPES.length
         });
       }
 
@@ -13004,16 +14954,17 @@
         let html = '';
         bucket.forEach((fish, i) => {
           const price = getFishPrice(fish);
-          // Benson gets returned, not mounted.
           // Benson has no price button at all. Offering a coin value for him
           // and then refusing the click would be a worse answer than not
-          // offering it.
+          // offering it. The Swag Fish is the same idea: it is a spin, not
+          // stock, so it is never sold and never priced.
+          const swag = isSwagFish(fish);
           const actionBtn = fish.benson
             ? '<button class="bucket-mount-btn" onclick="returnBenson(' + i + ')" title="Take him home">Return</button>'
-            : (fish.rarity === 'legendary'
-              ? '<button class="bucket-mount-btn" onclick="mountFish(' + i + ')" title="Hang it on your wall instead of selling">Mount</button>'
+            : (swag
+              ? '<button class="bucket-mount-btn" onclick="spinSwagFromBucket(' + i + ')" title="Spin the wheel">Spin</button>'
               : '');
-          const sellBtn = fish.benson
+          const sellBtn = (fish.benson || swag)
             ? ''
             : '<button onclick="sellFish(' + i + ')">🪙 ' + price + '</button>';
           html += '<div class="fish-bucket-entry"><span class="rarity-' + fish.rarity + '">' + fish.emoji + ' ' + fish.name + ' (' + fish.weight + ' kg)</span>' +
@@ -13023,13 +14974,13 @@
       }
       const sellAllBtn = document.getElementById('fish-sell-all-btn');
       if (sellAllBtn) {
-        if (bucket.length === 0 || bucket.every(f => f.benson)) {
+        if (bucket.length === 0 || bucket.every(f => f.benson || isSwagFish(f))) {
           sellAllBtn.style.display = 'none';
         } else {
           sellAllBtn.style.display = 'block';
           // Quote only what will actually be sold, or the button promises
-          // coins for a cat it is not going to sell.
-          const totalValue = bucket.filter(f => !f.benson).reduce((sum, f) => sum + getFishPrice(f), 0);
+          // coins for a cat and a swag fish it is not going to sell.
+          const totalValue = bucket.filter(f => !f.benson && !isSwagFish(f)).reduce((sum, f) => sum + getFishPrice(f), 0);
           sellAllBtn.textContent = 'Sell All (🪙 ' + totalValue + ')';
         }
       }
@@ -13094,32 +15045,15 @@
       );
     }
 
-    function mountFish(index) {
-      const bucket = getBucket();
-      if (index < 0 || index >= bucket.length) return;
-      const fish = bucket[index];
-      if (fish.rarity !== 'legendary') return;
-      const mounts = getMounts();
-      if (mounts.length >= 6) {
-        showGameModal('The wall is full. Six is as many as it holds.', 'No Room', '\u{1F3C6}');
-        return;
-      }
-      bucket.splice(index, 1);
-      mounts.push({ name: fish.name, emoji: fish.emoji, weight: fish.weight, color: fish.color });
-      try { localStorage.setItem(MOUNTS_KEY, JSON.stringify(mounts)); } catch (e) {}
-      window.BCSync?.schedulePush('world');
-      saveBucket(bucket);
-      saveFishCatch(fish);
-      renderBucket();
-      renderFishLog();
-      if (typeof addFurniture === 'function') {
-        try { addFurniture('mountedFish'); } catch (e) {}
-      }
-      const res = document.getElementById('fish-result');
-      if (res) {
-        res.style.color = '#F2C14E';
-        res.textContent = fish.name + ' is on the wall at home.';
-      }
+    // Mounting a caught fish was removed (Joshua, 2026-09-04): a legendary
+    // catch is worth more as a catch than as a wall ornament, and the trophy
+    // you can buy in the shop already fills that role.
+    //
+    // getMounts() and the wall itself deliberately stay: players who mounted
+    // fish before this change keep them. Removing the reader as well as the
+    // writer would silently empty a wall they had filled.
+    function mountFish() {
+      /* removed — see above */
     }
 
     // ─── Bestiary ───
@@ -13332,6 +15266,15 @@
 <script src="js/designer.js"></script>
 <script src="js/clueAnnotations.js"></script>
 <script src="js/clueAnatomy.js"></script>
+<script src="js/dailyTerminal.js"></script>
+<script src="js/graduation.js"></script>
+<script src="js/materials.js"></script>
+<script src="js/pets.js"></script>
+<script src="js/cottage.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/islanders.js"></script>
+<script src="js/notebook.js"></script>
+<script src="js/notebookUI.js"></script>
 <!-- Account/cloud-sync. type="module" because it dynamically imports the shared
      auth modules; it boots after load and no-ops entirely when auth is not
      configured, so the island never depends on it. -->
