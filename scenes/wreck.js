@@ -745,16 +745,19 @@ STORY_SCENES['wreck_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
     <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.26"/><stop offset="50%" stop-color="#F2C14E" stop-opacity="0.07"/><stop offset="100%" stop-color="#07141a" stop-opacity="0"/>
   </radialGradient>
   <linearGradient id="wreckWire6" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#d3a03a"/><stop offset="50%" stop-color="#8b6914"/><stop offset="100%" stop-color="#5c4409"/>
+    <stop offset="0%" stop-color="#8a7638"/><stop offset="45%" stop-color="#5f5122"/><stop offset="100%" stop-color="#3b3414"/>
   </linearGradient>
   <linearGradient id="wreckGlove6" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#4a7059"/><stop offset="100%" stop-color="#25392f"/>
+    <stop offset="0%" stop-color="#557f64"/><stop offset="55%" stop-color="#3d5f4b"/><stop offset="100%" stop-color="#22342b"/>
+  </linearGradient>
+  <linearGradient id="wreckPalm6" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#66937350"/><stop offset="0%" stop-color="#669373"/><stop offset="60%" stop-color="#48705a"/><stop offset="100%" stop-color="#2b4136"/>
   </linearGradient>
   <linearGradient id="wreckFloat6" x1="0" y1="0" x2="0.6" y2="1">
-    <stop offset="0%" stop-color="#cfeee0" stop-opacity="0.85"/><stop offset="45%" stop-color="#6fb3a8" stop-opacity="0.5"/><stop offset="100%" stop-color="#153038" stop-opacity="0.75"/>
+    <stop offset="0%" stop-color="#9dc0b6" stop-opacity="0.62"/><stop offset="45%" stop-color="#4e7d78" stop-opacity="0.42"/><stop offset="100%" stop-color="#132a30" stop-opacity="0.8"/>
   </linearGradient>
   <linearGradient id="wreckBellB6" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#c9962e"/><stop offset="40%" stop-color="#8b6914"/><stop offset="100%" stop-color="#4e3907"/>
+    <stop offset="0%" stop-color="#8d7a3c"/><stop offset="40%" stop-color="#5d5021"/><stop offset="100%" stop-color="#332d11"/>
   </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#wreckWater6)"/>
@@ -766,68 +769,125 @@ STORY_SCENES['wreck_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <rect x="424" y="112" width="72" height="52" rx="2" fill="#0f2528" opacity="0.65"/>
 <rect x="424" y="112" width="72" height="7" rx="2" fill="#1d3b3a" opacity="0.5"/>
 <path d="M34,24 Q14,52 32,72 Q48,88 28,106" fill="none" stroke="#2a3a2c" stroke-width="2.4" opacity="0.4"><animate attributeName="d" values="M34,24 Q14,52 32,72 Q48,88 28,106;M34,24 Q20,52 28,72 Q44,88 32,106;M34,24 Q14,52 32,72 Q48,88 28,106" dur="11s" repeatCount="indefinite"/></path>
-<!-- HIS TWO PALMS, held out flat and open, filling the bottom of frame -->
-<path d="M84,260 Q102,212 150,192" fill="none" stroke="#2e4a3c" stroke-width="28" stroke-linecap="round"/>
-<path d="M416,260 Q398,212 350,192" fill="none" stroke="#2e4a3c" stroke-width="28" stroke-linecap="round"/>
-<path d="M110,238 L150,216 L166,244 L126,266 Z" fill="#8b6914"/>
-<path d="M390,238 L350,216 L334,244 L374,266 Z" fill="#8b6914"/>
-<path d="M114,240 L148,221 L152,229 L118,248 Z" fill="#c9962e" opacity="0.5"/>
-<path d="M386,240 L352,221 L348,229 L382,248 Z" fill="#c9962e" opacity="0.5"/>
-<circle cx="132" cy="243" r="1.8" fill="#5c4409"/><circle cx="368" cy="243" r="1.8" fill="#5c4409"/>
-<!-- left palm, fingers open and flat -->
-<path d="M120,206 Q152,180 206,178 Q242,178 248,194 Q250,210 224,218 Q172,230 134,222 Q116,216 120,206 Z" fill="url(#wreckGlove6)"/>
-<path d="M208,176 Q232,170 246,176" fill="none" stroke="#4a7059" stroke-width="7.6" stroke-linecap="round"/>
-<path d="M200,172 Q220,164 236,170" fill="none" stroke="#4a7059" stroke-width="7" stroke-linecap="round"/>
-<path d="M190,169 Q208,160 222,166" fill="none" stroke="#43664f" stroke-width="6.4" stroke-linecap="round"/>
-<path d="M142,198 Q178,188 222,190" fill="none" stroke="#5b8069" stroke-width="1" opacity="0.5"/>
-<!-- right palm -->
-<path d="M380,206 Q348,180 294,178 Q258,178 252,194 Q250,210 276,218 Q328,230 366,222 Q384,216 380,206 Z" fill="url(#wreckGlove6)"/>
-<path d="M292,176 Q268,170 254,176" fill="none" stroke="#4a7059" stroke-width="7.6" stroke-linecap="round"/>
-<path d="M300,172 Q280,164 264,170" fill="none" stroke="#4a7059" stroke-width="7" stroke-linecap="round"/>
-<path d="M310,169 Q292,160 278,166" fill="none" stroke="#43664f" stroke-width="6.4" stroke-linecap="round"/>
-<path d="M358,198 Q322,188 278,190" fill="none" stroke="#5b8069" stroke-width="1" opacity="0.5"/>
+<!-- ===================== HIS TWO HANDS ==========================
+     Both hands come in from the BOTTOM of frame, side by side but clearly
+     separate, fingers pointing UP AND AWAY from each other rather than at
+     each other. Fingers never meet in the middle: the lure sits in the gap
+     between the two palms and there is open water either side of it, so the
+     two hands cannot fuse into one shape. Each hand is a wrist, a cuff, a
+     palm with a heel, four splayed fingers with joints, and a thumb thrown
+     wide of the fingers. Sizes and angles differ so they are not a mirror. -->
+
+<!-- LEFT HAND: wrist bottom-left, fingers up and to the left -->
+<g transform="translate(192,198) rotate(-28)">
+  <!-- forearm out of the bottom of frame -->
+  <path d="M6,96 L2,34" fill="none" stroke="#2e4a3c" stroke-width="30" stroke-linecap="round"/>
+  <!-- tarnished brass cuff at the wrist, sitting across the arm -->
+  <path d="M-18,44 L20,40 L22,58 L-16,62 Z" fill="#5f5122"/>
+  <path d="M-17,46 L19,42 L19.6,47 L-16.4,51 Z" fill="#8a7638" opacity="0.45"/>
+  <circle cx="-8" cy="53" r="1.8" fill="#3b3414"/><circle cx="10" cy="51" r="1.8" fill="#3b3414"/>
+  <!-- PALM: an open plane tilted toward us, heel at the bottom by the wrist -->
+  <path d="M-16,40 Q-20,16 -10,2 Q2,-8 16,-4 Q26,2 26,18 Q26,32 20,40 Q4,48 -16,40 Z" fill="url(#wreckPalm6)"/>
+  <!-- HEEL of the hand, the thick pad just above the cuff -->
+  <path d="M-16,40 Q-19,26 -12,16 Q0,12 8,18 Q10,30 6,42 Q-6,46 -16,40 Z" fill="#5b8a6d" opacity="0.5"/>
+  <!-- palm creases -->
+  <path d="M-10,20 Q2,14 18,16" fill="none" stroke="#2b4136" stroke-width="1.3" opacity="0.55" stroke-linecap="round"/>
+  <path d="M-8,29 Q4,25 16,28" fill="none" stroke="#2b4136" stroke-width="1.1" opacity="0.4" stroke-linecap="round"/>
+  <!-- FOUR FINGERS, splayed upward and fanning apart. Gaps between them. -->
+  <path d="M-8,0 Q-14,-13 -15,-24" fill="none" stroke="#5b8a6d" stroke-width="10" stroke-linecap="round"/>
+  <path d="M-11,-8 L-7,-9 M-13,-17 L-9,-18" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <path d="M2,-4 Q0,-17 -1,-30" fill="none" stroke="#548265" stroke-width="10.4" stroke-linecap="round"/>
+  <path d="M1,-11 L5,-11 M0,-21 L4,-21" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <path d="M12,-4 Q13,-16 15,-27" fill="none" stroke="#4d7a5e" stroke-width="9.8" stroke-linecap="round"/>
+  <path d="M12,-11 L16,-10 M14,-19 L18,-18" stroke="#2b4136" stroke-width="0.9" opacity="0.45"/>
+  <path d="M21,0 Q25,-11 27,-20" fill="none" stroke="#456e54" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M23,-8 L27,-7" stroke="#2b4136" stroke-width="0.8" opacity="0.45"/>
+  <!-- knuckle line where the fingers leave the palm -->
+  <path d="M-9,1 Q6,-6 22,1" fill="none" stroke="#2b4136" stroke-width="1" opacity="0.4"/>
+  <!-- THE THUMB, thrown wide to the LEFT, well clear of the fingers -->
+  <path d="M-16,22 Q-30,20 -40,10 Q-46,2 -38,-2 Q-28,-4 -18,6 Q-14,14 -16,22 Z" fill="#5b8a6d"/>
+  <path d="M-40,10 Q-46,2 -38,-2" fill="none" stroke="#669373" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M-31,7 L-34,3" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <!-- the web between thumb and index -->
+  <path d="M-18,6 Q-14,0 -9,0" fill="none" stroke="#2b4136" stroke-width="1.1" opacity="0.45"/>
+</g>
+
+<!-- RIGHT HAND: wrist bottom-right, fingers up and to the right.
+     Slightly larger and at a different angle, so it is not a mirror. -->
+<g transform="translate(312,202) rotate(26) scale(1.06)">
+  <path d="M-6,94 L-2,32" fill="none" stroke="#2e4a3c" stroke-width="30" stroke-linecap="round"/>
+  <path d="M18,42 L-20,38 L-22,56 L16,60 Z" fill="#5f5122"/>
+  <path d="M17,44 L-19,40 L-19.6,45 L16.4,49 Z" fill="#8a7638" opacity="0.45"/>
+  <circle cx="8" cy="51" r="1.8" fill="#3b3414"/><circle cx="-10" cy="49" r="1.8" fill="#3b3414"/>
+  <path d="M16,38 Q20,14 10,0 Q-2,-10 -16,-6 Q-26,0 -26,16 Q-26,30 -20,38 Q-4,46 16,38 Z" fill="url(#wreckPalm6)"/>
+  <path d="M16,38 Q19,24 12,14 Q0,10 -8,16 Q-10,28 -6,40 Q6,44 16,38 Z" fill="#5b8a6d" opacity="0.5"/>
+  <path d="M10,18 Q-2,12 -18,14" fill="none" stroke="#2b4136" stroke-width="1.3" opacity="0.55" stroke-linecap="round"/>
+  <path d="M8,27 Q-4,23 -16,26" fill="none" stroke="#2b4136" stroke-width="1.1" opacity="0.4" stroke-linecap="round"/>
+  <path d="M8,-2 Q14,-14 15,-26" fill="none" stroke="#5b8a6d" stroke-width="10" stroke-linecap="round"/>
+  <path d="M11,-10 L7,-11 M13,-19 L9,-20" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <path d="M-2,-6 Q0,-19 1,-32" fill="none" stroke="#548265" stroke-width="10.4" stroke-linecap="round"/>
+  <path d="M-1,-13 L-5,-13 M0,-23 L-4,-23" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <path d="M-12,-6 Q-13,-18 -15,-29" fill="none" stroke="#4d7a5e" stroke-width="9.8" stroke-linecap="round"/>
+  <path d="M-12,-13 L-16,-12 M-14,-21 L-18,-20" stroke="#2b4136" stroke-width="0.9" opacity="0.45"/>
+  <path d="M-21,-2 Q-25,-13 -27,-22" fill="none" stroke="#456e54" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M-23,-10 L-27,-9" stroke="#2b4136" stroke-width="0.8" opacity="0.45"/>
+  <path d="M9,-1 Q-6,-8 -22,-1" fill="none" stroke="#2b4136" stroke-width="1" opacity="0.4"/>
+  <path d="M16,20 Q30,18 40,8 Q46,0 38,-4 Q28,-6 18,4 Q14,12 16,20 Z" fill="#5b8a6d"/>
+  <path d="M40,8 Q46,0 38,-4" fill="none" stroke="#669373" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M31,5 L34,1" stroke="#2b4136" stroke-width="0.9" opacity="0.5"/>
+  <path d="M18,4 Q14,-2 9,-2" fill="none" stroke="#2b4136" stroke-width="1.1" opacity="0.45"/>
+</g>
+
+<!-- The heels of the two hands meeting: this is the shelf the lure
+     actually sits on, and it closes the hole between the wrists -->
+<path d="M214,206 Q252,196 292,206 Q294,224 276,236 Q252,244 228,236 Q210,224 214,206 Z" fill="#3d5f4b"/>
+<path d="M220,210 Q252,202 286,210 Q288,222 274,231 Q252,238 230,231 Q216,222 220,210 Z" fill="#48705a" opacity="0.75"/>
+<path d="M232,214 Q252,209 272,214" fill="none" stroke="#2b4136" stroke-width="1.1" opacity="0.45" stroke-linecap="round"/>
+<!-- contact shadow the object casts into that hollow -->
+<ellipse cx="252" cy="220" rx="34" ry="9" fill="#1b2c24" opacity="0.5"/>
+
 <!-- ================= THE LURE, lying across both palms ================= -->
-<g transform="translate(250,150)">
-  <animateTransform attributeName="transform" type="translate" values="250,150;250,153;250,150" dur="5.5s" repeatCount="indefinite"/>
+<g transform="translate(252,214) scale(0.42) rotate(-4)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,1.4;0,0" dur="6.5s" repeatCount="indefinite" additive="sum"/>
   <!-- 1. THE FRAME: a single length of brass wire bent into a teardrop and
        twisted shut at the top, the way a coat hanger is. The two sides do not
        match, because he bent it by eye. -->
   <path d="M0,-52 Q-46,-34 -54,10 Q-58,40 -22,48 Q4,54 30,46 Q62,36 58,4 Q54,-32 0,-52 Z"
         fill="none" stroke="url(#wreckWire6)" stroke-width="4.4" stroke-linejoin="round"/>
   <path d="M0,-52 Q-46,-34 -54,10 Q-58,40 -22,48 Q4,54 30,46 Q62,36 58,4 Q54,-32 0,-52 Z"
-        fill="none" stroke="#e0b452" stroke-width="1.2" opacity="0.45"/>
+        fill="none" stroke="#9c8a4a" stroke-width="1" opacity="0.3"/>
   <!-- the twist at the top where the two wire ends are wound together -->
-  <path d="M-3,-52 L-3,-70 M3,-52 L3,-70" stroke="#8b6914" stroke-width="3" stroke-linecap="round"/>
-  <path d="M-4,-56 L4,-59 M-4,-60 L4,-63 M-4,-64 L4,-67" stroke="#5c4409" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M-3,-52 L-3,-70 M3,-52 L3,-70" stroke="#5f5122" stroke-width="3" stroke-linecap="round"/>
+  <path d="M-4,-56 L4,-59 M-4,-60 L4,-63 M-4,-64 L4,-67" stroke="#3b3414" stroke-width="1.8" stroke-linecap="round"/>
   <!-- and a loop above it, uneven, to hang the whole thing from -->
   <path d="M-3,-70 Q-3,-82 3,-82 Q9,-82 8,-72" fill="none" stroke="url(#wreckWire6)" stroke-width="3.4" stroke-linecap="round"/>
   <!-- 2. A CROSSBAR, a second bit of wire soldered across the middle. The
        solder blob is visibly too big at one end and too small at the other. -->
   <path d="M-52,-2 L56,-8" stroke="url(#wreckWire6)" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="-52" cy="-2" r="4.4" fill="#8b6914"/>
-  <circle cx="-53" cy="-3.4" r="1.6" fill="#e0b452" opacity="0.6"/>
-  <circle cx="56" cy="-8" r="2" fill="#8b6914"/>
+  <circle cx="-52" cy="-2" r="4.4" fill="#5f5122"/>
+  <circle cx="-53" cy="-3.4" r="1.6" fill="#9c8a4a" opacity="0.4"/>
+  <circle cx="56" cy="-8" r="2" fill="#5f5122"/>
   <!-- 3. THREE GLASS FLOATS threaded on the crossbar, different sizes -->
   <g>
     <circle cx="-28" cy="-4" r="11" fill="url(#wreckFloat6)"/>
-    <circle cx="-28" cy="-4" r="11" fill="none" stroke="#7fc4b8" stroke-width="0.9" opacity="0.5"/>
-    <path d="M-34,-9 Q-31,-13 -26,-13" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" opacity="0.6"><animate attributeName="opacity" values="0.34;0.75;0.34" dur="3.6s" repeatCount="indefinite"/></path>
-    <path d="M-39,-4 L-17,-4" stroke="#8b6914" stroke-width="3" opacity="0.35"/>
+    <circle cx="-28" cy="-4" r="11" fill="none" stroke="#6a9a92" stroke-width="0.8" opacity="0.35"/>
+    <path d="M-34,-9 Q-31,-13 -26,-13" fill="none" stroke="#b9d6cc" stroke-width="1.8" stroke-linecap="round" opacity="0.32"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="3.6s" repeatCount="indefinite"/></path>
+    <path d="M-39,-4 L-17,-4" stroke="#5f5122" stroke-width="3" opacity="0.35"/>
   </g>
   <g>
     <circle cx="4" cy="-6" r="14" fill="url(#wreckFloat6)"/>
-    <circle cx="4" cy="-6" r="14" fill="none" stroke="#7fc4b8" stroke-width="0.9" opacity="0.5"/>
-    <path d="M-3,-12 Q1,-17 7,-16" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.62"><animate attributeName="opacity" values="0.36;0.82;0.36" dur="4.4s" repeatCount="indefinite" begin="1.2s"/></path>
-    <path d="M-10,-6 L18,-6" stroke="#8b6914" stroke-width="3" opacity="0.35"/>
+    <circle cx="4" cy="-6" r="14" fill="none" stroke="#6a9a92" stroke-width="0.8" opacity="0.35"/>
+    <path d="M-3,-12 Q1,-17 7,-16" fill="none" stroke="#b9d6cc" stroke-width="2.2" stroke-linecap="round" opacity="0.34"><animate attributeName="opacity" values="0.2;0.44;0.2" dur="4.4s" repeatCount="indefinite" begin="1.2s"/></path>
+    <path d="M-10,-6 L18,-6" stroke="#5f5122" stroke-width="3" opacity="0.35"/>
   </g>
   <g>
     <circle cx="36" cy="-7" r="9" fill="url(#wreckFloat6)"/>
-    <circle cx="36" cy="-7" r="9" fill="none" stroke="#7fc4b8" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="36" cy="-7" r="9" fill="none" stroke="#6a9a92" stroke-width="0.7" opacity="0.32"/>
     <!-- this one is chipped: a wedge missing off the rim -->
     <path d="M43,-11 L46,-6 L41,-2 Z" fill="#0d2028" opacity="0.7"/>
-    <path d="M43,-11 L46,-6 L41,-2" fill="none" stroke="#7fc4b8" stroke-width="0.8" opacity="0.45"/>
-    <path d="M31,-11 Q34,-14 38,-14" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.55"><animate attributeName="opacity" values="0.3;0.68;0.3" dur="3.1s" repeatCount="indefinite" begin="2.3s"/></path>
-    <path d="M28,-7 L45,-7" stroke="#8b6914" stroke-width="2.6" opacity="0.35"/>
+    <path d="M43,-11 L46,-6 L41,-2" fill="none" stroke="#6a9a92" stroke-width="0.7" opacity="0.3"/>
+    <path d="M31,-11 Q34,-14 38,-14" fill="none" stroke="#b9d6cc" stroke-width="1.6" stroke-linecap="round" opacity="0.3"><animate attributeName="opacity" values="0.16;0.36;0.16" dur="3.1s" repeatCount="indefinite" begin="2.3s"/></path>
+    <path d="M28,-7 L45,-7" stroke="#5f5122" stroke-width="2.6" opacity="0.35"/>
   </g>
   <!-- 4. KNOTTED LINE wound round the bottom of the frame, four real knots -->
   <path d="M-53,14 Q-30,26 -6,22 Q20,18 44,28 Q54,32 57,20" fill="none" stroke="#3b4a34" stroke-width="2.6"/>
@@ -847,28 +907,39 @@ STORY_SCENES['wreck_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
   <g transform="translate(4,62)">
     <animateTransform attributeName="transform" type="rotate" values="-5,0,-2;5,0,-2;-5,0,-2" dur="4.6s" repeatCount="indefinite" additive="sum"/>
     <!-- crown loop -->
-    <circle cx="0" cy="-2" r="3" fill="none" stroke="#8b6914" stroke-width="1.8"/>
+    <circle cx="0" cy="-2" r="3" fill="none" stroke="#5f5122" stroke-width="1.8"/>
     <!-- body of the bell -->
     <path d="M-12,16 Q-12,0 -6,-2 Q0,-3.4 6,-2 Q12,0 12,16 Z" fill="url(#wreckBellB6)"/>
     <!-- the flare at the mouth -->
-    <path d="M-12,16 Q0,21 12,16 L12,19.4 Q0,24.4 -12,19.4 Z" fill="#5c4409"/>
-    <path d="M-12,16 Q0,21 12,16" fill="none" stroke="#c9962e" stroke-width="0.9" opacity="0.5"/>
+    <path d="M-12,16 Q0,21 12,16 L12,19.4 Q0,24.4 -12,19.4 Z" fill="#3b3414"/>
+    <path d="M-12,16 Q0,21 12,16" fill="none" stroke="#8a7638" stroke-width="0.8" opacity="0.35"/>
     <!-- THE DENT: a flat facet where the round should be, with a crease -->
-    <path d="M5,2 L11.6,8 L9,15 L12,15 L12,4 Z" fill="#3f2e05"/>
-    <path d="M5,2 L11.6,8 L9,15" fill="none" stroke="#3f2e05" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M6.4,4.6 L10.4,8.6" stroke="#c9962e" stroke-width="0.8" opacity="0.4"/>
+    <path d="M5,2 L11.6,8 L9,15 L12,15 L12,4 Z" fill="#2a2410"/>
+    <path d="M5,2 L11.6,8 L9,15" fill="none" stroke="#2a2410" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M6.4,4.6 L10.4,8.6" stroke="#8a7638" stroke-width="0.7" opacity="0.3"/>
     <!-- highlight on the good side -->
-    <path d="M-7,2 Q-4,-1 0,-1.6" fill="none" stroke="#ffeaa7" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M-7,2 Q-4,-1 0,-1.6" fill="none" stroke="#c3b177" stroke-width="1.4" stroke-linecap="round" opacity="0.35"/>
     <!-- clapper, hanging out of the mouth -->
-    <path d="M0,16 L0,21" stroke="#5c4409" stroke-width="1.2"/>
-    <circle cx="0" cy="22.4" r="2.4" fill="#5c4409"/>
+    <path d="M0,16 L0,21" stroke="#3b3414" stroke-width="1.2"/>
+    <circle cx="0" cy="22.4" r="2.4" fill="#3b3414"/>
+  </g>
+  <!-- tarnish: green-black patches where the brass has gone off -->
+  <g fill="#3f4a2c" opacity="0.42">
+    <ellipse cx="-40" cy="-24" rx="7" ry="4.4" transform="rotate(-28,-40,-24)"/>
+    <ellipse cx="46" cy="16" rx="6" ry="3.6" transform="rotate(18,46,16)"/>
+    <ellipse cx="-16" cy="42" rx="8" ry="3.8" transform="rotate(6,-16,42)"/>
+    <ellipse cx="2" cy="-48" rx="5.4" ry="3" transform="rotate(-12,2,-48)"/>
+  </g>
+  <!-- plier marks where he gripped the wire to bend it -->
+  <g stroke="#3b3414" stroke-width="1.1" opacity="0.5">
+    <path d="M-50,-16 L-46,-13 M-49,-11 L-45,-8 M40,-30 L44,-27 M39,-25 L43,-22"/>
   </g>
   <!-- 6. one wire that was bent back on itself and simply left that way -->
   <path d="M-54,10 Q-70,2 -62,-10" fill="none" stroke="url(#wreckWire6)" stroke-width="3" stroke-linecap="round"/>
-  <path d="M-62,-10 L-58,-16" stroke="#8b6914" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-62,-10 L-58,-16" stroke="#5f5122" stroke-width="2.4" stroke-linecap="round"/>
 </g>
 <!-- Faint amber halo where the lamp above catches the brass. No spotlight. -->
-<ellipse cx="250" cy="146" rx="112" ry="44" fill="#F2C14E" opacity="0.06"><animate attributeName="opacity" values="0.03;0.09;0.03" dur="4s" repeatCount="indefinite"/></ellipse>
+<ellipse cx="252" cy="214" rx="52" ry="20" fill="#F2C14E" opacity="0.05"><animate attributeName="opacity" values="0.03;0.09;0.03" dur="4s" repeatCount="indefinite"/></ellipse>
 <!-- Motes -->
 <circle cx="140" cy="74" r="1" fill="#ffeaa7" opacity="0.26"><animate attributeName="cy" values="74;56;74" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.1;0.3;0.1" dur="5s" repeatCount="indefinite"/></circle>
 <circle cx="366" cy="58" r="1.1" fill="#ffeaa7" opacity="0.22"><animate attributeName="cy" values="58;40;58" dur="12s" repeatCount="indefinite" begin="2s"/><animate attributeName="opacity" values="0.08;0.26;0.08" dur="6s" repeatCount="indefinite" begin="2s"/></circle>
