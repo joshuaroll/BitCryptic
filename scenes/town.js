@@ -203,6 +203,10 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <linearGradient id="townCloseupBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#5a7a9a"/><stop offset="40%" stop-color="#7a9ab3"/><stop offset="100%" stop-color="#8a9db3"/>
   </linearGradient>
+  <!-- town_3 referenced townSoftGlow without defining it: the filter lives in
+       town_0, so the blur only appeared if that scene happened to still be in
+       the DOM. Its own copy, under its own id. -->
+  <filter id="town3SoftGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <radialGradient id="waterShimmer" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#aaddff" stop-opacity="0.2"/><stop offset="100%" stop-color="#aaddff" stop-opacity="0"/>
   </radialGradient>
@@ -251,7 +255,7 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2.2s" repeatCount="indefinite" begin="0.6s"/>
 </path>
 <!-- Submerged golden text in fountain water — matching index.html clues -->
-<g opacity="0.65" filter="url(#townSoftGlow)">
+<g opacity="0.65" filter="url(#town3SoftGlow)">
   <animate attributeName="opacity" values="0.5;0.8;0.5" dur="4s" repeatCount="indefinite"/>
   <!-- Clue 1 (left): TOWER. Answer: WROTE mangled -->
   <text x="125" y="180" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Wrote, mangled,</text>
