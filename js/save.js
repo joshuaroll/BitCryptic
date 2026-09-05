@@ -66,6 +66,9 @@ const BCWSave = (() => {
     'bcw_wreck_seen',
     // How many dives, so the page Fredward shows you rotates.
     'bcw_wreck_visits',
+    // The three pieces of the dock keeper's diving suit, and whether it
+    // has been put on.
+    'bcw_diving_suit',
     // The notebook is deliberately NOT synced (canvases would swamp the
     // 256 KB cloud payload) but it IS the player's own work, so export,
     // backup and account deletion must all see it.

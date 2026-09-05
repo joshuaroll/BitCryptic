@@ -2225,6 +2225,34 @@
       border-left: 2px solid #2A3553;
     }
 
+    /* ── The diving suit ─────────────────────────────────────────────────── */
+    .suit-say { text-align: left; margin-bottom: 18px; }
+    .suit-say p { color: #CBD5E1; font-size: 0.92rem; line-height: 1.55; margin: 0 0 10px; }
+    .suit-say p:last-child { margin: 0; }
+    .suit-list { text-align: left; display: flex; flex-direction: column; gap: 7px; }
+    .suit-row {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 10px 13px;
+    }
+    .suit-row.is-got { border-color: rgba(100, 217, 160, 0.4); }
+    .suit-row__tick {
+      font-family: 'JetBrains Mono', monospace;
+      color: #475569;
+      width: 12px;
+      flex: none;
+      text-align: center;
+      padding-top: 1px;
+    }
+    .suit-row.is-got .suit-row__tick { color: #64D9A0; }
+    .suit-row__body strong { display: block; color: #E2E8F0; font-size: 0.87rem; font-weight: 600; }
+    .suit-row.is-got .suit-row__body strong { color: #64D9A0; }
+    .suit-row__body span { display: block; color: #94A3B8; font-size: 0.81rem; line-height: 1.45; margin-top: 2px; }
+
     /* ── The ability workbench ───────────────────────────────────────────── */
     .pet-work__intro {
       color: #94A3B8;
@@ -5605,10 +5633,22 @@
         desc: 'The Decoder Docks jut out from the island\'s south-west shore. Ships put in carrying visitors and cargo nobody remembers ordering. The stranger dispatches end up pinned to the notice board.',
         actions: [
           { label: 'Notice Board', onclick: () => showGameModal('Faded dispatches cover the board, but one scrap in an angler\'s scrawl catches your eye: "The town terminal listens, you know. I told it FISH and something rippled by the water ever since."', 'Notice Board', '\u{1F4CC}') },
-          // The wreck is offshore and needs no code. Before the first visit
-          // this is the only thing that names it, and the map shows nothing.
-          { label: () => hasVisitedWreck() ? 'Back Down to the Wreck' : 'Visit the Wreck',
-            onclick: () => visitWreck() },
+          // The wreck is offshore and needs no code, but it does need a suit.
+          // Before the first dive this is the only thing that names either, and
+          // the map shows nothing.
+          //
+          // One button, two states. Until the suit is whole it opens the shack
+          // and the checklist; after that it goes down. A separate disabled
+          // "Visit the Wreck" sitting next to it would be a button that exists
+          // to say no.
+          { label: () => {
+              if (hasVisitedWreck()) return 'Back Down to the Wreck';
+              return suitReady() ? 'Down to the Wreck' : 'The Diving Suit';
+            },
+            onclick: () => {
+              if (hasVisitedWreck() || suitReady()) { closePanel(); visitWreck(); }
+              else { closePanel(); openDivingSuit(); }
+            } },
           { label: () => (typeof BCWGraduation !== 'undefined' && BCWGraduation.progress().ready) ? 'The Transport' : 'Set Sail',
             primary: () => typeof BCWGraduation !== 'undefined' && BCWGraduation.progress().ready,
             onclick: () => showSetSail() }
@@ -9438,6 +9478,9 @@
         actionsEl.appendChild(storyBtn);
       }
 
+      // A piece of the diving suit, when this is where one ended up.
+      appendSuitAction(actionsEl, id);
+
       // Canon's errand, when this is the place he sent you.
       //
       // Added by the renderer rather than written into five location panels,
@@ -13102,6 +13145,22 @@
       feedback.innerHTML += '<br><span class="mat-drop">' + escapeHtml(got.note) + '</span>';
     }
 
+    // ─── The diving suit piece, wherever it ended up ───
+    //
+    // Added by the renderer rather than written into three location panels,
+    // so a piece cannot be relocated in divingsuit.js and leave a button
+    // behind in the old place.
+    function appendSuitAction(actionsEl, locId) {
+      if (!actionsEl || typeof BCWDivingSuit === 'undefined') return;
+      const piece = BCWDivingSuit.pieceAt(locId);
+      if (!piece) return;
+      const btn = document.createElement('button');
+      btn.className = 'detail-action-btn';
+      btn.textContent = 'Take ' + piece.name.replace(/^The /, 'the ');
+      btn.onclick = () => takeSuitPiece(locId);
+      actionsEl.appendChild(btn);
+    }
+
     // ─── The errand button ───
     //
     // Appears on a location panel only while that location is the one Canon
@@ -13323,6 +13382,214 @@
         default:
           return '';
       }
+    }
+
+    // ═══════════════════════════════════
+    //  THE DIVING SUIT
+    // ═══════════════════════════════════
+    //
+    // Three pieces, gathered from places the player already goes, so that
+    // going down to the wreck is something they prepared for rather than a
+    // button that was always there.
+    //
+    // Never a gate. Every piece is named outright by the dock keeper, sits in
+    // plain sight, and needs no clue, code or story to collect. See the header
+    // of js/divingsuit.js for why that matters.
+    //
+    // COPY IS PLACEHOLDER until G3 sign-off.
+
+    function suitReady() {
+      return typeof BCWDivingSuit !== 'undefined' && BCWDivingSuit.complete();
+    }
+
+    // The shack, and the suit hanging in it. This is the whole conversation:
+    // he explains it once, names all three pieces and where they went, and
+    // afterwards it becomes a checklist he will read back on request.
+    function openDivingSuit() {
+      if (typeof BCWDivingSuit === 'undefined') return;
+      const first = BCWDivingSuit.ask();
+      const p = BCWDivingSuit.progress();
+
+      let body = '<div class="post">' + suitArt(p.have) + '<div class="suit-say">';
+
+      if (first) {
+        body +=
+          '<p>The dock keeper takes you round the back of the shack. Hanging on a ' +
+          'hook, and hanging is doing a lot of work in that sentence, is a diving ' +
+          'suit of the old kind: canvas, brass, and a great deal of weight.</p>' +
+          '<p>"She is sound," he says, and knocks a knuckle on the chest plate to ' +
+          'prove it. "What she is not, is complete. Three bits walked off over the ' +
+          'years, and the awkward thing is I know exactly where all three of them ' +
+          'went, and I have never once had the face to go and ask."</p>';
+      } else if (p.have >= BCWDivingSuit.PIECES.length) {
+        body += '<p>"All three." The dock keeper looks at the suit the way you look at ' +
+          'a thing you had stopped expecting. "Well. Go on then."</p>';
+      } else {
+        body += '<p>"Still short," says the dock keeper, without any particular urgency. ' +
+          '"She will wait. She has waited longer than this."</p>';
+      }
+
+      body += '</div><div class="suit-list">';
+      BCWDivingSuit.PIECES.forEach((piece) => {
+        const got = BCWDivingSuit.has(piece.id);
+        body +=
+          '<div class="suit-row' + (got ? ' is-got' : '') + '">' +
+          '<span class="suit-row__tick">' + (got ? '✓' : '·') + '</span>' +
+          '<span class="suit-row__body"><strong>' + escapeHtml(piece.name) + '</strong>' +
+          '<span>' + escapeHtml(got ? 'Recovered from ' + piece.where + '.' : piece.hint) + '</span>' +
+          '</span></div>';
+      });
+      body += '</div>';
+
+      if (p.have >= BCWDivingSuit.PIECES.length) {
+        body += '<div class="pet-panel__cheeses">' +
+          '<button class="pet-cheese" id="suit-wear">' +
+          (p.worn ? 'Go down to the wreck' : 'Put the suit on') + '</button></div>';
+      }
+
+      showGameModal(body + '</div>', 'The Diving Suit', '');
+
+      const go = document.getElementById('suit-wear');
+      if (go) go.onclick = () => {
+        const firstTime = BCWDivingSuit.wear();
+        closeGameModal();
+        if (firstTime) {
+          // The one beat where putting it on is the event. Afterwards the
+          // button just takes you down, because ceremony that repeats is not
+          // ceremony, it is a loading screen.
+          showGameModal(
+            '<div class="post">' + suitArt(3, true) +
+            '<p class="post__line">The helmet goes on last and the world goes quiet and brass-coloured. ' +
+            'Somebody outside knocks twice on the crown, which is either a signal or a joke, ' +
+            'and the dock keeper pays out the hose hand over hand as you go under.</p></div>',
+            'Ready', ''
+          );
+          const modal = document.getElementById('game-modal-body');
+          if (modal) {
+            const b = document.createElement('button');
+            b.className = 'pet-cheese';
+            b.textContent = 'Down';
+            b.onclick = () => { closeGameModal(); visitWreck(); };
+            const row = document.createElement('div');
+            row.className = 'pet-panel__cheeses';
+            row.appendChild(b);
+            modal.appendChild(row);
+          }
+        } else {
+          visitWreck();
+        }
+      };
+    }
+
+    // Picking a piece up, wherever it turns out to be. One function for all
+    // three, so a new piece cannot ship with its own half-written panel.
+    function takeSuitPiece(locationId) {
+      if (typeof BCWDivingSuit === 'undefined') return;
+      const piece = BCWDivingSuit.pieceAt(locationId);
+      if (!piece) return;
+      BCWDivingSuit.take(piece.id);
+      closePanel();
+
+      const left = BCWDivingSuit.missing();
+      let body = '<div class="post">' +
+        '<p class="post__line">' + escapeHtml(piece.found) + '</p>';
+      if (left.length) {
+        body += '<p class="post__brief">Still missing: ' +
+          escapeHtml(left.map((p) => p.name.replace(/^The /, '')).join(', ')) + '.</p>';
+      } else {
+        body += '<p class="post__brief">That is all three. The suit is whole.</p>';
+      }
+      showGameModal(body + '</div>', piece.name, '');
+      if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+      if (typeof BCWAchievements !== 'undefined' && BCWAchievements.checkSuit) {
+        const p = BCWDivingSuit.progress();
+        BCWAchievements.checkSuit(p.have, p.total);
+      }
+    }
+
+    // The suit on its hook, filling in as pieces come back. Drawn rather than
+    // listed because three ticks in a row is a form, and this is a thing
+    // hanging in a shed.
+    function suitArt(have, worn) {
+      const on = (n) => (have >= n ? 1 : 0);
+      const dim = 'opacity="0.18"';
+      const lit = 'opacity="1"';
+      // have is a count here, but the pieces come back in any order, so the
+      // drawing asks the module which specific ones are in.
+      const D = typeof BCWDivingSuit !== 'undefined' ? BCWDivingSuit : null;
+      const hasHelmet = worn || (D && D.has('helmet'));
+      const hasBoots = worn || (D && D.has('boots'));
+      const hasHose = worn || (D && D.has('hose'));
+
+      return '<svg class="post__art" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<defs>' +
+        '<linearGradient id="suitShed" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#12182a"/><stop offset="100%" stop-color="#0a0f1c"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="suitCanvas" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0%" stop-color="#5d6b52"/><stop offset="55%" stop-color="#8c9a78"/>' +
+        '<stop offset="100%" stop-color="#4a5644"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="suitBrass" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0%" stop-color="#7a6420"/><stop offset="45%" stop-color="#c8a63e"/>' +
+        '<stop offset="100%" stop-color="#6b5518"/>' +
+        '</linearGradient>' +
+        '<radialGradient id="suitLamp" cx="50%" cy="50%" r="50%">' +
+        '<stop offset="0%" stop-color="#F2C14E" stop-opacity="0.3"/>' +
+        '<stop offset="100%" stop-color="#F2C14E" stop-opacity="0"/>' +
+        '</radialGradient>' +
+        '</defs>' +
+        '<rect width="500" height="260" fill="url(#suitShed)"/>' +
+        // Shed wall: boards, and a lamp off to one side.
+        '<g opacity="0.5">' +
+        '<path d="M0,60 h500 M0,110 h500 M0,160 h500 M0,210 h500" stroke="#1c2438" stroke-width="1.5"/>' +
+        '</g>' +
+        '<circle cx="404" cy="52" r="46" fill="url(#suitLamp)"/>' +
+        '<rect x="399" y="34" width="10" height="14" rx="2" fill="#F2C14E" opacity="0.85">' +
+        '<animate attributeName="opacity" values="0.62;0.95;0.7;0.88;0.62" dur="3.2s" repeatCount="indefinite"/></rect>' +
+        // The hook and the beam it hangs off.
+        '<rect x="0" y="26" width="500" height="7" fill="#2a3346"/>' +
+        '<path d="M250,33 v14" stroke="#3d4a63" stroke-width="3" fill="none"/>' +
+        '<path d="M244,47 q6,-7 12,0" stroke="#3d4a63" stroke-width="3" fill="none"/>' +
+        // Torso, always present: this is the part that never walked off.
+        '<path d="M222,86 q28,-9 56,0 l7,66 q-35,9 -70,0 z" fill="url(#suitCanvas)"/>' +
+        '<path d="M222,86 q28,-9 56,0" stroke="#3c4838" stroke-width="1.4" fill="none"/>' +
+        '<rect x="236" y="112" width="28" height="20" rx="3" fill="#3f4a3c" opacity="0.7"/>' +
+        // Arms, hanging.
+        '<path d="M224,94 q-16,26 -12,52" stroke="url(#suitCanvas)" stroke-width="13" stroke-linecap="round" fill="none"/>' +
+        '<path d="M276,94 q16,26 12,52" stroke="url(#suitCanvas)" stroke-width="13" stroke-linecap="round" fill="none"/>' +
+        // Neck ring, always there. The helmet bolts onto it.
+        '<rect x="238" y="76" width="24" height="11" rx="3" fill="url(#suitBrass)"/>' +
+        // HELMET
+        '<g ' + (hasHelmet ? lit : dim) + '>' +
+        '<circle cx="250" cy="58" r="20" fill="url(#suitBrass)"/>' +
+        '<circle cx="250" cy="58" r="12.5" fill="#16323a"/>' +
+        '<circle cx="250" cy="58" r="12.5" fill="none" stroke="#6b5518" stroke-width="2"/>' +
+        // The polished patch, at eye height.
+        '<ellipse cx="247" cy="55" rx="5" ry="4" fill="#7fb0c0" opacity="0.35"/>' +
+        '<circle cx="234" cy="58" r="2.4" fill="url(#suitBrass)"/>' +
+        '<circle cx="266" cy="58" r="2.4" fill="url(#suitBrass)"/>' +
+        '<circle cx="250" cy="42" r="2.4" fill="url(#suitBrass)"/>' +
+        '</g>' +
+        // BOOTS
+        '<g ' + (hasBoots ? lit : dim) + '>' +
+        '<path d="M228,196 q-3,14 2,20 h22 q4,-8 1,-20 z" fill="#4a5644"/>' +
+        '<path d="M272,196 q3,14 -2,20 h-22 q-4,-8 -1,-20 z" fill="#4a5644"/>' +
+        '<rect x="225" y="214" width="28" height="6" rx="2" fill="url(#suitBrass)"/>' +
+        '<rect x="247" y="214" width="28" height="6" rx="2" fill="url(#suitBrass)"/>' +
+        '</g>' +
+        // Legs, between torso and boots, only meaningful with the boots on.
+        '<g ' + (hasBoots ? 'opacity="0.9"' : dim) + '>' +
+        '<rect x="230" y="150" width="17" height="48" rx="5" fill="url(#suitCanvas)"/>' +
+        '<rect x="253" y="150" width="17" height="48" rx="5" fill="url(#suitCanvas)"/>' +
+        '</g>' +
+        // HOSE, running off to the side and out of frame.
+        '<g ' + (hasHose ? lit : dim) + '>' +
+        '<path d="M268,80 q46,10 62,44 q16,34 58,30" stroke="#3b4a3a" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+        '<path d="M268,80 q46,10 62,44 q16,34 58,30" stroke="#5d6b52" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,7"/>' +
+        '<circle cx="268" cy="80" r="4" fill="url(#suitBrass)"/>' +
+        '</g>' +
+        '</svg>';
     }
 
     // ═══════════════════════════════════
@@ -16525,6 +16792,7 @@
 <script src="js/materials.js"></script>
 <script src="js/pets.js"></script>
 <script src="js/quest.js"></script>
+<script src="js/divingsuit.js"></script>
 <script src="js/cottage.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/islanders.js"></script>

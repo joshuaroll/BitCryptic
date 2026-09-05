@@ -46,6 +46,8 @@ const BCWAchievements = (() => {
     // because the errand is not the thing that happened.
     second_chair: { title: 'The Second Chair', desc: 'Bring something back to the listening post', icon: '🪑', category: 'story' },
     the_manifest: { title: 'What a Crossing Sheds', desc: 'Recover all five artifacts', icon: '🧭', category: 'story' },
+    // The dock keeper's suit, whole again after years in three places.
+    suited: { title: 'Sound, and Complete', desc: 'Put the diving suit back together', icon: '🪔', category: 'story' },
     // Pets. Adopting one at all is the milestone; the full five is the shelf.
     first_pet: { title: 'Followed You Out', desc: 'Take a creature home', icon: '🐾', category: 'house' },
     full_menagerie: { title: 'A Full House', desc: 'All five creatures living at the cottage', icon: '🏘️', category: 'house' },
@@ -178,6 +180,11 @@ const BCWAchievements = (() => {
     if (fishData.totalSpecies && fishData.uniqueSpecies >= fishData.totalSpecies) unlock('fish_complete');
   }
 
+  // Three pieces from three places, and a suit that works again.
+  function checkSuit(have, total) {
+    if (total && have >= total) unlock('suited');
+  }
+
   // Canon's errands. The first is the badge; the fifth is the manifest.
   function checkQuest(recovered, total) {
     if (recovered >= 1) unlock('second_chair');
@@ -236,6 +243,7 @@ const BCWAchievements = (() => {
     checkHouseItems,
     checkQuest,
     checkPets,
+    checkSuit,
     checkTerminalCodes,
     checkIntroComplete,
     checkShare,
