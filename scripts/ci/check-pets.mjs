@@ -112,7 +112,91 @@ check(!P.isAdopted('ram'), 'released pet is still at home');
 check(P.onSolve('reversal') === null, 'a released pet was re-offered as a surprise');
 check(P.adopt('ram') !== null, 'a released pet could not be taken back');
 
+// ── One in your pocket ────────────────────────────────────────────────────
+// The active pet is what the HUD points at, so a stale or impossible value
+// there is a badge naming a creature the player does not have.
+P.reset();
+check(P.active() === null, 'something was active with no pets adopted');
+P.adopt('croc');
+check(P.active()?.id === 'croc', 'the first pet adopted did not come with you');
+P.adopt('ram');
+check(P.active()?.id === 'croc', 'adopting a second pet stole the active slot');
+check(P.setActive('hedgehog') === false, 'an unowned pet could be made active');
+check(P.active()?.id === 'croc', 'a rejected setActive still changed the active pet');
+check(P.setActive('ram') === true, 'setActive refused an owned pet');
+P.release('ram');
+check(P.active()?.id === 'croc', 'releasing the active pet left the HUD pointing at it');
+P.release('croc');
+check(P.active() === null, 'releasing the last pet left something active');
+
+// ── Abilities ─────────────────────────────────────────────────────────────
+// The line these must never cross: a pet does a solver's MANUAL LABOUR and
+// hands back possibilities. It never picks one, and it never consults a word
+// list, because a pet that returned only real words would be an answer
+// machine and the solve would stop being the player's.
+for (const s of P.SPECIES) {
+  check(!!s.ability, `${s.id}: no ability`);
+  check(!!s.ability?.verb, `${s.id}: ability has no verb`);
+  check(!!s.ability?.tier1 && !!s.ability?.tier2, `${s.id}: ability is missing a tier`);
+  check(
+    ['letters', 'span', 'text', 'count', 'pair'].includes(s.ability?.input),
+    `${s.id}: unknown ability input "${s.ability?.input}"`
+  );
+}
+
+// The croc must NOT filter to real words. Given letters that spell one word,
+// he still has to be capable of handing back an arrangement that is not it.
+const arrangements = new Set();
+for (let i = 0; i < 200; i++) arrangements.add(P.shuffle('dine').pieces.join(''));
+check(arrangements.size > 1, 'THE CROC IS AN ANAGRAM SOLVER: he only ever returns one arrangement');
+check(
+  [...arrangements].some((a) => !['DINE', 'NIDE'].includes(a)),
+  'the croc only returns dictionary words; he must return the possibility space'
+);
+check(P.shuffle('dine').pieces.join('').split('').sort().join('') === 'DEIN',
+  'the croc lost or invented a letter');
+
+// The hedgehog reports WHERE, never WHAT is meant. A run wholly inside one
+// word is a substring, not a hidden answer, and reporting it would teach the
+// device wrong.
+check(P.sniff('extraordinary').spans.length === 0,
+  'THE HEDGEHOG FLAGGED A RUN INSIDE ONE WORD: that is a substring, not a hidden answer');
+const spain = P.sniff('gasp aintree horses', { length: 5 });
+check(spain.spans.some((s) => s.run === 'SPAIN'), 'the hedgehog missed a real hidden word');
+check(spain.spans.length > 1,
+  'THE HEDGEHOG NAMED THE ANSWER: she must offer the candidates, not pick one');
+check(/curled up/i.test(P.sniff('cat').note), 'a clue with nothing buried gave no clear answer');
+
+// The ram and the cat are exact operations, so they are checked for being right.
+check(P.turn('stop').readings[0].text === 'pots', 'the ram cannot reverse');
+check(P.turn('stop', { tier: 1 }).readings.length === 1, 'tier 1 ram had a tier 2 reading');
+check(P.turn('stop', { tier: 2 }).readings.length === 2, 'the ram never graduated');
+const nested = P.nest('at', 'home', { tier: 1 }).ways.map((w) => w.text);
+check(nested.join(' ') === 'HATOME HOATME HOMATE', `the cat nested wrong: ${nested.join(' ')}`);
+check(P.nest('at', 'home', { tier: 2 }).ways.length > nested.length, 'the cat never graduated');
+// Every seam of (7), and no seam that leaves a piece of nothing.
+check(P.split(7).pairs.length === 6, 'the chameleon miscounted the seams in (7)');
+check(P.split(7).pairs.every(([a, b]) => a > 0 && b > 0 && a + b === 7),
+  'the chameleon produced a seam that does not add up');
+
+// ── Graduation ────────────────────────────────────────────────────────────
+// Tier 2 is earned by the PAIRING, which is the lesson. Feeding a pet a pile
+// of the wrong cheese must never graduate it, or the teaching is decorative.
+P.reset();
+P.adopt('chameleon');
+check(P.tier('chameleon') === 1, 'a new pet did not start at tier 1');
+for (let i = 0; i < 40; i++) P.feed('chameleon', 'Anagram Cheddar');
+check(P.tier('chameleon') === 1, 'THE WRONG CHEESE GRADUATED A PET: the pairing is the lesson');
+const need = P.SPECIES.find((s) => s.id === 'chameleon').ability.feeds;
+for (let i = 0; i < need; i++) P.feed('chameleon', 'Charade Stilton');
+check(P.tier('chameleon') === 2, 'the right cheese never graduated the pet');
+check(P.graduation('chameleon')?.done === true, 'graduation did not report as done');
+// A ratchet, never a treadmill: nothing decays it back down.
+for (let i = 0; i < 10; i++) P.feed('chameleon', 'Anagram Cheddar');
+check(P.tier('chameleon') === 2, 'A PET WAS DEMOTED: graduation must be a ratchet');
+
 // ── Robustness ────────────────────────────────────────────────────────────
+P.reset();
 localStorage.setItem(P.KEY, '{{{ not json');
 check(P.progress().adopted === 0, 'corrupt state was not survived');
 localStorage.setItem(P.KEY, '["an array, not an object"]');

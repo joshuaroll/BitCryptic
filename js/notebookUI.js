@@ -96,7 +96,7 @@ var BCWNotebookUI = (() => {
       '<div class="nb-page">' +
       '<input class="nb-title" value="' + esc(page.title) + '" placeholder="Title this page" ' +
       'aria-label="Page title">' +
-      (page.kind === 'clue'
+      (page.kind === 'clue' || page.kind === 'artifact'
         ? '<p class="nb-clue">' + esc(page.text) + '</p>'
         : '') +
       '<div class="nb-canvas-wrap">' +
@@ -108,18 +108,21 @@ var BCWNotebookUI = (() => {
         '" data-pen="' + p.id + '" style="--pen:' + p.colour + '">' + esc(p.label) + '</button>').join('') +
       '<button type="button" class="nb-pen nb-pen--clear" data-clear>Clear ink</button>' +
       '</div>' +
-      (page.kind !== 'clue'
-        ? '<textarea class="nb-text" placeholder="Type here" aria-label="Page notes">' +
-          esc(page.text) + '</textarea>'
-        : '<textarea class="nb-text" placeholder="Working" aria-label="Working">' +
-          esc(page.working || '') + '</textarea>') +
+      (page.kind === 'clue' || page.kind === 'artifact'
+        ? '<textarea class="nb-text" placeholder="' +
+          (page.kind === 'artifact' ? 'What do you make of it' : 'Working') +
+          '" aria-label="Working">' + esc(page.working || '') + '</textarea>'
+        : '<textarea class="nb-text" placeholder="Type here" aria-label="Page notes">' +
+          esc(page.text) + '</textarea>') +
       '</div>' +
       '<div class="nb-actions">' +
       '<button type="button" class="story-puzzle-submit" onclick="BCWNotebookUI.save()">Save page</button>' +
       '<button type="button" class="nb-btn" onclick="BCWNotebookUI.showShelf()">Back to the shelf</button>' +
       '<button type="button" class="nb-btn nb-btn--drop" onclick="BCWNotebookUI.drop()">Tear out</button>' +
       '</div>',
-      page.kind === 'clue' ? 'Working on a clue' : 'Notebook', '\u{1F4D3}'
+      page.kind === 'clue' ? 'Working on a clue'
+        : page.kind === 'artifact' ? 'Something you brought back'
+        : 'Notebook', '\u{1F4D3}'
     );
 
     wirePage(page);
@@ -197,7 +200,7 @@ var BCWNotebookUI = (() => {
     if (!page) return;
 
     const patch = { title: title ? title.value : page.title };
-    if (page.kind === 'clue') patch.working = text ? text.value : '';
+    if (page.kind === 'clue' || page.kind === 'artifact') patch.working = text ? text.value : '';
     else patch.text = text ? text.value : '';
 
     // Only write ink when something was drawn. An untouched canvas would

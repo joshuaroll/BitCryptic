@@ -1463,6 +1463,9 @@
 
     .nb-card--clue { border-left-color: #F2C14E; }
     .nb-card--picture { border-left-color: #6FC3E0; }
+    /* Things brought back off the island. Mint, because they are the one kind
+       of page the player did not write. */
+    .nb-card--artifact { border-left-color: #64D9A0; }
     .nb-card:hover, .nb-card:focus-visible { border-color: #F2C14E; }
 
     .nb-card__shot {
@@ -2087,6 +2090,289 @@
       font-size: 0.88rem;
     }
     .pet-panel__reaction.is-match { color: #64D9A0; }
+
+    /* ── The one that comes with you ──────────────────────────────────────
+       The island has no player avatar on the map, so a companion cannot walk
+       beside you. It rides the HUD instead, which turns out to be the better
+       place: it is legible from every screen INCLUDING the inside of a clue
+       modal, which is exactly the moment you want to reach for it. */
+    .pet-hud {
+      position: fixed;
+      left: 14px;
+      bottom: 92px;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px 6px 6px;
+      background: rgba(11, 16, 33, 0.92);
+      border: 1px solid #2A3553;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      color: #E2E8F0;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .pet-hud:hover, .pet-hud:focus-visible {
+      border-color: #F2C14E;
+      transform: translateY(-2px);
+      outline: none;
+    }
+    .pet-hud[hidden] { display: none; }
+    .pet-hud__sprite {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pet-hud__sprite svg { width: 34px; height: 33px; }
+    .pet-hud__text { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
+    .pet-hud__name { font-size: 0.78rem; font-weight: 700; }
+    .pet-hud__verb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #F2C14E;
+    }
+    /* A graduated pet is worth noticing without a badge shouting about it. */
+    .pet-hud.is-tier2 .pet-hud__verb { color: #64D9A0; }
+    /* The companion walks on the spot. Small, slow, and off entirely under
+       reduced motion, like every other idle animation here. */
+    @keyframes petHudStep {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+    .pet-hud__sprite svg { animation: petHudStep 2.4s ease-in-out infinite; }
+    .reduced-motion .pet-hud__sprite svg { animation: none; }
+
+    /* ── The listening post ──────────────────────────────────────────────── */
+    .post { text-align: center; }
+    .post__art {
+      width: 100%;
+      max-width: 460px;
+      border-radius: 8px;
+      border: 1px solid #2A3553;
+      display: block;
+      margin: 0 auto 14px;
+    }
+    .post__line {
+      color: #E2E8F0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0 0 16px;
+      text-align: left;
+    }
+    /* Five slots, filled in the order they came back. An empty slot is the
+       shape of the next errand, which is why they are all drawn from the
+       start rather than appearing one at a time. */
+    .post__manifest {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .post__slot {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #161B2E;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 6px 11px 6px 7px;
+      font-size: 0.76rem;
+      color: #64748B;
+    }
+    .post__slot.is-got { border-color: rgba(100, 217, 160, 0.45); color: #E2E8F0; }
+    .post__slot-n {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      flex: none;
+    }
+    .post__slot.is-got .post__slot-n { background: rgba(100, 217, 160, 0.16); border-color: #64D9A0; color: #64D9A0; }
+    .post__gadgets { text-align: left; margin-bottom: 16px; }
+    .post__gadget {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 9px 11px;
+      margin-bottom: 7px;
+    }
+    .post__gadget strong { color: #F2C14E; font-size: 0.85rem; }
+    .post__gadget p { color: #94A3B8; font-size: 0.78rem; margin: 3px 0 0; line-height: 1.45; }
+    .post__gadget-art { width: 36px; height: 36px; flex: none; }
+    .post__brief {
+      color: #CBD5E1;
+      font-size: 0.88rem;
+      font-style: italic;
+      line-height: 1.5;
+      text-align: left;
+      margin: 0 0 14px;
+      padding-left: 11px;
+      border-left: 2px solid #2A3553;
+    }
+
+    /* ── The ability workbench ───────────────────────────────────────────── */
+    .pet-work__intro {
+      color: #94A3B8;
+      font-size: 0.84rem;
+      margin: 0 0 14px;
+      text-align: center;
+    }
+    .pet-work__label {
+      display: block;
+      color: #64748B;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 6px;
+    }
+    .pet-work__in {
+      width: 100%;
+      box-sizing: border-box;
+      background: #161B2E;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      color: #E2E8F0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      padding: 9px 11px;
+      margin-bottom: 10px;
+    }
+    .pet-work__in:focus { outline: none; border-color: #F2C14E; }
+    .pet-work__row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+    .pet-work__row .pet-work__field { flex: 1; }
+    .pet-work__out {
+      background: #0B1021;
+      border: 1px solid #2A3553;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 46px;
+      margin-top: 4px;
+    }
+    /* Loose letters the player can read as a pile, not as a word. The gaps
+       are the point: nothing here is spelling anything at you. */
+    .pet-tiles { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .pet-tile {
+      background: rgba(242, 193, 78, 0.12);
+      border: 1px solid rgba(242, 193, 78, 0.45);
+      color: #F2C14E;
+      border-radius: 6px;
+      min-width: 26px;
+      padding: 7px 6px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    /* A cluster the croc is holding together reads as one tile, not two. */
+    .pet-tile.is-group { background: rgba(100, 217, 160, 0.14); border-color: rgba(100, 217, 160, 0.5); color: #64D9A0; }
+    .pet-read {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: #E2E8F0;
+      word-break: break-all;
+      margin: 0 0 4px;
+    }
+    .pet-read__label {
+      display: block;
+      color: #64748B;
+      font-size: 0.68rem;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 10px;
+    }
+    .pet-read__label:first-child { margin-top: 0; }
+    .pet-span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #E2E8F0;
+      padding: 3px 0;
+    }
+    .pet-span mark { background: rgba(100, 217, 160, 0.25); color: #64D9A0; border-radius: 3px; padding: 0 2px; }
+    .pet-span__rev { color: #94A3B8; font-size: 0.72rem; font-family: 'Inter', sans-serif; }
+    .pet-seams { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .pet-seam {
+      background: rgba(242, 193, 78, 0.1);
+      border: 1px solid rgba(242, 193, 78, 0.35);
+      color: #F2C14E;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .pet-seam.is-triple { background: rgba(100, 217, 160, 0.1); border-color: rgba(100, 217, 160, 0.35); color: #64D9A0; }
+    .pet-work__note {
+      color: #94A3B8;
+      font-size: 0.78rem;
+      margin: 10px 0 0;
+      text-align: center;
+    }
+    .pet-work__empty { color: #64748B; font-size: 0.84rem; text-align: center; margin: 0; }
+    /* The line the whole feature stands on, said out loud in the UI. */
+    .pet-work__law {
+      color: #64748B;
+      font-size: 0.72rem;
+      text-align: center;
+      margin: 14px 0 0;
+      font-style: italic;
+    }
+    /* How close a pet is to its second trick. A quiet strip, never a nag. */
+    .pet-grad { margin: 14px 0 0; }
+    .pet-grad__bar {
+      height: 4px;
+      background: #161B2E;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .pet-grad__fill { height: 100%; background: #64D9A0; border-radius: 2px; transition: width 0.4s ease; }
+    .pet-grad__text {
+      color: #64748B;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      margin: 6px 0 0;
+      text-align: center;
+    }
+    .pet-swap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .pet-swap__btn {
+      background: rgba(226, 232, 240, 0.05);
+      border: 1px solid #2A3553;
+      border-radius: 10px;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #94A3B8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      transition: border-color 0.2s ease;
+    }
+    .pet-swap__btn:hover { border-color: #F2C14E; }
+    .pet-swap__btn.is-on { border-color: #64D9A0; color: #64D9A0; }
+    .pet-swap__btn svg { width: 34px; height: 33px; }
+
+    @media (max-width: 768px) {
+      .pet-hud { bottom: 78px; left: 8px; padding: 5px 10px 5px 5px; }
+      .pet-hud__sprite, .pet-hud__sprite svg { width: 28px; height: 27px; }
+    }
 
     .house-room {
       flex: 1;
@@ -4989,6 +5275,11 @@
   </div>
 
   <!-- Bottom Toolbar -->
+  <!-- The pet that came with you. Hidden until one has, and rendered by
+       renderPetHud() so its sprite and verb always match BCWPets.active(). -->
+  <button class="pet-hud" id="pet-hud" hidden onclick="openPetWorkbench()"
+          aria-label="Your companion. Opens what they can do."></button>
+
   <div class="toolbar">
     <button class="toolbar-btn" data-location="adventure" onclick="openLocation('adventure')">
       <span class="tooltip-text">Adventure</span>
@@ -5329,6 +5620,11 @@
         desc: 'The bustling Town Square sits at the center of Bit Cryptic World. An old terminal hums near the fountain, cursor blinking. Rumor has it the right code will open doors all over the island.',
         actions: [
           { label: 'Use Terminal', onclick: () => openTerminal(), primary: true, variant: 'terminal' },
+          // The way back down. It only exists once the player has been, so the
+          // grate is not advertised to anybody who has not found it, and once
+          // they have, they never have to retype a code to visit a person.
+          { label: 'Down the Grate', onclick: () => { closePanel(); enterListeningPost(); },
+            when: () => hasListeningPost() },
           { label: 'Bulletin Board', onclick: () => showGameModal('Community features coming soon!', 'Bulletin Board', '\u{1F4CB}') }
         ]
       },
@@ -5803,6 +6099,10 @@
       // The wreck's name, if it has been earned. Restored here so it survives
       // a reload rather than only appearing on the visit that granted it.
       if (hasVisitedWreck()) labelWreckOnMap();
+
+      // Whoever came with you. Same reason: the badge belongs to the save, not
+      // to the session that adopted them.
+      renderPetHud();
 
       // Completion rings. Last, so it reads the unlock flags this pass just set.
       updateLocationStates();
@@ -8974,6 +9274,14 @@
         actionsEl.appendChild(storyBtn);
       }
 
+      // Canon's errand, when this is the place he sent you.
+      //
+      // Added by the renderer rather than written into five location panels,
+      // so a mission cannot be moved in quest.js and leave a stale button
+      // behind on the old location. The panel does not know about the quest;
+      // the quest knows about the panel.
+      appendErrandAction(actionsEl, id);
+
       loc.actions.forEach((a, i) => {
         // An action may gate itself behind `when`. Absent beats present-and-
         // disabled: a button you cannot press is a question the panel cannot
@@ -9546,6 +9854,10 @@
             feedback.innerHTML += '<br><span class="mat-drop">+' + got.amount + ' ' +
               (BCWMaterials.KINDS[got.kind] ? BCWMaterials.KINDS[got.kind].label.toLowerCase() : got.kind) +
               '</span>';
+            // The yield graduated. Said ONCE, on the solve that first reaches
+            // a tier, and never again: a game that congratulates you on every
+            // solve for a thing that happened weeks ago is a game shouting.
+            noteMaterialTier(got, feedback);
           }
         }
         if (typeof activeChallenge.onSolved === 'function') {
@@ -9898,7 +10210,7 @@
         // redeeming them is what actually makes them appear. Without this the
         // house, pond, lair, moon, airship and yacht stay hidden even though
         // every ordinary location just opened.
-        ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'KAIT', 'PONDER', 'BOSTON', 'POG', 'ANGAS']
+        ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'KAIT', 'PONDER', 'BOSTON', 'POG', 'ANGAS', 'HIDDEN']
           .forEach(saveUnlockedCode);
         spawnHouse(); spawnPond(); spawnLair(); spawnMoon(); spawnAirship();
         restoreCodeCosmetics();
@@ -9960,6 +10272,17 @@
         addTerminalLine('A watch has been added to your furniture collection.', 'info');
         addTerminalLine('It keeps perfect time. It has stopped at one minute to.', 'info');
         setTimeout(() => { refreshTrophyPalette(); closeTerminal(); }, 1200);
+      } else if (normalized === 'HIDDEN') {
+        // The one code that opens a person rather than a place. It does not
+        // spawn anything on the map: the stairs are under the fountain the
+        // player has been walking over since the tutorial, and the whole
+        // point is that they were always there.
+        saveUnlockedCode(normalized);
+        addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
+        addTerminalLine('The fountain stops. Not the water. The sound.', 'success');
+        addTerminalLine('Under the basin, a grate swings down on a hinge.', 'info');
+        addTerminalLine('There are stairs.', 'info');
+        setTimeout(() => { closeTerminal(); enterListeningPost(); }, 1400);
       } else if (normalized === 'BOSTON') {
         saveUnlockedCode(normalized);
         addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
@@ -12164,6 +12487,31 @@
         body += '</div></div>';
       }
 
+      // What this one does, and whether they are travelling with you. The
+      // cottage is where that choice belongs: it is what makes going home
+      // worth doing after the decorating is finished.
+      const isOut = BCWPets.active() && BCWPets.active().id === id;
+      const t = BCWPets.tier(id);
+      body +=
+        '<div class="pet-panel__feed"><span class="pet-panel__feed-label">' +
+        escapeHtml(pet.ability.verb) + '</span>' +
+        '<p class="pet-work__intro" style="margin-bottom:10px">' +
+        escapeHtml(t >= 2 ? pet.ability.tier2 : pet.ability.tier1) + '</p>' +
+        '<div class="pet-panel__cheeses">' +
+        '<button class="pet-cheese' + (isOut ? ' is-on' : '') + '" id="pet-take-along">' +
+        (isOut ? 'Coming with you' : 'Bring them along') + '</button>' +
+        '<button class="pet-cheese" id="pet-open-work">Try it</button>' +
+        '</div></div>';
+
+      const grad = BCWPets.graduation(id);
+      if (grad && !grad.done) {
+        body +=
+          '<div class="pet-grad"><div class="pet-grad__bar">' +
+          '<div class="pet-grad__fill" style="width:' + Math.round((grad.have / grad.need) * 100) + '%"></div></div>' +
+          '<p class="pet-grad__text">' + grad.have + ' of ' + grad.need + ' ' +
+          escapeHtml(pet.cheese) + ' toward their second trick</p></div>';
+      }
+
       body += '<p class="pet-panel__reaction" id="pet-reaction" aria-live="polite"></p></div>';
 
       // showGameModal sets its body with innerHTML, so the markup above renders
@@ -12179,6 +12527,14 @@
           openPetPanel(id);
         };
       });
+      const along = document.getElementById('pet-take-along');
+      if (along) along.onclick = () => {
+        BCWPets.setActive(id);
+        renderPetHud();
+        openPetPanel(id);
+      };
+      const work = document.getElementById('pet-open-work');
+      if (work) work.onclick = () => openPetWorkbench(id);
     }
 
     function feedPetFromPanel(id, cheeseName, btn) {
@@ -12198,6 +12554,8 @@
         out.textContent = result.reaction + (result.hint ? ' ' + result.hint : '');
         out.classList.toggle('is-match', result.match);
       }
+      // A pet can graduate on this mouthful, and the badge carries the tier.
+      renderPetHud();
       if (typeof BCWAudio !== 'undefined') {
         if (result.match && BCWAudio.playSuccess) BCWAudio.playSuccess();
         else if (BCWAudio.playClick) BCWAudio.playClick();
@@ -12227,6 +12585,582 @@
     // Solve a clue unaided and, if that device has a creature you have not met,
     // it turns up. The offer waits until the solve modal is dismissed: two
     // modals stacked on one another would bury the thing worth seeing.
+    // ═══════════════════════════════════
+    //  THE COMPANION
+    // ═══════════════════════════════════
+    //
+    // One pet comes with you, it is visible wherever you are, and pressing it
+    // opens the one thing it can do. That is the whole interaction.
+    //
+    // It lives in the HUD rather than on the map because the island has no
+    // player avatar to walk beside. That turned out better than a marker: the
+    // badge is reachable from inside a clue modal, which is the exact moment a
+    // solver wants to push some letters around.
+
+    function renderPetHud() {
+      const el = document.getElementById('pet-hud');
+      if (!el) return;
+      if (typeof BCWPets === 'undefined') { el.hidden = true; return; }
+      const pet = BCWPets.active();
+      if (!pet) { el.hidden = true; return; }
+
+      el.hidden = false;
+      el.classList.toggle('is-tier2', pet.tier >= 2);
+      el.innerHTML =
+        '<span class="pet-hud__sprite">' + petSprite(pet) + '</span>' +
+        '<span class="pet-hud__text">' +
+        '<span class="pet-hud__name">' + escapeHtml(pet.name) + '</span>' +
+        '<span class="pet-hud__verb">' + escapeHtml(pet.ability.verb) + '</span>' +
+        '</span>';
+      el.setAttribute('aria-label', pet.name + ' is with you. ' + pet.ability.verb + '. Opens their workbench.');
+      el.title = pet.name + ' - ' + pet.ability.verb;
+    }
+
+    // ─── The workbench ───
+    //
+    // One panel per pet, shaped by what its ability needs. Every one of them
+    // takes something the player typed and hands back possibilities; not one
+    // of them ever picks.
+
+    function openPetWorkbench(id) {
+      if (typeof BCWPets === 'undefined') return;
+      const pet = id ? Object.assign({}, BCWPets.byId(id), { tier: BCWPets.tier(id) }) : BCWPets.active();
+      if (!pet || !pet.ability) return;
+
+      const a = pet.ability;
+      let body = '<div class="pet-work">' +
+        '<p class="pet-work__intro">' + escapeHtml(pet.tier >= 2 ? a.tier2 : a.tier1) + '</p>';
+
+      // Prefill from whatever clue is on screen, because the overwhelmingly
+      // common case is "I am stuck on THIS clue" and retyping it is friction
+      // for no reason.
+      const seed = escapeAttr(currentClueText());
+
+      if (a.input === 'letters') {
+        body +=
+          '<label class="pet-work__label" for="pw-text">Letters to shuffle</label>' +
+          '<input id="pw-text" class="pet-work__in" value="' + seed + '" placeholder="the fodder, or any letters">' +
+          '<button class="pet-cheese" id="pw-go">' + escapeHtml(a.verb) + '</button>';
+      } else if (a.input === 'span') {
+        body +=
+          '<label class="pet-work__label" for="pw-text">Where should she look</label>' +
+          '<input id="pw-text" class="pet-work__in" value="' + seed + '" placeholder="paste the clue">' +
+          '<div class="pet-work__row">' +
+          '<div class="pet-work__field"><label class="pet-work__label" for="pw-len">How long is the answer</label>' +
+          '<input id="pw-len" class="pet-work__in" style="margin-bottom:0" type="number" min="2" max="20" placeholder="from the enumeration"></div>' +
+          '<button class="pet-cheese" id="pw-go">' + escapeHtml(a.verb) + '</button>' +
+          '</div>';
+      } else if (a.input === 'text') {
+        body +=
+          '<label class="pet-work__label" for="pw-text">Point him at something</label>' +
+          '<input id="pw-text" class="pet-work__in" value="' + seed + '" placeholder="any word or phrase">' +
+          '<button class="pet-cheese" id="pw-go">' + escapeHtml(a.verb) + '</button>';
+      } else if (a.input === 'count') {
+        body +=
+          '<label class="pet-work__label" for="pw-count">How many letters in the answer</label>' +
+          '<input id="pw-count" class="pet-work__in" type="number" min="2" max="20" placeholder="from the enumeration">' +
+          '<button class="pet-cheese" id="pw-go">' + escapeHtml(a.verb) + '</button>';
+      } else if (a.input === 'pair') {
+        body +=
+          '<div class="pet-work__row">' +
+          '<div class="pet-work__field"><label class="pet-work__label" for="pw-inner">Goes inside</label>' +
+          '<input id="pw-inner" class="pet-work__in" style="margin-bottom:0" placeholder="the shorter piece"></div>' +
+          '<div class="pet-work__field"><label class="pet-work__label" for="pw-outer">Wraps around</label>' +
+          '<input id="pw-outer" class="pet-work__in" style="margin-bottom:0" placeholder="the longer piece"></div>' +
+          '</div><button class="pet-cheese" id="pw-go">' + escapeHtml(a.verb) + '</button>';
+      }
+
+      body += '<div class="pet-work__out" id="pw-out" aria-live="polite"><p class="pet-work__empty">Nothing yet.</p></div>';
+
+      // Say the rule out loud. A player who knows the pet will never hand them
+      // an answer trusts it faster, and uses it more.
+      body += '<p class="pet-work__law">' + escapeHtml(pet.name) +
+        ' does the work, never the solving. Nothing here checks a dictionary.</p>';
+
+      const grad = BCWPets.graduation(pet.id);
+      if (grad && !grad.done) {
+        body +=
+          '<div class="pet-grad"><div class="pet-grad__bar">' +
+          '<div class="pet-grad__fill" style="width:' + Math.round((grad.have / grad.need) * 100) + '%"></div></div>' +
+          '<p class="pet-grad__text">' + grad.have + ' of ' + grad.need + ' ' +
+          escapeHtml(pet.cheese) + ' toward their second trick</p></div>';
+      }
+
+      body += swapStripHtml(pet.id) + '</div>';
+
+      showGameModal(body, pet.name, '');
+
+      const go = document.getElementById('pw-go');
+      if (go) go.onclick = () => runPetAbility(pet.id);
+      const t = document.getElementById('pw-text');
+      if (t) t.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); runPetAbility(pet.id); } };
+      wireSwapStrip();
+      setTimeout(() => { const el = document.getElementById('pw-text') || document.getElementById('pw-count'); if (el) el.focus(); }, 250);
+    }
+
+    // Swapping happens where the pets are, but a strip here saves a walk home
+    // for a player who is mid-clue and wants a different tool.
+    function swapStripHtml(activeId) {
+      const living = BCWPets.adopted();
+      if (living.length < 2) return '';
+      let s = '<div class="pet-panel__feed"><span class="pet-panel__feed-label">Bring someone else</span><div class="pet-swap">';
+      living.forEach((p) => {
+        s += '<button class="pet-swap__btn' + (p.id === activeId ? ' is-on' : '') +
+          '" data-swap="' + escapeAttr(p.id) + '">' + petSprite(p) +
+          '<span>' + escapeHtml(p.ability.verb) + '</span></button>';
+      });
+      return s + '</div></div>';
+    }
+
+    function wireSwapStrip() {
+      document.querySelectorAll('.pet-swap__btn[data-swap]').forEach((btn) => {
+        btn.onclick = () => {
+          BCWPets.setActive(btn.dataset.swap);
+          renderPetHud();
+          openPetWorkbench(btn.dataset.swap);
+        };
+      });
+    }
+
+    // Whatever clue is currently on screen, so the workbench opens on the
+    // thing the player is actually stuck on.
+    function currentClueText() {
+      const sel = String(window.getSelection ? window.getSelection().toString() : '').trim();
+      if (sel) return sel;
+      const card = document.querySelector('#story-text [data-clue-card]');
+      if (card) return card.textContent.trim().slice(0, 120);
+      const modal = document.getElementById('game-modal-body');
+      const em = modal && modal.querySelector('em');
+      if (em) return em.textContent.replace(/^["'“]|["'”]$/g, '').trim().slice(0, 120);
+      return '';
+    }
+
+    function runPetAbility(id) {
+      const out = document.getElementById('pw-out');
+      if (!out) return;
+      const pet = BCWPets.byId(id);
+      if (!pet) return;
+      const v = (sel) => { const el = document.getElementById(sel); return el ? el.value : ''; };
+
+      const payload = {
+        text: v('pw-text'),
+        count: v('pw-count'),
+        inner: v('pw-inner'),
+        outer: v('pw-outer'),
+      };
+      const len = parseInt(v('pw-len'), 10);
+      if (len > 0) payload.length = len;
+
+      const res = BCWPets.use(id, payload);
+      if (!res) { out.innerHTML = '<p class="pet-work__empty">Nothing to work with yet.</p>'; return; }
+      out.innerHTML = renderAbilityResult(res, payload);
+      if (typeof BCWAudio !== 'undefined' && BCWAudio.playMenuOpen) BCWAudio.playMenuOpen();
+    }
+
+    function renderAbilityResult(res, payload) {
+      const r = res.result;
+
+      if (res.kind === 'letters') {
+        if (!r.pieces.length) return '<p class="pet-work__empty">Give him some letters first.</p>';
+        return '<div class="pet-tiles">' +
+          r.pieces.map((p) => '<span class="pet-tile' + (p.length > 1 ? ' is-group' : '') + '">' +
+            escapeHtml(p) + '</span>').join('') + '</div>' +
+          (r.note ? '<p class="pet-work__note">' + escapeHtml(r.note) + '</p>' : '') +
+          '<p class="pet-work__note">Press again for another throw.</p>';
+      }
+
+      if (res.kind === 'text') {
+        return r.readings.map((x) =>
+          '<span class="pet-read__label">' + escapeHtml(x.label) + '</span>' +
+          '<p class="pet-read">' + escapeHtml(x.text) + '</p>').join('');
+      }
+
+      if (res.kind === 'count') {
+        if (!r.pairs.length) return '<p class="pet-work__empty">Tell him how long the answer is.</p>';
+        let s = '<span class="pet-read__label">Two pieces</span><div class="pet-seams">' +
+          r.pairs.map((p) => '<span class="pet-seam">' + p.join(' + ') + '</span>').join('') + '</div>';
+        if (r.triples.length) {
+          s += '<span class="pet-read__label">Three pieces</span><div class="pet-seams">' +
+            r.triples.map((p) => '<span class="pet-seam is-triple">' + p.join(' + ') + '</span>').join('') + '</div>';
+        }
+        return s;
+      }
+
+      if (res.kind === 'pair') {
+        if (!r.ways.length) return '<p class="pet-work__empty">Give her two pieces to work with.</p>';
+        let last = '';
+        return r.ways.map((w) => {
+          const head = w.label !== last ? (last = w.label,
+            '<span class="pet-read__label">' + escapeHtml(w.label) + '</span>') : '';
+          return head + '<p class="pet-read">' + escapeHtml(w.text) + '</p>';
+        }).join('');
+      }
+
+      if (res.kind === 'span') {
+        if (!r.spans.length) return '<p class="pet-work__note">' + escapeHtml(r.note) + '</p>';
+        // Show each candidate marked IN THE CLUE, because where it sits is the
+        // thing the player needs to see. Reading it is still their job.
+        const src = String(payload.text || '');
+        const rows = r.spans.slice(0, 24).map((s) => {
+          const before = escapeHtml(src.slice(0, s.from));
+          const run = escapeHtml(src.slice(s.from, s.to + 1));
+          const after = escapeHtml(src.slice(s.to + 1));
+          return '<span class="pet-span">' + before + '<mark>' + run + '</mark>' + after +
+            (s.reversed ? ' <span class="pet-span__rev">backwards</span>' : '') + '</span>';
+        }).join('');
+        return rows + '<p class="pet-work__note">' + escapeHtml(r.note) + '</p>' +
+          (r.spans.length > 24 ? '<p class="pet-work__note">Showing the first 24. Give her the answer length to narrow it.</p>' : '');
+      }
+
+      return '<p class="pet-work__empty">Nothing yet.</p>';
+    }
+
+    // ═══════════════════════════════════
+    //  THE LISTENING POST
+    // ═══════════════════════════════════
+    //
+    // A room under the town square fountain, reached by typing HIDDEN. It is
+    // the quest hub: Canon is in it, the artifacts come back to it, and the
+    // gadgets are kept on its wall.
+    //
+    // The room is NOT a location on the map, deliberately. It has no pin, it
+    // is not in the toolbar, and the only way back is the terminal or the
+    // notebook. A place that never appears on a map is the only kind of
+    // secret an island this small can still keep.
+
+    function hasListeningPost() {
+      try { return getUnlockedCodes().includes('HIDDEN'); }
+      catch (e) { return false; }
+    }
+
+    function enterListeningPost() {
+      if (typeof BCWQuest === 'undefined') return;
+      const first = BCWQuest.start();
+      if (first) {
+        startStory('hidden');
+        return;
+      }
+      openPostPanel();
+    }
+
+    // Between errands. The room, what Canon has to say today, the gadgets on
+    // the wall, and the errand he is waiting on.
+    function openPostPanel() {
+      if (typeof BCWQuest === 'undefined') return;
+      const mission = BCWQuest.current();
+      const done = BCWQuest.progress();
+
+      let body = '<div class="post">' + listeningPostArt() +
+        '<p class="post__line">' + escapeHtml(BCWQuest.nextLine(POST_LINES)) + '</p>';
+
+      // What is on the table. Five slots, filled in the order they came back,
+      // because the artifacts are a sequence of revelations about two people
+      // and an unfilled slot is the shape of the next one.
+      body += '<div class="post__manifest">';
+      BCWQuest.MISSIONS.forEach((m) => {
+        const got = BCWQuest.isRecovered(m.id);
+        body += '<div class="post__slot' + (got ? ' is-got' : '') + '">' +
+          '<span class="post__slot-n">' + m.n + '</span>' +
+          '<span class="post__slot-name">' + escapeHtml(got ? m.artifact : 'Not yet') + '</span>' +
+          '</div>';
+      });
+      body += '</div>';
+
+      const gadgets = BCWQuest.gadgets();
+      if (gadgets.length) {
+        body += '<div class="post__gadgets"><span class="pet-panel__feed-label">On the wall</span>';
+        gadgets.forEach((g) => {
+          body += '<div class="post__gadget">' + gadgetArt(g.id) +
+            '<div><strong>' + escapeHtml(g.name) + '</strong>' +
+            '<p>' + escapeHtml(g.desc) + '</p></div></div>';
+        });
+        body += '</div>';
+      }
+
+      if (mission) {
+        body += '<p class="post__brief">' + escapeHtml(mission.brief) + '</p>' +
+          '<div class="pet-panel__cheeses">' +
+          '<button class="pet-cheese" id="post-go">Errand ' + mission.n + ': ' +
+          escapeHtml(locationName(mission.location)) + '</button></div>';
+      } else {
+        body += '<p class="post__brief">He has run out of errands. The chair is still there.</p>';
+      }
+
+      showGameModal(body + '</div>',
+        'The Listening Post', '');
+
+      const go = document.getElementById('post-go');
+      if (go) go.onclick = () => { closeGameModal(); openLocation(mission.location); };
+    }
+
+    // The panel table `locations` is the one place every location's display
+    // name lives. Guarded because this runs from a modal that can outlive a
+    // partial load, and a missing name should read as the id rather than
+    // throw and take the whole panel with it.
+    /**
+     * An artifact comes back.
+     *
+     * Three things happen and they happen here rather than at five call
+     * sites: the quest advances, the object becomes a NOTEBOOK PAGE the
+     * player can write on, and the achievement fires. The notebook is the
+     * point: the alternative was a read-only inventory screen, which is a
+     * thing you look at once. A case file is a notebook somebody used.
+     */
+    function recoverArtifact(missionId) {
+      if (typeof BCWQuest === 'undefined') return false;
+      const m = BCWQuest.byId(missionId);
+      if (!m) return false;
+      if (!BCWQuest.recover(missionId)) return false;
+
+      if (typeof BCWNotebook !== 'undefined' && BCWNotebook.addArtifact) {
+        BCWNotebook.addArtifact(m.id, m.artifact, m.artifactNote);
+      }
+      if (typeof BCWAchievements !== 'undefined' && BCWAchievements.checkQuest) {
+        const p = BCWQuest.progress();
+        BCWAchievements.checkQuest(p.done, p.total);
+      }
+      return true;
+    }
+
+    // The material tier is announced the first time it changes and then never
+    // again. Kept in localStorage rather than in memory so it survives the
+    // reload that would otherwise re-announce it.
+    const MAT_TIER_KEY = 'bcw_mat_tier_seen';
+
+    function noteMaterialTier(got, feedback) {
+      if (!got || !got.note || !feedback) return;
+      let seen = 0;
+      try { seen = parseInt(localStorage.getItem(MAT_TIER_KEY), 10) || 0; }
+      catch (e) { seen = 0; }
+      if (got.tier <= seen) return;
+      try { localStorage.setItem(MAT_TIER_KEY, String(got.tier)); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      feedback.innerHTML += '<br><span class="mat-drop">' + escapeHtml(got.note) + '</span>';
+    }
+
+    // ─── The errand button ───
+    //
+    // Appears on a location panel only while that location is the one Canon
+    // is waiting on, and only for a player who has been down the stairs. Every
+    // other visitor sees the panel exactly as it has always been.
+    function appendErrandAction(actionsEl, locId) {
+      if (!actionsEl || typeof BCWQuest === 'undefined') return;
+      if (!BCWQuest.hasStarted()) return;
+      const m = BCWQuest.current();
+      if (!m || m.location !== locId) return;
+
+      const btn = document.createElement('button');
+      btn.className = 'detail-action-btn';
+      btn.textContent = 'Errand ' + m.n + ': look for ' + m.artifact.toLowerCase();
+      btn.onclick = () => { closePanel(); openErrand(m.id); };
+      actionsEl.appendChild(btn);
+    }
+
+    /**
+     * An errand.
+     *
+     * The mission's clue is not written yet, so this stands in honestly: it
+     * shows what Canon asked for, the tool he sent you with, the one thing
+     * that is different in YOUR copy of this errand, and it hands the artifact
+     * over. No clue is faked here and no placeholder pretends to be a puzzle.
+     *
+     * COPY IS PLACEHOLDER until G3 sign-off, and the puzzle step is pending a
+     * clue commissioned with a full parse and Joshua's approval.
+     */
+    function openErrand(missionId) {
+      if (typeof BCWQuest === 'undefined') return;
+      const m = BCWQuest.byId(missionId);
+      if (!m) return;
+
+      // The one randomised value. Different in every save, so a walkthrough
+      // gets you to the right place and then stops being able to help.
+      const v = BCWQuest.variant(m.id, ERRAND_MARKS.length);
+      const mark = ERRAND_MARKS[v];
+
+      const gadget = m.gadget && BCWQuest.GADGETS[m.gadget]
+        ? BCWQuest.GADGETS[m.gadget]
+        : null;
+
+      let body = '<div class="post">' +
+        '<p class="post__brief">' + escapeHtml(m.brief) + '</p>';
+
+      if (gadget) {
+        body += '<div class="post__gadget">' + gadgetArt(m.gadget) +
+          '<div><strong>' + escapeHtml(gadget.name) + '</strong>' +
+          '<p>' + escapeHtml(gadget.desc) + '</p></div></div>';
+      } else {
+        // The empty drawer. Said plainly, because Canon says it plainly.
+        body += '<p class="post__line">He had nothing to send you with this time, ' +
+          'and he said so rather than improvising you something.</p>';
+      }
+
+      // What THIS save's copy of the errand looks like. A friend reading over
+      // your shoulder has a different one.
+      body += '<p class="post__line">' + escapeHtml(mark) + '</p>' +
+        '<div class="pet-panel__cheeses">' +
+        '<button class="pet-cheese" id="errand-take">Take it back to him</button>' +
+        '</div></div>';
+
+      showGameModal(body, 'Errand ' + m.n, '');
+
+      const take = document.getElementById('errand-take');
+      if (take) take.onclick = () => {
+        const got = recoverArtifact(m.id);
+        closeGameModal();
+        if (!got) return;
+        if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+        showGameModal(
+          '<div class="post">' +
+          '<p class="post__line"><strong>' + escapeHtml(m.artifact) + '</strong></p>' +
+          '<p class="post__brief">' + escapeHtml(m.artifactNote) + '</p>' +
+          '<p class="post__line">It is a page in your notebook now. ' +
+          'There is room under it to write.</p>' +
+          '</div>',
+          'You found it', ''
+        );
+      };
+    }
+
+    // The randomised detail, one per save. Deliberately about WHERE and HOW
+    // rather than about an answer: the point is that a player has to go and
+    // look, not that they have to be told something different.
+    const ERRAND_MARKS = [
+      'In your copy of this island it is under the third thing you would think to move.',
+      'Yours is further left than it has any business being.',
+      'It is wedged where two things meet, and in your copy the join is on the near side.',
+      'Somebody swept around it rather than moving it. The sweep marks point at it.',
+      'It is the only thing here that is the wrong temperature.',
+      'You find it because the sound changes, not because you see it.',
+      'It sits under something that was put on top of it recently, by somebody tidying.',
+      'In your copy it is high rather than low, which nobody would guess.',
+    ];
+
+    function locationName(id) {
+      try {
+        const panel = locations[id];
+        return panel && panel.title ? panel.title : id;
+      } catch (e) { return id; }
+    }
+
+    // Canon between errands. Rotated by BCWQuest.nextLine so a player who
+    // comes down twice running never gets the same line and concludes the
+    // room is a vending machine.
+    //
+    // COPY IS PLACEHOLDER until G3 sign-off.
+    const POST_LINES = [
+      'Nine screens and I still could not tell you what the weather is doing. ' +
+        'Come in, the chair is not for anything else.',
+      'The tide down there turns at ten past. It has turned at ten past every day ' +
+        'I have watched it, and one morning it will not, and I will be the only ' +
+        'person on this island who notices.',
+      'You have been to the cafe. It is on screen four and also you smell of it.',
+      'Sit if you are sitting. I do not get many people down here and I have ' +
+        'stopped being able to tell whether that is the room or me.',
+    ];
+
+    // ─── The room ───
+    //
+    // One big screen showing water, nine small ones showing an island where
+    // nothing is happening, and a second chair. Canon sits with his back to
+    // the player, which is the whole composition: you are the only person he
+    // has let stand behind him.
+    function listeningPostArt() {
+      let smalls = '';
+      for (let i = 0; i < 9; i++) {
+        const x = 300 + (i % 3) * 56;
+        const y = 44 + Math.floor(i / 3) * 42;
+        smalls +=
+          '<rect x="' + x + '" y="' + y + '" width="50" height="36" rx="2" fill="#0d1524" stroke="#2A3553"/>' +
+          '<rect x="' + (x + 3) + '" y="' + (y + 3) + '" width="44" height="30" fill="#16324a" opacity="0.5"/>' +
+          // A horizon line each, at a slightly different height, so nine
+          // screens read as nine places rather than one tiled texture.
+          '<path d="M' + (x + 3) + ',' + (y + 14 + (i % 4) * 3) + ' h44" stroke="#3d5a75" stroke-width="0.8" opacity="0.7"/>';
+      }
+      return '<svg class="post__art" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<defs>' +
+        '<linearGradient id="postRoom" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#0B1021"/><stop offset="100%" stop-color="#070b16"/>' +
+        '</linearGradient>' +
+        '<radialGradient id="postGlow" cx="30%" cy="42%" r="52%">' +
+        '<stop offset="0%" stop-color="#5fa0b8" stop-opacity="0.32"/>' +
+        '<stop offset="100%" stop-color="#5fa0b8" stop-opacity="0"/>' +
+        '</radialGradient>' +
+        '</defs>' +
+        '<rect width="500" height="260" fill="url(#postRoom)"/>' +
+        // The big screen: grey-green water, and the wreck's lamp in it.
+        '<rect x="40" y="36" width="220" height="150" rx="3" fill="#0d1524" stroke="#2A3553" stroke-width="2"/>' +
+        '<rect x="46" y="42" width="208" height="138" fill="#16323a"/>' +
+        '<path d="M46,120 Q98,112 150,120 Q202,128 254,120 L254,180 L46,180 Z" fill="#0f242c" opacity="0.8"/>' +
+        '<ellipse cx="150" cy="150" rx="46" ry="9" fill="#0a1a20"/>' +
+        '<path d="M112,150 q38,-16 76,0 l-6,10 h-64 z" fill="#132b33"/>' +
+        '<circle cx="150" cy="141" r="3" fill="#F2C14E" opacity="0.9">' +
+        '<animate attributeName="opacity" values="0.6;1;0.6" dur="3.4s" repeatCount="indefinite"/></circle>' +
+        '<circle cx="150" cy="141" r="9" fill="#F2C14E" opacity="0.16">' +
+        '<animate attributeName="opacity" values="0.1;0.24;0.1" dur="3.4s" repeatCount="indefinite"/></circle>' +
+        // Scanline wash over the big screen, slow.
+        '<rect x="46" y="42" width="208" height="4" fill="#7fd8e8" opacity="0.07">' +
+        '<animate attributeName="y" values="42;176;42" dur="9s" repeatCount="indefinite"/></rect>' +
+        smalls +
+        '<rect width="500" height="260" fill="url(#postGlow)"/>' +
+        // The table, the cards squared, the pencil parallel to the edge.
+        '<rect x="150" y="206" width="230" height="6" rx="2" fill="#2a3346"/>' +
+        '<rect x="300" y="196" width="26" height="10" rx="1" fill="#cbd5e1" opacity="0.85"/>' +
+        '<rect x="334" y="200" width="30" height="2.4" rx="1.2" fill="#F2C14E" opacity="0.75"/>' +
+        // The pocket calculator, on the table, solar strip worn pale.
+        '<rect x="258" y="194" width="22" height="12" rx="2" fill="#1b2337"/>' +
+        '<rect x="261" y="196" width="16" height="4" rx="1" fill="#54707a" opacity="0.8"/>' +
+        '<rect x="261" y="201.5" width="3" height="2" fill="#46566e"/>' +
+        '<rect x="266" y="201.5" width="3" height="2" fill="#46566e"/>' +
+        '<rect x="271" y="201.5" width="3" height="2" fill="#46566e"/>' +
+        // Canon, from behind. A back, a chair, and no face, ever.
+        '<path d="M196,206 q0,-44 26,-44 q26,0 26,44 z" fill="#141a2b"/>' +
+        '<circle cx="222" cy="150" r="15" fill="#141a2b"/>' +
+        '<path d="M209,146 q13,-10 26,0" stroke="#232c44" stroke-width="2" fill="none"/>' +
+        '<rect x="192" y="196" width="60" height="5" rx="2" fill="#111726"/>' +
+        // The second chair, empty, angled toward him.
+        '<rect x="404" y="176" width="34" height="4" rx="2" fill="#242d42"/>' +
+        '<rect x="404" y="150" width="4" height="30" rx="2" fill="#242d42"/>' +
+        '<rect x="408" y="180" width="3" height="26" fill="#1c2436"/>' +
+        '<rect x="431" y="180" width="3" height="26" fill="#1c2436"/>' +
+        '</svg>';
+    }
+
+    // Each gadget drawn as the object it is. They are all made out of things
+    // that washed up, so none of them looks manufactured.
+    function gadgetArt(id) {
+      const s = (inner) =>
+        '<svg class="post__gadget-art" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        inner + '</svg>';
+      switch (id) {
+        case 'sounding-spoon':
+          // A spoon on a line, hanging.
+          return s('<path d="M22,4 v18" stroke="#8a7a5a" stroke-width="1" fill="none"/>' +
+            '<rect x="21" y="21" width="2" height="11" rx="1" fill="#9aa8c4"/>' +
+            '<ellipse cx="22" cy="35" rx="6.5" ry="5" fill="#b9c4d8"/>' +
+            '<ellipse cx="22" cy="34.4" rx="4.6" ry="3.4" fill="#7f8ba3"/>');
+        case 'green-lens':
+          // Tin card with a square of green glass set in it.
+          return s('<rect x="7" y="11" width="30" height="22" rx="2" fill="#6b7280"/>' +
+            '<rect x="8.5" y="12.5" width="27" height="19" rx="1.5" fill="#565e6b"/>' +
+            '<rect x="15" y="16" width="14" height="12" rx="1" fill="#3ea86e" opacity="0.85"/>' +
+            '<rect x="15" y="16" width="14" height="4" fill="#63d39a" opacity="0.5"/>');
+        case 'quiet-hinge':
+          // A folded leather strip with wire knotted through it.
+          return s('<path d="M12,12 q10,-3 20,2 q-4,14 -2,20 q-11,3 -18,-2 q3,-12 0,-20 z" fill="#6b4f33"/>' +
+            '<path d="M12,12 q10,-3 20,2" stroke="#4a3722" stroke-width="1.2" fill="none"/>' +
+            '<path d="M18,18 q6,6 8,12" stroke="#9aa8c4" stroke-width="1.4" fill="none"/>' +
+            '<circle cx="18" cy="18" r="2" fill="none" stroke="#9aa8c4" stroke-width="1.2"/>');
+        case 'cold-latch':
+          // Two flat magnets taped face to face, on a string.
+          return s('<path d="M22,4 v10" stroke="#8a7a5a" stroke-width="1" fill="none"/>' +
+            '<rect x="13" y="14" width="18" height="9" rx="1.5" fill="#4a5568"/>' +
+            '<rect x="13" y="23" width="18" height="9" rx="1.5" fill="#8e3b3b"/>' +
+            '<rect x="11" y="17" width="22" height="12" fill="#d8cfae" opacity="0.55"/>');
+        default:
+          return '';
+      }
+    }
+
     // ═══════════════════════════════════
     //  THE WRECK
     // ═══════════════════════════════════
@@ -12264,11 +13198,62 @@
     // and a way to catch it. The second is the point of Canon's quest — you
     // cannot take a creature off this island by wanting to, and Fredward is
     // the one who tells you to go and ask about it.
+    //
+    // ── TWO WAYS IN, ON PURPOSE ───────────────────────────────────────────
+    //
+    // Pets used to sit entirely behind a secret terminal code. That is the
+    // shape of Professor Layton's most-criticised gate, and reviewers named
+    // it: content a player cannot know exists, behind a threshold they were
+    // never told about. Half the audience never sees the warmest thing in
+    // the game.
+    //
+    // So there are two catchers, and the difference between them is the
+    // quest:
+    //
+    //   FREDWARD'S LURE   found at the wreck, which needs no code and which
+    //                     anybody can reach by boat. Wire, glass and knotted
+    //                     line. It works exactly ONCE and then it sulks. One
+    //                     creature, and it is yours.
+    //
+    //   CANON'S CATCHER   the real thing, earned by the questline. Every
+    //                     species, no limit.
+    //
+    // Nobody is locked out of having a creature at home. Everybody who wants
+    // all five still wants the quest. The rule this follows: gate the best
+    // content, never the warmest.
     const PET_CATCH_KEY = 'bcw_pet_catcher';
+    const LURE_KEY = 'bcw_lure_fredward';
+
+    // '' none, '1' held and unspent, '2' spent. Three states rather than a
+    // boolean because "it works once" has to be legible in the save, and a
+    // spent lure still wants to be a thing you own and remember.
+    function lureState() {
+      try { return localStorage.getItem(LURE_KEY) || ''; }
+      catch (e) { return ''; }
+    }
+
+    function grantFredwardLure() {
+      // Never downgrade a spent lure back to unspent, which a replayed story
+      // would otherwise do and hand out a second free creature.
+      if (lureState()) return;
+      try { localStorage.setItem(LURE_KEY, '1'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+    }
+
+    function spendFredwardLure() {
+      if (lureState() !== '1') return;
+      try { localStorage.setItem(LURE_KEY, '2'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+    }
 
     function hasPetCatcher() {
       try { return localStorage.getItem(PET_CATCH_KEY) === '1'; }
       catch (e) { return false; }
+    }
+
+    /** Can a creature follow you home right now, by either route? */
+    function canCatchPet() {
+      return hasPetCatcher() || lureState() === '1';
     }
 
     function grantPetCatcher() {
@@ -12282,10 +13267,14 @@
       // species as seen and it would burn the one-time offer on a player who
       // cannot act on it yet.
       if (!hasHouse()) return;
-      if (!hasPetCatcher()) return;
+      if (!canCatchPet()) return;
       const species = BCWPets.onSolve(challenge.device, { unaided: !challenge.hinted });
       if (!species) return;
-      setTimeout(() => showPetOffer(species), 900);
+      // Which tool is doing the work changes what the moment says, so the
+      // offer needs to know. On the lure, this is the one time it will ever
+      // happen, and the player deserves to be told that before they spend it.
+      const byLure = !hasPetCatcher();
+      setTimeout(() => showPetOffer(species, byLure), 900);
     }
 
     function hasHouse() {
@@ -12295,14 +13284,24 @@
       } catch (e) { return false; }
     }
 
-    function showPetOffer(species) {
+    function showPetOffer(species, byLure) {
+      // A one-shot tool must say so BEFORE it is spent, and it must be
+      // declinable. Spending a player's only lure on a creature they did not
+      // want, because the button did not warn them, is exactly the kind of
+      // irreversible surprise this island does not do.
       const body =
         '<div class="pet-panel">' +
         '<div class="pet-panel__sprite">' + petSprite(species) + '</div>' +
         '<p class="pet-panel__idle">' + escapeHtml(species.blurb) + '</p>' +
         '<p class="pet-panel__quirk">' + escapeHtml(species.quirk) + '</p>' +
+        (byLure
+          ? '<p class="pet-work__note">Fredward’s lure has one ask in it. ' +
+            'Spend it here and it will not do this again.</p>'
+          : '') +
         '<div class="pet-panel__cheeses">' +
-        '<button class="pet-cheese" id="pet-take">Take them home</button>' +
+        '<button class="pet-cheese" id="pet-take">' +
+        (byLure ? 'Spend the lure on them' : 'Take them home') + '</button>' +
+        (byLure ? '<button class="pet-cheese" id="pet-keep">Save it for someone else</button>' : '') +
         '</div>' +
         '<p class="pet-panel__reaction">They followed you out of the clue.</p>' +
         '</div>';
@@ -12310,11 +13309,24 @@
       const take = document.getElementById('pet-take');
       if (take) take.onclick = () => {
         BCWPets.adopt(species.id);
+        if (byLure) spendFredwardLure();
         if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
         closeGameModal();
         // If the player is standing in the house, they should see it arrive.
         const room = document.getElementById('house-room');
         if (room) renderPets(room);
+        renderPetHud();
+        if (typeof BCWAchievements !== 'undefined' && BCWAchievements.checkPets) {
+          const p = BCWPets.progress();
+          BCWAchievements.checkPets(p.adopted, p.total);
+        }
+      };
+      // Declining costs nothing and un-sees the species, so the same creature
+      // can turn up again later. A lure kept back is not a chance thrown away.
+      const keep = document.getElementById('pet-keep');
+      if (keep) keep.onclick = () => {
+        BCWPets.unsee(species.id);
+        closeGameModal();
       };
     }
 
@@ -15270,6 +16282,7 @@
 <script src="js/graduation.js"></script>
 <script src="js/materials.js"></script>
 <script src="js/pets.js"></script>
+<script src="js/quest.js"></script>
 <script src="js/cottage.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/islanders.js"></script>

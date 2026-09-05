@@ -126,6 +126,74 @@ test.describe('cloud sync coverage', () => {
     expect(log.every((p) => p.game === 'world')).toBe(true);
   });
 
+  test('the questline, the lure and the pets all push', async ({ page }) => {
+    // Six new keys arrived with Canon's questline and the pets that came out
+    // of it, and every one of them is progress a player would be upset to
+    // lose: which creatures live at the cottage, which one is walking beside
+    // them, which artifacts they have recovered, and the seed that decides
+    // what their copy of each errand looks like.
+    //
+    // The seed matters more than it looks. It is minted once per save, and a
+    // save that reached the cloud without it would come back to a second
+    // device with different missions than the ones the player was halfway
+    // through.
+    await clearPushes(page);
+
+    await page.evaluate(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const w = window as any;
+      w.grantFredwardLure();
+      w.grantPetCatcher();
+      w.BCWPets.adopt('croc');
+      w.BCWPets.setActive('croc');
+      w.BCWPets.feed('croc', 'Anagram Cheddar');
+      w.BCWQuest.start();
+      w.BCWQuest.recover('rope');
+    });
+
+    const log = await pushes(page);
+    expect(log.length, 'quest and pet writers scheduled no cloud push').toBeGreaterThanOrEqual(6);
+    expect(log.every((p) => p.game === 'world')).toBe(true);
+
+    // The writes really happened. A push of nothing is not a pass.
+    const state = await page.evaluate(() => ({
+      lure: localStorage.getItem('bcw_lure_fredward'),
+      catcher: localStorage.getItem('bcw_pet_catcher'),
+      pets: localStorage.getItem('bcw_pets'),
+      quest: localStorage.getItem('bcw_quest'),
+    }));
+    expect(state.lure).toBe('1');
+    expect(state.catcher).toBe('1');
+    expect(state.pets).toContain('croc');
+    expect(state.quest).toContain('rope');
+    // The seed is on disk, not regenerated per read.
+    expect(JSON.parse(state.quest!).seed).toBeGreaterThan(0);
+  });
+
+  test('every new key is registered for backup and reset', async ({ page }) => {
+    // The trap this catches: a key that works perfectly in play and is
+    // invisible to export, to backup and to account deletion. It has happened
+    // in this file twice, and it is always silent, because the game plays
+    // correctly the entire time. Nobody finds out until a player restores a
+    // save and part of it is missing.
+    //
+    // Asserted against BCWSave.ALL_KEYS itself rather than by driving the
+    // export, because export writes a file: intercepting the download tests
+    // the browser, and a key holding a bare string would fall out of a
+    // JSON round trip and read as a registration failure when it is not.
+    const missing = await page.evaluate(() => {
+      // `const BCWSave = ...` at script scope is not a window property, so it
+      // is reached through eval, the same way the other suites here do it.
+      const keys: string[] = eval('BCWSave.ALL_KEYS');
+      return [
+        'bcw_pets', 'bcw_pet_catcher', 'bcw_lure_fredward',
+        'bcw_quest', 'bcw_mat_tier_seen', 'bcw_wreck_seen',
+      ].filter((k) => !keys.includes(k));
+    });
+
+    expect(missing, 'keys that escape export, backup and account deletion').toEqual([]);
+  });
+
   test('story progress still pushes (regression on the one writer that always did)', async ({ page }) => {
     await clearPushes(page);
     await page.evaluate(() => {

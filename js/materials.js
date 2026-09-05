@@ -63,6 +63,53 @@ var BCWMaterials = (() => {
   // handful, because a story is several clues and some walking about.
   const YIELD = { clue: 2, bonus: 3, story: 4 };
 
+  // ── The labour graduates ──────────────────────────────────────────────
+  //
+  // The most-repeated fair criticism of Spiritfarer, a game that is 94%
+  // positive: "it is not good on average." The named cause is that the verbs
+  // at hour forty are identical to the verbs at hour one. You are still doing
+  // the tutorial's job, by hand, forever.
+  //
+  // This bag had that shape. Every solve dropped two of something, at hour
+  // one and at hour two hundred, and the only thing that changed was the
+  // number getting bigger. So the yield graduates: once you have shown you
+  // understand a device, its material arrives faster, because you have
+  // stopped needing the practice and started needing the timber.
+  //
+  // Rules it obeys:
+  //   * It is a RATCHET. Nothing decays and no tier is ever lost.
+  //   * It is never a requirement. A player at tier one can build everything;
+  //     they just make more trips.
+  //   * It is earned from MASTERY, which is unaided solves, so it cannot be
+  //     ground out by taking hints on the same clue repeatedly.
+  const TIERS = [
+    { at: 0,  mult: 1, note: '' },
+    { at: 12, mult: 2, note: 'You have done this enough that it comes off in bigger pieces.' },
+    { at: 30, mult: 3, note: 'It falls out of the clue almost before you have finished reading it.' },
+  ];
+
+  /**
+   * How much a solve yields now, and why.
+   *
+   * Reads the Academy's mastery record when it is present. When it is not,
+   * which is any harness or a page that loaded this module alone, everything
+   * falls back to tier one and nothing breaks.
+   */
+  function tier() {
+    let unaided = 0;
+    try {
+      if (typeof BCMastery !== 'undefined' && BCMastery.summary && typeof BCTaxonomy !== 'undefined') {
+        // The unaided count is lifetime solves taken without a hint. Not the
+        // learned count, which counts DEVICES cleared and tops out at eight,
+        // and not attempted, which a player could run up by guessing.
+        unaided = BCMastery.summary(BCTaxonomy.ids()).unaided || 0;
+      }
+    } catch { /* the Academy is optional here */ }
+    let best = TIERS[0];
+    for (const t of TIERS) if (unaided >= t.at) best = t;
+    return best;
+  }
+
   function read() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -108,11 +155,14 @@ var BCWMaterials = (() => {
    */
   function award(device, source) {
     const kind = BY_DEVICE[device] || 'timber';
-    const amount = YIELD[source] || YIELD.clue;
+    const t = tier();
+    const amount = (YIELD[source] || YIELD.clue) * t.mult;
     const bag = read();
     bag[kind] += amount;
     write(bag);
-    return { kind: kind, amount: amount, total: bag[kind] };
+    // The note is carried only so a caller can say it once when a tier is
+    // first reached, rather than congratulating the player on every solve.
+    return { kind: kind, amount: amount, total: bag[kind], tier: t.mult, note: t.note };
   }
 
   /** A mixed handful, for finishing a story. */
@@ -167,6 +217,8 @@ var BCWMaterials = (() => {
     KINDS: KINDS,
     BY_DEVICE: BY_DEVICE,
     YIELD: YIELD,
+    TIERS: TIERS,
+    tier: tier,
     award: award,
     awardStory: awardStory,
     have: have,

@@ -40,6 +40,16 @@ const BCWAchievements = (() => {
     sky_hunter: { title: 'Ship\'s Log', desc: 'Complete Simon\'s Skyship story', icon: '🔭', category: 'story' },
     moonwalker: { title: 'Moonwalker', desc: 'Complete The Moon story', icon: '🌙', category: 'story' },
 
+    // The wreck, the room under the fountain, and what came of both.
+    //
+    // Named for the chair Canon keeps beside him rather than for the errand,
+    // because the errand is not the thing that happened.
+    second_chair: { title: 'The Second Chair', desc: 'Bring something back to the listening post', icon: '🪑', category: 'story' },
+    the_manifest: { title: 'What a Crossing Sheds', desc: 'Recover all five artifacts', icon: '🧭', category: 'story' },
+    // Pets. Adopting one at all is the milestone; the full five is the shelf.
+    first_pet: { title: 'Followed You Out', desc: 'Take a creature home', icon: '🐾', category: 'house' },
+    full_menagerie: { title: 'A Full House', desc: 'All five creatures living at the cottage', icon: '🏘️', category: 'house' },
+
     // Social
     first_share: { title: 'Social Butterfly', desc: 'Share your progress for the first time', icon: '🦋', category: 'social' },
 
@@ -168,6 +178,18 @@ const BCWAchievements = (() => {
     if (fishData.totalSpecies && fishData.uniqueSpecies >= fishData.totalSpecies) unlock('fish_complete');
   }
 
+  // Canon's errands. The first is the badge; the fifth is the manifest.
+  function checkQuest(recovered, total) {
+    if (recovered >= 1) unlock('second_chair');
+    if (total && recovered >= total) unlock('the_manifest');
+  }
+
+  // Creatures at the cottage.
+  function checkPets(adopted, total) {
+    if (adopted >= 1) unlock('first_pet');
+    if (total && adopted >= total) unlock('full_menagerie');
+  }
+
   function checkHouseItems(count) {
     if (count >= 5) unlock('decorator');
     if (count >= 15) unlock('dream_home');
@@ -212,6 +234,8 @@ const BCWAchievements = (() => {
     checkPuzzleFailed,
     checkFishing,
     checkHouseItems,
+    checkQuest,
+    checkPets,
     checkTerminalCodes,
     checkIntroComplete,
     checkShare,

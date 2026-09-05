@@ -54,6 +54,14 @@ const BCWSave = (() => {
     'bcw_quill_style',
     // The means of catching a pet, earned from Canon's quest.
     'bcw_pet_catcher',
+    // Fredward's lure: the one-shot version anybody can reach by boat,
+    // without a terminal code. '' none, '1' held, '2' spent.
+    'bcw_lure_fredward',
+    // Canon's questline: which artifacts are recovered, and this save's
+    // seed for the one randomised step in each mission.
+    'bcw_quest',
+    // Highest material yield tier announced, so it is said once.
+    'bcw_mat_tier_seen',
     // Whether the player has been down to the wreck.
     'bcw_wreck_seen',
     // The notebook is deliberately NOT synced (canvases would swamp the
@@ -310,6 +318,14 @@ const BCWSave = (() => {
   }
 
   return {
+    // Exported so a test can assert a new key was registered here.
+    //
+    // This list has drifted before, twice, and the failure is always silent:
+    // the key works perfectly in play and is invisible to export, to backup
+    // and to account deletion, so nobody finds out until a player restores a
+    // save and part of it is gone. It could not be checked from outside
+    // because it was not reachable from outside. Now it is.
+    ALL_KEYS,
     safeGet,
     safeSet,
     exportSave,

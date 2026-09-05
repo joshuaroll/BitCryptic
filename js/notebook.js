@@ -96,6 +96,38 @@ var BCWNotebook = (() => {
     }, extra || {}));
   }
 
+  /**
+   * File an artifact from Canon's questline.
+   *
+   * The quest was going to hand the player a read-only list of five objects,
+   * which is an inventory screen: a thing you look at once and never open
+   * again. The notebook is already the place a solver keeps their working, it
+   * already draws, and it was sitting unused by the quest entirely.
+   *
+   * So an artifact arrives as a PAGE. It comes with what Canon said about it
+   * and a canvas over the top, and from that moment it is the player's: they
+   * can write on it, connect it to another page, or ignore it. A case file is
+   * a notebook somebody used, not a gallery somebody curated.
+   *
+   * Deduplicated by `artifact`, because bringing a thing back is a single
+   * event even if the debrief gets replayed.
+   */
+  function addArtifact(id, title, note) {
+    if (!id) return null;
+    const existing = read().find((p) => p.artifact === id);
+    if (existing) return existing;
+    return add({
+      kind: 'artifact',
+      artifact: String(id),
+      title: String(title || 'Artifact'),
+      text: String(note || ''),
+    });
+  }
+
+  function hasArtifact(id) {
+    return read().some((p) => p.artifact === id);
+  }
+
   function update(id, patch) {
     const pages = read();
     const i = pages.findIndex((p) => p.id === id);
@@ -179,6 +211,8 @@ var BCWNotebook = (() => {
     MAX_PAGES: MAX_PAGES,
     add: add,
     addClue: addClue,
+    addArtifact: addArtifact,
+    hasArtifact: hasArtifact,
     update: update,
     remove: remove,
     all: all,
