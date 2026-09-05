@@ -243,10 +243,10 @@ function fred(opts) {
     var rFoot = pose === 'leaning' ? rLeg + h * 0.75 : rLeg;
     o += '<path d="M' + wn(lLeg) + ',' + wn(hipY - h * 0.2) +
       ' Q' + wn(lLeg - h * 0.12) + ',' + wn(kneeY) + ' ' + wn(lFoot) + ',' + wn(footY - h * 0.42) +
-      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.28) + '" stroke-linecap="round"/>';
+      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.62) + '" stroke-linecap="round"/>';
     o += '<path d="M' + wn(rLeg) + ',' + wn(hipY - h * 0.2) +
       ' Q' + wn(rLeg + h * 0.12) + ',' + wn(kneeY) + ' ' + wn(rFoot) + ',' + wn(footY - h * 0.42) +
-      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.28) + '" stroke-linecap="round"/>';
+      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.62) + '" stroke-linecap="round"/>';
     // knee creases, so the leg reads as a limb and not a pipe
     o += '<path d="M' + wn(lLeg - limb * 0.5) + ',' + wn(kneeY) + ' Q' + wn(lLeg) + ',' + wn(kneeY + h * 0.16) + ' ' + wn(lLeg + limb * 0.5) + ',' + wn(kneeY) +
       ' M' + wn(rLeg - limb * 0.5) + ',' + wn(kneeY) + ' Q' + wn(rLeg) + ',' + wn(kneeY + h * 0.16) + ' ' + wn(rLeg + limb * 0.5) + ',' + wn(kneeY) +
@@ -256,9 +256,9 @@ function fred(opts) {
   } else {
     // upside down: the legs go UP out of frame toward the hatch he came from
     o += '<path d="M' + wn(-hipW * 0.52) + ',' + wn(-h * 1.55) + ' Q' + wn(-hipW * 0.62) + ',' + wn(-h * 3.4) + ' ' + wn(-hipW * 0.5) + ',' + wn(-h * 5.1) +
-      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.28) + '" stroke-linecap="round"/>';
+      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.62) + '" stroke-linecap="round"/>';
     o += '<path d="M' + wn(hipW * 0.52) + ',' + wn(-h * 1.55) + ' Q' + wn(hipW * 0.66) + ',' + wn(-h * 3.4) + ' ' + wn(hipW * 0.54) + ',' + wn(-h * 5.1) +
-      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.28) + '" stroke-linecap="round"/>';
+      '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb * 1.62) + '" stroke-linecap="round"/>';
     o += '<g transform="translate(' + wn(-hipW * 0.5) + ',' + wn(-h * 5.3) + ') scale(1,-1)">' + wBoot(s, h, -1) + '</g>';
     o += '<g transform="translate(' + wn(hipW * 0.54) + ',' + wn(-h * 5.3) + ') scale(1,-1)">' + wBoot(s, h, 1) + '</g>';
   }
@@ -296,8 +296,8 @@ function fred(opts) {
     var aY = shoulderY + h * 0.5;
     var reach = pose === 'inverted' ? -1 : 1;
     var aTop = pose === 'inverted' ? -h * 3.6 : aY;
-    var handY = pose === 'inverted' ? aTop - h * 2.1 : aY + h * 2.15;
-    var lhx = -halfW - h * 0.75, rhx = halfW + h * 0.75;
+    var handY = pose === 'inverted' ? aTop - h * 2.1 : aY + h * 1.72;
+    var lhx = -halfW - h * 0.42, rhx = halfW + h * 0.42;
     o += '<path d="M' + wn(-halfW * 0.94) + ',' + wn(aTop) +
       ' Q' + wn(lhx + h * 0.15) + ',' + wn(aTop + reach * h * 1.15) + ' ' + wn(lhx) + ',' + wn(handY - reach * h * 0.35) +
       '" fill="none" stroke="url(#wSuit' + s + ')" stroke-width="' + wn(limb) + '" stroke-linecap="round"/>';
