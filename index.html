@@ -5503,6 +5503,8 @@
   <script src="scenes/workshop.js"></script>
   <script src="scenes/lair.js"></script>
   <script src="scenes/moon.js"></script>
+  <script src="scenes/wreck.js"></script>
+  <script src="scenes/hidden.js"></script>
 
   <script>
     // ═══════════════════════════════════
@@ -6131,6 +6133,162 @@
     //  STORY DATA
     // ═══════════════════════════════════
     const STORIES = {
+      // ═══════════════════════════════════
+      //  THE WRECK
+      // ═══════════════════════════════════
+      //
+      // Reached by boat from the docks. No terminal code, on purpose: this is
+      // the un-gated half of the pet system, and gating it would put the
+      // warmest thing on the island behind a secret again.
+      //
+      // No puzzle steps. The wreck is the one place that asks nothing of the
+      // player, which is part of why it reads the way it does.
+      //
+      // COPY IS PLACEHOLDER until G3 sign-off.
+      wreck: {
+        title: 'Why does anyone stay down here?',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The boat lets you down on a rope and the water takes your weight before you are ready for it. Green light. Then greener. Sound goes soft and far away, like the island is talking about you in another room.<br><br>Something long and dark resolves out of the seabed below you. First a shape you could argue with. Then no argument at all.'
+          },
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'It is a ship, and it is finished being one. The hull lies over on its side with sand banked along it like a drift of snow. Rope hangs in loops that no longer go anywhere. A ship is a thing for going somewhere, so a wreck is a thing that stopped.<br><br>Someone has swept the deck. There are lamps strung along the rail, glowing amber, and a doormat. A small crab is standing on the doormat, apparently in charge.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: 'A hatch opens and a diver comes out of it, upside down, waving. Old suit, brass fittings, a faceplate polished so clean it hurts. He rights himself with two lazy kicks and beams at you.<br><br>"Oh, wonderful. Wonderful. Hello." His voice carries fine underwater, which is one of the things this island does not explain to anyone. "Fredward Fishington. You will want to mind the crab, he thinks the mat is his and, honestly, he has the better claim."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: 'He leads you along the deck to a table bolted flat, and on it a book so thick the sea has given up on it. Every page is a creature. Drawn, measured, named, dated, with notes down the margin in a small tidy hand.<br><br>"This one curls up inside longer words and waits. Very patient. Very smug about it." He turns a page with real care. "This one hoards. This one is a crocodile and wears a waistcoat, which I have not been able to account for, but I have written it down, because the rule is that you write it down."'
+          },
+          {
+            // The case for his life, and it has to be a real one. The lore
+            // ledger refuses to say whether this island is a threat or the one
+            // refuge from being audited, and instructs that both readings stay
+            // planted. If Fredward is only ever charming, the ambiguity
+            // resolves by omission and Canon wins unopposed.
+            type: 'choice',
+            speaker: 'Fredward Fishington',
+            text: '"Nobody grades it, you see." He says it the way you would mention good drainage. "There is no mark at the end of the page. Nobody comes down to see whether I have kept up, and nobody ever has, and so every single thing in this book is in here because it is true and for no other reason at all."<br><br>He flattens the page with his palm. "Two hundred pages of that. I do not think there is another two hundred pages like it anywhere. Wherever you are from, ask yourself when you last read a page nobody was being scored on."',
+            choices: [
+              { label: 'How do you get them to hold still?', next: 5 },
+              { label: 'How long have you been at this?', correct: false, reaction: '"Longer than the book, and the book is thick." He looks at it with some surprise, as though it had been eating well without him. "It has all been one long good afternoon down here."' }
+            ]
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: '"Ah. Well. That is the interesting part." He props himself against the rail. "Mostly they do not. You watch, you draw, they leave. That is the honest way and it is a good way. But every so often one of them follows you home, and I have spent a long while working out why."<br><br>"It is not chasing. Chasing gets you nothing but a good look at something leaving. It is asking. There is a right way of asking on this island and it is not with your hands."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: 'He rummages in a crate and comes up with a thing of wire, glass and knotted line, with a small dented bell on the end of it. He holds it out flat on both palms, the way you present something you are proud of and slightly embarrassed by.<br><br>"I made it. It works. It works precisely once, and then it sulks, and I have never got a second out of it. So it is not very good. But it is the only one, so it is also the best one, which is a comfort I intend to keep."'
+          },
+          {
+            type: 'choice',
+            speaker: 'Fredward Fishington',
+            text: '"Take it. Yes, take it. I have the book and the crab and I do not need anything to follow me anywhere." He presses it into your hands and looks enormously pleased. "One creature. One ask. Choose a good one."',
+            choices: [
+              { label: 'Where is home for you, Fredward?', next: 8 },
+              { label: 'Won’t you want it back?', correct: false, reaction: 'He laughs, a big underwater laugh that fogs his faceplate. "Want it back. What a thought." He wipes the glass clear with his thumb. "No, no. Things down here are for using."' }
+            ]
+          },
+          {
+            // The settling, shown and never explained. The canonical symptom
+            // is the word "home" retrieving the wrong referent, so the step
+            // ends on the crab and the lamps rather than on the player's
+            // reaction. Nothing here narrates what just happened.
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: '"Home?" He says it warmly, the way you would answer a child who has asked something easy. He turns and looks at the long broken hull, the amber lamps, the sand banked up along her like a blanket.<br><br>"Here. The wreck. Always has been." He is smiling. He means it. "Best address on the island. Quiet, cool, no weather. And the neighbours keep to themselves, apart from the crab."<br><br>The crab has not moved. The lamps go on burning. Above you, a long way up, the surface moves like something breathing.'
+          },
+          {
+            type: 'choice',
+            speaker: 'Fredward Fishington',
+            text: 'He is already back at the book, licking a fingertip out of pure habit inside a sealed suit, turning to a fresh page for you. "Now. If you want a proper catcher, and you will, mine being what it is, there is a terminal in the Town Square that knows more than it says."',
+            choices: [
+              { label: 'Who should I ask?', next: 10 },
+              { label: 'Could you not come up and show me?', correct: false, reaction: '"Up?" He considers it the way you consider a holiday you are not going to take. "Kind of you. But the light up there is very loud and there is a great deal of it, and I have work."' }
+            ]
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: '"There is a man who comes to the fountain." He says it easily, and then stops, with his hand flat on the open page. "Thin fellow. Stands at the water. I could not tell you how I know that, and I have noticed that I do not, and then I stop noticing."<br><br>He shrugs, cheerfully, at himself. "I have a question for him. I have had it a good while. It never quite turns up in time to be asked, and a question that will not come when it is called cannot have been worth much."<br><br>Then, brightly: "Ask him about the catcher. He will know. People who stand at water always know something."'
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'You go up the rope and the green gets thinner and the sound comes back all at once, gulls and slap and wind, too much of it.<br><br>The last you see of him he is under the amber lamps with the book open, drawing something with six legs, entirely happy, at home.<br><br>The lure is in your fist. One creature. One ask.',
+            unlocks: [],
+            btnText: 'Surface'
+          }
+        ]
+      },
+
+      // Every later visit. Written to stand ALONE: a save that already tripped
+      // the first-visit flag before this story existed will only ever see this
+      // one, so who he is, what the book is, his argument, one settling beat
+      // and the pointer to the fountain all arrive here without a recap.
+      wreck_return: {
+        title: 'Back Down to Fishington’s',
+        steps: [
+          {
+            type: 'narrative',
+            speaker: null,
+            text: 'The rope, the green light, the wreck lying over on its side with the lamps lit along her rail. The crab is on the doormat. The crab has strong views about the doormat.<br><br>A hatch bangs open before you have got your feet down.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: '"You came back." The diver comes at you with both hands out, brass fittings, polished faceplate, delighted past all proportion. "Fredward Fishington. I catalogue the creatures on this island, all of them, and I live here, and you have arrived on a very good day, because look."<br><br>He has the great thick book open before you can answer. There is a new page, still tacky with ink that has no business drying underwater.'
+          },
+          {
+            type: 'choice',
+            speaker: 'Fredward Fishington',
+            // The drawing rotates per visit. Filled in by showStoryStep, which
+            // swaps in one line from WRECK_DRAWINGS so the page is new each
+            // time without four near-identical steps in the data.
+            text: '{{DRAWING}}<br><br>"New this week. It came down along the hull three nights running at the same hour, and on the fourth night it did not, and I sat up for it anyway." He taps the page. "That is the job. Most of the job is sitting up for things."',
+            choices: [
+              { label: 'What made you start cataloguing?', next: 3 },
+              { label: 'Doesn’t it get lonely down here?', correct: false, reaction: 'He looks around the deck, honestly checking, as though loneliness might be somewhere near the crate. "No. There is always something coming down the hull, and it is always something I have not drawn yet."' }
+            ]
+          },
+          {
+            type: 'narrative',
+            speaker: 'Fredward Fishington',
+            text: '"Start? I did not start. It is simply what I do and it is what I have always done." He says it without a flicker. "Somebody has to write down what the rules are here. Nobody has asked me for it, mind you, and nobody has ever come down to check it, and that is the best thing about it. There is nothing in this book that is in it to satisfy anybody."<br><br>He turns back a hundred pages to show you, and the handwriting a hundred pages ago is the same handwriting, tidy and steady.<br><br>"You will not find another book like that. Not where you come from."'
+          },
+          {
+            type: 'choice',
+            speaker: 'Fredward Fishington',
+            // Branches on whether the player has the real catcher yet. Both
+            // halves have to read cold, because either may be the first thing
+            // a given save ever hears from him.
+            text: '{{CATCHER}}',
+            choices: [
+              { label: 'I’ll come back and tell you what I find.', next: 5 },
+              { label: 'You could come with me.', correct: false, reaction: 'He pats the rail. "Somebody has to mind the book. And the lamps want trimming, and the crab has an appointment." He is not making excuses. He is listing his week.' }
+            ]
+          },
+          {
+            type: 'complete',
+            speaker: null,
+            text: 'He is already back at the table when you take the rope, one hand flat on the page to hold it against the current, humming something with no tune in it.<br><br>"Come down any time," he calls up. "You know where I live."',
+            unlocks: [],
+            btnText: 'Surface'
+          }
+        ]
+      },
       docks: {
         title: 'Washed Ashore',
         steps: [
@@ -8122,12 +8280,18 @@
       continueBtn.classList.remove('visible');
       completeBtn.classList.remove('visible');
 
+      // A step may carry a placeholder that only the running game can fill:
+      // which creature Fredward drew this week, or which of two things he says
+      // depending on what the player is already carrying. Resolved once, here,
+      // so both the typewriter and review mode see the same finished text.
+      const stepText = fillStoryText(step.text);
+
       // Review mode (stepped back): instant text, read-only controls,
       // no typewriter, no analytics re-count.
       if (reviewMode) {
         stopTextReveal();
         typewriterDone = true;
-        textEl.innerHTML = step.text;
+        textEl.innerHTML = stepText;
         showStoryControlsReview(step);
         return;
       }
@@ -8135,7 +8299,7 @@
       // Typewriter effect
       typewriterDone = false;
       let isTransitioning = false; // Guard against rapid clicks
-      const fullText = step.text;
+      const fullText = stepText;
 
       stopTextReveal();
 
@@ -13169,6 +13333,71 @@
     // seabed. It takes no code: the boat down is at the docks and anybody can
     // take it. Until you have, the wreck has no label, so the first visit
     // turns a shape in the water into a place with a name.
+    // ─── Story text the running game has to finish ───
+    //
+    // Two placeholders, both at the wreck. Kept as substitution rather than as
+    // extra steps because the alternative is four near-identical copies of one
+    // beat in the story data, which is where content drifts out of sync.
+    function fillStoryText(text) {
+      if (!text || text.indexOf('{{') === -1) return text || '';
+      return text
+        .replace('{{DRAWING}}', wreckDrawing())
+        .replace('{{CATCHER}}', wreckCatcherLine());
+    }
+
+    // What Fredward drew this week. Cycles by visit rather than at random, so
+    // a player who comes down twice running never gets the same page and
+    // concludes the wreck is a loop.
+    //
+    // COPY IS PLACEHOLDER until G3 sign-off.
+    const WRECK_DRAWINGS = [
+      'An eel that only swims through gaps between other things. Never open water. ' +
+        'I have not worked out whether that is fear or manners.',
+      'A crab who has been building a shell out of letters. Not shaped like letters. ' +
+        'Letters. I have drawn it twice and got a different word both times.',
+      'Something that comes and looks at the lamps and goes away again. Fourteen visits. ' +
+        'It has never once come closer, and it has never once not come.',
+      'A very small octopus that has moved into the ship’s bell. She does not ring it. ' +
+        'I have been waiting a month for her to ring it and I have made my peace with the waiting.',
+    ];
+
+    const WRECK_VISIT_KEY = 'bcw_wreck_visits';
+
+    function wreckDrawing() {
+      let n = 0;
+      try { n = parseInt(localStorage.getItem(WRECK_VISIT_KEY), 10) || 0; }
+      catch (e) { n = 0; }
+      return '<em>' + WRECK_DRAWINGS[n % WRECK_DRAWINGS.length] + '</em>';
+    }
+
+    function bumpWreckVisits() {
+      try {
+        const n = (parseInt(localStorage.getItem(WRECK_VISIT_KEY), 10) || 0) + 1;
+        localStorage.setItem(WRECK_VISIT_KEY, String(n));
+      } catch (e) { /* private mode: the page just repeats */ }
+      window.BCSync?.schedulePush('world');
+    }
+
+    // Branches on whether the player has the real catcher yet. Both halves
+    // have to read cold, because either may be the first thing a given save
+    // ever hears from him: a save that tripped the first-visit flag before
+    // this story existed will only ever see wreck_return.
+    function wreckCatcherLine() {
+      if (hasPetCatcher()) {
+        return '"Ah, you have got a proper one." He turns your catcher over with frank ' +
+          'professional envy and hands it straight back. "Mine was wire and a bell and one ' +
+          'good idea, and it caught exactly one creature before it lost interest in the ' +
+          'whole business. Which was enough. A thing only has to work once to settle the ' +
+          'question of whether it works."';
+      }
+      return 'He glances at your hands and something in him settles. "You want a catcher. ' +
+        'Everybody wants a catcher, and mine is a bad one, and I am the one who made it, ' +
+        'so you may trust me on the point." He is entirely unwounded by this. "There is a ' +
+        'man who comes to the fountain in the Town Square. Thin fellow. Stands at the water. ' +
+        'Ask him for a proper one. I have a question for him myself, and it has never once ' +
+        'turned up in time to be asked, so you had better do the asking for both of us."';
+    }
+
     const WRECK_KEY = 'bcw_wreck_seen';
 
     function hasVisitedWreck() {
@@ -13183,7 +13412,20 @@
         window.BCSync?.schedulePush('world');
         labelWreckOnMap();
       }
+      // Fredward hands the lure over in the story, so the grant happens on the
+      // way in rather than at the end. A player who closes the panel halfway
+      // has still met him and still been given the thing, and making them
+      // re-watch the whole dive to collect it would be a punishment for
+      // stopping to make tea.
+      //
+      // grantFredwardLure never downgrades a spent lure, so replaying the
+      // story cannot hand out a second free creature.
+      grantFredwardLure();
+      bumpWreckVisits();
       closePanel();
+      // An existing save may have tripped the first-visit flag back when this
+      // story did not exist and the call was a silent no-op. Those saves get
+      // wreck_return, which is written to stand alone for exactly that reason.
       startStory(first ? 'wreck' : 'wreck_return');
     }
 

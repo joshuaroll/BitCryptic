@@ -64,6 +64,8 @@ const BCWSave = (() => {
     'bcw_mat_tier_seen',
     // Whether the player has been down to the wreck.
     'bcw_wreck_seen',
+    // How many dives, so the page Fredward shows you rotates.
+    'bcw_wreck_visits',
     // The notebook is deliberately NOT synced (canvases would swamp the
     // 256 KB cloud payload) but it IS the player's own work, so export,
     // backup and account deletion must all see it.
