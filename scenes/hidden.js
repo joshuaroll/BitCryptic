@@ -39,7 +39,17 @@ function hidn(v) { return Math.round(v * 100) / 100; }
 // different camera distance changes this and nothing else. Head radius 14 is
 // the mid-shot (hidden_1), which is the reference for every other scene.
 var HID_HEAD = 14;
-var HID_SKIN = '#05070e', HID_SKIN_L = '#0b0f19', HID_RIM = '#9fd4e4';
+// HID_RIM IS OFF. It was a bright cyan stroke drawn INSIDE the silhouette,
+// down the middle of a black shape rather than along its outer edge, and it
+// read as a tear through the figure. Canon is a pure silhouette: a shape you
+// never see into, lit only by the screens in front of him. A pure silhouette
+// reads best as a pure shape, and the rim was added out of a worry that the
+// form was unreadable, which it was not.
+//
+// Set to the skin value so every existing call site becomes a no-op rather
+// than 79 separate edits, and so a future pass can reinstate it in ONE place
+// if it is ever done correctly (on the outer edge, following the light).
+var HID_SKIN = '#05070e', HID_SKIN_L = '#0b0f19', HID_RIM = '#05070e';
 var HID_CHAIR = '#2e3849', HID_CHAIR_L = '#3d4a60', HID_CHAIR_D = '#28313f';
 
 // ---------------------------------------------------------------------------
@@ -1097,7 +1107,7 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <circle cx="-2" cy="-4" r="18" fill="#05070e"/>
   <path d="M-20,-6 Q-14,-24 -2,-22 Q10,-24 16,-6" fill="#0b0f19"/>
   <path d="M-56,86 Q-48,32 -14,14" fill="none" stroke="#5fa0b8" stroke-width="5" opacity="0.2"/>
-  <path d="M-56,86 Q-48,32 -14,14" fill="none" stroke="#9fd4e4" stroke-width="1.8" opacity="0.78"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
 </g>
 <!-- His hand, resting flat where the pencil was put down. Drawn AFTER the
      table and the pencil, so the hand closes on the surface rather than the
@@ -1187,7 +1197,7 @@ STORY_SCENES['hidden_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 ` + hidHand(17, 1, { x: 68, y: -28, rot: 36, fill: '#03050a', rim: false }) + `
   <circle cx="0" cy="-16" r="17" fill="#03050a"/>
   <path d="M-17,-18 Q-11,-36 0,-34 Q11,-36 17,-18" fill="#080d18"/>
-  <path d="M-16,-24 Q-19,-14 -16,-6" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.5"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
 </g>
 <!-- second chair, edge of frame, still empty -->
 ` + hidChair(452, 226, -5, 258, { w: 44, d: 14, backH: 44, seat: '#0e1521', seatEdge: '#39465c' }) + `
@@ -1313,7 +1323,7 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <path d="M-14,11 Q-10,-5 1,-3 Q12,-5 16,11" fill="#0b0f19"/>
   <rect x="-6" y="24" width="13" height="9" fill="#05070e"/>
   <path d="M-29,88 Q-26,48 -13,34" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
-  <path d="M-29,88 Q-26,48 -13,34" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.76"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
 </g>
 <!-- second chair, angled toward him -->
 ` + hidChair(360, 226, -5, 253, { w: 48, d: 16, backH: 48 }) + `
@@ -1407,12 +1417,12 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
     <!-- ear -->
     <ellipse cx="7" cy="2" rx="3" ry="4.6" fill="#0b0f19"/>
     <!-- cold rim off the temple, the tell that he has turned -->
-    <path d="M-13,-6 Q-16,3 -12,10" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.8"/>
-    <path d="M-11,12 Q-6,16 0,16" fill="none" stroke="#7fc4d8" stroke-width="1.2" opacity="0.55"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
   </g>
   <rect x="-14" y="24" width="14" height="10" fill="#05070e"/>
   <path d="M-32,88 Q-32,50 -20,36" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
-  <path d="M-32,88 Q-32,50 -20,36" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.76"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
 </g>
 <!-- second chair, and he is turned toward it -->
 ` + hidChair(392, 228, -7, 253, { w: 48, d: 16, backH: 48 }) + `
@@ -1698,7 +1708,7 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <path d="M-16,22 Q-14,42 -4,44 Q6,44 6,26" fill="#05070e"/>
   <path d="M8,26 Q12,44 22,42 Q30,38 26,20" fill="#05070e"/>
   <!-- rim light down the finger edge -->
-  <path d="M-16,24 Q-14,40 -5,43" fill="none" stroke="#9fd4e4" stroke-width="1.4" opacity="0.6"/>
+  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
 </g>
 <!-- THE LINE. One clear unbroken run from the fingers to the handle hole.
      It swings a little, and the whole tool swings with it. -->
