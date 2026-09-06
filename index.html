@@ -13356,11 +13356,21 @@
         inner + '</svg>';
       switch (id) {
         case 'sounding-spoon':
-          // A spoon on a line, hanging.
-          return s('<path d="M22,4 v18" stroke="#8a7a5a" stroke-width="1" fill="none"/>' +
-            '<rect x="21" y="21" width="2" height="11" rx="1" fill="#9aa8c4"/>' +
-            '<ellipse cx="22" cy="35" rx="6.5" ry="5" fill="#b9c4d8"/>' +
-            '<ellipse cx="22" cy="34.4" rx="4.6" ry="3.4" fill="#7f8ba3"/>');
+          // A tuning fork, bent from a curtain rod. Two prongs, a shoulder,
+          // a stem and a flat foot: unmistakable at any size, which is the
+          // whole reason it replaced the spoon. The id is unchanged so no
+          // save or scene has to move.
+          return s(
+            // prongs
+            '<path d="M15,7 v18" stroke="#c9a24a" stroke-width="3.4" stroke-linecap="round" fill="none"/>' +
+            '<path d="M29,7 v18" stroke="#c9a24a" stroke-width="3.4" stroke-linecap="round" fill="none"/>' +
+            // the shoulder the prongs spring from
+            '<path d="M13.4,24 Q22,32 30.6,24" stroke="#c9a24a" stroke-width="3.4" fill="none"/>' +
+            // stem down to a flat foot, the part you rest on a plank
+            '<rect x="20.4" y="29" width="3.2" height="9" fill="#b08e3c"/>' +
+            '<rect x="17.6" y="37" width="8.8" height="2.6" rx="1.1" fill="#8a6d2c"/>' +
+            // a highlight down one prong so the brass reads as metal
+            '<path d="M14.2,9 v14" stroke="#e8ce87" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.75"/>');
         case 'green-lens':
           // Tin card with a square of green glass set in it.
           return s('<rect x="7" y="11" width="30" height="22" rx="2" fill="#6b7280"/>' +

@@ -69,17 +69,39 @@ if (hasModel) {
   // shape of the two failures actually seen in this file.
   for (const [key, svg] of Object.entries(store)) {
     if (typeof svg !== 'string') continue;
-    // Test what SURVIVES into the rendered string, not what the source calls
-    // things. The model emits a "glove" comment and a "helmet" comment but no
-    // "boot" one, so an earlier version of this check keyed on words that were
-    // never there and warned about every figure in the file. A guard that
-    // fires on everything is a guard people learn to scroll past.
+    // Assert on the STAMP, not on a word.
+    //
+    // This keyed on /helmet/i for a while, which is a comment word rather than
+    // a drawn thing. It survived only as long as every scene happened to carry
+    // a comment saying "helmet": the moment wreck_return_3 was restaged and
+    // its comment rewritten, the check warned about a figure that has a
+    // helmet, a faceplate, two legs and two boots, all plainly there in the
+    // render. A guard that fires on the correct file is worse than no guard,
+    // because it teaches people to scroll past warnings.
+    //
+    // fred() stamps data-fred-h on the group it returns for exactly this
+    // reason: the model reports its own presence and scale, so CI can assert
+    // instead of inferring from prose that may or may not be in the string.
+    // The actual bug is a HAND WITH NO BODY: gloves entering the frame from
+    // the edge attached to nothing. So the test is whether the scene draws a
+    // torso for the hand to belong to, either from the model (which stamps
+    // itself) or, for the one pose the model has no case for, as its own
+    // figure with a helmet-sized circle in it.
+    //
+    // Keying on the word "helmet" instead was brittle: it passed only while
+    // every scene happened to carry a comment containing that word, and
+    // warned about a complete figure the moment a comment was rewritten.
     const hasGlove = /glove/i.test(svg);
-    const hasHelmet = /helmet/i.test(svg);
-    if (hasGlove && !hasHelmet) {
+    const hasModel = /data-(?:fred|player)-h="/.test(svg);
+    // a helmet is a large circle at the top of a figure; the model draws one
+    // at r = h, and a scene-specific figure must draw one too
+    const hasHelmetCircle = /<circle cx="0" cy="\d+" r="(\d+(?:\.\d+)?)"/.test(svg) &&
+      Array.from(svg.matchAll(/<circle cx="0" cy="[\d.-]+" r="(\d+(?:\.\d+)?)"/g))
+        .some((m) => Number(m[1]) >= 15);
+    if (hasGlove && !hasModel && !hasHelmetCircle) {
       warnings.push(
-        `${key}: draws a hand but no helmet. A gloved hand entering frame with no ` +
-          'body attached is the bug this model exists to stop.'
+        `${key}: draws a hand but no figure from the model. A gloved hand entering ` +
+          'frame with no body attached is the bug this model exists to stop.'
       );
     }
     // A legless figure is NOT checked here, deliberately.

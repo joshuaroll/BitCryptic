@@ -76,7 +76,7 @@
         'The splice was done badly and then done again over the top of itself, by someone learning.',
       gadget: 'sounding-spoon',
       brief: 'Something of ours went into the water off the boat and came ashore there. ' +
-        'Take the spoon. If the sand sounds full, it is full.',
+        'Take the fork. If the sand answers flat, keep walking.',
     },
     {
       id: 'lens',
@@ -141,10 +141,23 @@
   // things a man built out of what washed up, which is the only kind of
   // equipment this island would let anybody have.
   const GADGETS = {
+    // Was "The Sounding Spoon", a beaten spoon on a fishing line. It never
+    // read: a spoon at 40px is an oval on a string, and three separate art
+    // passes produced a bell, a bathysphere and a blob. The problem was the
+    // object, not the drawing.
+    //
+    // A tuning fork has the one thing the spoon lacked: an unmistakable
+    // silhouette at any size. It also does the job more plainly, because a
+    // fork is FOR finding out what a thing sounds like. And it is still
+    // something a man makes from what washes up, which is the rule every
+    // gadget here obeys.
+    //
+    // The id stays 'sounding-spoon' so no save, scene or check breaks.
     'sounding-spoon': {
-      name: 'The Sounding Spoon',
-      desc: 'A soup spoon with the bowl beaten thin, on a length of fishing line. ' +
-        'Solid sounds like nothing. Hollow sounds like something.',
+      name: 'The Sounding Fork',
+      desc: 'Two prongs bent from a brass curtain rod, filed until they agree. ' +
+        'Strike it, set the stem against a plank, and listen. Solid answers flat. ' +
+        'Hollow answers back.',
     },
     'green-lens': {
       name: 'The Green Lens Card',
@@ -340,6 +353,28 @@
     return out;
   }
 
+  /**
+   * What the first errand actually buys.
+   *
+   * The badge used to be an achievement row and nothing else, which is the
+   * puffle-hat failure exactly: Club Penguin sold hats for 200 coins, they did
+   * nothing, and nobody remembers them. A reward that is only a picture of a
+   * reward teaches a player that the next one will be too.
+   *
+   * So the badge KEEPS THE SPOON. Canon lends you the Sounding Spoon for the
+   * first errand; bringing something back is what makes it yours, and from
+   * then on it works anywhere on the island rather than only where he sent
+   * you. It is small, it is permanent, and it is the difference between being
+   * lent a tool and owning one.
+   *
+   * Returns null before the first artifact is home, so a caller can simply ask.
+   */
+  function keptGadget() {
+    if (!load().done.length) return null;
+    const g = GADGETS['sounding-spoon'];
+    return g ? Object.assign({ id: 'sounding-spoon', kept: true }, g) : null;
+  }
+
   // ── Canon between errands ─────────────────────────────────────────────
   //
   // Rotated rather than random, and never repeated until the pool is spent,
@@ -376,6 +411,7 @@
     complete: complete,
     progress: progress,
     gadgets: gadgets,
+    keptGadget: keptGadget,
     nextLine: nextLine,
     reset: reset,
   };

@@ -44,7 +44,10 @@ const BCWAchievements = (() => {
     //
     // Named for the chair Canon keeps beside him rather than for the errand,
     // because the errand is not the thing that happened.
-    second_chair: { title: 'The Second Chair', desc: 'Bring something back to the listening post', icon: '🪑', category: 'story' },
+    // The badge KEEPS THE SPOON. A reward that is only a picture of a reward
+    // teaches a player the next one will be too: Club Penguin sold puffle hats
+    // for 200 coins, they did nothing, and nobody remembers them.
+    second_chair: { title: 'The Second Chair', desc: 'Bring something back, and the Sounding Spoon is yours to keep', icon: '🪑', category: 'story' },
     the_manifest: { title: 'What a Crossing Sheds', desc: 'Recover all five artifacts', icon: '🧭', category: 'story' },
     // The dock keeper's suit, whole again after years in three places.
     suited: { title: 'Sound, and Complete', desc: 'Put the diving suit back together', icon: '🪔', category: 'story' },

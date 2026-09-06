@@ -18,6 +18,798 @@
 // unsuffixed id silently steals another scene's fill.
 
 // ---------------------------------------------------------------------------
+// THE SHARED PARTS
+// ---------------------------------------------------------------------------
+// Everything that recurs across these 33 scenes lives here and nowhere else.
+// Before this block, the chair was drawn eight times as a back panel with two
+// rear legs (no seat, no front legs), rotated as a whole group so one leg
+// drove through the floor and the other hovered; the hand was drawn fourteen
+// times as a black blob between 1.8 and 4.8 head-diameters wide; and the
+// pencil ranged 46 to 130 units long across scenes whose own comments insisted
+// it had not moved.
+//
+// Canon is a SILHOUETTE. He is never shown facing the player and he has no
+// face, ever. That is a composition rule, not a shortcut: the hands below are
+// dark shapes, but they are shaped like hands, with a wrist, a palm, four
+// fingers and a thumb that opposes them.
+
+function hidn(v) { return Math.round(v * 100) / 100; }
+
+// CANON'S SCALE. One number the whole figure derives from, so a scene at a
+// different camera distance changes this and nothing else. Head radius 14 is
+// the mid-shot (hidden_1), which is the reference for every other scene.
+var HID_HEAD = 14;
+var HID_SKIN = '#05070e', HID_SKIN_L = '#0b0f19', HID_RIM = '#9fd4e4';
+var HID_CHAIR = '#2e3849', HID_CHAIR_L = '#3d4a60', HID_CHAIR_D = '#28313f';
+
+// ---------------------------------------------------------------------------
+// EASING. Every organic loop in this file goes through here.
+// ---------------------------------------------------------------------------
+// All 599 animation tags in this file and in wreck.js shipped linear: nothing
+// accelerated, nothing settled, and every loop turned its corners instantly.
+//
+// The one rule that bites: len(keySplines) must be exactly len(keyTimes) - 1.
+// A miscount is not a degraded animation, it is a DEAD one -- the element just
+// sits there. So the count is computed from the values list rather than typed.
+//
+// SMIL also requires all four control-point numbers in [0,1]. Bounce curves
+// like "0.34 1.56 0.64 1" are spec-invalid and kill the animation outright.
+var HID_EASE = '0.42 0 0.58 1';       // symmetric, rest at both ends
+var HID_EASE_OUT = '0 0 0.58 1';      // arrives and settles
+var HID_EASE_IN = '0.42 0 1 1';       // departs from rest
+
+// Emit the spline attributes for a values list of n entries, evenly spaced.
+// Pass a curve per segment, or one curve to use for all of them.
+function hidEase(n, curve) {
+  if (n < 2) return '';
+  var kt = [], ks = [];
+  for (var i = 0; i < n; i++) kt.push(hidn(i / (n - 1)));
+  for (var j = 0; j < n - 1; j++) ks.push(curve || HID_EASE);
+  return ' calcMode="spline" keyTimes="' + kt.join(';') + '" keySplines="' + ks.join(';') + '"';
+}
+
+// A whole eased <animate>. values is a semicolon list; the spline count is
+// derived from it so it cannot be miscounted.
+function hidAnim(attr, values, dur, opts) {
+  opts = opts || {};
+  var n = values.split(';').length;
+  return '<animate attributeName="' + attr + '" values="' + values + '" dur="' + dur +
+    '" repeatCount="indefinite"' + (opts.begin ? ' begin="' + opts.begin + '"' : '') +
+    hidEase(n, opts.curve) + (opts.additive ? ' additive="sum"' : '') + '/>';
+}
+
+// ---------------------------------------------------------------------------
+// THE TAPERED LIMB. Same primitive as scenes/wreck.js, same reasoning.
+// ---------------------------------------------------------------------------
+// SVG has no variable-width stroke and never will: the W3C proposal was last
+// edited in 2014 and never advanced. A limb that tapers has to be a FILLED
+// PATH WITH TWO EDGES, built as the Tiller-Hanson offset of a quadratic
+// centreline: offset each edge of the control polygon by its own distance and
+// intersect. Max width error over a limb-like curve is 0.5%, sub-pixel here.
+//
+// Every arm in this file that read as a sausage was a constant-width stroke,
+// and no amount of redrawing fixes that, because a stroke cannot taper.
+function hidLineX(a, b, c, d) {
+  var r = { x: b.x - a.x, y: b.y - a.y }, s = { x: d.x - c.x, y: d.y - c.y };
+  var den = r.x * s.y - r.y * s.x;
+  if (Math.abs(den) < 1e-9) return null;
+  var t = ((c.x - a.x) * s.y - (c.y - a.y) * s.x) / den;
+  return { x: a.x + t * r.x, y: a.y + t * r.y };
+}
+
+function hidOffCtrl(p0, p1, p2, d0, d1, d2, side) {
+  function off(a, b, da, db) {
+    var dx = b.x - a.x, dy = b.y - a.y, L = Math.sqrt(dx * dx + dy * dy) || 1;
+    var nx = side * (dy / L), ny = side * (-dx / L);
+    return [{ x: a.x + nx * da, y: a.y + ny * da },
+            { x: b.x + nx * db, y: b.y + ny * db }];
+  }
+  var A = off(p0, p1, d0, d1), B = off(p1, p2, d1, d2);
+  return hidLineX(A[0], A[1], B[0], B[1]) ||
+    { x: (A[1].x + B[0].x) / 2, y: (A[1].y + B[0].y) / 2 };
+}
+
+function hidLimb(p0, p1, p2, wS, wE) {
+  var d0 = wS / 2, d2 = wE / 2, d1 = (d0 + d2) / 2;
+  var L = hidOffCtrl(p0, p1, p2, d0, d1, d2, 1);
+  var R = hidOffCtrl(p0, p1, p2, d0, d1, d2, -1);
+  function nv(a, b) {
+    var dx = b.x - a.x, dy = b.y - a.y, l = Math.sqrt(dx * dx + dy * dy) || 1;
+    return { x: dy / l, y: -dx / l };
+  }
+  var n0 = nv(p0, p1), n2 = nv(p1, p2);
+  var A = { x: p0.x + n0.x * d0, y: p0.y + n0.y * d0 };
+  var B = { x: p2.x + n2.x * d2, y: p2.y + n2.y * d2 };
+  var C = { x: p2.x - n2.x * d2, y: p2.y - n2.y * d2 };
+  var D = { x: p0.x - n0.x * d0, y: p0.y - n0.y * d0 };
+  return 'M' + hidn(A.x) + ',' + hidn(A.y) +
+    ' Q' + hidn(L.x) + ',' + hidn(L.y) + ' ' + hidn(B.x) + ',' + hidn(B.y) +
+    ' A' + hidn(d2) + ',' + hidn(d2) + ' 0 0 1 ' + hidn(C.x) + ',' + hidn(C.y) +
+    ' Q' + hidn(R.x) + ',' + hidn(R.y) + ' ' + hidn(D.x) + ',' + hidn(D.y) +
+    ' A' + hidn(d0) + ',' + hidn(d0) + ' 0 0 1 ' + hidn(A.x) + ',' + hidn(A.y) + ' Z';
+}
+
+// ---------------------------------------------------------------------------
+// CANON'S HAND. A MITT, and that is arithmetic rather than taste.
+// ---------------------------------------------------------------------------
+// This was drawn as four separate fingers three times and came out a comb
+// three times. At Canon's scale the hand is about 1.5 r long, r = 14, so 21
+// units. ANSUR II (n=6,068) gives hand breadth as 0.457 of hand length, so 9.6
+// units across. Split four ways that is a 2.09 unit finger with a 0.58 unit
+// GAP. The icon-design floor is about 2 units for the smallest reliably
+// rendered void, so the gap is under a third of what can render. The fingers
+// fuse, the gaps grey out, and a rake is what is left on screen.
+//
+// THE COMB IS FOUR FINGERS DEGRADING. It is not a drawing that needs more
+// care; it is a construction that does not fit. And it is why the hands kept
+// growing: at the correct size four fingers stop working, so each pass scaled
+// the hand up until they did, which is how they reached 1.8x to 4.8x life.
+//
+// The construction that DOES fit at this size is a mitt: two lobes on one
+// contour with the thumb separate. The minimum feature set, in order of read
+// bought per unit of geometry:
+//   1. Two lobes on one contour.
+//   2. The thumb lobe attaches to the SIDE at MID-HEIGHT. A lobe on top is a
+//      fifth finger; a lobe on the side is a thumb. This is the distinction
+//      that converts a blob into a hand.
+//   3. The thumb BREAKS THE SILHOUETTE, so a concave notch divides the lobes.
+//      An everywhere-convex contour is a blob however it is shaded.
+//   4. A wrist terminator, so the hand does not melt into the forearm.
+//   5. The thumb seam, which asserts thumb-against-fingers even when a pose
+//      closes the notch. The insurance policy.
+//
+// Canon is a pure silhouette with no interior value to work with, so the whole
+// read has to come out of the outline. That makes the notch mandatory, not
+// decorative: it is the only thing distinguishing his hand from a lozenge.
+//
+// r    head radius the hand belongs to
+// dir  -1 for his left, +1 for his right
+// opts.rot     rotate about the wrist
+// opts.grip    close the hand on something
+// opts.rim     draw the cold screen rim light down the near edge
+//
+// Origin is the WRIST. An arm ends here and the hand carries on.
+function hidHand(r, dir, opts) {
+  opts = opts || {};
+  var H = r * 1.5;                 // wrist to fingertip: 0.75 head DIAMETERS
+  var B = 0.457 * H * 1.10;        // ANSUR breadth, a little full for a fist
+  var fill = opts.fill || HID_SKIN;
+  var o = '';
+
+  // ---- THE WRIST. A short band, so the hand has a boundary with the arm.
+  o += '<path d="M' + hidn(-B * 0.34 * dir) + ',' + hidn(H * 0.30) +
+    ' L' + hidn(B * 0.34 * dir) + ',' + hidn(H * 0.30) +
+    ' L' + hidn(B * 0.40 * dir) + ',0 L' + hidn(-B * 0.40 * dir) + ',0 Z" fill="' + fill + '"/>';
+
+  if (opts.grip) {
+    // ---- CLOSED. The mass shortens and squares off: a fist is wider than it
+    //      is tall, which is the opposite of the open mitt and is most of what
+    //      makes a closed hand read as closed.
+    o += '<path d="M' + hidn(-B * 0.46 * dir) + ',' + hidn(H * 0.04) +
+      ' L' + hidn(-B * 0.50 * dir) + ',' + hidn(-H * 0.30) +
+      ' Q' + hidn(-B * 0.44 * dir) + ',' + hidn(-H * 0.52) + ' ' + hidn(-B * 0.10 * dir) + ',' + hidn(-H * 0.52) +
+      ' L' + hidn(B * 0.22 * dir) + ',' + hidn(-H * 0.50) +
+      ' Q' + hidn(B * 0.52 * dir) + ',' + hidn(-H * 0.46) + ' ' + hidn(B * 0.50 * dir) + ',' + hidn(-H * 0.26) +
+      ' L' + hidn(B * 0.46 * dir) + ',' + hidn(H * 0.04) + ' Z" fill="' + fill + '"/>';
+    // the thumb, folded across the front of the fist, still on the SIDE
+    o += '<path d="M' + hidn(-B * 0.44 * dir) + ',' + hidn(-H * 0.06) +
+      ' Q' + hidn(-B * 0.86 * dir) + ',' + hidn(-H * 0.12) + ' ' + hidn(-B * 0.78 * dir) + ',' + hidn(-H * 0.34) +
+      ' Q' + hidn(-B * 0.62 * dir) + ',' + hidn(-H * 0.48) + ' ' + hidn(-B * 0.34 * dir) + ',' + hidn(-H * 0.32) +
+      ' Z" fill="' + fill + '"/>';
+  } else {
+    // ---- OPEN. THE BIG LOBE: four fingers massed. Taller than wide, blunt,
+    //      convex, no interior detail -- at this size interior detail is not
+    //      readable anyway and silhouette is the whole budget.
+    var top = -H * 0.98;
+    o += '<path d="M' + hidn(-B * 0.44 * dir) + ',' + hidn(H * 0.04) +
+      ' L' + hidn(-B * 0.50 * dir) + ',' + hidn(-H * 0.56) +
+      ' Q' + hidn(-B * 0.52 * dir) + ',' + hidn(top) + ' ' + hidn(-B * 0.16 * dir) + ',' + hidn(top) +
+      ' L' + hidn(B * 0.20 * dir) + ',' + hidn(top * 0.98) +
+      ' Q' + hidn(B * 0.54 * dir) + ',' + hidn(top * 0.94) + ' ' + hidn(B * 0.52 * dir) + ',' + hidn(-H * 0.54) +
+      ' L' + hidn(B * 0.44 * dir) + ',' + hidn(H * 0.04) + ' Z" fill="' + fill + '"/>';
+    // ---- THE THUMB LOBE, on the SIDE at MID-HEIGHT, about half the mass
+    //      length, protruding past the mass so the notch between them is
+    //      concave. This is the feature that makes it a hand.
+    var ax = -B * 0.46 * dir, ay = -H * 0.28;
+    var tipx = -B * 0.94 * dir, tipy = -H * 0.58;
+    o += '<path d="M' + hidn(ax) + ',' + hidn(ay + H * 0.11) +
+      ' Q' + hidn(tipx * 1.02) + ',' + hidn(ay) + ' ' + hidn(tipx) + ',' + hidn(tipy) +
+      ' Q' + hidn(tipx * 0.70) + ',' + hidn(tipy - H * 0.10) + ' ' + hidn(ax * 0.92) + ',' + hidn(ay - H * 0.14) +
+      ' Z" fill="' + fill + '"/>';
+  }
+
+  // ---- THE RIM. A dark silhouette with no lit edge is a hole in the frame,
+  //      and here it does double duty: it runs down the near edge and INTO
+  //      the thumb notch, which is what makes the notch legible when the whole
+  //      hand is one flat black.
+  if (opts.rim !== false) {
+    o += '<path d="M' + hidn(-B * 0.44 * dir) + ',' + hidn(H * 0.22) +
+      ' Q' + hidn(-B * 0.54 * dir) + ',' + hidn(-H * 0.10) + ' ' + hidn(-B * 0.48 * dir) + ',' + hidn(-H * 0.40) +
+      '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(B * 0.10) +
+      '" stroke-linecap="round" opacity="0.5"/>';
+  }
+  // ---- THE THUMB SEAM. One mark from the notch into the mass, so the two
+  //      lobes stay separate even when the pose closes the gap between them.
+  //      Always drawn: it is the insurance policy, and on a flat silhouette it
+  //      is the only interior information there is.
+  o += '<path d="M' + hidn(-B * 0.46 * dir) + ',' + hidn(-H * 0.40) +
+    ' Q' + hidn(-B * 0.26 * dir) + ',' + hidn(-H * 0.30) + ' ' + hidn(-B * 0.22 * dir) + ',' + hidn(-H * 0.14) +
+    '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(B * 0.07) +
+    '" stroke-linecap="round" opacity="0.34"/>';
+
+  var t = 'translate(' + hidn(opts.x || 0) + ',' + hidn(opts.y || 0) + ')';
+  if (opts.rot) t += ' rotate(' + opts.rot + ')';
+  return '<g transform="' + t + '">' + o + '</g>';
+}
+
+// ---------------------------------------------------------------------------
+// A GRIPPING HAND, split so the held object goes BETWEEN the halves.
+// ---------------------------------------------------------------------------
+// The shape is not the insight; the SPLIT is. Occlusion is the entire signal:
+// a hand beside a rail reads as near it, and a hand whose fingers are cut off
+// by the rail reads as gripping it. That is a document-order fix, and no
+// redraw of the hand substitutes for it.
+//
+// THE CALLER MUST DRAW: behind, then the object, then front.
+function hidGrip(r, dir, gt, opts) {
+  opts = opts || {};
+  var H = r * 1.5, B = 0.457 * H * 1.10;
+  var fill = opts.fill || HID_SKIN;
+  var out = { behind: '', front: '' };
+  function wrap(inner) {
+    var t = 'translate(' + hidn(opts.x || 0) + ',' + hidn(opts.y || 0) + ')';
+    if (opts.rot) t += ' rotate(' + opts.rot + ')';
+    return '<g transform="' + t + '">' + inner + '</g>';
+  }
+  // BEHIND: wrist and the palm mass, flat side turned to the object.
+  var b = '<path d="M' + hidn(-B * 0.40 * dir) + ',' + hidn(H * 0.30) +
+    ' L' + hidn(B * 0.40 * dir) + ',' + hidn(H * 0.30) +
+    ' L' + hidn(B * 0.46 * dir) + ',' + hidn(-H * 0.10) +
+    ' Q0,' + hidn(-H * 0.30) + ' ' + hidn(-B * 0.46 * dir) + ',' + hidn(-H * 0.08) +
+    ' Z" fill="' + fill + '"/>';
+  // FRONT: one rounded bar of massed finger backs crossing the object, and the
+  // thumb opposing on the near face. Opposition IS the grip; without it the
+  // fingers read as resting on the object rather than holding it.
+  var bh = Math.max(H * 0.22, gt * 0.9);
+  var f = '<rect x="' + hidn(dir > 0 ? -B * 0.44 : -B * 0.40) +
+    '" y="' + hidn(-H * 0.34 - bh / 2) +
+    '" width="' + hidn(B * 0.84) + '" height="' + hidn(bh) +
+    '" rx="' + hidn(bh * 0.44) + '" fill="' + fill + '"/>';
+  f += '<path d="M' + hidn(-B * 0.40 * dir) + ',' + hidn(-H * 0.10) +
+    ' Q' + hidn(-B * 0.84 * dir) + ',' + hidn(-H * 0.14) + ' ' + hidn(-B * 0.76 * dir) + ',' + hidn(-H * 0.34) +
+    ' Q' + hidn(-B * 0.62 * dir) + ',' + hidn(-H * 0.48) + ' ' + hidn(-B * 0.34 * dir) + ',' + hidn(-H * 0.32) +
+    ' Z" fill="' + fill + '"/>';
+  if (opts.rim !== false) {
+    f += '<path d="M' + hidn(-B * 0.44 * dir) + ',' + hidn(-H * 0.44) +
+      ' Q' + hidn(-B * 0.52 * dir) + ',' + hidn(-H * 0.30) + ' ' + hidn(-B * 0.42 * dir) + ',' + hidn(-H * 0.16) +
+      '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(B * 0.08) +
+      '" stroke-linecap="round" opacity="0.45"/>';
+  }
+  out.behind = wrap(b);
+  out.front = wrap(f);
+  return out;
+}
+
+// A WARM HAND, for the lamplit scenes at the end of the file.
+//
+// Canon's hands are dark silhouettes; Fredward's end scenes are warm and lit,
+// so they need the same anatomy in a different key. hidden_end_4 and _7 were
+// redrawn by hand and this is the same construction made callable, so the
+// remaining scenes do not each invent their own again: hidden_end_5 shipped
+// two brown blobs where the forearms should be and hidden_end_6 a single
+// cloud-shaped lump at the edge of the page.
+//
+// The rule that matters is the one those blobs broke: the PALM IS SHORT and
+// the FINGERS RUN A PALM-LENGTH AGAIN PAST IT. A palm drawn as long as the
+// whole hand with stubs on top reads as a loaf however carefully it is shaded.
+//
+// r    the hand's reference radius, taken off the HEAD in the shot
+// dir  -1 for his left, +1 for his right
+function hidWarmHand(r, dir, opts) {
+  opts = opts || {};
+  var w = r * 1.15, o = '';
+  var SKIN = opts.skin || '#c39a72', SHADE = opts.shade || '#a67c56', LIT = opts.lit || '#ffdf9e';
+  // the palm, short, stopping at the knuckles
+  o += '<path d="M' + hidn(-w * 0.62 * dir) + ',' + hidn(w * 0.44) +
+    ' Q' + hidn(-w * 0.74 * dir) + ',' + hidn(w * 0.02) + ' ' + hidn(-w * 0.58 * dir) + ',' + hidn(-w * 0.2) +
+    ' Q0,' + hidn(-w * 0.32) + ' ' + hidn(w * 0.6 * dir) + ',' + hidn(-w * 0.22) +
+    ' Q' + hidn(w * 0.76 * dir) + ',' + hidn(w * 0.02) + ' ' + hidn(w * 0.64 * dir) + ',' + hidn(w * 0.42) +
+    ' Z" fill="' + SKIN + '"/>';
+  // four fingers, each a full palm-length again, middle longest
+  for (var i = 0; i < 4; i++) {
+    var fx = (-0.4 + i * 0.32) * w * dir;
+    var len = w * (i === 0 ? 0.98 : i === 1 ? 1.2 : i === 2 ? 1.12 : 0.86);
+    var fw = w * 0.155;
+    o += '<path d="M' + hidn(fx - fw * dir) + ',' + hidn(-w * 0.12) +
+      ' L' + hidn(fx - fw * 0.9 * dir) + ',' + hidn(-len + fw) +
+      ' Q' + hidn(fx) + ',' + hidn(-len - fw * 0.5) + ' ' + hidn(fx + fw * 0.9 * dir) + ',' + hidn(-len + fw) +
+      ' L' + hidn(fx + fw * dir) + ',' + hidn(-w * 0.12) +
+      ' Z" fill="' + (i % 2 ? SKIN : SHADE) + '"/>';
+    if (i < 3) {
+      o += '<path d="M' + hidn(fx + fw * 1.08 * dir) + ',' + hidn(-w * 0.1) +
+        ' L' + hidn(fx + fw * 1.08 * dir) + ',' + hidn(-len * 0.84) +
+        '" fill="none" stroke="' + SHADE + '" stroke-width="' + hidn(w * 0.06) + '" opacity="0.7"/>';
+    }
+  }
+  // the thumb, set low and thicker than a finger
+  o += '<path d="M' + hidn(-w * 0.56 * dir) + ',' + hidn(w * 0.3) +
+    ' Q' + hidn(-w * 1.02 * dir) + ',' + hidn(w * 0.08) + ' ' + hidn(-w * 1.08 * dir) + ',' + hidn(-w * 0.38) +
+    ' Q' + hidn(-w * 0.94 * dir) + ',' + hidn(-w * 0.66) + ' ' + hidn(-w * 0.74 * dir) + ',' + hidn(-w * 0.34) +
+    ' Q' + hidn(-w * 0.68 * dir) + ',' + hidn(-w * 0.04) + ' ' + hidn(-w * 0.54 * dir) + ',' + hidn(w * 0.08) +
+    ' Z" fill="' + SKIN + '"/>';
+  // the knuckle line, and the lamp catching the back of the hand
+  o += '<path d="M' + hidn(-w * 0.52 * dir) + ',' + hidn(-w * 0.12) + ' Q0,' + hidn(-w * 0.26) +
+    ' ' + hidn(w * 0.56 * dir) + ',' + hidn(-w * 0.14) +
+    '" fill="none" stroke="' + SHADE + '" stroke-width="' + hidn(w * 0.06) + '" opacity="0.6"/>';
+  o += '<path d="M' + hidn(-w * 0.56 * dir) + ',' + hidn(w * 0.32) + ' Q' + hidn(-w * 0.68 * dir) + ',' + hidn(w * 0.02) +
+    ' ' + hidn(-w * 0.54 * dir) + ',' + hidn(-w * 0.18) +
+    '" fill="none" stroke="' + LIT + '" stroke-width="' + hidn(w * 0.07) + '" opacity="0.55"/>';
+  var t = 'translate(' + hidn(opts.x || 0) + ',' + hidn(opts.y || 0) + ')';
+  if (opts.rot) t += ' rotate(' + opts.rot + ')';
+  return '<g transform="' + t + '">' + o + '</g>';
+}
+
+// ---------------------------------------------------------------------------
+// AN ARM, with a joint in it and a taper that is measured rather than guessed.
+// ---------------------------------------------------------------------------
+// The old version drew two constant-width strokes and pasted a circle over the
+// bend. A circle at the bend is a patch over a joint that is not there: the
+// joint reads when the CENTRELINE CHANGES DIRECTION, which a filled tapered
+// path gives for free and a stroke cannot give at all.
+//
+// TAPER, from ANSUR II circumference data (n=6,068). Width goes with
+// circumference for a roughly circular limb, so:
+//
+//   shoulder : forearm max : wrist  =  1.00 : 0.87 : 0.49
+//
+// The shape fact hidden in those numbers is the one most drawings of an arm
+// get wrong: THE FOREARM IS NEARLY AS THICK AS THE BICEPS, only 13% down. The
+// dramatic taper is not shoulder-to-elbow, it is FOREARM-TO-WRIST, a 43% drop.
+// So this is a fat forearm ending in a thin wrist, NOT a cone. The build uses
+// 1.00 : 0.84 : 0.53 measured at the ELBOW rather than at the forearm maximum,
+// because the widest point of the forearm sits below the elbow.
+//
+// TWO NESTED TAPERS, not one: the upper arm and the forearm each taper
+// individually, so the forearm starts at 1.08x the elbow width before it
+// narrows. One monotonic taper shoulder to wrist is a cone, not an arm.
+//
+// ASYMMETRY is what kills the sausage read. A sausage is symmetric about its
+// centreline and an arm is not: the bicep curve sits low on the upper arm and
+// the tricep curve high, while the forearm's mass sits high near the elbow and
+// dives back in about midway. So each control point is pushed off the midpoint
+// AND off the centreline, in opposite directions for the two segments.
+//
+// The elbow sits at 0.556 along the shoulder-to-wrist line, from ANSUR's upper
+// arm / (upper arm + forearm). The old midpoint was close but the joint now
+// lands where a joint lands.
+//
+// Shoulder at (sx, sy), wrist at (wx, wy), both in the group's own space.
+// bend pushes the elbow off the straight line: positive is outward.
+function hidArm(r, sx, sy, wx, wy, bend, opts) {
+  opts = opts || {};
+  var fill = opts.fill || HID_SKIN;
+  var wSh = r * 0.62, wEl = wSh * 0.84, wWr = wSh * 0.53;
+  var S = { x: sx, y: sy }, W = { x: wx, y: wy };
+  var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
+  var E = { x: sx + dx * 0.556 - (dy / len) * bend,
+            y: sy + dy * 0.556 + (dx / len) * bend };
+  var side = bend >= 0 ? 1 : -1;
+  var o = '';
+
+  // UPPER ARM. Control point past the midpoint at 0.60 and off the centreline.
+  var uC = { x: S.x + (E.x - S.x) * 0.60 - (E.y - S.y) * 0.12 * side,
+             y: S.y + (E.y - S.y) * 0.60 + (E.x - S.x) * 0.12 * side };
+  o += '<path d="' + hidLimb(S, uC, E, wSh, wEl) + '" fill="' + fill + '"/>';
+
+  // FOREARM. Control point at 0.35, which is the standard anthropometric
+  // girth site (one third from the elbow toward the wrist), displaced the
+  // OTHER way, starting wider than the elbow before tapering hard.
+  var fC = { x: E.x + (W.x - E.x) * 0.35 + (W.y - E.y) * 0.10 * side,
+             y: E.y + (W.y - E.y) * 0.35 - (W.x - E.x) * 0.10 * side };
+  o += '<path d="' + hidLimb(E, fC, W, wEl * 1.08, wWr) + '" fill="' + fill + '"/>';
+
+  // The cold rim down the near edge. On a pure silhouette this is the only
+  // thing that says the arm has a form: without it the limb is a hole. It
+  // follows the actual limb now rather than a straight line beside it.
+  if (opts.rim) {
+    var ox = -(E.y - S.y) / (Math.sqrt(Math.pow(E.x - S.x, 2) + Math.pow(E.y - S.y, 2)) || 1) * wSh * 0.42 * side;
+    var oy = (E.x - S.x) / (Math.sqrt(Math.pow(E.x - S.x, 2) + Math.pow(E.y - S.y, 2)) || 1) * wSh * 0.42 * side;
+    o += '<path d="M' + hidn(S.x + ox) + ',' + hidn(S.y + oy) +
+      ' Q' + hidn(uC.x + ox) + ',' + hidn(uC.y + oy) + ' ' + hidn(E.x + ox * 0.86) + ',' + hidn(E.y + oy * 0.86) +
+      '" fill="none" stroke="' + HID_RIM + '" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>';
+  }
+  return o;
+}
+
+// Where the elbow ended up, for a caller lining a held object up with the
+// forearm. Same arithmetic as hidArm(), so the two cannot drift apart.
+function hidArmJoints(r, sx, sy, wx, wy, bend) {
+  var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
+  return { x: wx, y: wy,
+    ex: sx + dx * 0.556 - (dy / len) * bend,
+    ey: sy + dy * 0.556 + (dx / len) * bend };
+}
+
+// Where a hand should be rotated to, given the forearm direction.
+function hidWristRot(ex, ey, wx, wy) {
+  return hidn(Math.atan2(wy - ey, wx - ex) * 180 / Math.PI - 90);
+}
+
+
+// ---------------------------------------------------------------------------
+// CANON, from behind. A back, a head, a chair, and TWO ARMS WITH HANDS.
+// ---------------------------------------------------------------------------
+// He is never shown facing the player: every scene draws a back. That is the
+// composition rule and it stands. What it is NOT is licence to leave the arms
+// off, which is what happened in hidden_1 and hidden_6, or to end them in a
+// round cap or a lozenge, which is what happened everywhere else.
+//
+// His head radius drifted 14 -> 15 -> 16 -> 19 and his arm stroke width
+// 12 -> 13 -> 15 -> 28 across scenes that are the same man in the same room.
+// Here it is one number, r, and everything else is a multiple of it.
+//
+// r        head radius. HID_HEAD (14) is the mid-shot.
+// x, y     centre of the HEAD in scene coordinates
+// opts.reachL / reachR  where each hand goes, in body space relative to the
+//          head centre, as [x, y]. Omit for a hand resting in the lap.
+// opts.gripL / gripR    close that hand on something
+// opts.lean  how far the tired line falls forward, in degrees
+function hidCanon(r, x, y, opts) {
+  opts = opts || {};
+  var o = '';
+  // Skeleton, all in head radii, measured down from the head centre.
+  var neckY = r * 1.55;
+  var shoulderY = r * 2.05;
+  var halfW = r * 1.85;             // shoulder half width
+  var hipY = shoulderY + r * 3.1;
+  var th = r * 0.62;                // arm thickness
+
+  // ---- SHOULDERS AND BACK. The line falls forward: he has been here a while.
+  o += '<path d="M' + hidn(-halfW) + ',' + hidn(hipY) +
+    ' Q' + hidn(-halfW * 0.92) + ',' + hidn(shoulderY + r * 0.5) + ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.16) +
+    ' Q0,' + hidn(shoulderY - r * 0.58) + ' ' + hidn(r * 0.86) + ',' + hidn(shoulderY - r * 0.16) +
+    ' Q' + hidn(halfW * 0.92) + ',' + hidn(shoulderY + r * 0.5) + ' ' + hidn(halfW) + ',' + hidn(hipY) +
+    ' Z" fill="' + HID_SKIN + '"/>';
+  o += '<path d="M' + hidn(-halfW * 0.72) + ',' + hidn(shoulderY + r * 0.86) + ' Q0,' + hidn(shoulderY + r * 0.28) +
+    ' ' + hidn(halfW * 0.72) + ',' + hidn(shoulderY + r * 0.86) + '" fill="none" stroke="#1a2334" stroke-width="1" opacity="0.7"/>';
+
+  // ---- ARMS. Two of them, each with an elbow and each ending in a hand.
+  var lw = opts.reachL || [-halfW * 0.94, hipY - r * 0.5];
+  var rw = opts.reachR || [halfW * 0.94, hipY - r * 0.5];
+  var lsx = -halfW * 0.78, rsx = halfW * 0.78, sy = shoulderY + r * 0.18;
+  o += hidArm(r, lsx, sy, lw[0], lw[1], -r * 0.62, { rim: true });
+  o += hidArm(r, rsx, sy, rw[0], rw[1], r * 0.62);
+  // hands go down AFTER the arms and BEFORE anything they hold is closed on
+  o += hidHand(r, -1, { x: lw[0], y: lw[1], grip: opts.gripL, rot: opts.rotL || 0 });
+  o += hidHand(r, 1, { x: rw[0], y: rw[1], grip: opts.gripR, rot: opts.rotR || 0, rim: false });
+
+  // ---- NECK AND HEAD
+  o += '<rect x="' + hidn(-r * 0.4) + '" y="' + hidn(neckY - r * 0.3) + '" width="' + hidn(r * 0.84) +
+    '" height="' + hidn(r * 0.8) + '" fill="' + HID_SKIN + '"/>';
+  o += '<circle cx="' + hidn(r * 0.07) + '" cy="0" r="' + hidn(r) + '" fill="' + HID_SKIN + '"/>';
+  o += '<path d="M' + hidn(-r * 0.93) + ',' + hidn(-r * 0.14) + ' Q' + hidn(-r * 0.64) + ',' + hidn(-r * 1.14) +
+    ' ' + hidn(r * 0.07) + ',' + hidn(-r * 1) + ' Q' + hidn(r * 0.79) + ',' + hidn(-r * 1.14) +
+    ' ' + hidn(r * 1.07) + ',' + hidn(-r * 0.14) + '" fill="' + HID_SKIN_L + '"/>';
+
+  // ---- THE COLD RIM. A dark silhouette needs one lit edge or it is a hole.
+  o += '<path d="M' + hidn(-halfW * 0.96) + ',' + hidn(hipY - r * 0.6) + ' Q' + hidn(-halfW * 0.9) + ',' + hidn(shoulderY + r * 0.3) +
+    ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.12) + '" fill="none" stroke="#5fa0b8" stroke-width="' + hidn(r * 0.29) + '" opacity="0.22"/>';
+  o += '<path d="M' + hidn(-halfW * 0.96) + ',' + hidn(hipY - r * 0.6) + ' Q' + hidn(-halfW * 0.9) + ',' + hidn(shoulderY + r * 0.3) +
+    ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.12) + '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(r * 0.11) + '" opacity="0.75"/>';
+  o += '<path d="M' + hidn(-r * 0.93) + ',' + hidn(-r * 0.86) + ' Q' + hidn(-r * 1.07) + ',' + hidn(-r * 0.21) +
+    ' ' + hidn(-r * 0.86) + ',' + hidn(r * 0.29) + '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(r * 0.1) + '" opacity="0.6"/>';
+
+  var t = 'translate(' + hidn(x) + ',' + hidn(y) + ')';
+  if (opts.lean) t += ' rotate(' + opts.lean + ',0,' + hidn(hipY) + ')';
+  return '<g data-canon-r="' + r + '" transform="' + t + '">' + o + '</g>';
+}
+
+// ---------------------------------------------------------------------------
+// A CHAIR. Seat plane, back, four legs, all reaching the floor.
+// ---------------------------------------------------------------------------
+// Every chair in this file was a back panel plus two rear legs, then rotated
+// as a whole group, which tilts the legs off plumb: one drove up to 18px
+// through the floor and the other hovered 10px above it. A back panel with two
+// rear legs is not a chair.
+//
+// The fix is that the ROTATION APPLIES TO THE BODY ONLY. The legs are drawn
+// afterwards, vertical, from the seat corners straight down to floorY. So the
+// chair can be angled toward the table and still stand on the ground.
+//
+// x, y     centre of the seat plane, in scene coordinates
+// rot      how far the chair is turned toward the table, degrees
+// floorY   the floor line the legs must reach
+// opts.w   seat width (default 44), opts.d seat depth in the picture plane
+function hidChair(x, y, rot, floorY, opts) {
+  opts = opts || {};
+  var w = opts.w || 44;             // seat width
+  var d = opts.d || 16;             // how deep the seat reads, foreshortened
+  var backH = opts.backH || w * 0.82;
+  var hw = w / 2;
+  var o = '';
+  var legW = Math.max(3.5, w * 0.09);
+  var legFill = opts.legFill || HID_CHAIR_D;
+
+  // ---- the two BACK legs, drawn first so the seat overlaps them. They are
+  //      set in and up the picture plane so the chair has depth.
+  var backOff = d * 0.55;
+  var bl = [-hw + legW * 0.6, hw - legW * 1.6];
+  for (var i = 0; i < 2; i++) {
+    o += '<rect x="' + hidn(x + bl[i] * 0.82) + '" y="' + hidn(y - backOff) +
+      '" width="' + hidn(legW * 0.86) + '" height="' + hidn(floorY - d * 0.4 - (y - backOff)) +
+      '" fill="' + legFill + '" opacity="0.78"/>';
+  }
+
+  // ---- the SEAT and the BACK, as one body, rotated about the seat centre.
+  //      This is the only thing the rotation touches.
+  var body = '';
+  body += '<path d="M' + hidn(-hw) + ',0 L' + hidn(hw) + ',0 L' + hidn(hw - d * 0.34) + ',' + hidn(-d * 0.55) +
+    ' L' + hidn(-hw + d * 0.34) + ',' + hidn(-d * 0.55) + ' Z" fill="' + (opts.seat || HID_CHAIR) + '"/>';
+  body += '<rect x="' + hidn(-hw) + '" y="0" width="' + hidn(w) + '" height="' + hidn(d * 0.36) +
+    '" rx="1.5" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.75"/>';
+  // the back panel, rising from the rear edge of the seat
+  body += '<rect x="' + hidn(-hw + d * 0.3) + '" y="' + hidn(-d * 0.55 - backH) +
+    '" width="' + hidn(w - d * 0.6) + '" height="' + hidn(backH) + '" rx="3" fill="' + (opts.seat || HID_CHAIR) + '"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.3) + '" y="' + hidn(-d * 0.55 - backH) +
+    '" width="' + hidn(w - d * 0.6) + '" height="3" rx="1.5" fill="' + (opts.seatEdge || HID_CHAIR_L) + '"/>';
+  // two slats, which keep the seat/back L open in silhouette
+  body += '<rect x="' + hidn(-hw + d * 0.7) + '" y="' + hidn(-d * 0.55 - backH * 0.72) +
+    '" width="' + hidn(w - d * 1.4) + '" height="2" rx="1" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.55"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.7) + '" y="' + hidn(-d * 0.55 - backH * 0.42) +
+    '" width="' + hidn(w - d * 1.4) + '" height="2" rx="1" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.45"/>';
+  o += '<g transform="translate(' + hidn(x) + ',' + hidn(y) + ') rotate(' + rot + ')">' + body + '</g>';
+
+  // ---- the two FRONT legs. Vertical, from under the seat straight down to
+  //      the floor, so the chair stands however far the body is turned.
+  var fl = [-hw + legW * 0.4, hw - legW * 1.4];
+  for (var j = 0; j < 2; j++) {
+    o += '<rect x="' + hidn(x + fl[j]) + '" y="' + hidn(y + d * 0.2) +
+      '" width="' + hidn(legW) + '" height="' + hidn(floorY - (y + d * 0.2)) +
+      '" fill="' + legFill + '"/>';
+  }
+
+  // ---- the contact shadow, emitted from inside the helper so it cannot be
+  //      forgotten. Wide and flat, never circular.
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(floorY) + '" rx="' + hidn(w * 0.66) +
+    '" ry="' + hidn(w * 0.13) + '" fill="#05080f" opacity="0.34"/>';
+
+  return o;
+}
+
+// ---------------------------------------------------------------------------
+// THE PENCIL. Amber, and one of exactly two warm things in the room.
+// ---------------------------------------------------------------------------
+// It ranged 46 to 130 units long across scenes whose comments insisted it was
+// "still exactly parallel" and "where he left it". L is the full length
+// including the ferrule; everything else derives from it.
+function hidPencil(x, y, L, opts) {
+  opts = opts || {};
+  var t = L * 0.058;                 // it is a pencil: thin
+  var rot = opts.rot || 0;
+  var o = '';
+  o += '<rect x="0" y="0" width="' + hidn(L * 0.80) + '" height="' + hidn(t) +
+    '" rx="' + hidn(t * 0.5) + '" fill="#F2C14E" opacity="' + (opts.opacity || 0.85) + '"/>';
+  // the sharpened end, a wedge rather than a butt
+  o += '<path d="M' + hidn(L * 0.80) + ',0 L' + hidn(L * 0.92) + ',' + hidn(t * 0.5) +
+    ' L' + hidn(L * 0.80) + ',' + hidn(t) + ' Z" fill="#c08a2e" opacity="' + (opts.opacity || 0.85) + '"/>';
+  o += '<path d="M' + hidn(L * 0.88) + ',' + hidn(t * 0.22) + ' L' + hidn(L * 0.92) + ',' + hidn(t * 0.5) +
+    ' L' + hidn(L * 0.88) + ',' + hidn(t * 0.78) + ' Z" fill="#2b3548"/>';
+  // the ferrule and eraser at the blunt end
+  o += '<rect x="' + hidn(-L * 0.10) + '" y="0" width="' + hidn(L * 0.07) + '" height="' + hidn(t) +
+    '" fill="#525f79"/>';
+  o += '<rect x="' + hidn(-L * 0.15) + '" y="' + hidn(t * 0.08) + '" width="' + hidn(L * 0.05) +
+    '" height="' + hidn(t * 0.84) + '" rx="' + hidn(t * 0.3) + '" fill="#6e7688"/>';
+  return '<g transform="translate(' + hidn(x) + ',' + hidn(y) + ')' +
+    (rot ? ' rotate(' + rot + ')' : '') + '">' + o + '</g>';
+}
+
+// ---------------------------------------------------------------------------
+// THE TABLE. Top, front edge, four legs computed down to the floor.
+// ---------------------------------------------------------------------------
+// Six different tables in the same room: top y 164 to 200, width 308 to 420,
+// legs present, absent, present, present, present, absent. Two of them had the
+// top floating on a void with nothing below it at all.
+function hidTable(x, topY, w, floorY, opts) {
+  opts = opts || {};
+  var hw = w / 2, o = '';
+  var th = opts.th || 8;
+  var legW = Math.max(6, w * 0.021);
+  var lx = hw * 0.88;
+  // back legs first, set in, so the top overlaps them
+  o += '<rect x="' + hidn(x - lx * 0.86) + '" y="' + hidn(topY + th) + '" width="' + hidn(legW * 0.8) +
+    '" height="' + hidn(floorY - 6 - (topY + th)) + '" fill="#232c3c" opacity="0.8"/>';
+  o += '<rect x="' + hidn(x + lx * 0.86 - legW * 0.8) + '" y="' + hidn(topY + th) + '" width="' + hidn(legW * 0.8) +
+    '" height="' + hidn(floorY - 6 - (topY + th)) + '" fill="#232c3c" opacity="0.8"/>';
+  // the top
+  o += '<rect x="' + hidn(x - hw) + '" y="' + hidn(topY) + '" width="' + hidn(w) + '" height="' + hidn(th) +
+    '" rx="2" fill="' + (opts.top || '#3d4a60') + '"/>';
+  o += '<rect x="' + hidn(x - hw) + '" y="' + hidn(topY) + '" width="' + hidn(w) + '" height="2.5" rx="1" fill="#5d6b85" opacity="0.7"/>';
+  // front legs, straight to the floor
+  o += '<rect x="' + hidn(x - lx) + '" y="' + hidn(topY + th) + '" width="' + hidn(legW) +
+    '" height="' + hidn(floorY - (topY + th)) + '" fill="#2b3548"/>';
+  o += '<rect x="' + hidn(x + lx - legW) + '" y="' + hidn(topY + th) + '" width="' + hidn(legW) +
+    '" height="' + hidn(floorY - (topY + th)) + '" fill="#2b3548"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(floorY) + '" rx="' + hidn(w * 0.48) +
+    '" ry="' + hidn(w * 0.035) + '" fill="#05080f" opacity="0.3"/>';
+  return o;
+}
+
+// ---------------------------------------------------------------------------
+// THE FOUNTAIN. ONE object, seen twice.
+// ---------------------------------------------------------------------------
+// hidden_0 and hidden_10 are the same fountain in the same square. They shipped
+// with different basin heights, different pillar heights, a grey stone palette
+// against a blue-lit one, and an access hole that was an ellipse straddling the
+// basin wall in one and a rectangle flat on the cobbles in the other.
+//
+// WHERE THE HATCH PHYSICALLY IS: it is not in the basin. It is a service
+// hatch in the cobbles in FRONT of the fountain, over the valve chamber that
+// feeds it -- which is why a fountain is what marks the way down, and why the
+// water goes on running while the hatch stands open. It is a rectangular
+// steel plate with a bar grille, hinged along its far edge, and it opens by
+// swinging UP and back toward the basin, where it rests against the plinth.
+//
+// s      id suffix
+// x, y   centre of the basin ellipse
+// opts.open   draw the hatch swung open with the shaft below it
+// opts.lit    the water lit from within (hidden_10) rather than dark
+function hidFountain(s, x, y, opts) {
+  opts = opts || {};
+  var rx = 98, ry = 30;              // the basin, one size, both scenes
+  var pillarH = 48, capRx = 34;      // the pillar and its cap, one size
+  var o = '';
+
+  // ---- the plinth the basin stands on, so it is not an ellipse on a void
+  o += '<path d="M' + hidn(x - rx) + ',' + hidn(y) + ' L' + hidn(x - rx * 0.94) + ',' + hidn(y + 22) +
+    ' Q' + hidn(x) + ',' + hidn(y + 34) + ' ' + hidn(x + rx * 0.94) + ',' + hidn(y + 22) +
+    ' L' + hidn(x + rx) + ',' + hidn(y) + ' Z" fill="#232c3c"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y + 30) + '" rx="' + hidn(rx * 1.1) +
+    '" ry="' + hidn(ry * 0.36) + '" fill="#05080f" opacity="0.4"/>';
+
+  // ---- the basin: outer rim, then the water inside it
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y) + '" rx="' + rx + '" ry="' + ry + '" fill="#2e3648"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y + 2) + '" rx="' + hidn(rx * 0.86) +
+    '" ry="' + hidn(ry * 0.8) + '" fill="#1d3245"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y + 2) + '" rx="' + hidn(rx * 0.84) +
+    '" ry="' + hidn(ry * 0.76) + '" fill="url(#hidBasin' + s + ')"/>';
+  // the rim has thickness: a highlight along its top, so the cobbles clearly
+  // stop at it rather than passing under it
+  o += '<path d="M' + hidn(x - rx * 0.99) + ',' + hidn(y - 2) + ' Q' + hidn(x) + ',' + hidn(y - ry * 1.06) +
+    ' ' + hidn(x + rx * 0.99) + ',' + hidn(y - 2) + '" fill="none" stroke="#4a5770" stroke-width="2.4" opacity="0.7"/>';
+
+  // ---- the pillar and its cap. One height, both scenes.
+  o += '<rect x="' + hidn(x - 9) + '" y="' + hidn(y - pillarH) + '" width="18" height="' + hidn(pillarH + 4) +
+    '" fill="#39445c"/>';
+  o += '<rect x="' + hidn(x - 9) + '" y="' + hidn(y - pillarH) + '" width="5" height="' + hidn(pillarH + 4) +
+    '" fill="#4a5770" opacity="0.6"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y - pillarH) + '" rx="' + capRx + '" ry="11" fill="#4a5770"/>';
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(y - pillarH - 2) + '" rx="' + hidn(capRx * 0.82) +
+    '" ry="8" fill="' + (opts.lit ? '#2a4a5e' : '#243244') + '"/>';
+
+  // ---- the water, running off the cap into the basin. Two arcs and a fall.
+  var arc = function (d, o2, dur, begin) {
+    return '<path d="' + d + '" fill="none" stroke="url(#hidWat' + s + ')" stroke-width="2.2" ' +
+      'stroke-linecap="round" opacity="' + o2 + '">' +
+      hidAnim('opacity', o2 + ';' + hidn(o2 * 0.62) + ';' + o2, dur, { begin: begin }) + '</path>';
+  };
+  o += arc('M' + hidn(x - capRx * 0.62) + ',' + hidn(y - pillarH + 6) + ' Q' + hidn(x - capRx * 0.82) + ',' + hidn(y - 22) +
+    ' ' + hidn(x - capRx * 0.5) + ',' + hidn(y - 4), 0.62, '3.7s', '0s');
+  o += arc('M' + hidn(x + capRx * 0.62) + ',' + hidn(y - pillarH + 6) + ' Q' + hidn(x + capRx * 0.84) + ',' + hidn(y - 22) +
+    ' ' + hidn(x + capRx * 0.52) + ',' + hidn(y - 4), 0.58, '4.3s', '-1.1s');
+  // where the two falls land, a widening ring on the water
+  o += '<ellipse cx="' + hidn(x - capRx * 0.5) + '" cy="' + hidn(y - 2) + '" rx="4" ry="1.6" fill="none" ' +
+    'stroke="#7fb4c8" stroke-width="0.9" opacity="0">' +
+    hidAnim('rx', '3;13;3', '5.1s', { begin: '0s' }) +
+    hidAnim('opacity', '0;0.5;0', '5.1s', { begin: '0s' }) + '</ellipse>';
+  o += '<ellipse cx="' + hidn(x + capRx * 0.52) + '" cy="' + hidn(y - 2) + '" rx="4" ry="1.6" fill="none" ' +
+    'stroke="#7fb4c8" stroke-width="0.9" opacity="0">' +
+    hidAnim('rx', '3;13;3', '6.3s', { begin: '-2.4s' }) +
+    hidAnim('opacity', '0;0.44;0', '6.3s', { begin: '-2.4s' }) + '</ellipse>';
+
+  return o;
+}
+
+// The defs the fountain needs. Same stops in both scenes, so it is the same
+// stone and the same water; only opts.lit changes how much light is in it.
+function hidFountainDefs(s, lit) {
+  return '<radialGradient id="hidBasin' + s + '" cx="50%" cy="46%" r="62%">' +
+    '<stop offset="0%" stop-color="' + (lit ? '#3f7f96' : '#27455a') + '"/>' +
+    '<stop offset="100%" stop-color="' + (lit ? '#1d3245' : '#141f2e') + '"/>' +
+    '</radialGradient>' +
+    '<linearGradient id="hidWat' + s + '" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="#9fd4e4" stop-opacity="0.8"/>' +
+    '<stop offset="100%" stop-color="#3d5a75" stop-opacity="0.2"/>' +
+    '</linearGradient>';
+}
+
+// THE SERVICE HATCH, in the cobbles in front of the fountain.
+//
+// WHERE IT PHYSICALLY IS AND HOW IT OPENS. It is not in the basin: it is a
+// steel plate set flush in the cobbles in FRONT of the fountain, over the
+// valve chamber that feeds it. That is why a fountain is the thing that marks
+// the way down, and why the water goes on running while the hatch stands open.
+//
+// The hinge is a bar along the FAR edge, running left to right. So the lid
+// tips back and up about a HORIZONTAL axis, which in this picture is a
+// foreshortening rather than a rotation: it stands as a leaf behind the hole,
+// leaning on the fountain plinth, and we see its underside.
+//
+// hx, hy is the centre of the opening on the ground.
+function hidHatch(hx, hy, open, s) {
+  var w = 108, d = 30;               // the opening, one size in both scenes
+  var hw = w / 2, o = '';
+  // the ground plan of the plate: a trapezoid, wider at the near edge
+  var farL = hx - hw, farR = hx + hw, nearL = hx - hw - 6, nearR = hx + hw + 6;
+  var farY = hy - d / 2, nearY = hy + d / 2;
+
+  if (open) {
+    // ---- THE LEAF, standing back on its hinge. Drawn FIRST, because it is
+    //      behind the hole it came out of. We see its underside: darker than
+    //      the top face, with the grille bars showing through in relief and
+    //      the two stiffening ribs that are only on the inside.
+    var lean = 26;                   // how far up the leaf stands
+    var tipL = hx - hw + 5, tipR = hx + hw - 5;  // slightly narrowed by tilt
+    o += '<path d="M' + hidn(farL) + ',' + hidn(farY) +
+      ' L' + hidn(farR) + ',' + hidn(farY) +
+      ' L' + hidn(tipR) + ',' + hidn(farY - lean) +
+      ' L' + hidn(tipL) + ',' + hidn(farY - lean) + ' Z" fill="#232c3c"/>';
+    // the bar grille, seen from beneath: the gaps between the bars let the
+    // sky through, which is what says grille rather than plate
+    for (var j = 1; j < 7; j++) {
+      var t = j / 7;
+      var bxF = farL + t * w, bxT = tipL + t * (tipR - tipL);
+      o += '<path d="M' + hidn(bxF) + ',' + hidn(farY - 1) + ' L' + hidn(bxT) + ',' + hidn(farY - lean + 1) +
+        '" stroke="#141c2e" stroke-width="4.2" opacity="0.85"/>';
+    }
+    // two stiffening ribs across the underside
+    o += '<path d="M' + hidn(tipL + 2) + ',' + hidn(farY - lean * 0.72) + ' L' + hidn(tipR - 2) + ',' + hidn(farY - lean * 0.72) +
+      ' M' + hidn(farL + 3) + ',' + hidn(farY - lean * 0.30) + ' L' + hidn(farR - 3) + ',' + hidn(farY - lean * 0.30) +
+      '" stroke="#39445c" stroke-width="2.6" opacity="0.85"/>';
+    // the top edge of the leaf, catching the sky
+    o += '<path d="M' + hidn(tipL) + ',' + hidn(farY - lean) + ' L' + hidn(tipR) + ',' + hidn(farY - lean) +
+      '" stroke="#5d6b85" stroke-width="2" stroke-linecap="round" opacity="0.75"/>';
+
+    // ---- THE HOLE, and the stair going down into it
+    o += '<path d="M' + hidn(farL) + ',' + hidn(farY) + ' L' + hidn(farR) + ',' + hidn(farY) +
+      ' L' + hidn(nearR) + ',' + hidn(nearY) + ' L' + hidn(nearL) + ',' + hidn(nearY) +
+      ' Z" fill="url(#hidShaftDark' + s + ')"/>';
+    // four steps, receding and darkening, so it reads as going DOWN
+    for (var i = 0; i < 4; i++) {
+      var sw = w * (0.78 - i * 0.11), sy = farY + 4 + i * 5.4;
+      o += '<rect x="' + hidn(hx - sw / 2) + '" y="' + hidn(sy) + '" width="' + hidn(sw) + '" height="3.2" rx="1" ' +
+        'fill="#2b3548" opacity="' + hidn(0.70 - i * 0.15) + '"/>';
+    }
+    // ---- THE HINGE BAR, on the far edge. Drawn after the hole so it reads as
+    //      lying across it, and it is what the leaf turns on.
+    o += '<rect x="' + hidn(farL - 2) + '" y="' + hidn(farY - 2.4) + '" width="' + hidn(w + 4) + '" height="3.4" rx="1.7" fill="#4a5770"/>';
+    o += '<circle cx="' + hidn(farL + 8) + '" cy="' + hidn(farY - 0.7) + '" r="2.4" fill="#5d6b85"/>';
+    o += '<circle cx="' + hidn(farR - 8) + '" cy="' + hidn(farY - 0.7) + '" r="2.4" fill="#5d6b85"/>';
+    // ---- THE NEAR LIP, the kerb you would step over
+    o += '<path d="M' + hidn(nearL) + ',' + hidn(nearY) + ' L' + hidn(nearR) + ',' + hidn(nearY) +
+      '" stroke="#5d6b85" stroke-width="2.6" stroke-linecap="round" opacity="0.8"/>';
+  } else {
+    // ---- SHUT: the same plate lying flush, seen from above, same size, same
+    //      seven bars, same hinge along the far edge.
+    o += '<path d="M' + hidn(farL) + ',' + hidn(farY) + ' L' + hidn(farR) + ',' + hidn(farY) +
+      ' L' + hidn(nearR) + ',' + hidn(nearY) + ' L' + hidn(nearL) + ',' + hidn(nearY) +
+      ' Z" fill="#39445c"/>';
+    for (var k = 1; k < 7; k++) {
+      var u = k / 7;
+      o += '<path d="M' + hidn(farL + u * w) + ',' + hidn(farY + 2) + ' L' + hidn(nearL + u * (nearR - nearL)) + ',' + hidn(nearY - 2) +
+        '" stroke="#1a2334" stroke-width="4.2" opacity="0.8"/>';
+    }
+    // one faint cold gleam out of it, if you know to look
+    o += '<path d="M' + hidn(farL + 6) + ',' + hidn(farY + 4) + ' L' + hidn(farR - 6) + ',' + hidn(farY + 4) +
+      ' L' + hidn(nearR - 10) + ',' + hidn(nearY - 4) + ' L' + hidn(nearL + 10) + ',' + hidn(nearY - 4) +
+      ' Z" fill="#16323a" opacity="0.32"/>';
+    o += '<rect x="' + hidn(farL - 2) + '" y="' + hidn(farY - 2.4) + '" width="' + hidn(w + 4) + '" height="3.4" rx="1.7" fill="#4a5770" opacity="0.9"/>';
+    o += '<circle cx="' + hidn(farL + 8) + '" cy="' + hidn(farY - 0.7) + '" r="2.4" fill="#5d6b85" opacity="0.8"/>';
+    o += '<circle cx="' + hidn(farR - 8) + '" cy="' + hidn(farY - 0.7) + '" r="2.4" fill="#5d6b85" opacity="0.8"/>';
+  }
+  return o;
+}
+
+// ---------------------------------------------------------------------------
 // INTRO — hidden_0 .. hidden_10
 // ---------------------------------------------------------------------------
 
@@ -25,22 +817,19 @@
 // Water still running and the sound gone — the water is drawn mid-stream with
 // no ripple animation on the basin, which is the visual of a held note.
 STORY_SCENES['hidden_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
+<defs>` + hidFountainDefs('0', false) + `
   <linearGradient id="hidSky0" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#0a1224"/><stop offset="55%" stop-color="#16233a"/><stop offset="100%" stop-color="#28384c"/>
   </linearGradient>
-  <linearGradient id="hidStair0" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#1a2436"/><stop offset="100%" stop-color="#05080f"/>
+  <linearGradient id="hidShaftDark0" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0d1422"/><stop offset="100%" stop-color="#05080f"/>
   </linearGradient>
   <radialGradient id="hidShaft0" cx="50%" cy="12%" r="70%">
-    <stop offset="0%" stop-color="#5fa0b8" stop-opacity="0.22"/><stop offset="55%" stop-color="#3d5a75" stop-opacity="0.07"/><stop offset="100%" stop-color="#05080f" stop-opacity="0"/>
+    <stop offset="0%" stop-color="#5fa0b8" stop-opacity="0.2"/><stop offset="55%" stop-color="#3d5a75" stop-opacity="0.06"/><stop offset="100%" stop-color="#05080f" stop-opacity="0"/>
   </radialGradient>
-  <linearGradient id="hidWater0" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#7fb4c8" stop-opacity="0.55"/><stop offset="100%" stop-color="#3d5a75" stop-opacity="0.1"/>
-  </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#hidSky0)"/>
-<!-- Distant buildings, town square, kept flat and unlit -->
+<!-- FAR PLANE: the square around it, flat and unlit -->
 <rect x="0" y="52" width="62" height="120" rx="2" fill="#141c2e" opacity="0.9"/>
 <rect x="58" y="40" width="52" height="132" rx="2" fill="#101828" opacity="0.9"/>
 <rect x="392" y="46" width="56" height="126" rx="2" fill="#141c2e" opacity="0.9"/>
@@ -49,69 +838,30 @@ STORY_SCENES['hidden_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="36" y="70" width="10" height="12" rx="1" fill="#3d5a75" opacity="0.22"/>
 <rect x="404" y="64" width="10" height="12" rx="1" fill="#3d5a75" opacity="0.26"/>
 <rect x="458" y="56" width="10" height="12" rx="1" fill="#3d5a75" opacity="0.2"/>
-<!-- Cobbles -->
-<rect x="0" y="170" width="500" height="90" fill="#141a26"/>
-<ellipse cx="70" cy="200" rx="15" ry="6" fill="#3d4a60" opacity="0.6"/>
-<ellipse cx="150" cy="222" rx="13" ry="5" fill="#39465c" opacity="0.5"/>
-<ellipse cx="360" cy="206" rx="14" ry="6" fill="#3d4a60" opacity="0.55"/>
-<ellipse cx="430" cy="234" rx="13" ry="5" fill="#39465c" opacity="0.45"/>
-<ellipse cx="110" cy="248" rx="12" ry="5" fill="#3d4a60" opacity="0.4"/>
-<!-- Fountain basin, cut away at the front so the shaft reads -->
-<ellipse cx="250" cy="176" rx="98" ry="30" fill="#525f79"/>
-<ellipse cx="250" cy="174" rx="90" ry="26" fill="#1a2334"/>
-<!-- Fountain pillar and top basin, behind -->
-<rect x="243" y="112" width="14" height="46" fill="#525f79"/>
-<rect x="245" y="112" width="6" height="46" fill="#6d7b96" opacity="0.5"/>
-<ellipse cx="250" cy="112" rx="26" ry="9" fill="#525f79"/>
-<ellipse cx="250" cy="110" rx="20" ry="6" fill="#16323a"/>
-<!-- Water, still running. Drawn as unbroken ribbons, no animation: the sound is
-     what stopped, not the water, so the streams hold one shape -->
-<path d="M250,104 L250,88" stroke="url(#hidWater0)" stroke-width="2" fill="none" opacity="0.7"/>
-<path d="M236,113 Q226,132 220,152" stroke="url(#hidWater0)" stroke-width="1.6" fill="none" opacity="0.6"/>
-<path d="M264,113 Q274,132 280,152" stroke="url(#hidWater0)" stroke-width="1.6" fill="none" opacity="0.6"/>
-<path d="M242,116 Q236,138 233,156" stroke="#7fb4c8" stroke-width="0.8" fill="none" opacity="0.28"/>
-<path d="M258,116 Q264,138 267,156" stroke="#7fb4c8" stroke-width="0.8" fill="none" opacity="0.28"/>
-<!-- Open shaft in the floor of the basin -->
-<ellipse cx="250" cy="208" rx="62" ry="22" fill="#05080f"/>
-<ellipse cx="250" cy="208" rx="62" ry="22" fill="none" stroke="#525f79" stroke-width="2"/>
-<!-- Cold light coming UP out of the shaft, faint -->
-<ellipse cx="250" cy="204" rx="74" ry="30" fill="url(#hidShaft0)"/>
-<!-- Stairs going down, seen through the hole -->
-<g fill="url(#hidStair0)" stroke="#0d1422" stroke-width="0.6">
-  <rect x="212" y="200" width="76" height="7" rx="1"/>
-  <rect x="216" y="209" width="68" height="7" rx="1"/>
-  <rect x="220" y="218" width="60" height="6" rx="1"/>
-  <rect x="224" y="226" width="52" height="6" rx="1"/>
-  <rect x="228" y="234" width="44" height="5" rx="1"/>
-</g>
-<!-- Boot scuff on the fourth step -->
-<path d="M232,227 Q243,225 252,228" fill="none" stroke="#4a5568" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
-<path d="M236,230 Q245,228 251,230" fill="none" stroke="#4a5568" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
-<!-- The grate, swung open on its hinge, standing up at the left rim -->
-<g transform="translate(188,190) rotate(-64)">
-  <rect x="0" y="-3" width="62" height="6" rx="2" fill="#525f79"/>
-  <g stroke="#6d7b96" stroke-width="2.2" stroke-linecap="round">
-    <line x1="6" y1="-2" x2="6" y2="2"/><line x1="15" y1="-2" x2="15" y2="2"/>
-    <line x1="24" y1="-2" x2="24" y2="2"/><line x1="33" y1="-2" x2="33" y2="2"/>
-    <line x1="42" y1="-2" x2="42" y2="2"/><line x1="51" y1="-2" x2="51" y2="2"/>
-  </g>
-  <circle cx="0" cy="0" r="3" fill="#6d7b96"/>
-</g>
-<!-- Grate bars laid flat, seen edge-on across the near rim (the half still shut) -->
-<g stroke="#525f79" stroke-width="2" stroke-linecap="round" opacity="0.85">
-  <line x1="296" y1="196" x2="308" y2="214"/>
-  <line x1="304" y1="199" x2="314" y2="216"/>
-  <line x1="312" y1="203" x2="320" y2="219"/>
-</g>
-<!-- One thin cold gleam off the wet grate -->
-<line x1="188" y1="190" x2="215" y2="135" stroke="#5fa0b8" stroke-width="0.6" opacity="0.2"/>
 <!-- Two lanterns, low and grey. Nothing warm above ground. -->
-<rect x="118" y="128" width="4" height="44" fill="#4a5770"/>
-<rect x="112" y="118" width="16" height="13" rx="2" fill="#525f79"/>
-<rect x="114" y="120" width="12" height="9" rx="1" fill="#3d5a75" opacity="0.5"/>
-<rect x="378" y="128" width="4" height="44" fill="#4a5770"/>
-<rect x="372" y="118" width="16" height="13" rx="2" fill="#525f79"/>
-<rect x="374" y="120" width="12" height="9" rx="1" fill="#3d5a75" opacity="0.45"/>
+<rect x="118" y="128" width="4" height="44" fill="#28303f"/>
+<rect x="112" y="118" width="16" height="13" rx="2" fill="#303a4c"/>
+<rect x="114" y="120" width="12" height="9" rx="1" fill="#3d5a75" opacity="0.42"/>
+<rect x="378" y="128" width="4" height="44" fill="#28303f"/>
+<rect x="372" y="118" width="16" height="13" rx="2" fill="#303a4c"/>
+<rect x="374" y="120" width="12" height="9" rx="1" fill="#3d5a75" opacity="0.38"/>
+<!-- MID PLANE: cobbles -->
+<rect x="0" y="170" width="500" height="90" fill="#18202e"/>
+<ellipse cx="70" cy="200" rx="15" ry="6" fill="#202839" opacity="0.6"/>
+<ellipse cx="150" cy="222" rx="13" ry="5" fill="#1e2534" opacity="0.5"/>
+<ellipse cx="360" cy="206" rx="14" ry="6" fill="#202839" opacity="0.55"/>
+<ellipse cx="430" cy="234" rx="13" ry="5" fill="#1e2534" opacity="0.45"/>
+<ellipse cx="110" cy="248" rx="12" ry="5" fill="#202839" opacity="0.4"/>
+` + hidFountain('0', 250, 180, { lit: false }) + `
+<!-- NEAR PLANE: the service hatch, open, and the cold coming up out of it.
+     It is in the cobbles in FRONT of the fountain, over the valve chamber
+     that feeds it, which is why a fountain marks the way down and why the
+     water goes on running while the hatch stands open. -->
+<ellipse cx="196" cy="220" rx="72" ry="28" fill="url(#hidShaft0)"/>
+` + hidHatch(196, 226, true, '0') + `
+<!-- Boot scuff on the second step down -->
+<path d="M180,222 Q191,220 200,223" fill="none" stroke="#4a5568" stroke-width="1.3" stroke-linecap="round" opacity="0.5"/>
+<path d="M184,225 Q192,223 198,225" fill="none" stroke="#4a5568" stroke-width="0.8" stroke-linecap="round" opacity="0.32"/>
 </svg>`;
 
 // Scene 1: The listening post, establishing. Canon from behind, one big screen
@@ -139,10 +889,10 @@ STORY_SCENES['hidden_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect width="500" height="260" fill="url(#hidRoom1)"/>
 <rect width="500" height="260" fill="url(#hidWash1)"/>
 <!-- Back wall, lit by the screens. Gives the table a plane to sit in front of. -->
-<rect x="0" y="0" width="500" height="196" fill="#152232"/>
+<rect x="0" y="0" width="500" height="196" fill="#0d1526"/>
 <rect x="0" y="0" width="500" height="196" fill="url(#hidWash1)"/>
 <!-- Floor, lighter than the wall where the screenlight lands on it -->
-<rect x="0" y="196" width="500" height="64" fill="#0e1726"/>
+<rect x="0" y="196" width="500" height="64" fill="#080e1a"/>
 <ellipse cx="250" cy="214" rx="210" ry="34" fill="#16323a" opacity="0.4"/>
 <ellipse cx="250" cy="210" rx="140" ry="22" fill="#5fa0b8" opacity="0.09"/>
 <!-- BACK WALL: the nine small screens, three left, three right, three above.
@@ -186,10 +936,10 @@ STORY_SCENES['hidden_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="150" y="24" width="200" height="118" fill="url(#hidBig1)"/>
   <!-- slow water bands, deep and near-still -->
   <path d="M150,60 Q200,55 250,60 Q300,65 350,60 L350,72 Q300,77 250,72 Q200,67 150,72Z" fill="#1d3f49" opacity="0.5">
-    <animate attributeName="d" values="M150,60 Q200,55 250,60 Q300,65 350,60 L350,72 Q300,77 250,72 Q200,67 150,72Z;M150,63 Q200,58 250,63 Q300,68 350,63 L350,75 Q300,80 250,75 Q200,70 150,75Z;M150,60 Q200,55 250,60 Q300,65 350,60 L350,72 Q300,77 250,72 Q200,67 150,72Z" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M150,60 Q200,55 250,60 Q300,65 350,60 L350,72 Q300,77 250,72 Q200,67 150,72Z;M150,63 Q200,58 250,63 Q300,68 350,63 L350,75 Q300,80 250,75 Q200,70 150,75Z;M150,60 Q200,55 250,60 Q300,65 350,60 L350,72 Q300,77 250,72 Q200,67 150,72Z" dur="9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M150,96 Q205,91 250,96 Q295,101 350,96 L350,110 L150,110Z" fill="#0e2028" opacity="0.55">
-    <animate attributeName="d" values="M150,96 Q205,91 250,96 Q295,101 350,96 L350,110 L150,110Z;M150,99 Q205,94 250,99 Q295,104 350,99 L350,113 L150,113Z;M150,96 Q205,91 250,96 Q295,101 350,96 L350,110 L150,110Z" dur="11s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M150,96 Q205,91 250,96 Q295,101 350,96 L350,110 L150,110Z;M150,99 Q205,94 250,99 Q295,104 350,99 L350,113 L150,113Z;M150,96 Q205,91 250,96 Q295,101 350,96 L350,110 L150,110Z" dur="12.43s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <!-- the wreck: a shape that used to be a hull -->
   <path d="M186,132 Q206,110 246,106 L300,110 Q318,116 314,132 Z" fill="#08121a" opacity="0.9"/>
@@ -197,14 +947,15 @@ STORY_SCENES['hidden_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <path d="M246,106 L242,88 L252,86 L254,106" fill="#08121a" opacity="0.8"/>
   <!-- THE LAMP. The only warm thing in the room, and it is on a screen. -->
   <circle cx="272" cy="118" r="26" fill="url(#hidLamp1)" opacity="0.5">
-    <animate attributeName="opacity" values="0.34;0.56;0.34" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.34;0.56;0.34" dur="6.37s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   <circle cx="272" cy="118" r="2.6" fill="#F2C14E">
-    <animate attributeName="opacity" values="0.72;1;0.72" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.72;1;0.72" dur="8.89s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   <!-- scanline crawling down the big screen -->
   <rect x="150" y="24" width="200" height="16" fill="url(#hidScan1)">
-    <animate attributeName="y" values="10;146" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="10;146" dur="5.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="5.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- TABLE -->
@@ -236,33 +987,15 @@ STORY_SCENES['hidden_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <!-- The pencil. Amber. Laid parallel to the edge of the table. -->
 <rect x="228" y="188" width="46" height="2.6" rx="1.3" fill="#F2C14E" opacity="0.85"/>
 <rect x="272" y="188" width="4" height="2.6" rx="1" fill="#525f79"/>
-<!-- CANON, from behind. A back, a head, a chair. -->
-<g transform="translate(200,148)">
-  <!-- chair back -->
-  <rect x="-30" y="26" width="60" height="60" rx="4" fill="#333e52"/>
-  <rect x="-30" y="26" width="60" height="4" rx="2" fill="#46536b"/>
-  <!-- shoulders and back, tired: the line falls forward -->
-  <path d="M-26,88 Q-24,44 -12,30 Q0,24 12,30 Q24,44 26,88 Z" fill="#05070e"/>
-  <path d="M-20,42 Q0,34 20,42" fill="none" stroke="#1a2334" stroke-width="1" opacity="0.7"/>
-  <!-- head, forward of vertical -->
-  <circle cx="1" cy="12" r="14" fill="#05070e"/>
-  <path d="M-13,10 Q-9,-4 1,-2 Q11,-4 15,10" fill="#0b0f19"/>
-  <!-- neck -->
-  <rect x="-5" y="22" width="12" height="8" fill="#05070e"/>
-  <!-- cold rim light off one shoulder, from the screens -->
-  <path d="M-25,80 Q-23,46 -12,32" fill="none" stroke="#5fa0b8" stroke-width="4" opacity="0.22"/>
-  <path d="M-25,80 Q-23,46 -12,32" fill="none" stroke="#9fd4e4" stroke-width="1.5" opacity="0.75"/>
-  <path d="M-13,2 Q-15,11 -12,18" fill="none" stroke="#9fd4e4" stroke-width="1.4" opacity="0.6"/>
-</g>
+<!-- HIS CHAIR, behind him. Seat, back, four legs, all reaching the floor. -->
+` + hidChair(200, 214, 0, 252, { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#46536b' }) + `
+<!-- CANON. From behind: a back, a head, a chair. Two arms, two hands, both
+     forward on the table where a man watching a screen puts them. -->
+` + hidCanon(HID_HEAD, 200, 148, {
+  reachL: [-32, 44], reachR: [34, 42], rotL: 168, rotR: -172
+}) + `
 <!-- THE SECOND CHAIR. Empty, angled toward him. It has been there a while. -->
-<g transform="translate(332,160) rotate(-14)">
-  <rect x="-24" y="12" width="48" height="52" rx="4" fill="#2e3849"/>
-  <rect x="-24" y="12" width="48" height="3.5" rx="1.5" fill="#3d4a60"/>
-  <rect x="-20" y="20" width="40" height="2" rx="1" fill="#3d4a60" opacity="0.6"/>
-  <rect x="-20" y="27" width="40" height="2" rx="1" fill="#3d4a60" opacity="0.5"/>
-  <rect x="-22" y="62" width="5" height="34" fill="#28313f"/>
-  <rect x="17" y="62" width="5" height="34" fill="#28313f"/>
-</g>
+` + hidChair(332, 208, -5, 252, { w: 48, d: 16, backH: 46 }) + `
 <!-- Floor, and the cold spill of screenlight across it -->
 <rect x="0" y="252" width="500" height="8" fill="#0a121e" opacity="0.7"/>
 <ellipse cx="250" cy="248" rx="170" ry="14" fill="#5fa0b8" opacity="0.08"/>
@@ -292,22 +1025,22 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 </defs>
 <rect width="500" height="260" fill="url(#hidRoom2)"/>
 <rect width="500" height="260" fill="url(#hidWash2)"/>
-<rect x="0" y="0" width="500" height="164" fill="#152232"/>
+<rect x="0" y="0" width="500" height="164" fill="#0d1526"/>
 <rect x="0" y="0" width="500" height="164" fill="url(#hidWash2)"/>
 <!-- Big screen pushed left and small; the table is the subject now -->
 <rect x="38" y="12" width="158" height="96" rx="4" fill="#1e2637" stroke="#4a5770" stroke-width="2"/>
 <g clip-path="url(#hidBigClip2)">
   <rect x="42" y="16" width="150" height="88" fill="url(#hidBig2)"/>
   <path d="M42,50 Q80,46 117,50 Q154,54 192,50 L192,60 Q154,64 117,60 Q80,56 42,60Z" fill="#1d3f49" opacity="0.45">
-    <animate attributeName="d" values="M42,50 Q80,46 117,50 Q154,54 192,50 L192,60 Q154,64 117,60 Q80,56 42,60Z;M42,53 Q80,49 117,53 Q154,57 192,53 L192,63 Q154,67 117,63 Q80,59 42,63Z;M42,50 Q80,46 117,50 Q154,54 192,50 L192,60 Q154,64 117,60 Q80,56 42,60Z" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M42,50 Q80,46 117,50 Q154,54 192,50 L192,60 Q154,64 117,60 Q80,56 42,60Z;M42,53 Q80,49 117,53 Q154,57 192,53 L192,63 Q154,67 117,63 Q80,59 42,63Z;M42,50 Q80,46 117,50 Q154,54 192,50 L192,60 Q154,64 117,60 Q80,56 42,60Z" dur="10.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M70,100 Q86,84 118,81 L156,84 Q168,89 165,100 Z" fill="#08121a" opacity="0.9"/>
   <circle cx="140" cy="88" r="19" fill="url(#hidLamp2)" opacity="0.46">
-    <animate attributeName="opacity" values="0.3;0.52;0.3" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.52;0.3" dur="8.33s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle cx="140" cy="88" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.7;1;0.7" dur="7s" repeatCount="indefinite"/></circle>
   <rect x="42" y="16" width="150" height="14" fill="url(#hidScan2)">
-    <animate attributeName="y" values="4;108" dur="6.5s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="4;108" dur="8.65s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="8.65s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- Three small screens, right edge, different horizons -->
@@ -317,10 +1050,10 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="418" y="68" width="52" height="18" fill="#16323a"/><rect x="418" y="67" width="52" height="1" fill="#3d5a75" opacity="0.45"/>
 <rect x="416" y="94" width="56" height="34" rx="2" fill="#0e2028" stroke="#1d3f49" stroke-width="1"/>
 <rect x="418" y="115" width="52" height="11" fill="#16323a"/><rect x="418" y="114" width="52" height="1" fill="#3d5a75" opacity="0.4"/>
-<!-- TABLE, large, angled front-on -->
-<rect x="40" y="164" width="420" height="10" rx="3" fill="#3d4a60"/>
-<rect x="40" y="164" width="420" height="3" rx="1.5" fill="#66748f" opacity="0.75"/>
-<rect x="40" y="174" width="420" height="86" fill="#05070e"/>
+<!-- TABLE, large, angled front-on. Legs computed down to the floor: it used
+     to be a top on a black void with nothing below it at all. -->
+<rect x="0" y="230" width="500" height="30" fill="#0a121e"/>
+` + hidTable(250, 164, 420, 252, { th: 10 }) + `
 <!-- Cards, closer -->
 <g transform="translate(268,132)">
   <rect x="0" y="22" width="78" height="9" rx="1.5" fill="#454d5f"/>
@@ -352,29 +1085,28 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <polygon points="176,152 170,153.8 176,155.6" fill="#6d7b96"/>
 <!-- faint amber bloom under it, the only warm thing in the room's own air -->
 <ellipse cx="212" cy="157" rx="46" ry="4" fill="#F2C14E" opacity="0.07"/>
-<!-- Canon: shoulder and back of head, entering frame at the left, cropped -->
+<!-- Canon: shoulder and back of head, entering frame at the left, cropped.
+     The crop is the frame's decision, not the furniture's: the shoulder runs
+     off the left edge and the arm reaches across to where the pencil went
+     down. Head radius 18 here because the camera is closer, and nothing else
+     about him changes. -->
 <g transform="translate(58,168)">
   <path d="M-60,92 Q-52,26 -10,10 Q10,6 24,20 Q40,44 44,92 Z" fill="#05070e"/>
+  <!-- the arm, with an elbow in it, reaching to the table -->
+` + hidArm(18, 24, 22, 112, -20, -13) + `
   <circle cx="-2" cy="-4" r="18" fill="#05070e"/>
   <path d="M-20,-6 Q-14,-24 -2,-22 Q10,-24 16,-6" fill="#0b0f19"/>
   <path d="M-56,86 Q-48,32 -14,14" fill="none" stroke="#5fa0b8" stroke-width="5" opacity="0.2"/>
   <path d="M-56,86 Q-48,32 -14,14" fill="none" stroke="#9fd4e4" stroke-width="1.8" opacity="0.78"/>
-  <!-- his hand, resting where the pencil was put down -->
-  <ellipse cx="106" cy="-8" rx="16" ry="7" fill="#28313f" transform="rotate(-8,106,-8)"/>
-  <path d="M22,26 Q66,10 96,-8" fill="none" stroke="#05070e" stroke-width="13" stroke-linecap="round"/>
 </g>
+<!-- His hand, resting flat where the pencil was put down. Drawn AFTER the
+     table and the pencil, so the hand closes on the surface rather than the
+     arm lying across it. Sized off his head, not off the frame. -->
+` + hidHand(18, 1, { x: 172, y: 150, rot: -150, grip: true }) + `
 <!-- THE SECOND CHAIR. Big in frame. It has been there a while. -->
-<g transform="translate(390,150) rotate(-16)">
-  <rect x="-34" y="0" width="68" height="70" rx="5" fill="#2e3849"/>
-  <rect x="-34" y="0" width="68" height="4.5" rx="2" fill="#46536b"/>
-  <rect x="-28" y="12" width="56" height="2.5" rx="1" fill="#3d4a60" opacity="0.6"/>
-  <rect x="-28" y="22" width="56" height="2.5" rx="1" fill="#3d4a60" opacity="0.5"/>
-  <rect x="-28" y="32" width="56" height="2.5" rx="1" fill="#3d4a60" opacity="0.4"/>
-  <rect x="-31" y="68" width="6" height="44" fill="#28313f"/>
-  <rect x="25" y="68" width="6" height="44" fill="#28313f"/>
-  <!-- dust settled on the seat rail, the "a while" of it -->
-  <rect x="-30" y="66" width="60" height="1.2" fill="#3d5a75" opacity="0.18"/>
-</g>
+` + hidChair(398, 206, -6, 250, { w: 58, d: 20, backH: 56 }) + `
+<!-- dust settled on the seat rail, the "a while" of it -->
+<rect x="370" y="202" width="56" height="1.2" fill="#3d5a75" opacity="0.18"/>
 <rect x="0" y="253" width="500" height="7" fill="#0a121e" opacity="0.7"/>
 </svg>`;
 
@@ -403,18 +1135,16 @@ STORY_SCENES['hidden_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect width="500" height="260" fill="url(#hidRoom3)"/>
 <rect x="30" y="8" width="440" height="204" rx="6" fill="#1e2637" stroke="#4a5770" stroke-width="3"/>
 <g clip-path="url(#hidBigClip3)">
-  <rect x="34" y="12" width="432" height="196" fill="url(#hidBig3)"/>
-  <!-- suspended silt, drifting up very slowly -->
-  <circle cx="90" cy="180" r="1" fill="#5fa0b8" opacity="0.18"><animate attributeName="cy" values="180;40" dur="22s" repeatCount="indefinite"/></circle>
-  <circle cx="180" cy="200" r="1.4" fill="#5fa0b8" opacity="0.14"><animate attributeName="cy" values="200;30" dur="27s" repeatCount="indefinite" begin="4s"/></circle>
-  <circle cx="330" cy="190" r="1" fill="#5fa0b8" opacity="0.16"><animate attributeName="cy" values="190;36" dur="24s" repeatCount="indefinite" begin="9s"/></circle>
-  <circle cx="410" cy="205" r="1.2" fill="#5fa0b8" opacity="0.12"><animate attributeName="cy" values="205;44" dur="30s" repeatCount="indefinite" begin="14s"/></circle>
+  <circle cx="90" cy="180" r="1" fill="#5fa0b8" opacity="0"><animate attributeName="cy" values="180;40" dur="19.36s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0;0;0" dur="19.36s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+  <circle cx="180" cy="200" r="1.4" fill="#5fa0b8" opacity="0"><animate attributeName="cy" values="200;30" dur="27s" repeatCount="indefinite" begin="4s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.14;0.14;0" dur="27s" repeatCount="indefinite" begin="4s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+  <circle cx="330" cy="190" r="1" fill="#5fa0b8" opacity="0"><animate attributeName="cy" values="190;36" dur="27.12s" repeatCount="indefinite" begin="9s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.16;0.16;0" dur="27.12s" repeatCount="indefinite" begin="9s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+  <circle cx="410" cy="205" r="1.2" fill="#5fa0b8" opacity="0"><animate attributeName="cy" values="205;44" dur="27.3s" repeatCount="indefinite" begin="14s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.12;0.12;0" dur="27.3s" repeatCount="indefinite" begin="14s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
   <!-- water strata -->
   <path d="M34,66 Q140,58 250,66 Q360,74 466,66 L466,84 Q360,92 250,84 Q140,76 34,84Z" fill="#1d3f49" opacity="0.42">
-    <animate attributeName="d" values="M34,66 Q140,58 250,66 Q360,74 466,66 L466,84 Q360,92 250,84 Q140,76 34,84Z;M34,70 Q140,62 250,70 Q360,78 466,70 L466,88 Q360,96 250,88 Q140,80 34,88Z;M34,66 Q140,58 250,66 Q360,74 466,66 L466,84 Q360,92 250,84 Q140,76 34,84Z" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M34,66 Q140,58 250,66 Q360,74 466,66 L466,84 Q360,92 250,84 Q140,76 34,84Z;M34,70 Q140,62 250,70 Q360,78 466,70 L466,88 Q360,96 250,88 Q140,80 34,88Z;M34,66 Q140,58 250,66 Q360,74 466,66 L466,84 Q360,92 250,84 Q140,76 34,84Z" dur="15.24s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M34,118 Q150,111 250,118 Q350,125 466,118 L466,136 L34,136Z" fill="#12262e" opacity="0.5">
-    <animate attributeName="d" values="M34,118 Q150,111 250,118 Q350,125 466,118 L466,136 L34,136Z;M34,122 Q150,115 250,122 Q350,129 466,122 L466,140 L34,140Z;M34,118 Q150,111 250,118 Q350,125 466,118 L466,136 L34,136Z" dur="14s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M34,118 Q150,111 250,118 Q350,125 466,118 L466,136 L34,136Z;M34,122 Q150,115 250,122 Q350,129 466,122 L466,140 L34,140Z;M34,118 Q150,111 250,118 Q350,125 466,118 L466,136 L34,136Z" dur="11.76s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <!-- THE WRECK: a shape that used to be a hull -->
   <path d="M108,208 Q124,168 172,152 L318,140 Q384,146 396,178 L400,208 Z" fill="#07121a"/>
@@ -432,37 +1162,35 @@ STORY_SCENES['hidden_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <line x1="184" y1="145" x2="330" y2="135" stroke="#0b1a22" stroke-width="1.6" opacity="0.8"/>
   <!-- THE LAMP. A long way down and a mile out. -->
   <circle cx="344" cy="164" r="52" fill="url(#hidLamp3)" opacity="0.42">
-    <animate attributeName="opacity" values="0.26;0.5;0.26" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.26;0.5;0.26" dur="8.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   <circle cx="344" cy="164" r="16" fill="url(#hidLamp3)" opacity="0.6">
-    <animate attributeName="opacity" values="0.44;0.72;0.44" dur="8s" repeatCount="indefinite"/>
-  </circle>
+    <animate attributeName="opacity" values="0.44;0.72;0.44" dur="9.52s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <ellipse cx="344" cy="164" rx="3.4" ry="4.4" fill="#F2C14E">
-    <animate attributeName="opacity" values="0.78;1;0.78" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.78;1;0.78" dur="7.68s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </ellipse>
   <rect x="342.4" y="168" width="3.2" height="8" fill="#3a3a2a" opacity="0.7"/>
   <!-- scanline -->
   <rect x="34" y="12" width="432" height="26" fill="url(#hidScan3)">
-    <animate attributeName="y" values="-6;212" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="-6;212" dur="9.31s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="9.31s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
   <!-- screen curvature vignette -->
   <rect x="34" y="12" width="432" height="196" fill="url(#hidVig3)"/>
 </g>
-<!-- Canon, silhouette at the bottom edge, back to us, two fingers tipped up -->
+<!-- Canon, silhouette at the bottom edge, back to us. The arm goes UP to the
+     screen with an elbow in it, and it ends in a hand: two fingers out of a
+     loose fist, which is the gesture, rather than two sticks off a stump. -->
 <g transform="translate(140,214)">
   <path d="M-52,46 Q-46,10 -8,0 Q10,-2 22,10 Q36,26 40,46 Z" fill="#03050a"/>
+` + hidArm(17, 22, 12, 68, -28, 12, { fill: '#03050a' }) + `
+` + hidHand(17, 1, { x: 68, y: -28, rot: 36, fill: '#03050a', rim: false }) + `
   <circle cx="0" cy="-16" r="17" fill="#03050a"/>
   <path d="M-17,-18 Q-11,-36 0,-34 Q11,-36 17,-18" fill="#080d18"/>
-  <!-- arm up, two fingers at the screen -->
-  <path d="M26,14 Q52,-4 70,-26" fill="none" stroke="#03050a" stroke-width="11" stroke-linecap="round"/>
-  <path d="M70,-26 L78,-38" stroke="#03050a" stroke-width="4" stroke-linecap="round"/>
-  <path d="M73,-24 L82,-35" stroke="#03050a" stroke-width="4" stroke-linecap="round"/>
+  <path d="M-16,-24 Q-19,-14 -16,-6" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.5"/>
 </g>
 <!-- second chair, edge of frame, still empty -->
-<g transform="translate(452,206) rotate(-12)">
-  <rect x="-22" y="0" width="44" height="46" rx="4" fill="#0e1521"/>
-  <rect x="-22" y="0" width="44" height="3" rx="1.5" fill="#39465c"/>
-</g>
+` + hidChair(452, 226, -5, 258, { w: 44, d: 14, backH: 44, seat: '#0e1521', seatEdge: '#39465c' }) + `
 </svg>`;
 
 // Scene 4: The choice. "Ask him where home is." He turns a card over without
@@ -489,9 +1217,9 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 </defs>
 <rect width="500" height="260" fill="url(#hidRoom4)"/>
 <rect width="500" height="260" fill="url(#hidWash4)"/>
-<rect x="0" y="0" width="500" height="196" fill="#152232"/>
+<rect x="0" y="0" width="500" height="196" fill="#0d1526"/>
 <rect x="0" y="0" width="500" height="196" fill="url(#hidWash4)"/>
-<rect x="0" y="196" width="500" height="64" fill="#0e1726"/>
+<rect x="0" y="196" width="500" height="64" fill="#080e1a"/>
 <ellipse cx="250" cy="214" rx="200" ry="32" fill="#16323a" opacity="0.38"/>
 <!-- NINE SMALL SCREENS in a 3x3 ring around the big one. Nine places.
      Each has its own horizon height and its own furniture. -->
@@ -534,15 +1262,15 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <g clip-path="url(#hidBigClip4)">
   <rect x="186" y="18" width="128" height="76" fill="url(#hidBig4)"/>
   <path d="M186,44 Q218,40 250,44 Q282,48 314,44 L314,54 Q282,58 250,54 Q218,50 186,54Z" fill="#1d3f49" opacity="0.42">
-    <animate attributeName="d" values="M186,44 Q218,40 250,44 Q282,48 314,44 L314,54 Q282,58 250,54 Q218,50 186,54Z;M186,47 Q218,43 250,47 Q282,51 314,47 L314,57 Q282,61 250,57 Q218,53 186,57Z;M186,44 Q218,40 250,44 Q282,48 314,44 L314,54 Q282,58 250,54 Q218,50 186,54Z" dur="10s" repeatCount="indefinite"/>
   </path>
   <path d="M206,92 Q220,76 250,73 L288,76 Q300,81 297,92 Z" fill="#08121a" opacity="0.92"/>
   <circle cx="274" cy="80" r="17" fill="url(#hidLamp4)" opacity="0.46">
-    <animate attributeName="opacity" values="0.3;0.54;0.3" dur="7.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.54;0.3" dur="7.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle cx="274" cy="80" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.72;1;0.72" dur="7.5s" repeatCount="indefinite"/></circle>
+  <circle cx="274" cy="80" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.72;1;0.72" dur="8.48s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="186" y="18" width="128" height="14" fill="url(#hidScan4)">
-    <animate attributeName="y" values="6;98" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="6;98" dur="5.46s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="5.46s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- table -->
@@ -561,7 +1289,7 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 </g>
 <!-- the turning card: mid-flip, blank face up, a slow slight rock -->
 <g transform="translate(288,180)">
-  <animateTransform attributeName="transform" type="rotate" values="-6;-2;-6" dur="5s" repeatCount="indefinite" additive="sum"/>
+  <animateTransform attributeName="transform" type="rotate" values="-6;-2;-6" dur="6.35s" repeatCount="indefinite" additive="sum" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <rect x="-24" y="-3" width="46" height="7" rx="1.2" fill="#7a8296"/>
   <rect x="-24" y="-3" width="46" height="2" rx="1" fill="#8e96a8" opacity="0.6"/>
 </g>
@@ -571,26 +1299,24 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="3" y="3" width="28" height="5.6" rx="1" fill="#16323a"/>
   <rect x="3" y="3" width="17" height="5.6" rx="1" fill="#2f4245" opacity="0.75"/>
 </g>
-<!-- CANON from behind, centre, low. Head slightly down. -->
+<!-- HIS CHAIR, a real one: seat, back, four legs to the floor -->
+` + hidChair(238, 210, 0, 253, { w: 68, d: 20, backH: 58, seat: '#333e52', seatEdge: '#46536b' }) + `
+<!-- CANON from behind, centre, low. Head slightly down. Two arms: the left
+     resting, the right out toward the cards without looking at them. -->
 <g transform="translate(238,150)">
-  <rect x="-34" y="30" width="68" height="66" rx="4" fill="#333e52"/>
-  <rect x="-34" y="30" width="68" height="4" rx="2" fill="#46536b"/>
   <path d="M-30,96 Q-27,46 -13,32 Q0,25 13,32 Q27,46 30,96 Z" fill="#05070e"/>
+` + hidArm(15, -22, 40, -44, 44, -8) + `
+` + hidHand(15, -1, { x: -44, y: 44, rot: 172 }) + `
+` + hidArm(15, 24, 40, 62, 42, 10) + `
+` + hidHand(15, 1, { x: 62, y: 42, rot: -166, grip: true, rim: false }) + `
   <circle cx="1" cy="13" r="15" fill="#05070e"/>
   <path d="M-14,11 Q-10,-5 1,-3 Q12,-5 16,11" fill="#0b0f19"/>
   <rect x="-6" y="24" width="13" height="9" fill="#05070e"/>
   <path d="M-29,88 Q-26,48 -13,34" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
   <path d="M-29,88 Q-26,48 -13,34" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.76"/>
-  <!-- right arm out toward the cards, not looking -->
-  <path d="M28,52 Q56,44 76,32" fill="none" stroke="#05070e" stroke-width="12" stroke-linecap="round"/>
 </g>
 <!-- second chair, angled toward him -->
-<g transform="translate(360,164) rotate(-14)">
-  <rect x="-24" y="10" width="48" height="52" rx="4" fill="#2e3849"/>
-  <rect x="-24" y="10" width="48" height="3.5" rx="1.5" fill="#46536b"/>
-  <rect x="-22" y="60" width="5" height="36" fill="#28313f"/>
-  <rect x="17" y="60" width="5" height="36" fill="#28313f"/>
-</g>
+` + hidChair(360, 226, -5, 253, { w: 48, d: 16, backH: 48 }) + `
 <rect x="0" y="253" width="500" height="7" fill="#0a121e" opacity="0.7"/>
 </svg>`;
 
@@ -629,16 +1355,16 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="30" y="14" width="172" height="106" rx="4" fill="#1e2637" stroke="#4a5770" stroke-width="2"/>
 <g clip-path="url(#hidBigClip5)">
   <rect x="34" y="18" width="164" height="98" fill="url(#hidBig5)"/>
-  <path d="M34,56 Q75,51 116,56 Q157,61 198,56 L198,68 Q157,73 116,68 Q75,63 34,68Z" fill="#1d3f49" opacity="0.42">
-    <animate attributeName="d" values="M34,56 Q75,51 116,56 Q157,61 198,56 L198,68 Q157,73 116,68 Q75,63 34,68Z;M34,60 Q75,55 116,60 Q157,65 198,60 L198,72 Q157,77 116,72 Q75,67 34,72Z;M34,56 Q75,51 116,56 Q157,61 198,56 L198,68 Q157,73 116,68 Q75,63 34,68Z" dur="11s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M34,56 Q75,51 116,56 Q157,61 198,56 L198,68 Q157,73 116,68 Q75,63 34,68Z;M34,60 Q75,55 116,60 Q157,65 198,60 L198,72 Q157,77 116,72 Q75,67 34,72Z;M34,56 Q75,51 116,56 Q157,61 198,56 L198,68 Q157,73 116,68 Q75,63 34,68Z" dur="9.24s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M58,114 Q76,94 114,90 L162,94 Q176,100 172,114 Z" fill="#08121a" opacity="0.92"/>
   <circle cx="146" cy="98" r="22" fill="url(#hidLamp5)" opacity="0.45">
-    <animate attributeName="opacity" values="0.3;0.52;0.3" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.52;0.3" dur="8.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle cx="146" cy="98" r="2.2" fill="#F2C14E"><animate attributeName="opacity" values="0.74;1;0.74" dur="8s" repeatCount="indefinite"/></circle>
+  <circle cx="146" cy="98" r="2.2" fill="#F2C14E"><animate attributeName="opacity" values="0.74;1;0.74" dur="9.52s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="34" y="18" width="164" height="16" fill="url(#hidScan5)">
-    <animate attributeName="y" values="4;120" dur="6.5s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="4;120" dur="6.24s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="6.24s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- small screens, right stack -->
@@ -648,11 +1374,9 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="420" y="72" width="52" height="16" fill="#16323a"/><rect x="420" y="71" width="52" height="1" fill="#3d5a75" opacity="0.44"/>
 <rect x="418" y="96" width="56" height="34" rx="2" fill="#0e2028" stroke="#1d3f49" stroke-width="1"/>
 <rect x="420" y="118" width="52" height="10" fill="#16323a"/><rect x="420" y="117" width="52" height="1" fill="#3d5a75" opacity="0.4"/>
-<!-- table -->
-<rect x="70" y="200" width="360" height="9" rx="2.5" fill="#3d4a60"/>
-<rect x="70" y="200" width="360" height="2.6" rx="1.3" fill="#5d6b85" opacity="0.7"/>
-<rect x="88" y="209" width="7" height="51" fill="#2b3548"/>
-<rect x="406" y="209" width="7" height="51" fill="#2b3548"/>
+<!-- table. One plane, not two: the papers used to straddle a seam where a
+     second lighter rect ran behind at a different height. -->
+` + hidTable(250, 200, 360, 253, { th: 9 }) + `
 <rect x="126" y="192" width="48" height="2.8" rx="1.4" fill="#F2C14E" opacity="0.85"/>
 <rect x="172" y="192" width="4.5" height="2.8" rx="1" fill="#525f79"/>
 <g transform="translate(330,182)">
@@ -660,15 +1384,19 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="1" y="5" width="52" height="7" rx="1.2" fill="#5a6275"/>
   <rect x="0" y="-1" width="52" height="7" rx="1.2" fill="#687084"/>
 </g>
+<!-- HIS CHAIR, seen from the side because he has swivelled in it. Same
+     helper, turned: a seat, a back, and four legs on the floor. -->
+` + hidChair(262, 216, 8, 253, { w: 56, d: 20, backH: 54, seat: '#333e52', seatEdge: '#46536b' }) + `
 <!-- CANON, TURNED. Three-quarters away. We get the far side of a jaw and a
      temple in silhouette and nothing else. Still no face. -->
 <g transform="translate(258,148)">
-  <!-- chair, now seen from the side because he has swivelled in it -->
-  <rect x="-6" y="34" width="58" height="62" rx="4" fill="#333e52"/>
-  <rect x="-6" y="34" width="58" height="4" rx="2" fill="#46536b"/>
   <!-- torso turned: the shoulder line runs away from us -->
   <path d="M-34,96 Q-34,48 -20,34 Q-6,26 10,32 Q28,44 34,96 Z" fill="#05070e"/>
   <path d="M-22,44 Q-4,36 14,44" fill="none" stroke="#1a2334" stroke-width="1" opacity="0.6"/>
+  <!-- the near arm, laid along the table: upper arm, elbow, forearm, hand
+       open on the wood, not holding anything -->
+` + hidArm(15, -26, 40, -76, 44, 8) + `
+` + hidHand(15, -1, { x: -76, y: 44, rot: -102 }) + `
   <!-- head in three-quarter back view: skull, ear, jawline going away.
        The face plane points off-frame left and is not drawn. -->
   <g transform="translate(-8,10)">
@@ -685,18 +1413,9 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="-14" y="24" width="14" height="10" fill="#05070e"/>
   <path d="M-32,88 Q-32,50 -20,36" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
   <path d="M-32,88 Q-32,50 -20,36" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.76"/>
-  <!-- forearm along the table, hand open, not holding anything -->
-  <path d="M-30,54 Q-58,50 -84,52" fill="none" stroke="#05070e" stroke-width="12" stroke-linecap="round"/>
-  <ellipse cx="-92" cy="52" rx="12" ry="6" fill="#28313f"/>
 </g>
 <!-- second chair, and he is turned toward it -->
-<g transform="translate(392,168) rotate(-18)">
-  <rect x="-24" y="8" width="48" height="52" rx="4" fill="#2e3849"/>
-  <rect x="-24" y="8" width="48" height="3.5" rx="1.5" fill="#46536b"/>
-  <rect x="-20" y="20" width="40" height="2.4" rx="1" fill="#3d4a60" opacity="0.55"/>
-  <rect x="-22" y="58" width="5" height="36" fill="#28313f"/>
-  <rect x="17" y="58" width="5" height="36" fill="#28313f"/>
-</g>
+` + hidChair(392, 228, -7, 253, { w: 48, d: 16, backH: 48 }) + `
 <rect x="0" y="253" width="500" height="7" fill="#0a121e" opacity="0.7"/>
 </svg>`;
 
@@ -724,9 +1443,9 @@ STORY_SCENES['hidden_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 </defs>
 <rect width="500" height="260" fill="url(#hidRoom6)"/>
 <rect width="500" height="260" fill="url(#hidWash6)"/>
-<rect x="0" y="0" width="500" height="196" fill="#152232"/>
+<rect x="0" y="0" width="500" height="196" fill="#0d1526"/>
 <rect x="0" y="0" width="500" height="196" fill="url(#hidWash6)"/>
-<rect x="0" y="196" width="500" height="64" fill="#0e1726"/>
+<rect x="0" y="196" width="500" height="64" fill="#080e1a"/>
 <ellipse cx="250" cy="214" rx="210" ry="34" fill="#16323a" opacity="0.4"/>
 <!-- nine smalls, ring, different horizons -->
 <g>
@@ -755,26 +1474,25 @@ STORY_SCENES['hidden_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="150" y="22" width="200" height="118" fill="url(#hidBig6)"/>
   <!-- surface line, high in frame: this is the way in, seen from below -->
   <path d="M150,46 Q200,42 250,46 Q300,50 350,46 L350,54 Q300,58 250,54 Q200,50 150,54Z" fill="#5fa0b8" opacity="0.18">
-    <animate attributeName="d" values="M150,46 Q200,42 250,46 Q300,50 350,46 L350,54 Q300,58 250,54 Q200,50 150,54Z;M150,49 Q200,45 250,49 Q300,53 350,49 L350,57 Q300,61 250,57 Q200,53 150,57Z;M150,46 Q200,42 250,46 Q300,50 350,46 L350,54 Q300,58 250,54 Q200,50 150,54Z" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M150,46 Q200,42 250,46 Q300,50 350,46 L350,54 Q300,58 250,54 Q200,50 150,54Z;M150,49 Q200,45 250,49 Q300,53 350,49 L350,57 Q300,61 250,57 Q200,53 150,57Z;M150,46 Q200,42 250,46 Q300,50 350,46 L350,54 Q300,58 250,54 Q200,50 150,54Z" dur="11.97s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <!-- the boat, tiny, a hull and a mast, twelve years ago -->
-  <g transform="translate(244,42)">
-    <animateTransform attributeName="transform" type="translate" values="244,42;244,44;244,42" dur="8s" repeatCount="indefinite"/>
+  <g transform="translate(244,42)"><animateTransform attributeName="transform" type="translate" values="0,0;0,2;0,0" dur="7.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
     <path d="M-14,0 Q-11,4 -4,5 L8,5 Q14,4 15,0 Z" fill="#0b1a22"/>
     <rect x="-1" y="-14" width="1.6" height="14" fill="#0b1a22"/>
     <path d="M0.6,-14 L8,-8 L0.6,-6 Z" fill="#0b1a22" opacity="0.85"/>
   </g>
-  <!-- the depth, and the wreck lamp far below it -->
   <path d="M164,140 Q182,120 216,116 L294,118 Q320,124 318,140 Z" fill="#08121a" opacity="0.9"/>
   <circle cx="278" cy="126" r="21" fill="url(#hidLamp6)" opacity="0.4">
-    <animate attributeName="opacity" values="0.26;0.48;0.26" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.26;0.48;0.26" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle cx="278" cy="126" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.7;1;0.7" dur="8s" repeatCount="indefinite"/></circle>
+  <circle cx="278" cy="126" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.7;1;0.7" dur="9.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <!-- a rope, doubled, trailing down from the boat: same cleat, both of them -->
   <path d="M240,47 Q236,78 244,112" fill="none" stroke="#1d3f49" stroke-width="1" opacity="0.35"/>
   <path d="M248,47 Q252,78 246,112" fill="none" stroke="#1d3f49" stroke-width="1" opacity="0.28"/>
   <rect x="150" y="22" width="200" height="16" fill="url(#hidScan6)">
-    <animate attributeName="y" values="8;144" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="8;144" dur="5.46s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="5.46s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- table -->
@@ -795,24 +1513,14 @@ STORY_SCENES['hidden_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="3" y="3" width="28" height="6" rx="1" fill="#16323a"/>
   <rect x="3" y="3" width="18" height="6" rx="1" fill="#2a3d3f" opacity="0.7"/>
 </g>
-<!-- Canon from behind -->
-<g transform="translate(200,148)">
-  <rect x="-30" y="26" width="60" height="60" rx="4" fill="#333e52"/>
-  <rect x="-30" y="26" width="60" height="4" rx="2" fill="#46536b"/>
-  <path d="M-26,88 Q-24,44 -12,30 Q0,24 12,30 Q24,44 26,88 Z" fill="#05070e"/>
-  <circle cx="1" cy="12" r="14" fill="#05070e"/>
-  <path d="M-13,10 Q-9,-4 1,-2 Q11,-4 15,10" fill="#0b0f19"/>
-  <rect x="-5" y="22" width="12" height="8" fill="#05070e"/>
-  <path d="M-25,80 Q-23,46 -12,32" fill="none" stroke="#5fa0b8" stroke-width="4" opacity="0.22"/>
-  <path d="M-25,80 Q-23,46 -12,32" fill="none" stroke="#9fd4e4" stroke-width="1.5" opacity="0.75"/>
-</g>
+<!-- HIS CHAIR, behind him -->
+` + hidChair(200, 214, 0, 252, { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#46536b' }) + `
+<!-- Canon from behind, hands forward on the table as in hidden_1 -->
+` + hidCanon(HID_HEAD, 200, 148, {
+  reachL: [-32, 44], reachR: [34, 42], rotL: 168, rotR: -172
+}) + `
 <!-- second chair -->
-<g transform="translate(332,160) rotate(-14)">
-  <rect x="-24" y="12" width="48" height="52" rx="4" fill="#2e3849"/>
-  <rect x="-24" y="12" width="48" height="3.5" rx="1.5" fill="#46536b"/>
-  <rect x="-22" y="62" width="5" height="34" fill="#28313f"/>
-  <rect x="17" y="62" width="5" height="34" fill="#28313f"/>
-</g>
+` + hidChair(332, 208, -5, 252, { w: 48, d: 16, backH: 46 }) + `
 <rect x="0" y="252" width="500" height="8" fill="#0a121e" opacity="0.7"/>
 <ellipse cx="250" cy="248" rx="170" ry="14" fill="#5fa0b8" opacity="0.08"/>
 </svg>`;
@@ -852,89 +1560,112 @@ STORY_SCENES['hidden_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="40" y="226" width="420" height="4" rx="2" fill="#7686a3" opacity="0.6"/>
 <rect x="214" y="238" width="72" height="8" rx="4" fill="#22303f"/>
 
-<!-- 1. THE COIL OF FISHING LINE. Big, obvious, unmistakably a coil. -->
-<g transform="translate(122,116)">
-  <ellipse cx="0" cy="4" rx="52" ry="34" fill="#1e2820" opacity="0.5"/>
-  <g fill="none" stroke="#e8eef5" stroke-width="2.4" opacity="0.85">
-    <ellipse cx="0" cy="0" rx="50" ry="32"/><ellipse cx="2" cy="2" rx="42" ry="26"/>
-    <ellipse cx="-2" cy="-1" rx="34" ry="21"/><ellipse cx="1" cy="3" rx="26" ry="16"/>
-    <ellipse cx="0" cy="0" rx="18" ry="11"/><ellipse cx="1" cy="1" rx="10" ry="6"/>
-  </g>
-  <!-- the loose end, running out of the coil -->
-  <path d="M50,4 Q78,18 104,10 Q126,3 132,-14" fill="none" stroke="#e8eef5" stroke-width="2" opacity="0.7"/>
-</g>
+<!-- THE DRAWER OF A MAN WHO COAXES SOMETHING SMALL OUT FROM UNDER A FLOOR.
+     It read as paraphernalia before: three bright spoons with hard speculars,
+     a tight white coil, a jar of short white sticks. Nothing in it said what
+     it was for. What it is for is BAIT ,  for a small, harmless animal that
+     lives under the boards and will come out for food and not for anything
+     else. So: seed, a heel of bread, a saucer, a soft cloth to line a box
+     with, and ONE spoon, being used as a scoop.
+     Everything is warm-toned and soft-edged. Nothing in here is sharp. -->
 
-<!-- 2. THREE SPOONS. Clearly three, clearly spoons, clearly metal. -->
-<g transform="translate(266,86) rotate(14)">
-  <ellipse cx="0" cy="0" rx="20" ry="13" fill="#39434f"/>
-  <ellipse cx="0" cy="-1" rx="19" ry="12" fill="url(#hidSpoon7)"/>
-  <ellipse cx="1" cy="1" rx="13" ry="7.5" fill="#59636f" opacity="0.5"/>
-  <path d="M-17,-6 Q-20,0 -16,7" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.85" stroke-linecap="round"/>
-  <rect x="17" y="-2.6" width="60" height="5.2" rx="2.6" fill="#8e99a7"/>
-  <rect x="17" y="-2.6" width="60" height="1.8" rx="0.9" fill="#e8eef5" opacity="0.7"/>
-</g>
-<g transform="translate(272,128) rotate(-6)">
-  <ellipse cx="0" cy="0" rx="19" ry="12.5" fill="#39434f"/>
-  <ellipse cx="0" cy="-1" rx="18" ry="11.5" fill="url(#hidSpoon7)"/>
-  <ellipse cx="1" cy="1" rx="12" ry="7" fill="#59636f" opacity="0.5"/>
-  <path d="M-16,-6 Q-19,0 -15,6" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.8" stroke-linecap="round"/>
-  <rect x="16" y="-2.4" width="58" height="4.8" rx="2.4" fill="#8e99a7"/>
-  <rect x="16" y="-2.4" width="58" height="1.6" rx="0.8" fill="#e8eef5" opacity="0.65"/>
-</g>
-<!-- the third: bowl already beaten flat, hole drilled, line knotted through.
-     This is the one you are about to be given. -->
-<g transform="translate(266,174) rotate(5)">
-  <ellipse cx="0" cy="0" rx="23" ry="12" fill="#39434f"/>
-  <ellipse cx="0" cy="-1" rx="22" ry="11" fill="url(#hidSpoon7)"/>
-  <g fill="#7b8592" opacity="0.4">
-    <ellipse cx="-8" cy="-2" rx="5" ry="3"/><ellipse cx="6" cy="1" rx="5" ry="3"/><ellipse cx="-1" cy="4" rx="4.4" ry="2.6"/>
+<!-- 1. THE TIN OF SEED, open, tipped slightly, spilling. The biggest thing in
+     the drawer and the first thing read. -->
+<g transform="translate(140,132)">
+  <ellipse cx="4" cy="46" rx="62" ry="12" fill="#1e2820" opacity="0.55"/>
+  <!-- the body of the tin -->
+  <path d="M-52,-26 L52,-26 L44,42 Q0,50 -44,42 Z" fill="#7a6a44"/>
+  <path d="M-52,-26 L-30,-26 L-26,42 Q-36,44 -44,42 Z" fill="#93815a" opacity="0.7"/>
+  <!-- the open mouth, an ellipse so it is plainly a container -->
+  <ellipse cx="0" cy="-26" rx="52" ry="14" fill="#5c4f30"/>
+  <ellipse cx="0" cy="-26" rx="52" ry="14" fill="none" stroke="#a08a5c" stroke-width="2.4"/>
+  <!-- seed filling it, heaped above the rim -->
+  <path d="M-46,-26 Q-24,-40 0,-38 Q26,-40 46,-26 Q24,-18 0,-17 Q-24,-18 -46,-26 Z" fill="#c9a961"/>
+  <g fill="#e0c07a" opacity="0.85">
+    <ellipse cx="-28" cy="-30" rx="3" ry="2" transform="rotate(24,-28,-30)"/>
+    <ellipse cx="-14" cy="-33" rx="3.2" ry="2.1" transform="rotate(-16,-14,-33)"/>
+    <ellipse cx="2" cy="-34" rx="3" ry="2" transform="rotate(48,2,-34)"/>
+    <ellipse cx="17" cy="-32" rx="3.2" ry="2.1" transform="rotate(-38,17,-32)"/>
+    <ellipse cx="31" cy="-29" rx="3" ry="2" transform="rotate(12,31,-29)"/>
+    <ellipse cx="-20" cy="-25" rx="2.8" ry="1.9" transform="rotate(-62,-20,-25)"/>
+    <ellipse cx="10" cy="-25" rx="2.8" ry="1.9" transform="rotate(30,10,-25)"/>
   </g>
-  <path d="M-20,-5 Q-23,0 -19,6" fill="none" stroke="#ffffff" stroke-width="2.4" opacity="0.9" stroke-linecap="round"/>
-  <rect x="20" y="-2.8" width="62" height="5.6" rx="2.8" fill="#8e99a7"/>
-  <rect x="20" y="-2.8" width="62" height="1.9" rx="0.9" fill="#e8eef5" opacity="0.7"/>
-  <circle cx="76" cy="0" r="3" fill="#1b2534"/>
-  <path d="M76,0 Q92,14 96,34" fill="none" stroke="#e8eef5" stroke-width="1.8" opacity="0.75"/>
-</g>
-
-<!-- 3. THE JAR OF SCREWS, sorted by nothing. A jar shape, first and foremost. -->
-<g transform="translate(396,144)">
-  <rect x="-34" y="-56" width="68" height="92" rx="7" fill="#24404a" opacity="0.75"/>
-  <rect x="-34" y="-56" width="68" height="92" rx="7" fill="none" stroke="#9fd4e4" stroke-width="2" opacity="0.55"/>
-  <!-- glass highlight down the left, which is what says JAR -->
-  <rect x="-29" y="-50" width="9" height="80" rx="4.5" fill="#dff0f7" opacity="0.32"/>
-  <!-- neck and lid -->
-  <rect x="-22" y="-66" width="44" height="12" rx="3" fill="#5b6a72"/>
-  <rect x="-22" y="-66" width="44" height="4" rx="2" fill="#93a4ac" opacity="0.7"/>
-  <!-- screws, jumbled, at every angle -->
-  <g fill="#c3ccd8" opacity="0.8">
-    <rect x="-24" y="8" width="20" height="3.6" rx="1.8" transform="rotate(22,-14,10)"/>
-    <rect x="-8" y="18" width="22" height="3.6" rx="1.8" transform="rotate(-14,3,20)"/>
-    <rect x="6" y="2" width="18" height="3.4" rx="1.7" transform="rotate(58,15,4)"/>
-    <rect x="-22" y="24" width="21" height="3.6" rx="1.8" transform="rotate(-42,-12,26)"/>
-    <rect x="0" y="28" width="19" height="3.4" rx="1.7" transform="rotate(8,10,30)"/>
-    <rect x="-26" y="-6" width="17" height="3.4" rx="1.7" transform="rotate(-68,-18,-4)"/>
-    <rect x="8" y="14" width="20" height="3.6" rx="1.8" transform="rotate(36,18,16)"/>
-    <rect x="-14" y="-16" width="18" height="3.4" rx="1.7" transform="rotate(15,-5,-14)"/>
+  <!-- a scatter of it that has got out onto the drawer floor -->
+  <g fill="#c9a961" opacity="0.75">
+    <ellipse cx="62" cy="30" rx="3" ry="2" transform="rotate(18,62,30)"/>
+    <ellipse cx="74" cy="38" rx="3.2" ry="2.1" transform="rotate(-28,74,38)"/>
+    <ellipse cx="58" cy="44" rx="2.8" ry="1.9" transform="rotate(52,58,44)"/>
+    <ellipse cx="86" cy="30" rx="2.9" ry="1.9" transform="rotate(-8,86,30)"/>
+    <ellipse cx="70" cy="52" rx="3" ry="2" transform="rotate(38,70,52)"/>
+    <ellipse cx="-64" cy="40" rx="3" ry="2" transform="rotate(-44,-64,40)"/>
+    <ellipse cx="-76" cy="34" rx="2.8" ry="1.9" transform="rotate(20,-76,34)"/>
   </g>
 </g>
 
-<!-- 4. BENT WIRE, a few long clear lengths across the back of the drawer -->
-<g fill="none" stroke="#b3bfcc" stroke-width="2.6" stroke-linecap="round" opacity="0.8">
-  <path d="M74,74 Q124,62 168,78 Q206,92 246,74"/>
-  <path d="M80,90 Q112,80 136,92"/>
-</g>
-<g fill="none" stroke="#8996a4" stroke-width="2.2" stroke-linecap="round" opacity="0.6">
-  <path d="M78,200 Q122,212 164,198 Q196,188 214,198"/>
+<!-- 2. THE SPOON, ONE of them, lying in the seed as a SCOOP. This is the
+     Sounding Spoon before it was beaten flat, and it is doing the ordinary
+     job a spoon does. Warm metal, soft highlight, not a lure. -->
+<g transform="translate(228,104) rotate(28)">
+  <ellipse cx="0" cy="0" rx="20" ry="13" fill="#4a4436"/>
+  <ellipse cx="0" cy="-1" rx="19" ry="12" fill="#a09274"/>
+  <ellipse cx="1" cy="1" rx="13" ry="7.5" fill="#6f6650" opacity="0.55"/>
+  <path d="M-16,-6 Q-19,0 -15,6" fill="none" stroke="#d8cba8" stroke-width="1.8" opacity="0.6" stroke-linecap="round"/>
+  <rect x="17" y="-2.6" width="58" height="5.2" rx="2.6" fill="#8e8266"/>
+  <rect x="17" y="-2.6" width="58" height="1.6" rx="0.8" fill="#c4b691" opacity="0.6"/>
 </g>
 
-<!-- HIS HAND on the drawer edge. Near-black against the lit drawer, which is
-     what makes it read. -->
-<g transform="translate(96,42)">
-  <path d="M0,0 Q2,18 14,22 L58,20 Q74,15 70,0 Z" fill="#05070e"/>
-  <path d="M12,21 Q14,32 22,32 Q28,30 27,19" fill="#05070e"/>
-  <path d="M28,20 Q30,33 39,33 Q45,31 44,19" fill="#05070e"/>
-  <path d="M45,19 Q47,31 54,30 Q59,28 58,18" fill="#05070e"/>
-  <path d="M0,0 Q2,16 13,21" fill="none" stroke="#9fd4e4" stroke-width="1.4" opacity="0.5"/>
+<!-- 3. THE HEEL OF BREAD, on a saucer. Domestic, soft, unmistakable. -->
+<g transform="translate(316,178)">
+  <ellipse cx="0" cy="16" rx="44" ry="10" fill="#1e2820" opacity="0.5"/>
+  <ellipse cx="0" cy="10" rx="42" ry="13" fill="#8d97a4"/>
+  <ellipse cx="0" cy="8" rx="35" ry="10" fill="#b0b9c5"/>
+  <ellipse cx="0" cy="8" rx="24" ry="6.5" fill="#98a2af" opacity="0.6"/>
+  <!-- the crust: a wedge with a soft crumb face turned up -->
+  <path d="M-24,4 Q-20,-18 -2,-22 Q18,-24 24,-8 Q26,2 20,7 Q-2,12 -24,4 Z" fill="#8a6634"/>
+  <path d="M-19,2 Q-15,-14 -1,-17 Q14,-19 19,-7 Q20,0 16,4 Q-2,8 -19,2 Z" fill="#d8bb85"/>
+  <g fill="#c2a271" opacity="0.7">
+    <ellipse cx="-8" cy="-6" rx="3" ry="2.2"/><ellipse cx="4" cy="-9" rx="2.6" ry="1.9"/>
+    <ellipse cx="9" cy="-2" rx="2.4" ry="1.8"/><ellipse cx="-2" cy="0" rx="2.8" ry="2"/>
+  </g>
+  <!-- crumbs on the saucer -->
+  <g fill="#c2a271" opacity="0.8">
+    <ellipse cx="27" cy="9" rx="2.4" ry="1.7"/><ellipse cx="-29" cy="11" rx="2.2" ry="1.6"/>
+    <ellipse cx="33" cy="4" rx="1.8" ry="1.3"/>
+  </g>
+</g>
+
+<!-- 4. THE FOLDED CLOTH, to line a box with so the thing has somewhere warm.
+     Soft, thick, and it drapes: the only thing in the drawer with a fold. -->
+<g transform="translate(400,86)">
+  <ellipse cx="0" cy="34" rx="46" ry="10" fill="#1e2820" opacity="0.45"/>
+  <path d="M-44,28 Q-46,4 -38,-6 Q-4,-16 38,-8 Q46,2 44,28 Q0,38 -44,28 Z" fill="#5c6b7a"/>
+  <path d="M-38,14 Q0,4 38,12" fill="none" stroke="#78889a" stroke-width="3" opacity="0.7"/>
+  <path d="M-40,22 Q0,12 40,20" fill="none" stroke="#48545f" stroke-width="2.4" opacity="0.6"/>
+  <path d="M-36,-2 Q-2,-11 34,-4" fill="none" stroke="#78889a" stroke-width="2.6" opacity="0.55"/>
+</g>
+
+<!-- the room light moving very slightly over the drawer floor, so the shot
+     is not a photograph. One slow loop, nothing else. -->
+<ellipse cx="250" cy="140" rx="200" ry="76" fill="#5fa0b8" opacity="0.03">
+  <animate attributeName="opacity" values="0.02;0.06;0.02" dur="9.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</ellipse>
+<!-- 5. A LENGTH OF SOFT STRING, coiled loose. Not taut, not wire: three easy
+     turns and an end lying where it fell. -->
+<g transform="translate(126,214)">
+  <g fill="none" stroke="#a89878" stroke-width="2.6" opacity="0.7" stroke-linecap="round">
+    <path d="M-34,0 Q-18,-11 2,-8 Q22,-5 30,4"/>
+    <path d="M-28,7 Q-12,-3 8,-1 Q26,1 34,9"/>
+  </g>
+  <path d="M34,9 Q56,16 76,10" fill="none" stroke="#a89878" stroke-width="2.2" opacity="0.55" stroke-linecap="round"/>
+</g>
+
+<!-- HIS HAND on the drawer edge, with a WRIST and a forearm running up out of
+     frame, so it belongs to a man rather than entering as a blob. Sized off
+     his head (r=18 at this camera), not off the drawer: it was 2.5 head
+     diameters wide before. -->
+<g transform="translate(150,4)">
+` + hidArm(20, -4, -30, 6, 34, 6) + `
+` + hidHand(20, 1, { x: 6, y: 36, rot: 172, grip: true }) + `
 </g>
 </svg>`;
 
@@ -972,7 +1703,7 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <!-- THE LINE. One clear unbroken run from the fingers to the handle hole.
      It swings a little, and the whole tool swings with it. -->
 <g transform="translate(250,58)">
-  <animateTransform attributeName="transform" type="rotate" values="-2.2;2.2;-2.2" dur="5.5s" repeatCount="indefinite" additive="sum"/>
+  <animateTransform attributeName="transform" type="rotate" values="-2.2;2.2;-2.2" dur="6.99s" repeatCount="indefinite" additive="sum" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <!-- the line itself: bright, thin, unmistakably a line -->
   <line x1="0" y1="-4" x2="-1" y2="66" stroke="#0a121e" stroke-width="3" opacity="0.5"/>
   <line x1="0" y1="-4" x2="-1" y2="66" stroke="#dfe7f0" stroke-width="1.4" opacity="0.9"/>
@@ -982,69 +1713,42 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <!-- the cut tail of the line, left long because he did not trim it -->
   <path d="M1,72 Q9,80 7,90" fill="none" stroke="#dfe7f0" stroke-width="1" opacity="0.55"/>
 
-  <!-- ONE CONTINUOUS PIECE OF METAL. A soup spoon somebody beat flat with a
-       hammer: narrow at the top, widening into a shallow bowl at the bottom.
-       It hangs at a rake so the bowl is seen as a foreshortened ellipse and
-       the handle runs OUT of it along the same axis. Drawn as a SINGLE path
-       so there is no seam where a handle stops and a round thing begins. -->
-  <g transform="rotate(13)">
-    <!-- the whole spoon, one silhouette, dark backing plate -->
-    <path d="M-4.6,72
-             C-5.4,104 -6.6,124 -7.4,140
-             C-15,146 -21,156 -21.6,169
-             C-22.4,186 -13.8,199 -0.6,201
-             C13,203 23.4,192 24.4,176
-             C25.2,162 19.6,150 10.6,143
-             C8.6,126 7,104 6.2,72 Z" fill="#2b333e"/>
-    <!-- the metal itself, same path inset -->
-    <path d="M-3.4,73
-             C-4.2,104 -5.4,124 -6.2,139
-             C-13.4,145 -19.2,155 -19.8,168
-             C-20.6,184 -12.4,196 -0.4,198
-             C12,200 21.6,190 22.6,175
-             C23.4,161 18,150 9.4,143
-             C7.4,126 5.8,104 5,73 Z" fill="url(#hidSteel8)"/>
-    <!-- THE HOLLOW of the bowl: one shallow crescent, offset UP and LEFT so it
-         reads as a dish catching light, not as a pair of marks on a face. -->
-    <path d="M-15.4,166
-             C-14.4,155 -7.4,148 0.6,148
-             C9.4,148 16.4,156 17,167
-             C12.6,159 6.6,155 0.4,155
-             C-6.2,155 -11.8,159 -15.4,166 Z" fill="#5c6774" opacity="0.6"/>
-    <!-- the deepest part of the dish, a single soft pool low in the bowl -->
-    <ellipse cx="0.4" cy="177" rx="14.6" ry="9.4" fill="#4a5563" opacity="0.42"/>
-    <!-- hammer marks. Irregular, scattered, NEVER paired left-and-right. -->
-    <g fill="#8a95a4" opacity="0.3">
-      <ellipse cx="-9" cy="160" rx="5.4" ry="3.2" transform="rotate(-16,-9,160)"/>
-      <ellipse cx="6.4" cy="185" rx="4.6" ry="2.8" transform="rotate(9,6.4,185)"/>
-      <ellipse cx="-12.6" cy="180" rx="4.2" ry="2.6" transform="rotate(22,-12.6,180)"/>
-      <ellipse cx="9.4" cy="171.6" rx="4" ry="2.4" transform="rotate(-8,9.4,171.6)"/>
-      <ellipse cx="-2.4" cy="192" rx="5" ry="2.6" transform="rotate(4,-2.4,192)"/>
+    <!-- THE SOUNDING FORK. Two prongs bent from a brass curtain rod and filed
+       until they agree, a shoulder, a stem, and a flat foot you set against
+       a plank. It hangs from the line at a slight rake.
+
+       This replaced a beaten spoon, which never read: at this size a spoon
+       is an oval on a string, and it came out as a bell, a bathysphere and
+       a blob across three passes. A fork cannot be mistaken for anything. -->
+  <g transform="rotate(9)">
+    <!-- the two prongs -->
+    <path d="M-17,74 L-17,150" stroke="#8a6d2c" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <path d="M17,74 L17,150" stroke="#8a6d2c" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <path d="M-17,74 L-17,150" stroke="#c9a24a" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M17,74 L17,150" stroke="#c9a24a" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <!-- the shoulder the prongs spring from, one continuous bend -->
+    <path d="M-21,148 Q0,182 21,148" stroke="#8a6d2c" stroke-width="11" fill="none"/>
+    <path d="M-21,148 Q0,180 21,148" stroke="#c9a24a" stroke-width="8" fill="none"/>
+    <!-- stem, and the flat foot that goes against the wood -->
+    <rect x="-4.6" y="172" width="9.2" height="26" rx="1.6" fill="#b08e3c"/>
+    <rect x="-4.6" y="172" width="3.2" height="26" fill="#d8b45e" opacity="0.7"/>
+    <rect x="-12" y="196" width="24" height="7" rx="2.6" fill="#8a6d2c"/>
+    <rect x="-12" y="196" width="24" height="2.4" rx="1.2" fill="#d8b45e" opacity="0.6"/>
+    <!-- one unbroken specular down the near prong, so the brass reads as
+         metal rather than as a painted bar -->
+    <path d="M-19.4,80 L-19.4,144" stroke="#f0dca4" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M14.6,80 L14.6,144" stroke="#f0dca4" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <!-- file marks near the tips, where he took metal off to tune it -->
+    <g stroke="#6d5423" stroke-width="1.1" opacity="0.5">
+      <path d="M-21,88 h8"/><path d="M-21,94 h8"/><path d="M13,86 h8"/><path d="M13,92 h8"/>
     </g>
-    <!-- hammer marks up the stem too: he beat the whole thing -->
-    <g fill="#5b6674" opacity="0.42">
-      <ellipse cx="-5.4" cy="96" rx="2.4" ry="3.4"/><ellipse cx="-4.6" cy="112" rx="2.2" ry="3"/>
-      <ellipse cx="-6" cy="128" rx="2.4" ry="3.2"/>
-    </g>
-    <!-- HARD SPECULAR: one unbroken highlight running the WHOLE length, down
-         the stem and round the near rim. This is what welds it into one object. -->
-    <path d="M-3.2,74 C-4,104 -5.2,124 -6,139
-             C-13,145 -18.4,155 -19,168
-             C-19.6,180 -14.6,189 -6.6,194"
-          fill="none" stroke="#f2f7fc" stroke-width="2.2" opacity="0.85" stroke-linecap="round"/>
-    <!-- and the shaded far rim, so the bowl turns away from us -->
-    <path d="M9.6,143 C18,150 23.2,161 22.4,175 C21.6,188 13.4,197 2,198"
-          fill="none" stroke="#232a34" stroke-width="2.4" opacity="0.85" stroke-linecap="round"/>
-    <!-- the beaten edge is not truly round: one flattened stretch -->
-    <path d="M-19.4,172 C-18.6,183 -12.4,191 -3.6,193"
-          fill="none" stroke="#c6d0dc" stroke-width="1.4" opacity="0.55"/>
-    <!-- where the stem meets the bowl the metal is widest and thinnest:
-         two faint spread lines, the mark of hammering it out -->
-    <path d="M-9.4,146 C-6.4,150 -2.4,151 1.6,151" fill="none" stroke="#8a95a4" stroke-width="0.9" opacity="0.45"/>
-    <path d="M-11.4,152 C-7.4,157 -2.4,159 3.6,158" fill="none" stroke="#8a95a4" stroke-width="0.8" opacity="0.35"/>
-    <!-- THE DRILLED HOLE, at the narrow top, where the line is knotted -->
-    <ellipse cx="-4.2" cy="80" rx="2.6" ry="3.2" fill="#101c2b"/>
-    <ellipse cx="-4.2" cy="80" rx="2.6" ry="3.2" fill="none" stroke="#c6d0dc" stroke-width="0.7" opacity="0.5"/>
+    <!-- the drilled hole at the top of the near prong, where the line knots -->
+    <ellipse cx="-17" cy="80" rx="2.4" ry="3" fill="#3a2c10"/>
+    <!-- the prongs ring: a small, slow lean apart and back. Eased, and the
+         two sides use different durations so they do not move as one bar. -->
+    <animateTransform attributeName="transform" type="rotate" values="9;10.4;9"
+      dur="4.4s" repeatCount="indefinite" calcMode="spline"
+      keyTimes="0;0.42;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </g>
 </g>
 <!-- what the tool is FOR: a plank wall behind, and the spoon is near it -->
@@ -1057,14 +1761,14 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <!-- the sound it makes: two faint rings off the bowl, because it is a
      listening device and nothing else in the frame says so -->
 <ellipse cx="292" cy="250" rx="52" ry="14" fill="none" stroke="#9fd4e4" stroke-width="1.2" opacity="0.25">
-  <animate attributeName="rx" values="40;96" dur="4s" repeatCount="indefinite"/>
-  <animate attributeName="ry" values="11;26" dur="4s" repeatCount="indefinite"/>
-  <animate attributeName="opacity" values="0.3;0" dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="rx" values="40;96" dur="3.36s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+  <animate attributeName="ry" values="11;26" dur="4.28s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+  <animate attributeName="opacity" values="0.3;0" dur="4.76s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 0.58 1"/>
 </ellipse>
 <ellipse cx="292" cy="250" rx="52" ry="14" fill="none" stroke="#9fd4e4" stroke-width="1.2" opacity="0.2">
-  <animate attributeName="rx" values="40;96" dur="4s" repeatCount="indefinite" begin="2s"/>
-  <animate attributeName="ry" values="11;26" dur="4s" repeatCount="indefinite" begin="2s"/>
-  <animate attributeName="opacity" values="0.25;0" dur="4s" repeatCount="indefinite" begin="2s"/>
+  <animate attributeName="rx" values="40;96" dur="3.84s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+  <animate attributeName="ry" values="11;26" dur="5.32s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+  <animate attributeName="opacity" values="0.25;0" dur="3.52s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 0.58 1"/>
 </ellipse>
 </svg>`;
 
@@ -1108,8 +1812,11 @@ STORY_SCENES['hidden_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <rect x="-74" y="-46" width="144" height="3" rx="1.5" fill="#a2aabc" opacity="0.5"/>
   <!-- ruled line -->
   <line x1="-64" y1="-30" x2="60" y2="-30" stroke="#4c5468" stroke-width="0.8" opacity="0.6"/>
-  <!-- the two letters, pencil grey, written by hand -->
-  <text x="-2" y="10" text-anchor="middle" font-family="'Courier New',monospace" font-size="42" font-weight="bold" fill="#4a5770" opacity="0.85">LR</text>
+  <!-- The clue, pencil grey, written by hand. Canon does not give the answer. -->
+  <text x="-2" y="-8" text-anchor="middle" font-family="'Courier New',monospace" font-size="12" fill="#4a5770" opacity="0.9">Infamous clue setter</text>
+  <text x="-2" y="7" text-anchor="middle" font-family="'Courier New',monospace" font-size="12" fill="#4a5770" opacity="0.9">mail returned (4)</text>
+  <line x1="-40" y1="18" x2="36" y2="18" stroke="#4c5468" stroke-width="0.7" opacity="0.5"/>
+  <text x="-2" y="31" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#5b6377" opacity="0.75">TYPE IT INTO THE TERMINAL</text>
   <!-- a thumb smudge -->
   <ellipse cx="46" cy="26" rx="14" ry="9" fill="#5b6377" opacity="0.4"/>
 </g>
@@ -1141,23 +1848,25 @@ STORY_SCENES['hidden_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   <path d="M-6,19 Q-4,29 4,29 Q10,27 9,17" fill="#05070e"/>
   <path d="M12,18 Q15,27 22,26 Q27,24 26,16" fill="#05070e"/>
 </g>
+<!-- the screenlight in the room shifting, very slightly -->
+<ellipse cx="250" cy="130" rx="250" ry="110" fill="#5fa0b8" opacity="0.02">
+  <animate attributeName="opacity" values="0.012;0.042;0.012" dur="12.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</ellipse>
 </svg>`;
 
 // Scene 10: Back up into the square. The grate behind him, the fountain sound
 // released mid-splash — the water is animating again, which scene 0 refused to do.
 STORY_SCENES['hidden_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
+<defs>` + hidFountainDefs('10', true) + `
   <linearGradient id="hidSky10" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#0a1224"/><stop offset="52%" stop-color="#1a2a42"/><stop offset="100%" stop-color="#2e405a"/>
   </linearGradient>
   <radialGradient id="hidMist10" cx="50%" cy="60%" r="34%">
     <stop offset="0%" stop-color="#7fb4c8" stop-opacity="0.16"/><stop offset="100%" stop-color="#7fb4c8" stop-opacity="0"/>
   </radialGradient>
-  <linearGradient id="hidWater10" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#9fd0e0" stop-opacity="0.6"/><stop offset="100%" stop-color="#3d5a75" stop-opacity="0.1"/>
-  </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#hidSky10)"/>
+<!-- FAR PLANE: the same square, one beat later and a shade warmer -->
 <rect x="0" y="50" width="64" height="122" rx="2" fill="#16203a" opacity="0.9"/>
 <rect x="60" y="38" width="52" height="134" rx="2" fill="#121a30" opacity="0.9"/>
 <rect x="390" y="44" width="58" height="128" rx="2" fill="#16203a" opacity="0.9"/>
@@ -1166,61 +1875,29 @@ STORY_SCENES['hidden_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <rect x="38" y="68" width="10" height="12" rx="1" fill="#5fa0b8" opacity="0.2"/>
 <rect x="404" y="62" width="10" height="12" rx="1" fill="#5fa0b8" opacity="0.24"/>
 <rect x="460" y="54" width="10" height="12" rx="1" fill="#5fa0b8" opacity="0.18"/>
-<rect x="0" y="170" width="500" height="90" fill="#18202e"/>
-<ellipse cx="72" cy="200" rx="15" ry="6" fill="#202839" opacity="0.6"/>
-<ellipse cx="150" cy="224" rx="13" ry="5" fill="#1e2534" opacity="0.5"/>
-<ellipse cx="358" cy="206" rx="14" ry="6" fill="#202839" opacity="0.55"/>
-<ellipse cx="432" cy="234" rx="13" ry="5" fill="#1e2534" opacity="0.45"/>
-<!-- fountain, whole again -->
-<ellipse cx="250" cy="180" rx="98" ry="30" fill="#2e3648"/>
-<ellipse cx="250" cy="178" rx="90" ry="26" fill="#1d3245"/>
-<ellipse cx="250" cy="178" rx="82" ry="21" fill="#25506a" opacity="0.55"/>
-<rect x="243" y="112" width="14" height="48" fill="#2e3648"/>
-<rect x="245" y="112" width="6" height="48" fill="#3e4a5e" opacity="0.5"/>
-<ellipse cx="250" cy="112" rx="26" ry="9" fill="#2e3648"/>
-<ellipse cx="250" cy="110" rx="20" ry="6" fill="#25506a" opacity="0.6"/>
-<!-- water, MOVING now: the held note released, mid splash -->
-<line x1="250" y1="104" x2="250" y2="84" stroke="url(#hidWater10)" stroke-width="2.2" opacity="0.8">
-  <animate attributeName="opacity" values="0.5;0.9;0.5" dur="1.7s" repeatCount="indefinite"/>
-</line>
-<path d="M236,113 Q226,133 220,153" stroke="url(#hidWater10)" stroke-width="1.7" fill="none" opacity="0.6">
-  <animate attributeName="opacity" values="0.3;0.75;0.3" dur="2.1s" repeatCount="indefinite" begin="0.3s"/>
-</path>
-<path d="M264,113 Q274,133 280,153" stroke="url(#hidWater10)" stroke-width="1.7" fill="none" opacity="0.6">
-  <animate attributeName="opacity" values="0.3;0.75;0.3" dur="2.1s" repeatCount="indefinite" begin="0.7s"/>
-</path>
-<circle cx="250" cy="82" r="2.2" fill="#9fd0e0" opacity="0.4">
-  <animate attributeName="cy" values="82;74;70" dur="1.5s" repeatCount="indefinite"/>
-  <animate attributeName="opacity" values="0.6;0.8;0" dur="1.5s" repeatCount="indefinite"/>
-</circle>
-<circle cx="222" cy="150" r="1.6" fill="#9fd0e0" opacity="0.35">
-  <animate attributeName="cy" values="146;158;170" dur="1.8s" repeatCount="indefinite"/>
-  <animate attributeName="opacity" values="0.5;0.2;0" dur="1.8s" repeatCount="indefinite"/>
-</circle>
-<circle cx="278" cy="150" r="1.6" fill="#9fd0e0" opacity="0.35">
-  <animate attributeName="cy" values="146;158;170" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
-  <animate attributeName="opacity" values="0.5;0.2;0" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
-</circle>
-<ellipse cx="250" cy="166" rx="62" ry="26" fill="url(#hidMist10)"/>
-<!-- the grate, shut again, in the cobbles at the front. Nothing marks it. -->
-<g opacity="0.85">
-  <rect x="196" y="216" width="108" height="26" rx="2" fill="#3d4a60"/>
-  <g stroke="#525f79" stroke-width="2.4" stroke-linecap="round">
-    <line x1="206" y1="219" x2="206" y2="239"/><line x1="220" y1="219" x2="220" y2="239"/>
-    <line x1="234" y1="219" x2="234" y2="239"/><line x1="248" y1="219" x2="248" y2="239"/>
-    <line x1="262" y1="219" x2="262" y2="239"/><line x1="276" y1="219" x2="276" y2="239"/>
-    <line x1="290" y1="219" x2="290" y2="239"/>
-  </g>
-  <!-- one faint cold gleam out of it, if you know to look -->
-  <rect x="204" y="222" width="94" height="14" fill="#16323a" opacity="0.35"/>
-</g>
-<!-- lanterns -->
+<!-- the same two lanterns, in the same place -->
 <rect x="118" y="128" width="4" height="44" fill="#28303f"/>
 <rect x="112" y="118" width="16" height="13" rx="2" fill="#303a4c"/>
 <rect x="114" y="120" width="12" height="9" rx="1" fill="#5fa0b8" opacity="0.4"/>
 <rect x="378" y="128" width="4" height="44" fill="#28303f"/>
 <rect x="372" y="118" width="16" height="13" rx="2" fill="#303a4c"/>
 <rect x="374" y="120" width="12" height="9" rx="1" fill="#5fa0b8" opacity="0.36"/>
+<!-- MID PLANE: cobbles -->
+<rect x="0" y="170" width="500" height="90" fill="#18202e"/>
+<ellipse cx="72" cy="200" rx="15" ry="6" fill="#202839" opacity="0.6"/>
+<ellipse cx="150" cy="224" rx="13" ry="5" fill="#1e2534" opacity="0.5"/>
+<ellipse cx="358" cy="206" rx="14" ry="6" fill="#202839" opacity="0.55"/>
+<ellipse cx="432" cy="234" rx="13" ry="5" fill="#1e2534" opacity="0.45"/>
+<ellipse cx="110" cy="248" rx="12" ry="5" fill="#202839" opacity="0.4"/>
+<!-- THE SAME FOUNTAIN, lit from within: the held note released. -->
+` + hidFountain('10', 250, 180, { lit: true }) + `
+<!-- the jet, running higher than it was, and a drop falling back off it -->
+<line x1="250" y1="128" x2="250" y2="102" stroke="url(#hidWat10)" stroke-width="2.4" opacity="0.8">` + hidAnim('opacity', '0.52;0.9;0.52', '2.9s') + `</line>
+<circle cx="250" cy="100" r="2.2" fill="#9fd0e0" opacity="0">` + hidAnim('cy', '100;124;150', '2.3s', { curve: HID_EASE_IN }) + hidAnim('opacity', '0;0.7;0', '2.3s') + `</circle>
+<circle cx="256" cy="104" r="1.5" fill="#9fd0e0" opacity="0">` + hidAnim('cy', '104;128;152', '3.1s', { begin: '-1.4s', curve: HID_EASE_IN }) + hidAnim('opacity', '0;0.55;0', '3.1s', { begin: '-1.4s' }) + `</circle>
+<ellipse cx="250" cy="166" rx="62" ry="26" fill="url(#hidMist10)"/>
+<!-- NEAR PLANE: the same hatch, shut again. Nothing marks it. -->
+` + hidHatch(250, 229, false, '10') + `
 </svg>`;
 
 // ---------------------------------------------------------------------------
@@ -1258,55 +1935,87 @@ STORY_SCENES['hidden_m1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <!-- table, lit, filling the lower frame -->
 <rect x="0" y="108" width="500" height="152" fill="url(#hidTableM1)"/>
 <rect x="0" y="108" width="500" height="5" rx="2.5" fill="#7686a3" opacity="0.65"/>
-<!-- THE ROPE. Tarred, pale against the table, spliced badly at one end,
-     cut clean at the other. Read the two ends at a glance. -->
-<g transform="translate(250,180) rotate(-6)">
+<!-- THE ARTIFACT: A CHILD'S SHOE, off one foot, come up on Scramble Shores.
+     It was a rope end before and it did not read: a warm brown tapered club
+     with a bulbous end, which looked like a baguette. This is small, domestic,
+     and exactly the kind of thing a crossing sheds ,  and the LACES ARE
+     DOUBLE-KNOTTED, one knot laid over another, which is the beat: a fourteen
+     year old who was told to do it twice and did it twice.
+     Small in frame on purpose. It is a child's shoe; it should look like one. -->
+<g transform="translate(238,186) rotate(-3)">
   <!-- cast shadow, so it sits ON the table -->
-  <path d="M-120,10 Q-60,20 0,10 Q60,0 120,12" fill="none" stroke="#101a26" stroke-width="20" opacity="0.35" stroke-linecap="round"/>
-  <!-- the lay of the rope -->
-  <path d="M-118,0 Q-88,-10 -58,0 Q-28,10 2,0 Q32,-10 62,0 Q92,10 118,2" fill="none" stroke="#2f2c26" stroke-width="22" stroke-linecap="round"/>
-  <path d="M-118,0 Q-88,-10 -58,0 Q-28,10 2,0 Q32,-10 62,0 Q92,10 118,2" fill="none" stroke="url(#hidRopeM1)" stroke-width="18" stroke-linecap="round"/>
-  <!-- the twist of the strands, drawn as diagonal bands -->
-  <g stroke="#3b382f" stroke-width="2.4" opacity="0.65" stroke-linecap="round">
-    <line x1="-102" y1="-8" x2="-94" y2="8"/><line x1="-80" y1="-9" x2="-72" y2="7"/>
-    <line x1="-58" y1="-8" x2="-50" y2="8"/><line x1="-36" y1="-5" x2="-28" y2="11"/>
-    <line x1="-14" y1="-8" x2="-6" y2="8"/><line x1="8" y1="-9" x2="16" y2="7"/>
-    <line x1="30" y1="-8" x2="38" y2="8"/><line x1="52" y1="-6" x2="60" y2="10"/>
-    <line x1="74" y1="-6" x2="82" y2="10"/><line x1="96" y1="-4" x2="104" y2="12"/>
+  <ellipse cx="2" cy="26" rx="80" ry="10" fill="#101a26" opacity="0.42"/>
+  <!-- SOLE: a thin slab, and the shoe's whole length. Thin, because a thick
+       one turns the silhouette into a loaf. -->
+  <path d="M-70,20 Q-76,10 -66,7 L62,4 Q78,5 79,12 Q79,20 64,22 L-58,25 Q-68,25 -70,20 Z" fill="#241f1a"/>
+  <path d="M-68,13 L77,8" fill="none" stroke="#5a5147" stroke-width="2" opacity="0.75"/>
+  <!-- HEEL BLOCK, a clear step up at the back: this is what says SHOE. -->
+  <path d="M-70,20 L-70,7 L-44,6 L-44,22 Z" fill="#2f2822"/>
+  <!-- HEEL COUNTER, rising steeply, then the INSTEP DIPPING sharply, then the
+       toe box swelling low and forward. Three moves, not one arc. -->
+  <path d="M-66,7 Q-70,-26 -54,-32 Q-40,-36 -30,-28 Q-24,-22 -22,-12
+           Q-6,-18 14,-16 Q42,-13 62,0 Q72,5 72,9 L62,4 Z" fill="#6b4f33"/>
+  <!-- the toe cap, a separate lighter panel, low and rounded -->
+  <path d="M20,-15 Q46,-12 63,0 Q72,5 72,9 L30,7 Q28,-4 20,-15 Z" fill="#82603d"/>
+  <path d="M46,-4 Q58,0 66,6" fill="none" stroke="#9d7b50" stroke-width="2.4" opacity="0.5" stroke-linecap="round"/>
+  <!-- the heel counter panel, darker, so the back reads as a separate piece -->
+  <path d="M-66,7 Q-70,-26 -54,-32 L-44,-29 Q-54,-20 -52,7 Z" fill="#4a351f"/>
+  <!-- THE OPEN THROAT: a dark V between the counter and the toe box. This is
+       the negative space that makes a shoe a shoe. -->
+  <path d="M-30,-28 Q-24,-22 -22,-12 Q-6,-18 14,-16 L18,-11
+           Q-4,-8 -20,-6 Q-30,-10 -32,-22 Z" fill="#15100a"/>
+  <!-- the tongue, sitting up inside the throat -->
+  <path d="M-28,-26 Q-16,-31 -2,-27 L2,-20 Q-14,-16 -26,-15 Z" fill="#8a6a45"/>
+  <path d="M-26,-24 Q-16,-28 -4,-25" fill="none" stroke="#a3835c" stroke-width="1.4" opacity="0.6"/>
+  <!-- EYELETS, four a side along the two edges of the throat -->
+  <g fill="#a8834a">
+    <circle cx="-24" cy="-19" r="1.9"/><circle cx="-13" cy="-21" r="1.9"/>
+    <circle cx="-1" cy="-21" r="1.9"/><circle cx="10" cy="-18" r="1.9"/>
   </g>
-  <!-- the tar sheen, cold and hard: this is old boat rope -->
-  <path d="M-108,-7 Q-78,-15 -50,-7" fill="none" stroke="#cdd6df" stroke-width="2" opacity="0.35"/>
-  <path d="M14,-7 Q42,-15 70,-6" fill="none" stroke="#cdd6df" stroke-width="2" opacity="0.3"/>
-  <!-- CUT CLEAN, right end: a flat face, strands all level -->
-  <ellipse cx="120" cy="2" rx="5" ry="10" fill="#a49d8b"/>
-  <ellipse cx="120" cy="2" rx="3.2" ry="7.4" fill="#4a463c"/>
-  <line x1="120" y1="-5" x2="120" y2="9" stroke="#dfe6ec" stroke-width="1" opacity="0.5"/>
-  <!-- THE SPLICE, left end: done badly, then done AGAIN over the top of itself.
-       Two visibly different weaves stacked, which is the whole point of it. -->
-  <g transform="translate(-118,0)">
-    <!-- first attempt: loose tucks, spaced too far apart -->
-    <path d="M2,-9 Q-16,-13 -30,-5" fill="none" stroke="#5f5a4e" stroke-width="8" stroke-linecap="round"/>
-    <path d="M2,8 Q-18,12 -34,4" fill="none" stroke="#5f5a4e" stroke-width="8" stroke-linecap="round"/>
-    <!-- second attempt, laid over the first: tighter, closer, still not neat -->
-    <path d="M0,-6 Q-15,-10 -24,-3" fill="none" stroke="#8d8778" stroke-width="6" stroke-linecap="round"/>
-    <path d="M0,5 Q-16,9 -26,2" fill="none" stroke="#8d8778" stroke-width="6" stroke-linecap="round"/>
-    <path d="M-9,-2 Q-19,1 -24,6" fill="none" stroke="#a49d8b" stroke-width="5" stroke-linecap="round"/>
-    <!-- loose strand ends nobody trimmed -->
-    <path d="M-30,-5 Q-40,-8 -48,-3" fill="none" stroke="#5f5a4e" stroke-width="3.4" stroke-linecap="round"/>
-    <path d="M-34,4 Q-44,7 -50,3" fill="none" stroke="#5f5a4e" stroke-width="3" stroke-linecap="round"/>
-    <!-- sand still caught in the splice -->
-    <circle cx="-16" cy="-4" r="1.4" fill="#e8e2d0" opacity="0.55"/>
-    <circle cx="-22" cy="4" r="1.1" fill="#e8e2d0" opacity="0.45"/>
-    <circle cx="-10" cy="6" r="1.2" fill="#e8e2d0" opacity="0.4"/>
+  <!-- THE LACES, crossed through them -->
+  <g fill="none" stroke="#d8cdb8" stroke-width="2.2" stroke-linecap="round" opacity="0.9">
+    <path d="M-24,-19 L-13,-21"/><path d="M-13,-21 L-1,-21"/><path d="M-1,-21 L10,-18"/>
+    <path d="M-24,-21 Q-18,-25 -13,-23"/><path d="M-13,-23 Q-7,-26 -1,-24"/>
   </g>
+  <!-- THE DOUBLE KNOT, sitting proud on the instep. Two bows, the second tied
+       over the first, the lower one's loops still showing under the upper.
+       This is the beat, and it is the brightest thing in the frame. -->
+  <g transform="translate(-7,-28)">
+    <path d="M-8,3 Q-14,-1 -11,-6 Q-7,-9 -3,-5" fill="none" stroke="#b0a48c" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M7,3 Q14,-1 11,-6 Q7,-9 3,-5" fill="none" stroke="#b0a48c" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M-5,0 Q-15,-6 -10,-12 Q-4,-16 0,-9" fill="none" stroke="#e8dfc9" stroke-width="3" stroke-linecap="round"/>
+    <path d="M5,0 Q15,-6 10,-12 Q4,-16 0,-9" fill="none" stroke="#e8dfc9" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-3" rx="4.8" ry="4" fill="#c9bda3"/>
+    <ellipse cx="0" cy="-4" rx="2.6" ry="2.1" fill="#8a7f68"/>
+    <path d="M-3,1 Q-8,9 -13,13" fill="none" stroke="#d8cdb8" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M3,1 Q6,10 4,17" fill="none" stroke="#d8cdb8" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <!-- SAND still in the welt and dried on the toe: it came off a beach -->
+  <g fill="#e8e2d0">
+    <circle cx="-50" cy="16" r="1.3" opacity="0.5"/><circle cx="-28" cy="18" r="1" opacity="0.4"/>
+    <circle cx="6" cy="15" r="1.1" opacity="0.44"/><circle cx="38" cy="11" r="1.2" opacity="0.38"/>
+    <circle cx="56" cy="2" r="1" opacity="0.34"/><circle cx="-46" cy="-16" r="0.9" opacity="0.3"/>
+  </g>
+  <!-- a tidemark: the waterline it dried at -->
+  <path d="M-62,-2 Q-18,-8 50,-4" fill="none" stroke="#9c8560" stroke-width="1.5" opacity="0.38"/>
 </g>
-<!-- HIS THUMB, running along the splice. Near-black hand, lit table. -->
-<g transform="translate(112,214)">
-  <path d="M0,42 Q-10,12 8,-8 Q28,-28 56,-26 L90,-22 Q108,-16 104,2 Q98,22 72,28 L22,42 Z" fill="#05070e"/>
-  <path d="M12,-6 Q26,-26 50,-32 Q66,-35 70,-27 Q72,-19 58,-14 Q38,-8 22,4 Z" fill="#0b0f19"/>
-  <path d="M24,-24 Q42,-31 60,-29" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.55"/>
-  <path d="M0,40 Q-8,14 8,-6" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.45"/>
-</g>
+<!-- NO HAND IN THIS FRAME, DELIBERATELY.
+     The shot is the shoe and the double knot, and it kept losing that fight.
+     The original drew a single 8-point black path 112 units wide against a
+     28-unit head, which is 4.0 head-diameters. The repair replaced it with a
+     real hand and then made the SAME mistake again at r = 26, nearly twice
+     Canon's own head, with a forearm running a third of the frame: a black
+     bar crossing the pencil and out-massing the object the scene is about.
+     Sizing it correctly off the head fixed the hand and left the arm still
+     dominating the composition.
+     So the arm is cropped out. Cropping by the frame edge is a camera
+     decision; there is no rule that every shot must contain a figure, and a
+     still life of the artifact is what this beat actually is. His hands are
+     in m2 through m5, at head scale, where they have something to do. -->
+<!-- the light on the table shifting, slowly. He has not moved; the room has. -->
+<ellipse cx="250" cy="190" rx="240" ry="66" fill="#9fd4e4" opacity="0.02">
+  <animate attributeName="opacity" values="0.015;0.05;0.015" dur="11.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</ellipse>
 <!-- the pencil, set aside, still exactly parallel -->
 <rect x="356" y="234" width="92" height="4.4" rx="2.2" fill="#F2C14E" opacity="0.9"/>
 <rect x="444" y="234" width="6" height="4.4" rx="1.6" fill="#525f79"/>
@@ -1349,18 +2058,18 @@ STORY_SCENES['hidden_m2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <!-- THE BIG SCREEN, large and bright -->
 <rect x="108" y="16" width="284" height="160" rx="4" fill="#1e2637" stroke="#4a5770" stroke-width="3"/>
 <g clip-path="url(#hidBigClipM2)">
-  <rect x="112" y="20" width="276" height="152" fill="url(#hidBigM2)"/>
   <path d="M112,66 Q180,60 250,66 Q320,72 388,66 L388,80 Q320,86 250,80 Q180,74 112,80Z" fill="#2b6070" opacity="0.5">
-    <animate attributeName="d" values="M112,66 Q180,60 250,66 Q320,72 388,66 L388,80 Q320,86 250,80 Q180,74 112,80Z;M112,70 Q180,64 250,70 Q320,76 388,70 L388,84 Q320,90 250,84 Q180,78 112,84Z;M112,66 Q180,60 250,66 Q320,72 388,66 L388,80 Q320,86 250,80 Q180,74 112,80Z" dur="11s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M112,66 Q180,60 250,66 Q320,72 388,66 L388,80 Q320,86 250,80 Q180,74 112,80Z;M112,70 Q180,64 250,70 Q320,76 388,70 L388,84 Q320,90 250,84 Q180,78 112,84Z;M112,66 Q180,60 250,66 Q320,72 388,66 L388,80 Q320,86 250,80 Q180,74 112,80Z" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M142,172 Q164,138 220,132 L316,136 Q356,144 352,172 Z" fill="#061019" opacity="0.95"/>
   <path d="M226,132 L218,86 L232,84 L240,132Z" fill="#061019" opacity="0.9"/>
   <circle cx="312" cy="146" r="34" fill="url(#hidLampM2)" opacity="0.45">
-    <animate attributeName="opacity" values="0.3;0.55;0.3" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.55;0.3" dur="9.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle cx="312" cy="146" r="2.8" fill="#F2C14E"><animate attributeName="opacity" values="0.76;1;0.76" dur="8s" repeatCount="indefinite"/></circle>
+  <circle cx="312" cy="146" r="2.8" fill="#F2C14E"><animate attributeName="opacity" values="0.76;1;0.76" dur="7.28s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="112" y="20" width="276" height="22" fill="url(#hidScanM2)">
-    <animate attributeName="y" values="2;176" dur="6.5s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="2;176" dur="8.26s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="8.26s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- THE LENS, held up against it. Everything behind the glass goes green. -->
@@ -1387,15 +2096,15 @@ STORY_SCENES['hidden_m2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <path d="M330,150 Q344,142 344,128" fill="none" stroke="#2e2a1f" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
 <!-- the green throw across the room -->
 <circle cx="298" cy="112" r="118" fill="url(#hidLensGlowM2)" opacity="0.6">
-  <animate attributeName="opacity" values="0.46;0.68;0.46" dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0.46;0.68;0.46" dur="5.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </circle>
-<!-- his hand and forearm holding it up, from below left. No head, no face. -->
-<path d="M232,260 Q238,214 254,182 Q262,166 274,158" fill="none" stroke="#05070e" stroke-width="28" stroke-linecap="round"/>
-<path d="M244,258 Q250,214 264,184" fill="none" stroke="#4fd6a0" stroke-width="2" opacity="0.3"/>
+<!-- His hand and forearm holding the lens up, from below left. No head, no
+     face. The forearm was a 28-wide stroke against a 30-wide head, so it was
+     as thick as his skull, and the hand on the end of it was a blob with two
+     stubs. Both go through the helpers now, sized off the head. -->
+` + hidArm(HID_HEAD * 1.25, 232, 272, 292, 176, -22, { rim: true }) + `
+` + hidHand(HID_HEAD * 1.25, 1, { x: 294, y: 172, rot: -18, grip: true }) + `
 <g transform="translate(268,154)">
-  <path d="M0,16 Q-6,0 6,-10 Q20,-20 34,-14 Q44,-8 40,6 Q34,20 16,22 Z" fill="#05070e"/>
-  <path d="M28,-14 Q36,-22 44,-18" fill="none" stroke="#05070e" stroke-width="8" stroke-linecap="round"/>
-  <path d="M34,-8 Q44,-14 50,-8" fill="none" stroke="#05070e" stroke-width="7" stroke-linecap="round"/>
   <path d="M4,-6 Q14,-16 26,-16" fill="none" stroke="#4fd6a0" stroke-width="1.6" opacity="0.5"/>
 </g>
 <!-- table edge, pencil parallel, green-lit -->
@@ -1504,18 +2213,21 @@ STORY_SCENES['hidden_m3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
     <ellipse cx="22" cy="0" rx="15" ry="4.6" fill="none" stroke="#3d4557" stroke-width="1.1" opacity="0.75"/>
   </g>
 </g>
-<!-- his hand at the lifted card. Two fingers. Nothing tense about it. -->
-<g transform="translate(456,106)">
-  <path d="M-32,26 Q-38,6 -24,-6 Q-6,-20 14,-16 Q30,-12 28,6 Q24,24 4,28 Z" fill="#05070e"/>
-  <path d="M-24,24 Q-26,38 -14,40 Q-6,40 -6,26" fill="#05070e"/>
-  <path d="M-4,27 Q-2,41 8,41 Q17,39 15,25" fill="#05070e"/>
-  <path d="M-31,24 Q-36,8 -24,-4" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.5"/>
-</g>
+<!-- His hand at the lifted card. Nothing tense about it. It was a black blob
+     with two stubs, and the pencil passed straight through the palm and out
+     the far side; the hand goes through hidHand() now and the pencil is drawn
+     BEFORE it, so the fingers close over the shaft. -->
+` + hidArm(HID_HEAD * 1.25, 498, 200, 436, 132, -18) + `
+` + hidHand(HID_HEAD * 1.25, 1, { x: 434, y: 130, rot: 150, grip: true }) + `
 <!-- THE PENCIL. Still exactly parallel. He has not dropped it. Not yet. -->
 <rect x="56" y="238" width="118" height="4.6" rx="2.3" fill="#F2C14E" opacity="0.9"/>
 <rect x="170" y="238" width="7" height="4.6" rx="1.6" fill="#525f79"/>
 <polygon points="56,238 44,240.3 56,242.6" fill="#6d7b96"/>
 <ellipse cx="114" cy="244" rx="70" ry="5" fill="#F2C14E" opacity="0.07"/>
+<!-- the lamp over the table, breathing. He is reading; nothing else moves. -->
+<ellipse cx="250" cy="150" rx="230" ry="90" fill="#F2C14E" opacity="0.02">
+  <animate attributeName="opacity" values="0.015;0.045;0.015" dur="8.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</ellipse>
 </svg>`;
 
 // Mission 4: Mystic Peak. The ship's compass card on the table, turned slowly
@@ -1553,7 +2265,7 @@ STORY_SCENES['hidden_m4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 </g>
 <!-- THE COMPASS CARD. Turns eleven degrees off the grain, once, and stops. -->
 <g transform="translate(250,162)">
-  <animateTransform attributeName="transform" type="rotate" values="0;11" dur="4s" fill="freeze" additive="sum"/>
+  <animateTransform attributeName="transform" type="rotate" values="0;13.4;10.2;11" dur="4.6s" fill="freeze" additive="sum" calcMode="spline" keyTimes="0;0.42;0.72;1" keySplines="0.42 0 0.58 1;0 0 0.58 1;0 0 0.58 1"/>
   <ellipse cx="4" cy="8" rx="72" ry="70" fill="#101a26" opacity="0.4"/>
   <circle cx="0" cy="0" r="70" fill="url(#hidRoseM4)"/>
   <circle cx="0" cy="0" r="70" fill="none" stroke="#6a6858" stroke-width="1.8"/>
@@ -1592,12 +2304,12 @@ STORY_SCENES['hidden_m4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <!-- THE ELEVEN DEGREES, drawn: the room's line and the card's line -->
 <line x1="250" y1="88" x2="250" y2="150" stroke="#9fd4e4" stroke-width="1.2" opacity="0.4" stroke-dasharray="5 5"/>
 <line x1="250" y1="162" x2="238" y2="90" stroke="#F2C14E" stroke-width="1.2" opacity="0.28" stroke-dasharray="5 5"/>
-<!-- his hand on the rim, stopped turning it -->
-<g transform="translate(178,240)">
-  <path d="M0,20 Q-14,-8 6,-26 Q28,-46 58,-44 L90,-40 Q110,-33 106,-13 Q100,6 72,12 L22,20 Z" fill="#05070e"/>
-  <path d="M14,-26 Q30,-44 54,-48 Q70,-50 72,-41 Q72,-32 56,-28" fill="#0b0f19"/>
-  <path d="M26,-42 Q44,-48 62,-46" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.5"/>
-</g>
+<!-- His hand on the rim, stopped turning it. It was a featureless black
+     teardrop lying across the lower third of the compass, so the hand hid the
+     bearing, which is the subject of the shot. It is a hand on the RIM now:
+     off to the side, fingers on the edge, and the face of the compass clear. -->
+` + hidArm(HID_HEAD * 1.25, 84, 272, 176, 214, 22) + `
+` + hidHand(HID_HEAD * 1.25, 1, { x: 180, y: 210, rot: 74, grip: true }) + `
 <!-- the pencil, and it is STILL parallel. Mission four. It breaks at five. -->
 <rect x="350" y="238" width="106" height="4.6" rx="2.3" fill="#F2C14E" opacity="0.9"/>
 <rect x="452" y="238" width="7" height="4.6" rx="1.6" fill="#525f79"/>
@@ -1647,7 +2359,6 @@ STORY_SCENES['hidden_m5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
   <rect x="184" y="8" width="52" height="34" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
   <rect x="187" y="11" width="46" height="28" fill="#16323a"/><rect x="187" y="27" width="46" height="12" fill="#1d3f49"/><rect x="187" y="26" width="46" height="1.3" fill="#7fc4d8" opacity="0.48"/>
   <rect x="264" y="8" width="52" height="34" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
-  <rect x="267" y="11" width="46" height="28" fill="#16323a"/><rect x="267" y="20" width="46" height="19" fill="#1d3f49"/><rect x="267" y="19" width="46" height="1.3" fill="#7fc4d8" opacity="0.42"/>
   <rect x="322" y="8" width="52" height="34" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
   <rect x="325" y="11" width="46" height="28" fill="#16323a"/><rect x="325" y="32" width="46" height="7" fill="#1d3f49"/><rect x="325" y="31" width="46" height="1.3" fill="#7fc4d8" opacity="0.5"/>
   <rect x="380" y="8" width="52" height="34" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
@@ -1657,9 +2368,10 @@ STORY_SCENES['hidden_m5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
   <!-- and the ninth, narrow between them: water, and the lamp -->
   <rect x="242" y="8" width="18" height="34" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
   <rect x="244" y="11" width="14" height="28" fill="#16323a"/>
-  <circle cx="251" cy="31" r="1.8" fill="#F2C14E"><animate attributeName="opacity" values="0.55;1;0.55" dur="8s" repeatCount="indefinite"/></circle>
+  <circle cx="251" cy="31" r="1.8" fill="#F2C14E"><animate attributeName="opacity" values="0.55;1;0.55" dur="8.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="10" y="8" width="480" height="7" fill="url(#hidScanM5)">
-    <animate attributeName="y" values="2;42" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="2;42" dur="10.71s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="10.71s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- table, lit -->
@@ -1691,14 +2403,16 @@ STORY_SCENES['hidden_m5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
   <!-- hard specular along the lid, so it reads as tin -->
   <path d="M-62,-38 L44,-38" stroke="#eaf5f9" stroke-width="2" opacity="0.4"/>
 </g>
-<!-- his hands: put it down, and let go. Both, open, withdrawing. -->
-<g transform="translate(88,206)">
-  <path d="M0,26 Q-10,2 6,-14 Q24,-30 50,-28 L76,-24 Q92,-18 88,-2 Q82,14 58,20 L20,26 Z" fill="#05070e"/>
-  <path d="M52,-27 Q64,-36 76,-32" fill="none" stroke="#05070e" stroke-width="9" stroke-linecap="round"/>
-  <path d="M0,24 Q-8,2 6,-12" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.45"/>
-</g>
+<!-- His hands: put it down, and let go. Both, open, withdrawing. They were
+     two black teardrops with no fingers, no wrists and no arms attached to
+     anything. Open hands are the whole point of the beat, so they have to be
+     legible AS hands: both go through hidHand(), open rather than gripping,
+     with the arms running off the near edge of the table. -->
+` + hidArm(HID_HEAD * 1.25, 8, 268, 150, 220, -16) + `
+` + hidHand(HID_HEAD * 1.25, 1, { x: 154, y: 218, rot: 96 }) + `
+` + hidArm(HID_HEAD * 1.25, 492, 268, 350, 220, 16) + `
+` + hidHand(HID_HEAD * 1.25, -1, { x: 346, y: 218, rot: -96 }) + `
 <g transform="translate(412,206) scale(-1,1)">
-  <path d="M0,26 Q-10,2 6,-14 Q24,-30 50,-28 L76,-24 Q92,-18 88,-2 Q82,14 58,20 L20,26 Z" fill="#05070e"/>
   <path d="M52,-27 Q64,-36 76,-32" fill="none" stroke="#05070e" stroke-width="9" stroke-linecap="round"/>
   <path d="M0,24 Q-8,2 6,-12" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.45"/>
 </g>
@@ -1745,7 +2459,7 @@ STORY_SCENES['hidden_end_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   </linearGradient>
   <radialGradient id="hidLampE0" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#F2C14E" stop-opacity="0.85"/><stop offset="38%" stop-color="#F2C14E" stop-opacity="0.22"/><stop offset="100%" stop-color="#F2C14E" stop-opacity="0"/>
-  </radialGradient>
+  <rect x="164" y="10" width="172" height="12" fill="url(#hidScanE0)"><animate attributeName="y" values="0;76" dur="5.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" dur="5.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></rect>
   <clipPath id="hidBigClipE0"><rect x="164" y="10" width="172" height="62" rx="3"/></clipPath>
 </defs>
 <rect width="500" height="260" fill="url(#hidRoomE0)"/>
@@ -1755,9 +2469,9 @@ STORY_SCENES['hidden_end_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <rect x="164" y="10" width="172" height="62" fill="#1d3f49"/>
   <path d="M164,32 Q206,28 250,32 Q294,36 336,32 L336,42 Q294,46 250,42 Q206,38 164,42Z" fill="#2b6070" opacity="0.5"/>
   <path d="M182,72 Q196,56 226,53 L296,56 Q312,62 310,72 Z" fill="#061019"/>
-  <circle cx="286" cy="60" r="15" fill="url(#hidLampE0)" opacity="0.5"><animate attributeName="opacity" values="0.34;0.6;0.34" dur="8s" repeatCount="indefinite"/></circle>
-  <circle cx="286" cy="60" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.74;1;0.74" dur="8s" repeatCount="indefinite"/></circle>
-  <rect x="164" y="10" width="172" height="12" fill="url(#hidScanE0)"><animate attributeName="y" values="0;76" dur="6.5s" repeatCount="indefinite"/></rect>
+  <circle cx="286" cy="60" r="15" fill="url(#hidLampE0)" opacity="0.5"><animate attributeName="opacity" values="0.34;0.6;0.34" dur="7.68s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+  <circle cx="286" cy="60" r="2" fill="#F2C14E"><animate attributeName="opacity" values="0.74;1;0.74" dur="10.64s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+  <rect x="164" y="10" width="172" height="12" fill="url(#hidScanE0)" opacity="0"><animate attributeName="y" values="0;76" dur="5.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" dur="5.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></rect>
 </g>
 <!-- table, lit, filling the frame -->
 <rect x="0" y="88" width="500" height="172" fill="url(#hidTableE0)"/>
@@ -1863,18 +2577,19 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <g clip-path="url(#hidBigClipE1)">
   <rect x="76" y="14" width="348" height="176" fill="url(#hidBigE1)"/>
   <path d="M76,62 Q162,55 250,62 Q338,69 424,62 L424,78 Q338,85 250,78 Q162,71 76,78Z" fill="#2b6070" opacity="0.5">
-    <animate attributeName="d" values="M76,62 Q162,55 250,62 Q338,69 424,62 L424,78 Q338,85 250,78 Q162,71 76,78Z;M76,66 Q162,59 250,66 Q338,73 424,66 L424,82 Q338,89 250,82 Q162,75 76,82Z;M76,62 Q162,55 250,62 Q338,69 424,62 L424,78 Q338,85 250,78 Q162,71 76,78Z" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M76,62 Q162,55 250,62 Q338,69 424,62 L424,78 Q338,85 250,78 Q162,71 76,78Z;M76,66 Q162,59 250,66 Q338,73 424,66 L424,82 Q338,89 250,82 Q162,75 76,82Z;M76,62 Q162,55 250,62 Q338,69 424,62 L424,78 Q338,85 250,78 Q162,71 76,78Z" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
-  <circle cx="120" cy="150" r="1.4" fill="#7fc4d8" opacity="0.2"><animate attributeName="cy" values="150;30" dur="24s" repeatCount="indefinite"/></circle>
-  <circle cx="330" cy="170" r="1.6" fill="#7fc4d8" opacity="0.16"><animate attributeName="cy" values="170;34" dur="28s" repeatCount="indefinite" begin="7s"/></circle>
+  <circle cx="120" cy="150" r="1.4" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="150;30" dur="27.12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.2;0.2;0" dur="27.12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+  <circle cx="330" cy="170" r="1.6" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="170;34" dur="25.48s" repeatCount="indefinite" begin="7s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.16;0.16;0" dur="25.48s" repeatCount="indefinite" begin="7s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
   <path d="M108,190 Q128,150 186,142 L322,146 Q374,156 372,190 Z" fill="#061019"/>
   <path d="M234,142 L224,86 L242,84 L252,142Z" fill="#061019"/>
   <circle cx="330" cy="158" r="44" fill="url(#hidLampE1)" opacity="0.45">
-    <animate attributeName="opacity" values="0.3;0.56;0.3" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.56;0.3" dur="10.16s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <ellipse cx="330" cy="158" rx="3.4" ry="4.4" fill="#F2C14E"><animate attributeName="opacity" values="0.78;1;0.78" dur="8s" repeatCount="indefinite"/></ellipse>
+  <ellipse cx="330" cy="158" rx="3.4" ry="4.4" fill="#F2C14E"><animate attributeName="opacity" values="0.78;1;0.78" dur="6.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
   <rect x="76" y="14" width="348" height="24" fill="url(#hidScanE1)">
-    <animate attributeName="y" values="-6;194" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="-6;194" dur="7.49s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="7.49s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- floor, lit by the screen -->
@@ -1888,9 +2603,15 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <circle cx="3" cy="30" r="20" fill="#05070e"/>
   <path d="M-17,28 Q-11,4 3,6 Q17,4 23,28" fill="#0b0f19"/>
   <rect x="-6" y="46" width="18" height="12" fill="#05070e"/>
-  <!-- arms down, hands empty. There is nothing in them. -->
-  <path d="M-26,86 Q-38,130 -36,168" fill="none" stroke="#05070e" stroke-width="15" stroke-linecap="round"/>
-  <path d="M32,86 Q44,130 42,168" fill="none" stroke="#05070e" stroke-width="15" stroke-linecap="round"/>
+  <!-- Arms down, hands empty. There is nothing in them, and that is the shot,
+       which is exactly why they have to BE hands: they were two 15-wide
+       strokes hanging free and ending in round caps, so the frame's whole
+       point (empty hands) had nothing in it to read. Head is r=20 in this
+       standing shot, so the hands are sized off 20. -->
+` + hidArm(20, -24, 84, -34, 156, -7) + `
+` + hidArm(20, 30, 84, 40, 156, 7) + `
+` + hidHand(20, -1, { x: -34, y: 156, rot: -6, rim: false }) + `
+` + hidHand(20, 1, { x: 40, y: 156, rot: 6, rim: false }) + `
   <!-- the rim, hard: he is standing in front of a lit screen -->
   <path d="M-29,196 Q-31,112 -22,74 Q-14,56 0,51" fill="none" stroke="#5fa0b8" stroke-width="6" opacity="0.2"/>
   <path d="M-29,196 Q-31,112 -22,74 Q-14,56 0,51" fill="none" stroke="#9fd4e4" stroke-width="2" opacity="0.8"/>
@@ -1898,12 +2619,9 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <path d="M-37,120 Q-40,146 -37,166" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.55"/>
 </g>
 <!-- the empty second chair, pushed back, still there -->
-<g transform="translate(410,196) rotate(-16)">
-  <rect x="-26" y="-4" width="52" height="52" rx="4" fill="#2e3849"/>
-  <rect x="-26" y="-4" width="52" height="4" rx="2" fill="#5b6a86"/>
-  <rect x="-24" y="46" width="6" height="34" fill="#28313f"/>
-  <rect x="19" y="46" width="6" height="34" fill="#28313f"/>
-</g>
+<!-- the empty second chair, pushed back, still there. Legs used to end at
+     278.7 and 266.8 against a floor of 260: both of them through the deck. -->
+` + hidChair(410, 218, -6, 258, { w: 52, d: 18, backH: 50 }) + `
 </svg>`;
 
 // E3: the choice. "You are going down there, because you are the one he makes
@@ -1931,11 +2649,11 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <rect width="500" height="260" fill="url(#hidDeepE3)"/>
 <!-- the water above, and the cold outside the lamplight -->
 <path d="M0,30 Q80,22 160,30 Q240,38 320,30 Q400,22 500,30 L500,44 Q400,52 320,44 Q240,36 160,44 Q80,52 0,44Z" fill="#164450" opacity="0.4">
-  <animate attributeName="d" values="M0,30 Q80,22 160,30 Q240,38 320,30 Q400,22 500,30 L500,44 Q400,52 320,44 Q240,36 160,44 Q80,52 0,44Z;M0,34 Q80,26 160,34 Q240,42 320,34 Q400,26 500,34 L500,48 Q400,56 320,48 Q240,40 160,48 Q80,56 0,48Z;M0,30 Q80,22 160,30 Q240,38 320,30 Q400,22 500,30 L500,44 Q400,52 320,44 Q240,36 160,44 Q80,52 0,44Z" dur="13s" repeatCount="indefinite"/>
+  <animate attributeName="d" values="M0,30 Q80,22 160,30 Q240,38 320,30 Q400,22 500,30 L500,44 Q400,52 320,44 Q240,36 160,44 Q80,52 0,44Z;M0,34 Q80,26 160,34 Q240,42 320,34 Q400,26 500,34 L500,48 Q400,56 320,48 Q240,40 160,48 Q80,56 0,48Z;M0,30 Q80,22 160,30 Q240,38 320,30 Q400,22 500,30 L500,44 Q400,52 320,44 Q240,36 160,44 Q80,52 0,44Z" dur="15.47s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- silt drifting up -->
-<circle cx="60" cy="200" r="1.4" fill="#7fc4d8" opacity="0.16"><animate attributeName="cy" values="200;40" dur="26s" repeatCount="indefinite"/></circle>
-<circle cx="440" cy="220" r="1.6" fill="#7fc4d8" opacity="0.14"><animate attributeName="cy" values="220;36" dur="30s" repeatCount="indefinite" begin="9s"/></circle>
+<circle cx="60" cy="200" r="1.4" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="200;40" dur="24.96s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.16;0.16;0" dur="24.96s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="440" cy="220" r="1.6" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="220;36" dur="39.9s" repeatCount="indefinite" begin="9s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.14;0.14;0" dur="39.9s" repeatCount="indefinite" begin="9s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
 <!-- the warm room the lamps make, which is the whole of Fredward's world -->
 <rect width="500" height="260" fill="url(#hidWarmE3)"/>
 <!-- hull ribs arching over, the old ship still around him -->
@@ -1959,17 +2677,17 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <!-- THE LAMPS ALONG THE RAIL. They are always lit. -->
 <g>
   <rect x="34" y="128" width="13" height="18" rx="2.5" fill="#5c4526" stroke="#7d6031" stroke-width="1.4"/>
-  <rect x="36.5" y="131" width="8" height="12" fill="#ffe9a8" opacity="0.9"><animate attributeName="opacity" values="0.72;1;0.82;0.95;0.72" dur="3.4s" repeatCount="indefinite"/></rect>
-  <circle cx="40.5" cy="137" r="42" fill="url(#hidLantE3)" opacity="0.42"><animate attributeName="opacity" values="0.3;0.5;0.36;0.46;0.3" dur="3.4s" repeatCount="indefinite"/></circle>
+  <rect x="36.5" y="131" width="8" height="12" fill="#ffe9a8" opacity="0.9"><animate attributeName="opacity" values="0.72;1;0.82;0.95;0.72" dur="2.99s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <circle cx="40.5" cy="137" r="42" fill="url(#hidLantE3)" opacity="0.42"><animate attributeName="opacity" values="0.3;0.5;0.36;0.46;0.3" dur="3.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="454" y="128" width="13" height="18" rx="2.5" fill="#5c4526" stroke="#7d6031" stroke-width="1.4"/>
-  <rect x="456.5" y="131" width="8" height="12" fill="#ffe9a8" opacity="0.85"><animate attributeName="opacity" values="0.68;1;0.78;0.92;0.68" dur="3.9s" repeatCount="indefinite" begin="1.2s"/></rect>
-  <circle cx="460.5" cy="137" r="40" fill="url(#hidLantE3)" opacity="0.4"><animate attributeName="opacity" values="0.28;0.48;0.34;0.44;0.28" dur="3.9s" repeatCount="indefinite" begin="1.2s"/></circle>
+  <rect x="456.5" y="131" width="8" height="12" fill="#ffe9a8" opacity="0.85"><animate attributeName="opacity" values="0.68;1;0.78;0.92;0.68" dur="4.41s" repeatCount="indefinite" begin="1.2s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <circle cx="460.5" cy="137" r="40" fill="url(#hidLantE3)" opacity="0.4"><animate attributeName="opacity" values="0.28;0.48;0.34;0.44;0.28" dur="3.55s" repeatCount="indefinite" begin="1.2s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
 <!-- the lamp over the table, the one Canon watches on a screen -->
 <line x1="250" y1="0" x2="250" y2="34" stroke="#3a2c19" stroke-width="2.4"/>
 <rect x="240" y="34" width="20" height="26" rx="3" fill="#5c4526" stroke="#8a6a35" stroke-width="1.6"/>
-<rect x="244" y="38" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.78;1;0.86;0.96;0.78" dur="3.1s" repeatCount="indefinite"/></rect>
-<circle cx="250" cy="47" r="92" fill="url(#hidLantE3)" opacity="0.42"><animate attributeName="opacity" values="0.32;0.5;0.38;0.47;0.32" dur="3.1s" repeatCount="indefinite"/></circle>
+<rect x="244" y="38" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.78;1;0.86;0.96;0.78" dur="3.94s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+<circle cx="250" cy="47" r="92" fill="url(#hidLantE3)" opacity="0.42"><animate attributeName="opacity" values="0.32;0.5;0.38;0.47;0.32" dur="2.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- THE TABLE -->
 <rect x="120" y="176" width="270" height="10" rx="3" fill="#5c4526"/>
 <rect x="120" y="176" width="270" height="3.4" rx="1.7" fill="#9d7c40" opacity="0.7"/>
@@ -2008,6 +2726,13 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <!-- body: the canvas suit, sleeves rolled to the elbow -->
   <path d="M-34,96 Q-36,44 -22,26 Q-8,16 6,20 Q22,28 28,50 Q34,74 32,96 Z" fill="#6b6350"/>
   <path d="M-34,96 Q-36,44 -22,26 Q-8,16 6,20 Q22,28 28,50 Q34,74 32,96 Z" fill="#8a8168" opacity="0.5"/>
+  <!-- LEGS. The torso used to close at y=96 with nothing under it, so he was
+       a bust on a table. Seated at the bolted table: thigh forward, shin
+       down, one boot on the deck and the far leg reading behind it. -->
+  <path d="M-24,92 Q-26,108 -22,120 L-4,120 Q-2,104 -4,92 Z" fill="#4f4a3a"/>
+  <path d="M4,92 Q2,108 6,120 L24,120 Q26,104 24,92 Z" fill="#5c5644"/>
+  <rect x="-24" y="118" width="22" height="9" rx="3" fill="#3a3428"/>
+  <rect x="4" y="118" width="22" height="9" rx="3" fill="#453e30"/>
   <!-- the rolled cuffs -->
   <rect x="-38" y="56" width="16" height="9" rx="3" fill="#a89d7e"/>
   <rect x="24" y="52" width="16" height="9" rx="3" fill="#a89d7e"/>
@@ -2015,13 +2740,27 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <path d="M-30,64 Q-14,76 8,80" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
   <path d="M32,60 Q46,68 58,76" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
   <!-- hands: one on the straight edge, one steadying the page -->
-  <ellipse cx="12" cy="82" rx="10" ry="7" fill="#c39a72"/>
-  <ellipse cx="62" cy="78" rx="10" ry="7" fill="#c39a72" transform="rotate(-14,62,78)"/>
+  <!-- Hands. Bare ellipses before; a mass plus a thumb lobe on the side,
+       which is the minimum that reads at this size. -->
+  <path d="M2,78 Q13,74 20,79 Q23,84 18,88 Q9,90 3,86 Z" fill="#c39a72"/>
+  <path d="M4,79 Q-2,80 -3,84 Q-2,88 3,87" fill="#c39a72"/>
+  <path d="M6,83 Q12,82 17,84" fill="none" stroke="#a37f5b" stroke-width="0.9" opacity="0.7"/>
+  <g transform="rotate(-14,62,78)">
+    <path d="M53,74 Q64,70 71,75 Q74,80 69,84 Q60,86 54,82 Z" fill="#c39a72"/>
+    <path d="M55,75 Q49,76 48,80 Q49,84 54,83" fill="#c39a72"/>
+    <path d="M57,79 Q63,78 68,80" fill="none" stroke="#a37f5b" stroke-width="0.9" opacity="0.7"/>
+  </g>
   <!-- head, DOWN at the ledger. Face is allowed here: he is not Canon. -->
   <circle cx="-2" cy="0" r="17" fill="#c39a72"/>
   <path d="M-19,-4 Q-14,-20 -2,-18 Q11,-20 15,-4" fill="#5a4a34"/>
   <!-- brow and the line of a nose, seen from three quarters, looking down -->
   <path d="M-14,4 Q-10,2 -6,4" fill="none" stroke="#8a6748" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- EYES, closed and down at the page. The face shipped with a brow, a
+       nose and a moustache and no eyes, which is what made it read blank. -->
+  <path d="M-13,7 Q-9.5,9.5 -6,7" fill="none" stroke="#5a4a34" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M4,6 Q7.5,8.5 11,6" fill="none" stroke="#5a4a34" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M-13,4.5 Q-9.5,2.5 -6,4.5" fill="none" stroke="#8a6748" stroke-width="1.1" stroke-linecap="round" opacity="0.7"/>
+  <path d="M4,3.5 Q7.5,1.5 11,3.5" fill="none" stroke="#8a6748" stroke-width="1.1" stroke-linecap="round" opacity="0.7"/>
   <path d="M2,2 Q6,8 2,11" fill="none" stroke="#8a6748" stroke-width="1.4" stroke-linecap="round"/>
   <!-- the moustache, and a mouth that is not doing anything in particular -->
   <path d="M-6,13 Q-1,15 6,12" fill="none" stroke="#5a4a34" stroke-width="2.6" stroke-linecap="round"/>
@@ -2048,7 +2787,7 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <path d="M9,3 Q15,5 12,9" fill="none" stroke="#d8cdb4" stroke-width="2" stroke-linecap="round"/>
   <ellipse cx="0" cy="13" rx="11" ry="3" fill="#c9bda2"/>
   <path d="M-2,-4 Q1,-11 -1,-18" fill="none" stroke="#ffe9a8" stroke-width="1.4" opacity="0.3">
-    <animate attributeName="opacity" values="0.14;0.34;0.14" dur="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.14;0.34;0.14" dur="5.35s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
 </g>
 </svg>`;
@@ -2073,8 +2812,8 @@ STORY_SCENES['hidden_end_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <!-- the lamp above, the only thing in this frame that moves -->
 <line x1="250" y1="0" x2="250" y2="20" stroke="#3a2c19" stroke-width="2.4"/>
 <rect x="240" y="20" width="20" height="26" rx="3" fill="#5c4526" stroke="#8a6a35" stroke-width="1.6"/>
-<rect x="244" y="24" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3.2s" repeatCount="indefinite"/></rect>
-<circle cx="250" cy="33" r="110" fill="url(#hidLantE4)" opacity="0.4"><animate attributeName="opacity" values="0.3;0.48;0.36;0.45;0.3" dur="3.2s" repeatCount="indefinite"/></circle>
+<rect x="244" y="24" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3.81s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+<circle cx="250" cy="33" r="110" fill="url(#hidLantE4)" opacity="0.4"><animate attributeName="opacity" values="0.3;0.48;0.36;0.45;0.3" dur="3.07s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- THE TABLE, close, filling the lower frame. Warm wood. -->
 <rect x="0" y="128" width="500" height="132" fill="#5c4526"/>
 <rect x="0" y="128" width="500" height="5" rx="2.5" fill="#a5813f" opacity="0.75"/>
@@ -2138,22 +2877,36 @@ STORY_SCENES['hidden_end_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <g transform="translate(304,214)">
   <!-- the shadow it casts, soft and close: the hand is pressed down -->
   <ellipse cx="4" cy="18" rx="62" ry="14" fill="#3a2c19" opacity="0.4"/>
-  <!-- back of the hand -->
-  <path d="M-58,16 Q-64,-6 -46,-18 Q-24,-32 8,-30 L44,-26 Q64,-20 60,0 Q54,18 26,22 L-30,24 Z" fill="#c39a72"/>
-  <!-- fingers, spread flat, each one down -->
-  <path d="M-46,-18 Q-52,-34 -38,-38 Q-26,-40 -24,-26" fill="#c39a72"/>
-  <path d="M-22,-28 Q-24,-46 -8,-48 Q6,-48 6,-30" fill="#c39a72"/>
-  <path d="M8,-29 Q8,-47 24,-46 Q36,-44 34,-26" fill="#c39a72"/>
-  <path d="M36,-26 Q38,-42 52,-39 Q62,-36 58,-20" fill="#c39a72"/>
-  <!-- thumb, laid along the near edge -->
-  <path d="M-56,10 Q-72,4 -74,-8 Q-74,-18 -62,-16 Q-52,-12 -48,-2" fill="#c39a72"/>
+  <!-- The PALM: a shorter block than it was. The hand read as a bread roll
+       because the palm ran the full 130 units and the four fingers were 20
+       unit lumps on top of it. On a real hand the fingers are about as long
+       as the palm, so the palm shrinks and the fingers grow. -->
+  <path d="M-52,18 Q-58,0 -46,-8 Q-22,-16 6,-15 L40,-13 Q58,-10 56,4 Q50,20 24,24 L-26,26 Z" fill="#c39a72"/>
+  <!-- FINGERS, spread flat and each one its own length: index, middle, ring,
+       little, with the middle longest. Each runs a full palm-length. -->
+  <path d="M-44,-9 Q-50,-44 -38,-52 Q-26,-56 -22,-40 L-20,-12 Z" fill="#c39a72"/>
+  <path d="M-20,-13 Q-24,-54 -10,-62 Q4,-64 6,-46 L8,-13 Z" fill="#c39a72"/>
+  <path d="M8,-13 Q6,-52 20,-58 Q34,-58 34,-42 L34,-12 Z" fill="#c39a72"/>
+  <path d="M34,-12 Q34,-42 48,-44 Q58,-42 56,-28 L54,-8 Z" fill="#c39a72"/>
+  <!-- the creases between them, so four fingers read as four -->
+  <g stroke="#a67c56" stroke-width="1.2" opacity="0.5" stroke-linecap="round">
+    <path d="M-21,-40 L-21,-13"/><path d="M7,-46 L7,-13"/><path d="M34,-42 L34,-12"/>
+  </g>
+  <!-- the knuckle creases across each finger -->
+  <g stroke="#a67c56" stroke-width="1" opacity="0.4" stroke-linecap="round">
+    <path d="M-44,-30 L-22,-32"/><path d="M-20,-38 L6,-40"/>
+    <path d="M8,-36 L34,-36"/><path d="M35,-28 L55,-27"/>
+  </g>
+  <!-- THUMB, laid along the near edge, thicker than a finger and set lower -->
+  <path d="M-50,12 Q-70,8 -76,-6 Q-78,-20 -64,-20 Q-52,-18 -46,-6 Z" fill="#c39a72"/>
+  <path d="M-64,-16 Q-70,-8 -66,2" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
   <!-- tendons: the hand is pressing, not resting -->
-  <g stroke="#a67c56" stroke-width="1.4" opacity="0.55" stroke-linecap="round">
-    <line x1="-38" y1="-16" x2="-32" y2="6"/><line x1="-14" y1="-24" x2="-10" y2="4"/>
-    <line x1="14" y1="-24" x2="16" y2="4"/><line x1="40" y1="-20" x2="40" y2="2"/>
+  <g stroke="#a67c56" stroke-width="1.4" opacity="0.5" stroke-linecap="round">
+    <line x1="-36" y1="-4" x2="-30" y2="12"/><line x1="-12" y1="-6" x2="-8" y2="14"/>
+    <line x1="14" y1="-6" x2="16" y2="14"/><line x1="38" y1="-4" x2="38" y2="12"/>
   </g>
   <!-- warm rim off the knuckles -->
-  <path d="M-46,-18 Q-24,-32 8,-30 L44,-26" fill="none" stroke="#ffdf9e" stroke-width="2" opacity="0.6"/>
+  <path d="M-44,-10 Q-20,-17 8,-15 L40,-13" fill="none" stroke="#ffdf9e" stroke-width="2" opacity="0.6"/>
   <!-- rolled cuff and forearm, running off the bottom of frame -->
   <path d="M-24,24 Q-14,50 -10,80" fill="none" stroke="#c39a72" stroke-width="26" stroke-linecap="round"/>
   <rect x="-34" y="40" width="46" height="14" rx="4" fill="#a89d7e" transform="rotate(6,-11,47)"/>
@@ -2178,8 +2931,8 @@ STORY_SCENES['hidden_end_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <rect width="500" height="260" fill="url(#hidDeepE5)"/>
 <rect width="500" height="260" fill="url(#hidFaceKeyE5)"/>
 <!-- the lamps behind, thrown well out of focus. Nothing back there matters. -->
-<circle cx="52" cy="60" r="46" fill="url(#hidLantE5)" opacity="0.32"><animate attributeName="opacity" values="0.24;0.4;0.28;0.36;0.24" dur="3.6s" repeatCount="indefinite"/></circle>
-<circle cx="452" cy="76" r="42" fill="url(#hidLantE5)" opacity="0.28"><animate attributeName="opacity" values="0.2;0.36;0.26;0.32;0.2" dur="4.1s" repeatCount="indefinite" begin="1.4s"/></circle>
+<circle cx="52" cy="60" r="46" fill="url(#hidLantE5)" opacity="0.32"><animate attributeName="opacity" values="0.24;0.4;0.28;0.36;0.24" dur="4.79s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<circle cx="452" cy="76" r="42" fill="url(#hidLantE5)" opacity="0.28"><animate attributeName="opacity" values="0.2;0.36;0.26;0.32;0.2" dur="3.61s" repeatCount="indefinite" begin="1.4s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <circle cx="52" cy="60" r="7" fill="#ffe9a8" opacity="0.55"/>
 <circle cx="452" cy="76" r="6" fill="#ffe9a8" opacity="0.5"/>
 <!-- hull ribs, soft, far back -->
@@ -2235,16 +2988,19 @@ STORY_SCENES['hidden_end_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <!-- BOTH HANDS FULL, and both are at the bottom edge, dark and UNREADABLE.
      Something rope-shaped, something paper-shaped. Neither is legible, and
      that is on purpose: he is not looking at them either. -->
+<!-- BOTH HANDS FULL, and both at the bottom edge. WHAT they hold stays
+     deliberately unreadable, because he is not looking at either of them --
+     but the HANDS have to be hands. They were two brown blobs with nothing in
+     them: no fingers, no wrists, no thumbs. Sized off the head in this shot
+     (ry 58, so r = 29 x 0.62), which is the same rule as everywhere else. -->
 <g opacity="0.9">
-  <g transform="translate(84,244) rotate(-12)">
-    <path d="M-30,16 Q-36,-6 -18,-16 Q4,-26 30,-20 Q46,-14 42,2 Q36,18 12,22 Z" fill="#8a6a4c"/>
-    <path d="M-24,-14 Q-40,-20 -52,-14" fill="none" stroke="#3a3830" stroke-width="13" stroke-linecap="round"/>
-    <path d="M-24,-14 Q-40,-20 -52,-14" fill="none" stroke="#6a6558" stroke-width="9" stroke-linecap="round" opacity="0.7"/>
-  </g>
-  <g transform="translate(420,242) rotate(9)">
-    <path d="M30,16 Q36,-6 18,-16 Q-4,-26 -30,-20 Q-46,-14 -42,2 Q-36,18 -12,22 Z" fill="#8a6a4c"/>
-    <rect x="6" y="-34" width="52" height="30" rx="1" fill="#d8cfb4" opacity="0.7" transform="rotate(-14,32,-19)"/>
-  </g>
+  <!-- the rope-shaped thing, laid across the fingers before they close -->
+  <path d="M64,228 Q34,218 8,226" fill="none" stroke="#3a3830" stroke-width="15" stroke-linecap="round"/>
+  <path d="M64,228 Q34,218 8,226" fill="none" stroke="#6a6558" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
+` + hidWarmHand(34, 1, { x: 96, y: 244, rot: -16, skin: '#a8825e', shade: '#8a6a4c' }) + `
+  <!-- the paper-shaped thing, held against the other palm -->
+  <rect x="418" y="192" width="60" height="34" rx="1" fill="#d8cfb4" opacity="0.7" transform="rotate(-14,448,209)"/>
+` + hidWarmHand(34, -1, { x: 408, y: 242, rot: 14, skin: '#a8825e', shade: '#8a6a4c' }) + `
 </g>
 </svg>`;
 
@@ -2267,8 +3023,8 @@ STORY_SCENES['hidden_end_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <rect width="500" height="260" fill="url(#hidWarmE6)"/>
 <line x1="250" y1="0" x2="250" y2="16" stroke="#3a2c19" stroke-width="2.4"/>
 <rect x="240" y="16" width="20" height="26" rx="3" fill="#5c4526" stroke="#8a6a35" stroke-width="1.6"/>
-<rect x="244" y="20" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3.2s" repeatCount="indefinite"/></rect>
-<circle cx="250" cy="29" r="106" fill="url(#hidLantE6)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.43;0.28" dur="3.2s" repeatCount="indefinite"/></circle>
+<rect x="244" y="20" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+<circle cx="250" cy="29" r="106" fill="url(#hidLantE6)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.43;0.28" dur="3.62s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- table -->
 <rect x="0" y="118" width="500" height="142" fill="#5c4526"/>
 <rect x="0" y="118" width="500" height="5" rx="2.5" fill="#a5813f" opacity="0.75"/>
@@ -2316,13 +3072,13 @@ STORY_SCENES['hidden_end_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <!-- and a faint warm pool right on it, because that is where he is looking -->
   <ellipse cx="-48" cy="-24" rx="34" ry="42" fill="#F2C14E" opacity="0.1"/>
 </g>
-<!-- his hand, gone still at the edge of the page. Not writing. -->
-<g transform="translate(392,138)">
-  <path d="M0,24 Q-8,4 8,-10 Q28,-24 52,-20 L76,-16 Q92,-10 88,4 Q82,20 58,24 L18,28 Z" fill="#c39a72"/>
-  <path d="M8,-10 Q4,-26 20,-28 Q34,-28 32,-12" fill="#c39a72"/>
-  <path d="M34,-13 Q34,-29 48,-28 Q60,-26 56,-12" fill="#c39a72"/>
-  <path d="M2,20 Q-6,4 8,-8" fill="none" stroke="#ffdf9e" stroke-width="2" opacity="0.55"/>
-</g>
+<!-- His hand, gone still at the edge of the page. Not writing. It was one
+     rounded mass with two short lumps on top, which read as a cloud sitting
+     on the ledger; the palm ran the whole width and the "fingers" cleared it
+     by a few units. Through the helper it is a short palm with four fingers
+     lying flat along the page, which is what a hand that has stopped writing
+     actually does. -->
+` + hidWarmHand(34, 1, { x: 412, y: 158, rot: -100 }) + `
 <!-- the pen, put down across the gutter, which he would never normally do -->
 <g transform="translate(196,126) rotate(-8)">
   <rect x="0" y="0" width="66" height="4" rx="2" fill="#2f2418"/>
@@ -2348,8 +3104,8 @@ STORY_SCENES['hidden_end_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <rect width="500" height="260" fill="url(#hidDeepE7)"/>
 <rect width="500" height="260" fill="url(#hidWarmE7)"/>
 <rect x="240" y="10" width="20" height="26" rx="3" fill="#5c4526" stroke="#8a6a35" stroke-width="1.6"/>
-<rect x="244" y="14" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3.3s" repeatCount="indefinite"/></rect>
-<circle cx="250" cy="23" r="104" fill="url(#hidLantE7)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.43;0.28" dur="3.3s" repeatCount="indefinite"/></circle>
+<rect x="244" y="14" width="12" height="18" fill="#ffe9a8"><animate attributeName="opacity" values="0.8;1;0.88;0.97;0.8" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+<circle cx="250" cy="23" r="104" fill="url(#hidLantE7)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.43;0.28" dur="4.19s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <rect x="0" y="120" width="500" height="140" fill="#5c4526"/>
 <rect x="0" y="120" width="500" height="5" rx="2.5" fill="#a5813f" opacity="0.75"/>
 <g stroke="#3a2c19" stroke-width="1.4" opacity="0.5">
@@ -2374,15 +3130,51 @@ STORY_SCENES['hidden_end_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 </g>
 <!-- both hands, squaring: one on each edge, coming in square to the block -->
 <g transform="translate(120,188)">
-  <path d="M0,30 Q-12,6 6,-12 Q28,-30 56,-26 L82,-22 Q100,-14 94,4 Q86,24 58,28 L20,32 Z" fill="#c39a72"/>
-  <path d="M56,-26 Q54,-44 70,-44 Q84,-42 80,-24" fill="#c39a72"/>
-  <path d="M2,26 Q-8,6 8,-10" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
+  <!-- The hand squaring the block, seen from the side. It was ONE closed blob
+       with a single stub for a thumb and no fingers at all: two of them side
+       by side filled 54% of the frame and read as paws. Now the palm is edge
+       on to us and the four fingers curl over the far side of the paper,
+       which is what squaring a stack actually looks like. -->
+  <!-- the palm, edge on -->
+  <path d="M2,30 Q-10,8 4,-8 Q24,-22 50,-19 L76,-16 Q92,-10 88,4 Q80,22 54,26 L20,31 Z" fill="#c39a72"/>
+  <!-- four fingers, curling over the top edge of the block and down the far
+       side: each one a full palm-length, the middle one longest -->
+  <path d="M50,-19 Q52,-42 64,-44 Q76,-44 75,-30 Q74,-20 68,-15 Z" fill="#b78d64"/>
+  <path d="M62,-17 Q66,-40 78,-41 Q89,-40 87,-27 Q86,-18 80,-13 Z" fill="#c39a72"/>
+  <path d="M74,-14 Q79,-35 90,-35 Q99,-33 96,-21 Q94,-13 88,-9 Z" fill="#b78d64"/>
+  <path d="M85,-10 Q90,-28 99,-27 Q107,-25 104,-15 Q102,-8 96,-5 Z" fill="#c39a72"/>
+  <!-- the knuckle line, where the fingers bend over the edge -->
+  <path d="M52,-19 Q68,-15 86,-9 Q97,-6 103,-4" fill="none" stroke="#a67c56" stroke-width="1.3" opacity="0.5"/>
+  <!-- the thumb, on OUR side of the block, pressing down -->
+  <path d="M18,-2 Q30,-14 48,-11 Q58,-8 54,2 Q46,10 30,9 Q20,7 18,-2 Z" fill="#d0a97f"/>
+  <path d="M30,-8 Q42,-8 50,-3" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
+  <!-- warm rim off the wrist and the heel of the hand -->
+  <path d="M4,26 Q-6,6 8,-8" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
+  <!-- the rolled cuff -->
   <rect x="-16" y="14" width="44" height="15" rx="4" fill="#a89d7e" transform="rotate(-8,6,21)"/>
 </g>
 <g transform="translate(380,188) scale(-1,1)">
-  <path d="M0,30 Q-12,6 6,-12 Q28,-30 56,-26 L82,-22 Q100,-14 94,4 Q86,24 58,28 L20,32 Z" fill="#c39a72"/>
-  <path d="M56,-26 Q54,-44 70,-44 Q84,-42 80,-24" fill="#c39a72"/>
-  <path d="M2,26 Q-8,6 8,-10" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
+  <!-- The hand squaring the block, seen from the side. It was ONE closed blob
+       with a single stub for a thumb and no fingers at all: two of them side
+       by side filled 54% of the frame and read as paws. Now the palm is edge
+       on to us and the four fingers curl over the far side of the paper,
+       which is what squaring a stack actually looks like. -->
+  <!-- the palm, edge on -->
+  <path d="M2,30 Q-10,8 4,-8 Q24,-22 50,-19 L76,-16 Q92,-10 88,4 Q80,22 54,26 L20,31 Z" fill="#c39a72"/>
+  <!-- four fingers, curling over the top edge of the block and down the far
+       side: each one a full palm-length, the middle one longest -->
+  <path d="M50,-19 Q52,-42 64,-44 Q76,-44 75,-30 Q74,-20 68,-15 Z" fill="#b78d64"/>
+  <path d="M62,-17 Q66,-40 78,-41 Q89,-40 87,-27 Q86,-18 80,-13 Z" fill="#c39a72"/>
+  <path d="M74,-14 Q79,-35 90,-35 Q99,-33 96,-21 Q94,-13 88,-9 Z" fill="#b78d64"/>
+  <path d="M85,-10 Q90,-28 99,-27 Q107,-25 104,-15 Q102,-8 96,-5 Z" fill="#c39a72"/>
+  <!-- the knuckle line, where the fingers bend over the edge -->
+  <path d="M52,-19 Q68,-15 86,-9 Q97,-6 103,-4" fill="none" stroke="#a67c56" stroke-width="1.3" opacity="0.5"/>
+  <!-- the thumb, on OUR side of the block, pressing down -->
+  <path d="M18,-2 Q30,-14 48,-11 Q58,-8 54,2 Q46,10 30,9 Q20,7 18,-2 Z" fill="#d0a97f"/>
+  <path d="M30,-8 Q42,-8 50,-3" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
+  <!-- warm rim off the wrist and the heel of the hand -->
+  <path d="M4,26 Q-6,6 8,-8" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
+  <!-- the rolled cuff -->
   <rect x="-16" y="14" width="44" height="15" rx="4" fill="#a89d7e" transform="rotate(-8,6,21)"/>
 </g>
 <!-- the tin, open, empty now -->
@@ -2413,11 +3205,11 @@ STORY_SCENES['hidden_end_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <!-- the lamps along the rail, all lit, all of them always lit -->
 <g>
   <rect x="30" y="70" width="12" height="17" rx="2.4" fill="#5c4526" stroke="#7d6031" stroke-width="1.4"/>
-  <rect x="32.4" y="73" width="7.2" height="11" fill="#ffe9a8"><animate attributeName="opacity" values="0.74;1;0.84;0.96;0.74" dur="3.5s" repeatCount="indefinite"/></rect>
-  <circle cx="36" cy="78" r="40" fill="url(#hidLantE8)" opacity="0.4"><animate attributeName="opacity" values="0.3;0.48;0.36;0.44;0.3" dur="3.5s" repeatCount="indefinite"/></circle>
+  <rect x="32.4" y="73" width="7.2" height="11" fill="#ffe9a8"><animate attributeName="opacity" values="0.74;1;0.84;0.96;0.74" dur="2.94s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <circle cx="36" cy="78" r="40" fill="url(#hidLantE8)" opacity="0.4"><animate attributeName="opacity" values="0.3;0.48;0.36;0.44;0.3" dur="3.75s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   <rect x="458" y="78" width="12" height="17" rx="2.4" fill="#5c4526" stroke="#7d6031" stroke-width="1.4"/>
-  <rect x="460.4" y="81" width="7.2" height="11" fill="#ffe9a8"><animate attributeName="opacity" values="0.7;1;0.8;0.94;0.7" dur="4s" repeatCount="indefinite" begin="1.3s"/></rect>
-  <circle cx="464" cy="86" r="38" fill="url(#hidLantE8)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.42;0.28" dur="4s" repeatCount="indefinite" begin="1.3s"/></circle>
+  <rect x="460.4" y="81" width="7.2" height="11" fill="#ffe9a8"><animate attributeName="opacity" values="0.7;1;0.8;0.94;0.7" dur="4.76s" repeatCount="indefinite" begin="1.3s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <circle cx="464" cy="86" r="38" fill="url(#hidLantE8)" opacity="0.38"><animate attributeName="opacity" values="0.28;0.46;0.34;0.42;0.28" dur="3.84s" repeatCount="indefinite" begin="1.3s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
 <line x1="20" y1="94" x2="480" y2="94" stroke="#4a3822" stroke-width="4" stroke-linecap="round"/>
 <g stroke="#3a2c19" stroke-width="5" stroke-linecap="round">
@@ -2551,9 +3343,9 @@ STORY_SCENES['hidden_end_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <defs>
   <linearGradient id="hidDeepE10" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#0e2c36"/><stop offset="55%" stop-color="#071a22"/><stop offset="100%" stop-color="#030c11"/>
-  </linearGradient>
   <radialGradient id="hidWarmE10" cx="30%" cy="62%" r="46%">
     <stop offset="0%" stop-color="#F2C14E" stop-opacity="0.3"/><stop offset="50%" stop-color="#c98b34" stop-opacity="0.1"/><stop offset="100%" stop-color="#030c11" stop-opacity="0"/>
+  </radialGradient>
   </radialGradient>
   <radialGradient id="hidLantE10" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffe9a8" stop-opacity="0.9"/><stop offset="36%" stop-color="#F2C14E" stop-opacity="0.3"/><stop offset="100%" stop-color="#F2C14E" stop-opacity="0"/>
@@ -2565,9 +3357,9 @@ STORY_SCENES['hidden_end_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <rect width="500" height="260" fill="url(#hidDeepE10)"/>
 <!-- the open water beyond the rail: cold, wide, and where he is looking -->
 <rect width="500" height="260" fill="url(#hidOpenE10)"/>
-<circle cx="360" cy="200" r="1.4" fill="#7fc4d8" opacity="0.2"><animate attributeName="cy" values="200;24" dur="26s" repeatCount="indefinite"/></circle>
-<circle cx="430" cy="220" r="1.6" fill="#7fc4d8" opacity="0.16"><animate attributeName="cy" values="220;30" dur="31s" repeatCount="indefinite" begin="8s"/></circle>
-<circle cx="300" cy="240" r="1.2" fill="#7fc4d8" opacity="0.14"><animate attributeName="cy" values="240;40" dur="34s" repeatCount="indefinite" begin="15s"/></circle>
+<circle cx="360" cy="200" r="1.4" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="200;24" dur="34.58s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.2;0.2;0" dur="34.58s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="430" cy="220" r="1.6" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="220;30" dur="27.28s" repeatCount="indefinite" begin="8s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.16;0.16;0" dur="27.28s" repeatCount="indefinite" begin="8s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="300" cy="240" r="1.2" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="240;40" dur="34s" repeatCount="indefinite" begin="15s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.14;0.14;0" dur="34s" repeatCount="indefinite" begin="15s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
 <!-- the warm half of the frame, behind him, where the table is -->
 <rect width="500" height="260" fill="url(#hidWarmE10)"/>
 <!-- deck -->
@@ -2585,8 +3377,8 @@ STORY_SCENES['hidden_end_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <line x1="288" y1="152" x2="490" y2="152" stroke="#4a3822" stroke-width="3.4" stroke-linecap="round"/>
 <!-- one lamp, back on the warm side, doing its work without him -->
 <rect x="60" y="86" width="13" height="18" rx="2.5" fill="#5c4526" stroke="#7d6031" stroke-width="1.4"/>
-<rect x="62.5" y="89" width="8" height="12" fill="#ffe9a8"><animate attributeName="opacity" values="0.76;1;0.86;0.96;0.76" dur="3.4s" repeatCount="indefinite"/></rect>
-<circle cx="66.5" cy="95" r="72" fill="url(#hidLantE10)" opacity="0.36"><animate attributeName="opacity" values="0.26;0.44;0.32;0.4;0.26" dur="3.4s" repeatCount="indefinite"/></circle>
+<rect x="62.5" y="89" width="8" height="12" fill="#ffe9a8"><animate attributeName="opacity" values="0.76;1;0.86;0.96;0.76" dur="3.84s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+<circle cx="66.5" cy="95" r="72" fill="url(#hidLantE10)" opacity="0.36"><animate attributeName="opacity" values="0.26;0.44;0.32;0.4;0.26" dur="3.09s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- THE TABLE, behind him, with THE FOUR PAGES STILL ON IT -->
 <rect x="24" y="164" width="196" height="9" rx="3" fill="#7d6031"/>
 <rect x="24" y="164" width="196" height="3" rx="1.5" fill="#a5813f" opacity="0.7"/>
@@ -2661,7 +3453,7 @@ STORY_SCENES['hidden_end_11'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 </defs>
 <!-- PLAIN LIT WALL. The tool is the subject, so it gets a ground to read on. -->
 <rect width="500" height="260" fill="url(#hidWallE11)"/>
-<circle cx="120" cy="60" r="120" fill="url(#hidLantE11)" opacity="0.3"><animate attributeName="opacity" values="0.22;0.36;0.26;0.34;0.22" dur="3.6s" repeatCount="indefinite"/></circle>
+<circle cx="120" cy="60" r="120" fill="url(#hidLantE11)" opacity="0.3"><animate attributeName="opacity" values="0.22;0.36;0.26;0.34;0.22" dur="4.57s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- THE HOOP: steamed cane, bound where the two ends overlap -->
 <g transform="translate(174,120)">
   <ellipse cx="0" cy="0" rx="96" ry="94" fill="none" stroke="#3a2c19" stroke-width="12"/>
@@ -2724,8 +3516,6 @@ STORY_SCENES['hidden_end_11'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 </g>
 </svg>`;
 
-// E13: He walks you to the rope, because he always walks you to the rope.
-// He waves. He is still waving when the water takes the shape of him.
 STORY_SCENES['hidden_end_12'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="hidDeepE12" x1="0" y1="0" x2="0" y2="1">
@@ -2741,10 +3531,10 @@ STORY_SCENES['hidden_end_12'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 </defs>
 <rect width="500" height="260" fill="url(#hidDeepE12)"/>
 <!-- looking BACK and UP: we are on the rope, going. -->
-<circle cx="110" cy="180" r="1.6" fill="#9fd4e4" opacity="0.3"><animate attributeName="cy" values="180;10" dur="9s" repeatCount="indefinite"/></circle>
-<circle cx="380" cy="220" r="1.4" fill="#9fd4e4" opacity="0.26"><animate attributeName="cy" values="220;20" dur="11s" repeatCount="indefinite" begin="3s"/></circle>
-<circle cx="230" cy="240" r="1.8" fill="#9fd4e4" opacity="0.22"><animate attributeName="cy" values="240;30" dur="13s" repeatCount="indefinite" begin="6s"/></circle>
-<circle cx="440" cy="200" r="1.2" fill="#9fd4e4" opacity="0.24"><animate attributeName="cy" values="200;16" dur="10s" repeatCount="indefinite" begin="8s"/></circle>
+<circle cx="110" cy="180" r="1.6" fill="#9fd4e4" opacity="0"><animate attributeName="cy" values="180;10" dur="7.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.3;0.3;0" dur="7.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="380" cy="220" r="1.4" fill="#9fd4e4" opacity="0"><animate attributeName="cy" values="220;20" dur="11.77s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.26;0.26;0" dur="11.77s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="230" cy="240" r="1.8" fill="#9fd4e4" opacity="0"><animate attributeName="cy" values="240;30" dur="15.47s" repeatCount="indefinite" begin="6s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.22;0.22;0" dur="15.47s" repeatCount="indefinite" begin="6s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
+<circle cx="440" cy="200" r="1.2" fill="#9fd4e4" opacity="0"><animate attributeName="cy" values="200;16" dur="9.6s" repeatCount="indefinite" begin="8s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.24;0.24;0" dur="9.6s" repeatCount="indefinite" begin="8s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
 <!-- THE ROPE, running up out of frame past the camera -->
 <path d="M64,260 Q80,180 74,100 Q70,44 84,0" fill="none" stroke="#2f2c26" stroke-width="13" stroke-linecap="round"/>
 <path d="M64,260 Q80,180 74,100 Q70,44 84,0" fill="none" stroke="#8d8778" stroke-width="9" stroke-linecap="round"/>
@@ -2763,9 +3553,9 @@ STORY_SCENES['hidden_end_12'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <line x1="170" y1="184" x2="420" y2="184" stroke="#4a3822" stroke-width="4" opacity="0.4" filter="url(#hidWaterTakeE12)"/>
 </g>
 <!-- the lamps, still lit, blurring out -->
-<circle cx="186" cy="170" r="34" fill="url(#hidLantE12)" opacity="0.35"><animate attributeName="opacity" values="0.24;0.4;0.28;0.38;0.24" dur="3.6s" repeatCount="indefinite"/></circle>
+<circle cx="186" cy="170" r="34" fill="url(#hidLantE12)" opacity="0.35"><animate attributeName="opacity" values="0.24;0.4;0.28;0.38;0.24" dur="4.79s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <circle cx="186" cy="170" r="4" fill="#ffe9a8" opacity="0.6" filter="url(#hidWaterTakeE12)"/>
-<circle cx="404" cy="176" r="30" fill="url(#hidLantE12)" opacity="0.3"><animate attributeName="opacity" values="0.2;0.36;0.26;0.32;0.2" dur="4.1s" repeatCount="indefinite" begin="1.4s"/></circle>
+<circle cx="404" cy="176" r="30" fill="url(#hidLantE12)" opacity="0.3"><animate attributeName="opacity" values="0.2;0.36;0.26;0.32;0.2" dur="3.61s" repeatCount="indefinite" begin="1.4s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <circle cx="404" cy="176" r="3.4" fill="#ffe9a8" opacity="0.55" filter="url(#hidWaterTakeE12)"/>
 <!-- FREDWARD, WAVING, and the water is taking the shape of him. He is drawn
      entirely through the blur filter: still a man, no longer a person. -->
@@ -2777,16 +3567,16 @@ STORY_SCENES['hidden_end_12'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <g>
     <path d="M20,4 Q40,-16 46,-42" fill="none" stroke="#c39a72" stroke-width="9" stroke-linecap="round"/>
     <ellipse cx="47" cy="-48" rx="8" ry="9" fill="#c39a72"/>
-    <animateTransform attributeName="transform" type="rotate" values="-7;7;-7" dur="2.4s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="rotate" values="-7;7;-7" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </g>
   <path d="M-20,4 Q-30,22 -30,44" fill="none" stroke="#c39a72" stroke-width="9" stroke-linecap="round"/>
 </g>
 <!-- and the water closing over the shape: bands drifting across him -->
 <path d="M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z" fill="#2f7d92" opacity="0.16">
-  <animate attributeName="d" values="M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z;M180,118 Q250,110 320,118 Q390,126 460,118 L460,134 Q390,142 320,134 Q250,126 180,134Z;M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z" dur="7s" repeatCount="indefinite"/>
+  <animate attributeName="d" values="M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z;M180,118 Q250,110 320,118 Q390,126 460,118 L460,134 Q390,142 320,134 Q250,126 180,134Z;M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M160,170 Q240,162 320,170 Q400,178 480,170 L480,190 L160,190Z" fill="#2f7d92" opacity="0.12">
-  <animate attributeName="d" values="M160,170 Q240,162 320,170 Q400,178 480,170 L480,190 L160,190Z;M160,178 Q240,170 320,178 Q400,186 480,178 L480,198 L160,198Z;M160,170 Q240,162 320,170 Q400,178 480,170 L480,190 L160,190Z" dur="9s" repeatCount="indefinite"/>
+  <animate attributeName="d" values="M160,170 Q240,162 320,170 Q400,178 480,170 L480,190 L160,190Z;M160,178 Q240,170 320,178 Q400,186 480,178 L480,198 L160,198Z;M160,170 Q240,162 320,170 Q400,178 480,170 L480,190 L160,190Z" dur="8.19s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 </svg>`;
 
@@ -2828,7 +3618,6 @@ STORY_SCENES['hidden_end_13'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <rect x="133" y="6" width="70" height="4" fill="#1d3f49"/>
   <rect x="212" y="0" width="76" height="12" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
   <rect x="215" y="4" width="70" height="6" fill="#1d3f49"/>
-  <rect x="294" y="0" width="76" height="12" rx="2" fill="#1e2637" stroke="#4a5770" stroke-width="1.4"/>
   <rect x="297" y="8" width="70" height="2" fill="#1d3f49"/>
 </g>
 <!-- the big screen, on the wreck -->
@@ -2836,21 +3625,22 @@ STORY_SCENES['hidden_end_13'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <g clip-path="url(#hidBigClipE13)">
   <rect x="128" y="16" width="244" height="140" fill="url(#hidBigE13)"/>
   <path d="M128,54 Q188,48 250,54 Q312,60 372,54 L372,68 Q312,74 250,68 Q188,62 128,68Z" fill="#2b6070" opacity="0.5">
-    <animate attributeName="d" values="M128,54 Q188,48 250,54 Q312,60 372,54 L372,68 Q312,74 250,68 Q188,62 128,68Z;M128,58 Q188,52 250,58 Q312,64 372,58 L372,72 Q312,78 250,72 Q188,66 128,72Z;M128,54 Q188,48 250,54 Q312,60 372,54 L372,68 Q312,74 250,68 Q188,62 128,68Z" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M128,54 Q188,48 250,54 Q312,60 372,54 L372,68 Q312,74 250,68 Q188,62 128,68Z;M128,58 Q188,52 250,58 Q312,64 372,58 L372,72 Q312,78 250,72 Q188,66 128,72Z;M128,54 Q188,48 250,54 Q312,60 372,54 L372,68 Q312,74 250,68 Q188,62 128,68Z" dur="15.24s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
   <path d="M150,156 Q168,120 216,114 L318,118 Q352,126 350,156 Z" fill="#061019"/>
   <path d="M224,114 L216,70 L230,68 L238,114Z" fill="#061019"/>
   <!-- the lamps are lit down there, the way they always are -->
   <circle cx="310" cy="128" r="34" fill="url(#hidLampE13)" opacity="0.44">
-    <animate attributeName="opacity" values="0.3;0.54;0.3" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.54;0.3" dur="6.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <ellipse cx="310" cy="128" rx="3" ry="4" fill="#F2C14E"><animate attributeName="opacity" values="0.78;1;0.78" dur="8s" repeatCount="indefinite"/></ellipse>
+  <ellipse cx="310" cy="128" rx="3" ry="4" fill="#F2C14E"><animate attributeName="opacity" values="0.78;1;0.78" dur="8.56s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
   <!-- and a man at a table down there, doing nothing at all -->
   <rect x="240" y="132" width="58" height="3" rx="1.4" fill="#3a2c19" opacity="0.8"/>
   <ellipse cx="262" cy="124" rx="7" ry="9" fill="#0d1a16" opacity="0.85"/>
   <circle cx="262" cy="112" r="4.4" fill="#0d1a16" opacity="0.85"/>
   <rect x="128" y="16" width="244" height="20" fill="url(#hidScanE13)">
-    <animate attributeName="y" values="0;160" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="0;160" dur="8.33s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="8.33s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- floor and screen spill -->
@@ -2858,38 +3648,30 @@ STORY_SCENES['hidden_end_13'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <path d="M124,196 L376,196 L446,260 L54,260 Z" fill="#16323a" opacity="0.42"/>
 <path d="M170,196 L330,196 L380,260 L120,260 Z" fill="#5fa0b8" opacity="0.07"/>
 <!-- table -->
-<rect x="72" y="182" width="356" height="9" rx="3" fill="#3d4a60"/>
-<rect x="72" y="182" width="356" height="3" rx="1.5" fill="#66748f" opacity="0.65"/>
+<!-- the table. It used to be this top and nothing else: no legs at all, so
+     it floated on a void. hidTable() computes the legs down to the floor. -->
+` + hidTable(250, 182, 356, 258, { th: 9 }) + `
 <!-- the cards, still in a stack, still unsquared since the tin -->
 <g transform="translate(354,164)">
   <rect x="0" y="12" width="64" height="8" rx="1.3" fill="#5e6577" transform="rotate(3,32,16)"/>
   <rect x="4" y="3" width="64" height="8" rx="1.3" fill="#6d748a" transform="rotate(-6,36,7)"/>
   <rect x="-1" y="-6" width="64" height="8" rx="1.3" fill="#7c849b" transform="rotate(2,31,-2)"/>
 </g>
-<!-- THE PENCIL, WHERE HE LEFT IT. Still not parallel. -->
-<g transform="translate(96,168) rotate(31)">
-  <rect x="0" y="0" width="80" height="4.4" rx="2.2" fill="#F2C14E" opacity="0.88"/>
-  <rect x="76" y="0" width="6" height="4.4" rx="1.6" fill="#525f79"/>
-</g>
-<!-- CANON from behind, watching. He does not ask you what happened. -->
-<g transform="translate(238,120)">
-  <rect x="-36" y="34" width="72" height="72" rx="4" fill="#333e52"/>
-  <rect x="-36" y="34" width="72" height="4" rx="2" fill="#5b6a86"/>
-  <path d="M-32,106 Q-30,50 -14,34 Q0,26 14,34 Q30,50 32,106 Z" fill="#05070e"/>
-  <circle cx="1" cy="14" r="16" fill="#05070e"/>
-  <path d="M-15,12 Q-10,-6 1,-4 Q13,-6 17,12" fill="#0b0f19"/>
-  <rect x="-6" y="26" width="14" height="10" fill="#05070e"/>
-  <path d="M-31,98 Q-29,52 -14,36" fill="none" stroke="#5fa0b8" stroke-width="5" opacity="0.2"/>
-  <path d="M-31,98 Q-29,52 -14,36" fill="none" stroke="#9fd4e4" stroke-width="1.8" opacity="0.78"/>
-  <path d="M-14,4 Q-17,14 -14,22" fill="none" stroke="#9fd4e4" stroke-width="1.4" opacity="0.6"/>
-</g>
+<!-- THE PENCIL, WHERE HE LEFT IT. Still not parallel: that is the point of it
+     in this frame. It was 80 units long here against 46 in hidden_1, drawn at
+     a 31 degree tilt, so it read as a yellow bar across the table rather than
+     as the pencil. hidPencil() gives it the file's one length. -->
+` + hidPencil(120, 172, 48, { rot: 14 }) + `
+<!-- HIS CHAIR, a real one, behind him -->
+` + hidChair(238, 200, 0, 258, { w: 72, d: 20, backH: 56, seat: '#333e52', seatEdge: '#5b6a86' }) + `
+<!-- CANON from behind, watching. He does not ask you what happened.
+     He had no arms drawn at all here, and his head was r=16 against r=14 in
+     hidden_1: the same man in the same room, two sizes. -->
+` + hidCanon(HID_HEAD, 238, 128, {
+  reachL: [-30, 48], reachR: [32, 46], rotL: 168, rotR: -172
+}) + `
 <!-- the second chair, and it has been sat in: it is pulled out now -->
-<g transform="translate(356,196) rotate(-20)">
-  <rect x="-24" y="-6" width="48" height="50" rx="4" fill="#2e3849"/>
-  <rect x="-24" y="-6" width="48" height="4" rx="2" fill="#5b6a86"/>
-  <rect x="-22" y="42" width="6" height="32" fill="#28313f"/>
-  <rect x="17" y="42" width="6" height="32" fill="#28313f"/>
-</g>
+` + hidChair(356, 216, -8, 258, { w: 48, d: 16, backH: 48 }) + `
 </svg>`;
 
 // E15 / E16 / E17: "He read it. He put his hand on the table." He gathers the
@@ -2945,14 +3727,14 @@ STORY_SCENES['hidden_end_16'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <line x1="112" y1="132" x2="394" y2="132" stroke="#050f16" stroke-width="3"/>
   <!-- THE LAMP. Lit. It is always lit. This is the only thing that moves. -->
   <circle cx="250" cy="150" r="86" fill="url(#hidLampE16)" opacity="0.4">
-    <animate attributeName="opacity" values="0.3;0.46;0.3" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.46;0.3" dur="7.68s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   <circle cx="250" cy="150" r="30" fill="url(#hidLampE16)" opacity="0.5">
-    <animate attributeName="opacity" values="0.4;0.6;0.4" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0.6;0.4" dur="10.64s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   <rect x="246" y="112" width="8" height="12" rx="2" fill="#3a2c19"/>
   <ellipse cx="250" cy="126" rx="3.4" ry="4.6" fill="#ffe0a0">
-    <animate attributeName="opacity" values="0.82;1;0.82" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.82;1;0.82" dur="7.04s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </ellipse>
   <!-- THE TABLE -->
   <rect x="180" y="180" width="146" height="5" rx="2" fill="#5c4526"/>
@@ -2990,7 +3772,8 @@ STORY_SCENES['hidden_end_16'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <rect x="46" y="22" width="408" height="196" fill="url(#hidVigE16)"/>
   <!-- the scanline, crawling. Slower here than anywhere else in the file. -->
   <rect x="46" y="22" width="408" height="22" fill="url(#hidScanE16)">
-    <animate attributeName="y" values="-8;222" dur="11s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="-8;222" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/>
   </rect>
 </g>
 <!-- the cold room around it. A table edge, and the amber pencil, and that is
