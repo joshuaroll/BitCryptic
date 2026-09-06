@@ -353,7 +353,11 @@ function fred(opts) {
   o += '</g>';
 
   o += '</g>';
-  return '<g transform="translate(' + opts.x + ',' + opts.y + ')' +
+  // The scale is stamped on the group so a CI check can assert it rather than
+  // infer it from circle radii. The model composes helmets from computed
+  // values, so without this a scene drawn at the wrong scale is invisible to
+  // everything except looking at it.
+  return '<g data-fred-h="' + h + '" transform="translate(' + opts.x + ',' + opts.y + ')' +
     (dir < 0 ? ' scale(-1,1)' : '') + (opts.scale ? ' scale(' + opts.scale + ')' : '') + '">' + o + '</g>';
 }
 
@@ -407,7 +411,7 @@ function player(opts) {
   o += '<path d="M' + wn(-p * 0.68) + ',' + wn(p * 0.46) + ' Q0,' + wn(p * 0.76) + ' ' + wn(p * 0.68) + ',' + wn(p * 0.46) +
     '" fill="none" stroke="#0a1a1e" stroke-width="' + wn(p * 0.11) + '"/>';
   o += '</g>';
-  return '<g transform="translate(' + opts.x + ',' + opts.y + ')' + (dir < 0 ? ' scale(-1,1)' : '') + '">' + o + '</g>';
+  return '<g data-player-h="' + p + '" transform="translate(' + opts.x + ',' + opts.y + ')' + (dir < 0 ? ' scale(-1,1)' : '') + '">' + o + '</g>';
 }
 
 // THE CATALOGUE BOOK, closed block plus open spread. w is the full width of

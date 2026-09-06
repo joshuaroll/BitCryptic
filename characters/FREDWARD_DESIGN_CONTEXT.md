@@ -140,6 +140,17 @@ face, which is the entire point of the shot it is used in.
 - If a thing is behind another thing it needs a visible contact point or a
   shadow, so the depth is legible. Standing figures get a contact shadow.
 
+**The camera moves, the anatomy does not.** If a prop and the man cannot both
+fit the frame at model scale, move the camera or resize the PROP. Never resize
+the helmet to match a prop: `h` is the whole figure's scale, and the implied
+standing height is always `8.65 h`. A quick check: at `h = 21` he is 182px in
+a 260px frame. If a scene's `h` implies a figure much taller than the frame,
+the head is too big unless it is a deliberate close shot like `wreck_6`.
+
+**Cropping by the frame edge is fine; cropping by furniture is not.** A close
+shot may run his hips off the bottom of the picture. That is a camera decision.
+A man who stops at a table with no legs is a bug.
+
 **Draw order matters.** Furniture the figure stands behind goes down first.
 Objects he holds go down before the hand that holds them, so the hand closes
 over the object rather than vanishing under it.
@@ -209,6 +220,8 @@ whatever size felt right in isolation, and he drifted.
 | `wreck_5` had **no Fredward in it at all**, just an empty deck with a book | A nested `translate` plus an additive `animateTransform` overwrote the base transform and threw the group off frame. |
 | `wreck_6` was **two enormous disembodied mitts**, no wrists, no forearms, no body | Hands authored as a standalone composition with nothing to attach to. |
 | `wreck_7` and `wreck_8` **lost their legs**, torsos ending at the deck line | Figures built top down and stopped when they reached the furniture. |
+| `wreck_return_2` and `wreck_return_3` had a **billboard book with disembodied gloved hands** entering from the frame edge | Book art authored to fill the frame, with hands added to it rather than a man drawn holding it. |
+| The first fix for those two **inflated the helmet** instead, giving a giant head on a shoulder stub | Scaling the head to match an oversized prop, rather than scaling the prop to match the man. The same class of bug as the drifting radii, pointing the other way. |
 
 The fix in every case is the same: call `fred()`, pass a scale, place him by
 helmet centre using `fredFootDrop()`, and let the model supply the parts.

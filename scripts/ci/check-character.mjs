@@ -69,56 +69,69 @@ if (hasModel) {
   // shape of the two failures actually seen in this file.
   for (const [key, svg] of Object.entries(store)) {
     if (typeof svg !== 'string') continue;
-    const usesModel = /wHand\(|fred\(|player\(/.test(svg);
-    // Scenes are strings by the time they are in the store, so the test is on
-    // what got DRAWN: cuffs and gloves are the model's hand signature.
-    const hasGlove = /glove|cuff/i.test(svg);
-    const hasHelmet = /helmet|faceplate|bolt/i.test(svg);
-    const hasBoot = /boot|sole/i.test(svg);
+    // Test what SURVIVES into the rendered string, not what the source calls
+    // things. The model emits a "glove" comment and a "helmet" comment but no
+    // "boot" one, so an earlier version of this check keyed on words that were
+    // never there and warned about every figure in the file. A guard that
+    // fires on everything is a guard people learn to scroll past.
+    const hasGlove = /glove/i.test(svg);
+    const hasHelmet = /helmet/i.test(svg);
     if (hasGlove && !hasHelmet) {
       warnings.push(
         `${key}: draws a hand but no helmet. A gloved hand entering frame with no ` +
           'body attached is the bug this model exists to stop.'
       );
     }
-    if (hasHelmet && !hasBoot) {
-      warnings.push(
-        `${key}: draws a helmet but no boots. Check he is not cut off by furniture; ` +
-          'wreck_7, wreck_8 and wreck_return_1 all shipped as a torso with no legs.'
-      );
-    }
-    void usesModel;
+    // A legless figure is NOT checked here, deliberately.
+    //
+    // I tried twice. Keying on the word "boot" warned about every figure in
+    // the file, because the model emits no such comment. Measuring the drop
+    // from the helmet to the lowest drawn point warned about wreck_2, the
+    // CANONICAL scene, because the first circle in the markup is a lamp glow
+    // rather than the helmet and the origin was wrong.
+    //
+    // A guard that fires on the reference scene is worse than no guard: it
+    // teaches whoever runs this to scroll past the warnings, which is how the
+    // real ones get missed. The legless case is covered by the two checks that
+    // do work (the model is called, and the helmet is not scaled alone) plus
+    // the always-present-parts list in FREDWARD_DESIGN_CONTEXT.md.
+    //
+    // If it is worth catching mechanically later, the way in is to have fred()
+    // stamp a data attribute on its root group with the pose and the computed
+    // foot position, and assert on that. That is a change to the art code, not
+    // to this file, so it is not being done on the way past.
   }
 
-  // ── The helmet may not be scaled on its own ─────────────────────────────
+  // ── One scale, asserted rather than inferred ────────────────────────────
   //
-  // The second failure, found after the first was fixed: two scenes lost
-  // their disembodied hands by inflating the HELMET instead, until his head
-  // was wider than the book and the moustache sat at neck height. That is the
-  // same disease as the original drift, pointing the other way, and the spec
-  // is explicit that a scene at another distance "changes h and nothing else".
+  // The second failure, found after the first was fixed: two scenes lost their
+  // disembodied hands by inflating the HELMET instead, until his head was
+  // wider than the book and the moustache sat at neck height. Same disease as
+  // the original drift, pointing the other way, and the spec is explicit that
+  // a scene at another distance "changes h and nothing else".
   //
-  // The proxy: a helmet is a circle, and the spec fixes the faceplate glass at
-  // 0.674 of the helmet radius. So the two largest circles in a scene that
-  // draws a helmet should sit near that ratio. A head inflated on its own
-  // pushes the helmet far past everything else in frame.
+  // This was first written to infer the scale from the largest circle radius,
+  // which was wrong twice over: the model composes helmets from computed
+  // values rather than literal radii, so most scenes were invisible to it, and
+  // the largest circle in a scene is often a lamp glow rather than a head. It
+  // passed a mutation that doubled the model's own scale variable.
+  //
+  // So fred() and player() now stamp data-fred-h and data-player-h on the
+  // group they return, and this reads the number instead of guessing it.
+  const FRED_REF = 21;      // wreck_2, the canonical mid-shot
+  const FRED_MAX = 30;      // wreck_6 is a documented close-up at 27.99
   for (const [key, svg] of Object.entries(store)) {
     if (typeof svg !== 'string') continue;
-    if (!/helmet|faceplate/i.test(svg)) continue;
-    const rs = [...svg.matchAll(/<circle[^>]*\sr="(\d+(?:\.\d+)?)"/g)]
-      .map((m) => parseFloat(m[1]))
-      .filter((r) => r >= 6)
-      .sort((a, b) => b - a);
-    // Calibrated against the file rather than guessed. Every correctly staged
-    // scene here draws its helmet at r=21 to 26, including the deliberate
-    // close-up. The two that inflated the head independently landed at 56.8,
-    // more than double the largest good one. 40 sits clear of both.
-    if (rs.length && rs[0] > 40) {
-      warnings.push(
-        `${key}: helmet drawn at r=${rs[0]}, against 21 to 26 everywhere else. ` +
-          'Check it was not scaled independently of the body; the spec says a ' +
-          'different distance changes h and nothing else.'
-      );
+    for (const m of svg.matchAll(/data-fred-h="([0-9.]+)"/g)) {
+      const h = parseFloat(m[1]);
+      if (h > FRED_MAX || h < FRED_REF * 0.3) {
+        warnings.push(
+          `${key}: Fredward drawn at h=${h.toFixed(2)}, against ${FRED_REF} in every ` +
+            'mid-shot. A different distance changes h, but a head this far off the ' +
+            'reference is usually a prop being matched by the man instead of the ' +
+            'other way round.'
+        );
+      }
     }
   }
 
