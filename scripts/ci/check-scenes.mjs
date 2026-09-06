@@ -80,6 +80,26 @@ for (const file of files) {
     if (!svg.startsWith('<svg')) problems.push(`${file} ${key}: does not open with <svg`);
     if (!svg.trimEnd().endsWith('</svg>')) problems.push(`${file} ${key}: does not close with </svg>`);
 
+    // Unbalanced groups. innerHTML silently repairs these, so the scene still
+    // renders and nothing errors, but an extra </g> closes a group early and
+    // everything after it escapes into the parent: wreck_return_4 shipped with
+    // 17 opens and 18 closes, and a leftover hand-built figure was rendering
+    // as a smear in the corner because of it.
+    //
+    // Counted per tag rather than parsed, which is enough to catch the real
+    // fault and cannot itself be fooled by attribute contents.
+    for (const tag of ['g', 'defs', 'svg']) {
+      const open = (svg.match(new RegExp(`<${tag}[\\s>]`, 'g')) || []).length;
+      const close = (svg.match(new RegExp(`</${tag}>`, 'g')) || []).length;
+      if (open !== close) {
+        problems.push(
+          `${file} ${key}: ${open} <${tag}> against ${close} </${tag}>. An extra close ` +
+            'ends a group early and everything after it escapes; innerHTML repairs ' +
+            'this silently so nothing else will tell you.'
+        );
+      }
+    }
+
     // 1. Illegal comments. `--` may not appear inside an XML comment body.
     //    innerHTML forgives this, so it warns rather than fails.
     for (const c of svg.match(/<!--[\s\S]*?-->/g) || []) {

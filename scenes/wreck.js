@@ -16,7 +16,7 @@
 //
 // Hardhat diver proportions, locked:
 //   helmet radius        h        the head
-//   full standing height 13 h     6.5 helmet diameters
+//   full standing height 8.65 h   4.3 helmet diameters
 //   shoulder half width  1.6 h
 //   torso length         2.6 h
 //   leg length           3.5 h
@@ -2610,19 +2610,6 @@ STORY_SCENES['wreck_return_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
     + '<circle cx="' + wn(-P * 1.7) + '" cy="' + wn(P * 4.3) + '" r="' + wn(P * 0.34) + '" fill="#1a3a3e"/>';
   return player({ h: P, x: px, y: py, face: 'left', arms: arms });
 })() + `
-<!-- head, turned slightly toward him -->
-  <circle cx="-2" cy="11" r="13.6" fill="#132c30"/>
-  <ellipse cx="-4" cy="9" rx="9.6" ry="7.2" fill="#1a4a55" opacity="0.68"/>
-  <ellipse cx="-6" cy="6.6" rx="3.4" ry="2.4" fill="#7fc4b8" opacity="0.4"/>
-  <path d="M-12,18 Q-2,22 8,18" fill="none" stroke="#0a1a1e" stroke-width="1.4"/>
-  <!-- both arms forward, hands on the table edge either side of the catchers -->
-  <path d="M-20,44 Q-46,62 -62,80" fill="none" stroke="#132c30" stroke-width="9.6" stroke-linecap="round"/>
-  <path d="M-58,78 Q-72,76 -80,82 Q-82,88 -74,92 Q-62,94 -56,88 Z" fill="#1a3a3e"/>
-  <path d="M20,44 Q34,60 34,80" fill="none" stroke="#132c30" stroke-width="9.6" stroke-linecap="round"/>
-  <circle cx="34" cy="83" r="6" fill="#1a3a3e"/>
-  <path d="M-9,84 Q-14,94 -22,96" fill="none" stroke="#132c30" stroke-width="7" stroke-linecap="round"/>
-  <path d="M9,84 Q14,94 22,96" fill="none" stroke="#132c30" stroke-width="7" stroke-linecap="round"/>
-</g>
 <!-- Bubbles from both, at their own rates -->
 <circle cx="194" cy="86" r="1.7" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="86;-10" dur="5.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.42;0" dur="5.4s" repeatCount="indefinite"/></circle>
 <circle cx="188" cy="80" r="1.2" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="80;-10" dur="7s" repeatCount="indefinite" begin="2.6s"/><animate attributeName="opacity" values="0;0.36;0" dur="7s" repeatCount="indefinite" begin="2.6s"/></circle>
@@ -2760,7 +2747,7 @@ STORY_SCENES['wreck_return_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
 </g>
 <!-- your gloved hand on the rope, closest thing to camera -->
 <g transform="translate(94,196)">
-  <animateTransform attributeName="transform" type="translate" values="94,200;94,188;94,200" dur="9s" repeatCount="indefinite"/>
+  <animateTransform attributeName="transform" type="translate" values="0,4;0,-8;0,4" additive="sum" dur="9s" repeatCount="indefinite"/>
   <path d="M-16,10 Q-20,-6 -6,-14 Q10,-20 20,-10 Q26,0 18,10 Q4,20 -16,10 Z" fill="#1a3a3e"/>
   <path d="M-14,-4 Q-22,-8 -26,-2" fill="none" stroke="#1a3a3e" stroke-width="7" stroke-linecap="round"/>
   <path d="M-15,4 Q-25,4 -29,10" fill="none" stroke="#16323a" stroke-width="6.4" stroke-linecap="round"/>
