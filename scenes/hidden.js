@@ -187,12 +187,25 @@ function hidLimb(p0, p1, p2, wS, wE) {
 //
 // Returns a HALF width, because every path here is built symmetrically about
 // the limb axis.
-function hidWristW(r) { return r * 0.62 * 0.53 * 0.5; }
+// THE RATIO CHAIN, in one place. forearm : wrist : hand-breadth = 1.76 : 1.00
+// : 1.61 (measured). Every previous attempt fixed ONE link and left the others,
+// which is why the hand kept reading as a balloon on a thread: the mouth agreed
+// with the arm and then the mass ballooned to 2.29x the wrist when it should be
+// 1.61x. A hand nearly twice the size of the limb it hangs from is exactly what
+// floppy and disconnected looks like.
+//
+// All three derive from the ARM, because the arm is the thing the hand has to
+// belong to. Half widths, since every path here is symmetric about the axis.
+function hidForearmW(r) { return r * 0.62 * 0.53 * 0.5; }
+function hidWristW(r)   { return hidForearmW(r) / 1.76; }
+function hidHandB(r)    { return hidWristW(r) * 1.61; }
 
 function hidHand(r, dir, opts) {
   opts = opts || {};
   var H = r * 1.5;                 // wrist to fingertip: 0.75 head DIAMETERS
-  var B = 0.457 * H * 1.10;        // ANSUR breadth, a little full for a fist
+  // Breadth comes off the ratio chain, NOT off hand length. Deriving it from H
+  // independently of the arm is how it ended up 1.95x too big for its own wrist.
+  var B = hidHandB(r) * 2;         // full breadth, from the arm
   var fill = opts.fill || HID_SKIN;
   var o = '';
 
