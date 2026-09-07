@@ -196,50 +196,49 @@ function hidLimb(p0, p1, p2, wS, wE) {
 //
 // All three derive from the ARM, because the arm is the thing the hand has to
 // belong to. Half widths, since every path here is symmetric about the axis.
-// All three come off the BICEPS, which is the arm's own reference, and the
-// biceps comes off the head. Everything the arm draws and everything the hand
-// draws now reads the same three numbers, so they cannot drift apart again.
-function hidBicepsW(r) { return r * 0.62 * 0.53 * 0.5 * 2 * 1.62; }  // full
-function hidWristW(r)  { return hidBicepsW(r) * 0.49 * 0.5; }        // half
-function hidHandB(r)   { return hidWristW(r) * 1.61; }               // half
+// RUBBER-HOSE WIDTHS, taken off the reference rather than off a person.
+//
+// The whole limb is ONE width. There is no wrist measurement because there is
+// no wrist: the hose runs at a constant thickness into a cuff, and the hand
+// sits on the far side of it, LARGER than the arm.
+//
+// That last part is the inversion four previous versions got wrong. I kept
+// shrinking the hand to match a tapering wrist. In this idiom the hand is the
+// biggest thing on the limb and the arm is a thin noodle, which is why the
+// cuff exists: it is the transition that makes the size jump read.
+function hidHoseW(r)  { return r * 0.40; }              // the arm, end to end
+function hidCuffW(r)  { return hidHoseW(r) * 1.30; }    // slightly proud of it
+function hidHandB(r)  { return hidHoseW(r) * 2.20 * 0.5; }  // HALF, and bigger
+// Kept so existing call sites resolve; the hose has no wrist of its own.
+function hidWristW(r) { return hidHoseW(r) * 0.5; }
 
 function hidHand(r, dir, opts) {
   opts = opts || {};
-  var H = r * 1.5;                 // wrist to fingertip: 0.75 head DIAMETERS
+  // LENGTH COMES OFF THE BREADTH, not off the head. A cartoon mitt is roughly
+  // as wide as it is long; deriving length from head radius while breadth came
+  // from the arm made it 1.70x longer than wide, which is a finger shape.
+  var B0 = hidHandB(r) * 2;
+  var H = B0 * 1.05;               // a shade longer than wide
   // Breadth comes off the ratio chain, NOT off hand length. Deriving it from H
   // independently of the arm is how it ended up 1.95x too big for its own wrist.
-  var B = hidHandB(r) * 2;         // full breadth, from the arm
+  var B = B0;                      // full breadth, from the arm
   var fill = opts.fill || HID_SKIN;
   var o = '';
 
-  // ---- THE OVERLAP, which replaced a wrist band.
+  // ---- THE CUFF, and it is the whole join.
   //
-  // There used to be a short trapezoid here whose comment read "so the hand has
-  // a boundary with the arm". That was the bug, stated out loud: it made the
-  // construction boundary between hidArm() and hidHand() into a VISIBLE
-  // boundary, so a hand read as a glove stuck on the end of a pole.
+  // I deleted a band from here two commits ago, calling it "the seam". That
+  // was wrong: in rubber-hose construction the cuff IS the correct answer. It
+  // is what lets a hand 2.2x the width of the arm read as attached rather than
+  // stuck on, because it stages the size jump instead of hiding it. Every
+  // reference image has one and they are the clearest joins in the drawing.
   //
-  // The fix is the cutout-animation answer. Canon is a single flat fill, so an
-  // overlap between two shapes of the same colour is literally invisible: run
-  // the hand mass BACKWARD past the wrist by 0.22H and let the forearm cover
-  // the far end of it. No seam, no shared tangent to compute, and every call
-  // site keeps its `rot` because the hand is still its own rotatable shape.
-  //
-  // The wrist itself must PINCH. Measured, forearm : wrist : hand-breadth is
-  // 1.76 : 1.00 : 1.61, so the wrist is narrower than BOTH its neighbours; a
-  // smooth interpolation between arm and hand is not a wrist.
-  // ONE wrist width, shared with hidArm(). They used to disagree by 1.93x:
-  // hidHand derived its mouth from head radius and hidArm derived its wrist
-  // from shoulder width, so the hand flared to nearly double the limb it was
-  // meant to continue. That is most of what made the join read as a lump.
-  var WW = hidWristW(r);
-  var OVER = H * 0.22;
-  o += '<path d="M' + hidn(-WW * 0.86 * dir) + ',' + hidn(OVER) +
-    ' Q' + hidn(-WW * 1.02 * dir) + ',' + hidn(H * 0.10) + ' ' + hidn(-WW * dir) + ',0' +
-    ' L' + hidn(WW * dir) + ',0' +
-    ' Q' + hidn(WW * 1.02 * dir) + ',' + hidn(H * 0.10) + ' ' + hidn(WW * 0.86 * dir) + ',' + hidn(OVER) +
-    ' Z" fill="' + fill + '"/>';
-
+  // Proud of the hose on both sides, short, and square-ended.
+  var CW = hidCuffW(r) * 0.5;
+  var CH = CW * 0.62;
+  o += '<rect x="' + hidn(-CW) + '" y="' + hidn(-CH * 0.15) +
+    '" width="' + hidn(CW * 2) + '" height="' + hidn(CH) +
+    '" rx="' + hidn(CH * 0.30) + '" fill="' + fill + '"/>';
   if (opts.grip) {
     // ---- CLOSED. The mass shortens and squares off: a fist is wider than it
     //      is tall, which is the opposite of the open mitt and is most of what
@@ -444,80 +443,55 @@ function hidWarmHand(r, dir, opts) {
 //
 // Shoulder at (sx, sy), wrist at (wx, wy), both in the group's own space.
 // bend pushes the elbow off the straight line: positive is outward.
-// THE ARM. Rebuilt from the shape of a real one, because the old build had a
-// fundamentally wrong idea of what an arm IS.
+// THE ARM. Rubber hose, which is what this character actually is.
 //
-// It was two tapering tubes joined at a point: a cone from shoulder to elbow,
-// another cone from elbow to wrist. That is a spike, not a limb. Measured, it
-// ran 1.00 : 0.84 : 0.30 shoulder to wrist, against a real 1.00 : 0.87 : 0.49.
+// Four previous versions chased ANATOMY: biceps girth, deltoid caps, forearm
+// swell one third down from the elbow, ANSUR II circumference ratios. Every
+// one of them was measured correctly and every one was wrong, because Canon is
+// a stylised cartoon figure and cartoon limbs are not anatomical.
 //
-// Three errors, all conceptual rather than numerical:
+// The reference is unambiguous and it inverts nearly everything I had built:
 //
-//   1. IT STARTED AT SHOULDER WIDTH. Biceps girth is 0.304 of shoulder girth,
-//      so the arm is under a third of the shoulder mass and the deltoid cap
-//      must be visibly WIDER than the arm hanging below it. Drawing the limb
-//      full shoulder width makes a tube with a head on top.
+//   * THE ARM IS A CONSTANT-WIDTH TUBE. No taper anywhere. No shoulder mass,
+//     no biceps, no elbow narrowing, no forearm swell. A bent noodle of one
+//     thickness end to end. All that anatomical structure was noise.
 //
-//   2. THE FOREARM NEVER SWELLED. hidLimb() interpolates between a start and
-//      an end width, so it can only ever make a cone; there was no way to
-//      express a bulge. But the forearm reaches its MAXIMUM one third of the
-//      way down from the elbow (the standard anthropometric girth site) and
-//      only then drops, and that drop is the dramatic one: 43%. An arm is a
-//      fat forearm ending in a thin wrist, not a taper from the shoulder.
+//   * THE HAND IS BIGGER THAN THE ARM, about 2.2x its width. I had spent four
+//     passes making the hand SMALLER to match a thin wrist, which is exactly
+//     backwards: in this idiom the hand is the largest thing on the limb.
 //
-//   3. THE WRIST WAS TOO THIN, 0.30 of the shoulder instead of 0.49, which is
-//      what made everything hanging off it look like a balloon on a thread.
+//   * A CUFF SEPARATES THEM. The band I deleted as "the seam" is the correct
+//     construction. It is what makes a big hand read as attached to a thin
+//     arm rather than stuck on it, and it is why the reference reads cleanly
+//     at any size.
 //
-// So the forearm is now TWO segments with the swell between them, which is the
-// only way a two-point primitive can describe a bulge.
+// The curve carries all the expression. A rubber-hose limb bends in one smooth
+// arc rather than articulating at a joint, so `bend` is the whole performance.
 function hidArm(r, sx, sy, wx, wy, bend, opts) {
   opts = opts || {};
   var fill = opts.fill || HID_SKIN;
 
-  // Widths, as full widths, all relative to the BICEPS rather than the
-  // shoulder. The deltoid is drawn separately and sits over the top.
-  var bic = hidBicepsW(r);               // upper arm at the biceps
-  var elb = bic * 0.84;                  // narrowest point of the whole limb
-  var fmx = bic * 0.87;                  // forearm maximum, 1/3 down
-  var wri = bic * 0.49;                  // wrist
-  var del = bic * 1.34;                  // the deltoid cap, wider than the arm
+  // ONE width, the whole length. This is the entire idea.
+  var w = hidHoseW(r);
 
   var S = { x: sx, y: sy }, W = { x: wx, y: wy };
   var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
-  var E = { x: sx + dx * 0.556 - (dy / len) * bend,
-            y: sy + dy * 0.556 + (dx / len) * bend };
-  var side = bend >= 0 ? 1 : -1;
 
-  // The forearm swell sits one third from the elbow toward the wrist.
-  var M = { x: E.x + (W.x - E.x) * 0.33, y: E.y + (W.y - E.y) * 0.33 };
-  var o = "";
+  // One control point at the midpoint, pushed off the line by `bend`. A single
+  // quadratic is the rubber hose: it cannot kink, and a kink is the one thing
+  // this construction must never do.
+  var C = { x: sx + dx * 0.5 - (dy / len) * bend * 1.35,
+            y: sy + dy * 0.5 + (dx / len) * bend * 1.35 };
 
-  // UPPER ARM: biceps down to the elbow, the narrowest point on the limb.
-  var uC = { x: S.x + (E.x - S.x) * 0.60 - (E.y - S.y) * 0.12 * side,
-             y: S.y + (E.y - S.y) * 0.60 + (E.x - S.x) * 0.12 * side };
-  o += "<path d=\"" + hidLimb(S, uC, E, bic, elb) + "\" fill=\"" + fill + "\"/>";
+  // Drawn as a STROKE, not a filled outline. A stroke has uniform width by
+  // definition, which is precisely what is wanted here, and round caps give
+  // the shoulder and wrist their domed ends for free. The filled-path
+  // machinery existed only to express taper, and there is no taper.
+  var o = "<path d=\"M" + hidn(S.x) + "," + hidn(S.y) +
+    " Q" + hidn(C.x) + "," + hidn(C.y) + " " + hidn(W.x) + "," + hidn(W.y) +
+    "\" fill=\"none\" stroke=\"" + fill + "\" stroke-width=\"" + hidn(w) +
+    "\" stroke-linecap=\"round\"/>";
 
-  // FOREARM, part one: elbow OUT to the swell. This widens, which is the thing
-  // the old build could not say at all.
-  var f1 = { x: E.x + (M.x - E.x) * 0.5 + (M.y - E.y) * 0.06 * side,
-             y: E.y + (M.y - E.y) * 0.5 - (M.x - E.x) * 0.06 * side };
-  o += "<path d=\"" + hidLimb(E, f1, M, elb, fmx) + "\" fill=\"" + fill + "\"/>";
-
-  // FOREARM, part two: the swell down to the wrist. This is the 43% drop and
-  // it is the only steep taper on the whole arm.
-  var f2 = { x: M.x + (W.x - M.x) * 0.42 + (W.y - M.y) * 0.05 * side,
-             y: M.y + (W.y - M.y) * 0.42 - (W.x - M.x) * 0.05 * side };
-  o += "<path d=\"" + hidLimb(M, f2, W, fmx, wri) + "\" fill=\"" + fill + "\"/>";
-
-  // THE DELTOID CAP, over the top of the joint, wider than the arm below it.
-  // Without this the limb reads as a tube socketed into the torso.
-  if (opts.deltoid !== false) {
-    var ax = (E.x - S.x) / len, ay = (E.y - S.y) / len;
-    o += "<ellipse cx=\"" + hidn(S.x + ax * del * 0.12) + "\" cy=\"" + hidn(S.y + ay * del * 0.12) +
-      "\" rx=\"" + hidn(del * 0.5) + "\" ry=\"" + hidn(del * 0.42) +
-      "\" transform=\"rotate(" + hidn(Math.atan2(ay, ax) * 180 / Math.PI) + "," +
-      hidn(S.x + ax * del * 0.12) + "," + hidn(S.y + ay * del * 0.12) + ")\" fill=\"" + fill + "\"/>";
-  }
   return o;
 }
 function hidArmJoints(r, sx, sy, wx, wy, bend) {
