@@ -179,6 +179,16 @@ function hidLimb(p0, p1, p2, wS, wE) {
 // opts.rim     draw the cold screen rim light down the near edge
 //
 // Origin is the WRIST. An arm ends here and the hand carries on.
+// THE WRIST, in ONE place, so the arm and the hand cannot disagree.
+//
+// Measured, forearm : wrist : hand-breadth is 1.76 : 1.00 : 1.61, so the wrist
+// is narrower than BOTH its neighbours and the outline has to pinch. A smooth
+// interpolation from arm to hand is not a wrist, it is a sausage.
+//
+// Returns a HALF width, because every path here is built symmetrically about
+// the limb axis.
+function hidWristW(r) { return r * 0.62 * 0.53 * 0.5; }
+
 function hidHand(r, dir, opts) {
   opts = opts || {};
   var H = r * 1.5;                 // wrist to fingertip: 0.75 head DIAMETERS
@@ -186,10 +196,33 @@ function hidHand(r, dir, opts) {
   var fill = opts.fill || HID_SKIN;
   var o = '';
 
-  // ---- THE WRIST. A short band, so the hand has a boundary with the arm.
-  o += '<path d="M' + hidn(-B * 0.34 * dir) + ',' + hidn(H * 0.30) +
-    ' L' + hidn(B * 0.34 * dir) + ',' + hidn(H * 0.30) +
-    ' L' + hidn(B * 0.40 * dir) + ',0 L' + hidn(-B * 0.40 * dir) + ',0 Z" fill="' + fill + '"/>';
+  // ---- THE OVERLAP, which replaced a wrist band.
+  //
+  // There used to be a short trapezoid here whose comment read "so the hand has
+  // a boundary with the arm". That was the bug, stated out loud: it made the
+  // construction boundary between hidArm() and hidHand() into a VISIBLE
+  // boundary, so a hand read as a glove stuck on the end of a pole.
+  //
+  // The fix is the cutout-animation answer. Canon is a single flat fill, so an
+  // overlap between two shapes of the same colour is literally invisible: run
+  // the hand mass BACKWARD past the wrist by 0.22H and let the forearm cover
+  // the far end of it. No seam, no shared tangent to compute, and every call
+  // site keeps its `rot` because the hand is still its own rotatable shape.
+  //
+  // The wrist itself must PINCH. Measured, forearm : wrist : hand-breadth is
+  // 1.76 : 1.00 : 1.61, so the wrist is narrower than BOTH its neighbours; a
+  // smooth interpolation between arm and hand is not a wrist.
+  // ONE wrist width, shared with hidArm(). They used to disagree by 1.93x:
+  // hidHand derived its mouth from head radius and hidArm derived its wrist
+  // from shoulder width, so the hand flared to nearly double the limb it was
+  // meant to continue. That is most of what made the join read as a lump.
+  var WW = hidWristW(r);
+  var OVER = H * 0.22;
+  o += '<path d="M' + hidn(-WW * 0.86 * dir) + ',' + hidn(OVER) +
+    ' Q' + hidn(-WW * 1.02 * dir) + ',' + hidn(H * 0.10) + ' ' + hidn(-WW * dir) + ',0' +
+    ' L' + hidn(WW * dir) + ',0' +
+    ' Q' + hidn(WW * 1.02 * dir) + ',' + hidn(H * 0.10) + ' ' + hidn(WW * 0.86 * dir) + ',' + hidn(OVER) +
+    ' Z" fill="' + fill + '"/>';
 
   if (opts.grip) {
     // ---- CLOSED. The mass shortens and squares off: a fist is wider than it
@@ -398,7 +431,10 @@ function hidWarmHand(r, dir, opts) {
 function hidArm(r, sx, sy, wx, wy, bend, opts) {
   opts = opts || {};
   var fill = opts.fill || HID_SKIN;
-  var wSh = r * 0.62, wEl = wSh * 0.84, wWr = wSh * 0.53;
+  // wWr comes from hidWristW so the arm ends exactly where the hand begins.
+  // These two were computed independently and disagreed by 1.93x, which is
+  // why a hand read as a lump on a stick rather than a hand on an arm.
+  var wSh = r * 0.62, wEl = wSh * 0.84, wWr = hidWristW(r) * 2;
   var S = { x: sx, y: sy }, W = { x: wx, y: wy };
   var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
   var E = { x: sx + dx * 0.556 - (dy / len) * bend,
