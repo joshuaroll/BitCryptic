@@ -196,9 +196,12 @@ function hidLimb(p0, p1, p2, wS, wE) {
 //
 // All three derive from the ARM, because the arm is the thing the hand has to
 // belong to. Half widths, since every path here is symmetric about the axis.
-function hidForearmW(r) { return r * 0.62 * 0.53 * 0.5; }
-function hidWristW(r)   { return hidForearmW(r) / 1.76; }
-function hidHandB(r)    { return hidWristW(r) * 1.61; }
+// All three come off the BICEPS, which is the arm's own reference, and the
+// biceps comes off the head. Everything the arm draws and everything the hand
+// draws now reads the same three numbers, so they cannot drift apart again.
+function hidBicepsW(r) { return r * 0.62 * 0.53 * 0.5 * 2 * 1.62; }  // full
+function hidWristW(r)  { return hidBicepsW(r) * 0.49 * 0.5; }        // half
+function hidHandB(r)   { return hidWristW(r) * 1.61; }               // half
 
 function hidHand(r, dir, opts) {
   opts = opts || {};
@@ -441,47 +444,82 @@ function hidWarmHand(r, dir, opts) {
 //
 // Shoulder at (sx, sy), wrist at (wx, wy), both in the group's own space.
 // bend pushes the elbow off the straight line: positive is outward.
+// THE ARM. Rebuilt from the shape of a real one, because the old build had a
+// fundamentally wrong idea of what an arm IS.
+//
+// It was two tapering tubes joined at a point: a cone from shoulder to elbow,
+// another cone from elbow to wrist. That is a spike, not a limb. Measured, it
+// ran 1.00 : 0.84 : 0.30 shoulder to wrist, against a real 1.00 : 0.87 : 0.49.
+//
+// Three errors, all conceptual rather than numerical:
+//
+//   1. IT STARTED AT SHOULDER WIDTH. Biceps girth is 0.304 of shoulder girth,
+//      so the arm is under a third of the shoulder mass and the deltoid cap
+//      must be visibly WIDER than the arm hanging below it. Drawing the limb
+//      full shoulder width makes a tube with a head on top.
+//
+//   2. THE FOREARM NEVER SWELLED. hidLimb() interpolates between a start and
+//      an end width, so it can only ever make a cone; there was no way to
+//      express a bulge. But the forearm reaches its MAXIMUM one third of the
+//      way down from the elbow (the standard anthropometric girth site) and
+//      only then drops, and that drop is the dramatic one: 43%. An arm is a
+//      fat forearm ending in a thin wrist, not a taper from the shoulder.
+//
+//   3. THE WRIST WAS TOO THIN, 0.30 of the shoulder instead of 0.49, which is
+//      what made everything hanging off it look like a balloon on a thread.
+//
+// So the forearm is now TWO segments with the swell between them, which is the
+// only way a two-point primitive can describe a bulge.
 function hidArm(r, sx, sy, wx, wy, bend, opts) {
   opts = opts || {};
   var fill = opts.fill || HID_SKIN;
-  // wWr comes from hidWristW so the arm ends exactly where the hand begins.
-  // These two were computed independently and disagreed by 1.93x, which is
-  // why a hand read as a lump on a stick rather than a hand on an arm.
-  var wSh = r * 0.62, wEl = wSh * 0.84, wWr = hidWristW(r) * 2;
+
+  // Widths, as full widths, all relative to the BICEPS rather than the
+  // shoulder. The deltoid is drawn separately and sits over the top.
+  var bic = hidBicepsW(r);               // upper arm at the biceps
+  var elb = bic * 0.84;                  // narrowest point of the whole limb
+  var fmx = bic * 0.87;                  // forearm maximum, 1/3 down
+  var wri = bic * 0.49;                  // wrist
+  var del = bic * 1.34;                  // the deltoid cap, wider than the arm
+
   var S = { x: sx, y: sy }, W = { x: wx, y: wy };
   var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
   var E = { x: sx + dx * 0.556 - (dy / len) * bend,
             y: sy + dy * 0.556 + (dx / len) * bend };
   var side = bend >= 0 ? 1 : -1;
-  var o = '';
 
-  // UPPER ARM. Control point past the midpoint at 0.60 and off the centreline.
+  // The forearm swell sits one third from the elbow toward the wrist.
+  var M = { x: E.x + (W.x - E.x) * 0.33, y: E.y + (W.y - E.y) * 0.33 };
+  var o = "";
+
+  // UPPER ARM: biceps down to the elbow, the narrowest point on the limb.
   var uC = { x: S.x + (E.x - S.x) * 0.60 - (E.y - S.y) * 0.12 * side,
              y: S.y + (E.y - S.y) * 0.60 + (E.x - S.x) * 0.12 * side };
-  o += '<path d="' + hidLimb(S, uC, E, wSh, wEl) + '" fill="' + fill + '"/>';
+  o += "<path d=\"" + hidLimb(S, uC, E, bic, elb) + "\" fill=\"" + fill + "\"/>";
 
-  // FOREARM. Control point at 0.35, which is the standard anthropometric
-  // girth site (one third from the elbow toward the wrist), displaced the
-  // OTHER way, starting wider than the elbow before tapering hard.
-  var fC = { x: E.x + (W.x - E.x) * 0.35 + (W.y - E.y) * 0.10 * side,
-             y: E.y + (W.y - E.y) * 0.35 - (W.x - E.x) * 0.10 * side };
-  o += '<path d="' + hidLimb(E, fC, W, wEl * 1.08, wWr) + '" fill="' + fill + '"/>';
+  // FOREARM, part one: elbow OUT to the swell. This widens, which is the thing
+  // the old build could not say at all.
+  var f1 = { x: E.x + (M.x - E.x) * 0.5 + (M.y - E.y) * 0.06 * side,
+             y: E.y + (M.y - E.y) * 0.5 - (M.x - E.x) * 0.06 * side };
+  o += "<path d=\"" + hidLimb(E, f1, M, elb, fmx) + "\" fill=\"" + fill + "\"/>";
 
-  // The cold rim down the near edge. On a pure silhouette this is the only
-  // thing that says the arm has a form: without it the limb is a hole. It
-  // follows the actual limb now rather than a straight line beside it.
-  if (opts.rim) {
-    var ox = -(E.y - S.y) / (Math.sqrt(Math.pow(E.x - S.x, 2) + Math.pow(E.y - S.y, 2)) || 1) * wSh * 0.42 * side;
-    var oy = (E.x - S.x) / (Math.sqrt(Math.pow(E.x - S.x, 2) + Math.pow(E.y - S.y, 2)) || 1) * wSh * 0.42 * side;
-    o += '<path d="M' + hidn(S.x + ox) + ',' + hidn(S.y + oy) +
-      ' Q' + hidn(uC.x + ox) + ',' + hidn(uC.y + oy) + ' ' + hidn(E.x + ox * 0.86) + ',' + hidn(E.y + oy * 0.86) +
-      '" fill="none" stroke="' + HID_RIM + '" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>';
+  // FOREARM, part two: the swell down to the wrist. This is the 43% drop and
+  // it is the only steep taper on the whole arm.
+  var f2 = { x: M.x + (W.x - M.x) * 0.42 + (W.y - M.y) * 0.05 * side,
+             y: M.y + (W.y - M.y) * 0.42 - (W.x - M.x) * 0.05 * side };
+  o += "<path d=\"" + hidLimb(M, f2, W, fmx, wri) + "\" fill=\"" + fill + "\"/>";
+
+  // THE DELTOID CAP, over the top of the joint, wider than the arm below it.
+  // Without this the limb reads as a tube socketed into the torso.
+  if (opts.deltoid !== false) {
+    var ax = (E.x - S.x) / len, ay = (E.y - S.y) / len;
+    o += "<ellipse cx=\"" + hidn(S.x + ax * del * 0.12) + "\" cy=\"" + hidn(S.y + ay * del * 0.12) +
+      "\" rx=\"" + hidn(del * 0.5) + "\" ry=\"" + hidn(del * 0.42) +
+      "\" transform=\"rotate(" + hidn(Math.atan2(ay, ax) * 180 / Math.PI) + "," +
+      hidn(S.x + ax * del * 0.12) + "," + hidn(S.y + ay * del * 0.12) + ")\" fill=\"" + fill + "\"/>";
   }
   return o;
 }
-
-// Where the elbow ended up, for a caller lining a held object up with the
-// forearm. Same arithmetic as hidArm(), so the two cannot drift apart.
 function hidArmJoints(r, sx, sy, wx, wy, bend) {
   var dx = wx - sx, dy = wy - sy, len = Math.sqrt(dx * dx + dy * dy) || 1;
   return { x: wx, y: wy,
