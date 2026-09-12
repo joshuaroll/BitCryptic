@@ -11,6 +11,13 @@ node_modules/
 /concept
 dist/
 
+# Scratch files from art work in progress. Underscore-prefixed drafts in
+# scenes/ are fragments an agent assembles from, never anything the game
+# loads, and index.html script-tags every scene file explicitly so a stray
+# one would be inert anyway.
+scenes/_*.js
+_*.mjs
+
 # misc
 .DS_Store
 Thumbs.db

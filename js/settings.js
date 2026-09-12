@@ -181,6 +181,11 @@ const BCWSettings = (() => {
           <div id="settings-account"></div>
         </div>
 
+        <!-- Cosmetic codes the player has redeemed. Ships hidden and stays
+             hidden until one is unlocked, so the panel never advertises that
+             a secret exists. Filled by renderCosmeticToggles(). -->
+        <div class="settings-section" id="cosmetics-section" hidden></div>
+
         <div class="settings-section">
           <h3>Stats</h3>
           <div id="settings-stats" class="settings-stats"></div>
@@ -316,6 +321,9 @@ const BCWSettings = (() => {
     }
 
     renderAccountSection();
+    // Cosmetic toggles: rendered on open like the account section, because
+    // the player can redeem a code from the terminal while this is closed.
+    if (typeof renderCosmeticToggles === 'function') renderCosmeticToggles();
   }
 
   // ─── Account controls (W5) ───

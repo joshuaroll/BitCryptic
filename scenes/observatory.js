@@ -1,6 +1,6 @@
-// Observatory story scenes — "The Star Watcher's Puzzle"
+// Observatory story scenes, "The Star Watcher's Puzzle"
 // Keys: observatory_0 through observatory_5
-// DRAFT — for review only
+// DRAFT, for review only
 
 // Scene 0: Mountain trail, swirling mist, silver dome above clouds, starfield
 STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -8,7 +8,7 @@ STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <linearGradient id="obsSkyBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#050a18"/><stop offset="50%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a2040"/>
   </linearGradient>
-  <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+  <radialGradient id="obsStarGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffd700" stop-opacity="0.6"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="domeShine" cx="40%" cy="30%" r="60%">
@@ -31,9 +31,22 @@ STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <circle cx="380" cy="45" r="0.7" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3.3s" repeatCount="indefinite" begin="1.8s"/></circle>
 <circle cx="440" cy="58" r="0.9" fill="#fff" opacity="0.4"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite" begin="0.4s"/></circle>
 <circle cx="30" cy="70" r="0.6" fill="#fff" opacity="0.35"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite" begin="2.2s"/></circle>
-<!-- Mountain silhouettes -->
-<polygon points="0,260 0,160 80,110 160,140 200,100 260,80 320,105 380,90 440,120 500,95 500,260" fill="#0c1428"/>
-<polygon points="0,260 0,180 60,145 130,165 180,135 250,115 300,140 360,120 420,150 500,130 500,260" fill="#101830"/>
+<!-- ====================================================================
+     THE RIDGES. Two flat polygons in near-identical blues read as cut paper.
+     A ridge reads as a ridge when its LIT face and its SHADOWED face meet at
+     the crest, and a single-fill polygon can never show that.
+     ==================================================================== -->
+<path d="M0,260 L0,160 L80,110 L160,140 L200,100 L260,80 L320,105 L380,90 L440,120 L500,95 L500,260 Z" fill="#0c1428"/>
+<path d="M80,110 L160,140 L120,260 L0,260 L0,160 Z" fill="#121c34" opacity="0.55"/>
+<path d="M200,100 L260,80 L320,105 L300,260 L214,260 Z" fill="#121c34" opacity="0.45"/>
+<path d="M380,90 L440,120 L500,95 L500,260 L420,260 Z" fill="#121c34" opacity="0.4"/>
+<!-- snow catching starlight on the two highest crests -->
+<path d="M200,100 L260,80 L286,93 Q248,88 214,106 Z" fill="#8a9ab0" opacity="0.2"/>
+<path d="M368,96 L380,90 L404,102 Q384,98 372,104 Z" fill="#8a9ab0" opacity="0.14"/>
+<path d="M0,260 L0,180 L60,145 L130,165 L180,135 L250,115 L300,140 L360,120 L420,150 L500,130 L500,260 Z" fill="#101830"/>
+<path d="M60,145 L130,165 L96,260 L0,260 L0,180 Z" fill="#16203c" opacity="0.5"/>
+<path d="M180,135 L250,115 L300,140 L280,260 L196,260 Z" fill="#16203c" opacity="0.42"/>
+
 <!-- Cairns on trail -->
 <ellipse cx="130" cy="210" rx="5" ry="3" fill="#4a5068"/>
 <ellipse cx="130" cy="207" rx="4" ry="2.5" fill="#5a6078"/>
@@ -41,29 +54,93 @@ STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <ellipse cx="320" cy="195" rx="4" ry="2.5" fill="#4a5068"/>
 <ellipse cx="320" cy="193" rx="3" ry="2" fill="#5a6078"/>
 <ellipse cx="320" cy="191" rx="2" ry="1.5" fill="#6a7088"/>
-<!-- Trail path -->
-<path d="M0,250 Q80,240 130,215 Q180,190 250,170 Q310,155 350,145" fill="none" stroke="#2a3048" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
-<path d="M0,250 Q80,240 130,215 Q180,190 250,170 Q310,155 350,145" fill="none" stroke="#3a4058" stroke-width="5" stroke-linecap="round" opacity="0.4"/>
+<!-- ====================================================================
+     THE TRAIL. It ran to (350,145) while the observatory stands at x=250, so
+     the path led PAST the building and stopped in open hillside. It also ran
+     as one shallow diagonal, which is a ramp: a hill path SWITCHES BACK, and
+     an S-curve is what a person could actually walk up.
+
+     It now ends at the door in the drum wall.
+     ==================================================================== -->
+<path d="M18,258 Q90,244 148,224 Q196,208 176,186 Q158,168 214,152 Q238,146 246,124"
+      fill="none" stroke="#2a3048" stroke-width="9" stroke-linecap="round" opacity="0.55"/>
+<path d="M18,258 Q90,244 148,224 Q196,208 176,186 Q158,168 214,152 Q238,146 246,124"
+      fill="none" stroke="#3a4058" stroke-width="5.5" stroke-linecap="round" opacity="0.45"/>
+<path d="M18,256 Q90,242 148,222 Q194,207 175,186 Q157,167 213,151 Q237,145 245,124"
+      fill="none" stroke="#4a5068" stroke-width="1.6" stroke-linecap="round" opacity="0.3"/>
+<!-- stones edging the switchback, so the turn reads as made rather than drawn -->
+<g fill="#4a5068" opacity="0.5">
+  <path d="M186,190 q4,-3 8,0 q-4,3 -8,0 Z"/>
+  <path d="M170,178 q4,-3 8,0 q-4,3 -8,0 Z"/>
+  <path d="M196,166 q4,-3 8,0 q-4,3 -8,0 Z"/>
+  <path d="M120,232 q5,-3 10,0 q-5,3 -10,0 Z"/>
+  <path d="M232,140 q4,-3 8,0 q-4,3 -8,0 Z"/>
+</g>
 <!-- Cloud / mist layer -->
 <ellipse cx="250" cy="160" rx="280" ry="25" fill="#8090b0" opacity="0.08" filter="url(#mistBlur)"/>
 <ellipse cx="180" cy="155" rx="140" ry="18" fill="#a0b0d0" opacity="0.06" filter="url(#mistBlur)"><animate attributeName="cx" values="180;200;180" dur="12s" repeatCount="indefinite"/></ellipse>
 <ellipse cx="350" cy="165" rx="120" ry="15" fill="#8090b0" opacity="0.07" filter="url(#mistBlur)"><animate attributeName="cx" values="350;330;350" dur="10s" repeatCount="indefinite"/></ellipse>
-<!-- Observatory dome -->
-<ellipse cx="260" cy="82" rx="30" ry="4" fill="#000" opacity="0.15"/>
-<rect x="240" y="75" width="40" height="10" fill="#6a7a9a" rx="1"/>
-<path d="M238,78 Q250,50 260,42 Q270,50 282,78 Z" fill="#8a9ab0"/>
-<path d="M238,78 Q250,50 260,42 Q270,50 282,78 Z" fill="url(#domeShine)"/>
-<!-- Dome slit -->
-<line x1="259" y1="44" x2="259" y2="70" stroke="#0a1628" stroke-width="2.5" opacity="0.6"/>
-<!-- Dome base detail -->
-<rect x="242" y="78" width="36" height="3" fill="#7a8aa0" rx="1"/>
-<rect x="245" y="81" width="30" height="2" fill="#5a6a80"/>
+<!-- ====================================================================
+     THE OBSERVATORY. It was a triangle with a slit in it. A dome reads as a
+     dome because it is a HEMISPHERE with a shutter slot running over its
+     crown, sitting on a drum wall with a base course. The slot is what makes
+     it an observatory rather than a chapel.
+     ==================================================================== -->
+<!-- A cut-stone landing supports the drum and joins the mountain trail. -->
+<path d="M221 116 L274 116 L287 127 L272 138 L224 138 L210 130Z" fill="#3a4058"/>
+<path d="M210 130 L224 138 H272 L287 127 L283 140 L266 149 L223 146Z" fill="#2a3048"/>
+<path d="M220 123 L272 121 L280 127 L268 133 L226 132Z" fill="#4a5068"/>
+<path d="M225 112 H275 V124 H225Z" fill="#3a4560"/>
+<path d="M227 119 H240 M261 119 H273" stroke="#6a7a9a" stroke-width="1" opacity=".5"/>
+<!-- the drum the dome sits on -->
+<path d="M228,96 L272,96 L274,112 L226,112 Z" fill="#3a4560"/>
+<path d="M228,96 L272,96 L272,99 L228,99 Z" fill="#6a7a9a" opacity="0.5"/>
+<path d="M224,112 L276,112 L277,117 L223,117 Z" fill="#2a3348"/>
+<!-- the hemisphere -->
+<path d="M226,96 Q226,64 250,64 Q274,64 274,96 Z" fill="#5a6a86"/>
+<path d="M226,96 Q226,64 250,64 Q262,64 268,74 Q244,70 234,96 Z" fill="#8a9ab0" opacity="0.45"/>
+<path d="M250,64 Q274,64 274,96 L266,96 Q268,72 250,66 Z" fill="#3a4560" opacity="0.6"/>
+<circle cx="250" cy="90" r="26" fill="url(#domeShine)" opacity="0.5"/>
+<!-- THE SHUTTER SLOT, open, with the sky showing through it -->
+<path d="M244,96 Q244,66 250,64 Q256,66 256,96 Z" fill="#0a1020"/>
+<path d="M245.5,94 Q245.5,68 250,66 Q254.5,68 254.5,94 Z" fill="#1a2440" opacity="0.8"/>
+<!-- the telescope barrel just showing in the slot, angled at the sky -->
+<path d="M247,92 L253,92 L256,72 L250,70 Z" fill="#8a9ab0" opacity="0.85"/>
+<path d="M248.5,90 L252,90 L254,74 L250.5,72.5 Z" fill="#c8a878" opacity="0.5"/>
+<circle cx="253" cy="71" r="2.4" fill="#c8a878" opacity="0.7"/>
+<!-- the ribs that carry the shutter, which is what makes the dome mechanical -->
+<path d="M236,96 Q236,70 249,65" fill="none" stroke="#3a4560" stroke-width="1.2" opacity="0.7"/>
+<path d="M264,96 Q264,70 251,65" fill="none" stroke="#3a4560" stroke-width="1.2" opacity="0.7"/>
+<!-- THE DOOR the trail arrives at -->
+<path d="M244,112 L256,112 Q258,112 258,116 L258,124 L242,124 L242,116 Q242,112 244,112 Z" fill="#1a2440"/>
+<path d="M245,114 L255,114 Q256,114 256,117 L256,124 L244,124 L244,117 Q244,114 245,114 Z" fill="#ffd700" opacity="0.35"/>
+<path d="M242,124 Q250,127 258,124 L258,126 Q250,129 242,126 Z" fill="#2a3348"/>
+<!-- a lit window in the drum: someone is up there -->
+<path d="M234,101 L242,101 L242,109 L234,109 Z" fill="#ffd700" opacity="0.5">
+  <animate attributeName="opacity" values="0.38;0.58;0.38" dur="6.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</path>
+<path d="M258,101 L266,101 L266,109 L258,109 Z" fill="#ffd700" opacity="0.32"/>
+<!-- ====================================================================
+     THE LIGHT. Previously only the left window threw a wedge and the right
+     window and the door threw nothing, so the building was lit inconsistently.
+     Every opening casts, and each wedge is scaled to the opening it comes
+     from: the door is widest and strongest, the two windows narrower and
+     dimmer, all three spreading at the same angle.
+     ==================================================================== -->
+<path d="M234 109 H242 L244 131 H228Z" fill="#ffd700" opacity=".035"/>
+<path d="M258 109 H266 L272 131 H256Z" fill="#ffd700" opacity=".025"/>
+<!-- Short treads lead directly from the threshold to the trail. -->
+<path d="M242 126 H258 V129 H242Z M238 130 H261 V133 H238Z M234 134 H263 V137 H234Z M230 138 H261 V141 H230Z" fill="#6a7088"/>
+<path d="M242 129 H258 M238 133 H261 M234 137 H263 M230 141 H261" stroke="#2a3348" stroke-width="1"/>
+<path d="M244 126 H256 L260 140 H234Z" fill="#ffeaa7" opacity=".09"/>
+<!-- the pool of light on the ground at the threshold -->
+<ellipse cx="249" cy="128" rx="9" ry="2" fill="#ffd700" opacity="0.08"/>
 </svg>`;
 
-// Scene 1: Star Watcher introduction — reuse scene 0 exterior (character described in narrative)
+// Scene 1: Star Watcher introduction, reusing the scene 0 exterior (character described in narrative)
 STORY_SCENES['observatory_1'] = STORY_SCENES['observatory_0'];
 
-// Scene 2: Interior — transparent dome, dense starfield
+// Scene 2: Interior, transparent dome and dense starfield
 // Also used for Scene 3 (puzzle: constellations S, K, Y)
 STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -76,6 +153,12 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
   <radialGradient id="constGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffd700" stop-opacity="0.35"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
   </radialGradient>
+  <linearGradient id="obs2Pier" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#1e2536"/><stop offset="38%" stop-color="#3e485e"/><stop offset="100%" stop-color="#181e2d"/>
+  </linearGradient>
+  <linearGradient id="obs2Floor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#141e38"/><stop offset="100%" stop-color="#0a1226"/>
+  </linearGradient>
   <filter id="starSoft"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <filter id="constFilter"><feGaussianBlur stdDeviation="0.8" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <radialGradient id="nebulaA" cx="30%" cy="25%" r="25%">
@@ -89,204 +172,515 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <!-- Nebula washes -->
 <circle cx="150" cy="65" r="80" fill="url(#nebulaA)"/>
 <circle cx="375" cy="90" r="70" fill="url(#nebulaB)"/>
-<!-- Dense starfield -->
-<circle cx="22" cy="15" r="0.8" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite"/></circle>
-<circle cx="58" cy="42" r="0.5" fill="#fff" opacity="0.4"/>
-<circle cx="90" cy="20" r="0.7" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" repeatCount="indefinite" begin="0.5s"/></circle>
-<circle cx="115" cy="60" r="0.6" fill="#fff" opacity="0.45"/>
-<circle cx="145" cy="30" r="0.9" fill="#fff" opacity="0.55"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.5s" repeatCount="indefinite" begin="1s"/></circle>
-<circle cx="178" cy="50" r="0.5" fill="#fff" opacity="0.35"/>
-<circle cx="210" cy="18" r="0.7" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="4.5s" repeatCount="indefinite" begin="0.3s"/></circle>
-<circle cx="245" cy="38" r="0.6" fill="#fff" opacity="0.4"/>
-<circle cx="275" cy="12" r="0.8" fill="#fff" opacity="0.55"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.2s" repeatCount="indefinite" begin="1.5s"/></circle>
-<circle cx="310" cy="55" r="0.5" fill="#fff" opacity="0.35"/>
-<circle cx="340" cy="25" r="0.7" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.8s" repeatCount="indefinite" begin="0.8s"/></circle>
-<circle cx="375" cy="15" r="0.6" fill="#fff" opacity="0.45"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="4.2s" repeatCount="indefinite" begin="2s"/></circle>
-<circle cx="400" cy="48" r="0.8" fill="#fff" opacity="0.5"/>
-<circle cx="430" cy="22" r="0.5" fill="#fff" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="5s" repeatCount="indefinite" begin="1.2s"/></circle>
-<circle cx="465" cy="35" r="0.7" fill="#fff" opacity="0.45"/>
-<circle cx="488" cy="55" r="0.6" fill="#fff" opacity="0.4"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.5s" repeatCount="indefinite" begin="0.6s"/></circle>
-<circle cx="35" cy="80" r="0.5" fill="#fff" opacity="0.3"/>
-<circle cx="72" cy="95" r="0.6" fill="#fff" opacity="0.35"/>
-<circle cx="195" cy="78" r="0.5" fill="#fff" opacity="0.3"/>
-<circle cx="305" cy="85" r="0.6" fill="#fff" opacity="0.35"/>
-<circle cx="450" cy="75" r="0.5" fill="#fff" opacity="0.3"/>
-<!-- Constellation S — clear S-curve of stars, NO connecting lines (left area) -->
+<!-- ====================
+     THE MILKY WAY, a band of unresolved light running across the opening.
+     It is what makes the gap in the shutter read as a view of the real sky
+     rather than as a dark panel with dots on it.
+     ==================== -->
+<path d="M0,44 Q120,84 250,66 Q380,48 500,90 L500,126 Q380,86 250,104 Q120,122 0,82 Z" fill="#3a4a80" opacity="0.055"/>
+<path d="M0,58 Q120,92 250,76 Q380,60 500,98 L500,114 Q380,78 250,94 Q120,110 0,76 Z" fill="#6a7ab0" opacity="0.04"/>
+<!-- ====================
+     THE STARFIELD. The draft laid 23 identical white circles in a grid of
+     rows. A sky is not uniform: stars vary in SIZE, in COLOUR temperature
+     from cold blue to warm amber, and the brightest few throw a diffraction
+     cross. They also clear the three constellations, so the puzzle shapes
+     stay legible against them.
+     ==================== -->
+<path d="M252.9,32.7 Q253.2,32.2 253.7,31.8 Q254.2,32.2 254.6,32.7 Q254.2,33.1 253.7,33.5 Q253.2,33.1 252.9,32.7 Z" fill="#f4f8ff" opacity="0.5"/><path d="M444.7,143.9 Q444.8,143.6 445.1,143.5 Q445.5,143.6 445.6,143.9 Q445.5,144.2 445.1,144.3 Q444.8,144.2 444.7,143.9 Z" fill="#f4f8ff" opacity="0.4"/><path d="M237,138.6 Q237.1,138.2 237.4,138.1 Q237.7,138.2 237.9,138.6 Q237.7,138.9 237.4,139 Q237.1,138.9 237,138.6 Z" fill="#f4f8ff" opacity="0.3"/><path d="M313.4,38.8 Q314.6,38.2 315.2,37.1 Q315.8,38.2 316.9,38.8 Q315.8,39.4 315.2,40.6 Q314.6,39.4 313.4,38.8 Z" fill="#f4f8ff" opacity="0.7"/><path d="M93.8,40.2 Q95,39.6 95.6,38.3 Q96.3,39.6 97.5,40.2 Q96.3,40.8 95.6,42.1 Q95,40.8 93.8,40.2 Z" fill="#ffd8c8" opacity="0.3"/><path d="M111.6,11.4 Q114.8,10.6 115.6,7.4 Q116.3,10.6 119.5,11.4 Q116.3,12.1 115.6,15.3 Q114.8,12.1 111.6,11.4 Z" fill="#fff0d8" opacity="0.7"/><path d="M109.1,11.4 L115.6,10.7 L122,11.4 L115.6,12 Z" fill="#fff0d8" opacity="0.2"/><path d="M115.6,4.9 L116.2,11.4 L115.6,17.8 L114.9,11.4 Z" fill="#fff0d8" opacity="0.2"/><path d="M293.7,40.7 Q293.8,40.4 294.1,40.2 Q294.4,40.4 294.5,40.7 Q294.4,41 294.1,41.1 Q293.8,41 293.7,40.7 Z" fill="#fff0d8" opacity="0.5"/><path d="M219.1,125.4 Q219.2,125 219.6,124.9 Q220,125 220.1,125.4 Q220,125.8 219.6,125.9 Q219.2,125.8 219.1,125.4 Z" fill="#fff0d8" opacity="0.2"/><path d="M432.9,68.3 Q433.1,68 433.4,67.8 Q433.8,68 434,68.3 Q433.8,68.7 433.4,68.9 Q433.1,68.7 432.9,68.3 Z" fill="#f4f8ff" opacity="0.4"/><path d="M137.2,140.4 Q137.4,140.1 137.7,140 Q138,140.1 138.2,140.4 Q138,140.7 137.7,140.9 Q137.4,140.7 137.2,140.4 Z" fill="#ffd8c8" opacity="0.3"/><path d="M285.9,142.9 Q287.2,142.3 287.9,140.9 Q288.5,142.3 289.9,142.9 Q288.5,143.6 287.9,144.9 Q287.2,143.6 285.9,142.9 Z" fill="#ffd8c8" opacity="0.2"/><path d="M430.4,105.9 Q430.5,105.6 430.8,105.5 Q431.1,105.6 431.3,105.9 Q431.1,106.2 430.8,106.3 Q430.5,106.2 430.4,105.9 Z" fill="#d8e4ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="4.2s" repeatCount="indefinite" begin="1.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M223.1,28.2 Q223.2,27.9 223.6,27.8 Q223.9,27.9 224,28.2 Q223.9,28.5 223.6,28.6 Q223.2,28.5 223.1,28.2 Z" fill="#ffd8c8" opacity="0.6"/><path d="M365.8,33.6 Q365.9,33.2 366.4,33 Q366.8,33.2 367,33.6 Q366.8,34.1 366.4,34.2 Q365.9,34.1 365.8,33.6 Z" fill="#dfe8ff" opacity="0.4"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.6s" repeatCount="indefinite" begin="0.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M134.6,34.7 Q134.8,34.3 135.2,34.1 Q135.6,34.3 135.8,34.7 Q135.6,35.1 135.2,35.3 Q134.8,35.1 134.6,34.7 Z" fill="#dfe8ff" opacity="0.3"/><path d="M412.6,30.4 Q414.4,29.7 415.1,27.9 Q415.8,29.7 417.6,30.4 Q415.8,31 415.1,32.9 Q414.4,31 412.6,30.4 Z" fill="#fff0d8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.2s" repeatCount="indefinite" begin="0.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M256.5,114.1 Q256.8,113.6 257.3,113.2 Q257.8,113.6 258.2,114.1 Q257.8,114.6 257.3,114.9 Q256.8,114.6 256.5,114.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M70.4,64.6 Q71.2,64.1 71.8,63.3 Q72.3,64.1 73.1,64.6 Q72.3,65.2 71.8,66 Q71.2,65.2 70.4,64.6 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.9s" repeatCount="indefinite" begin="3.9s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M442,63 Q443.4,62.4 444.1,61 Q444.7,62.4 446.1,63 Q444.7,63.7 444.1,65.1 Q443.4,63.7 442,63 Z" fill="#d8e4ff" opacity="0.4"/><path d="M481.7,40.7 Q481.9,40.3 482.2,40.2 Q482.6,40.3 482.7,40.7 Q482.6,41 482.2,41.1 Q481.9,41 481.7,40.7 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.7s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M53.2,124.7 Q53.5,124.3 54,123.9 Q54.4,124.3 54.8,124.7 Q54.4,125.2 54,125.5 Q53.5,125.2 53.2,124.7 Z" fill="#ffd8c8" opacity="0.6"><animate attributeName="opacity" values="0.3;1;0.3" dur="4.3s" repeatCount="indefinite" begin="1.3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M293.2,47 Q293.5,46.5 294,46.2 Q294.5,46.5 294.7,47 Q294.5,47.4 294,47.7 Q293.5,47.4 293.2,47 Z" fill="#f4f8ff" opacity="0.4"/><path d="M458.5,80.5 Q459,79.9 459.5,79.4 Q460.1,79.9 460.6,80.5 Q460.1,81 459.5,81.5 Q459,81 458.5,80.5 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="5.3s" repeatCount="indefinite" begin="3.3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M203.8,116.1 Q203.9,115.7 204.2,115.6 Q204.5,115.7 204.6,116.1 Q204.5,116.4 204.2,116.5 Q203.9,116.4 203.8,116.1 Z" fill="#fff0d8" opacity="0.5"/><path d="M429.4,22.6 Q431.8,21.9 432.5,19.6 Q433.2,21.9 435.5,22.6 Q433.2,23.3 432.5,25.7 Q431.8,23.3 429.4,22.6 Z" fill="#f4f8ff" opacity="0.6"/><path d="M32.2,116.5 Q33.5,115.8 34.2,114.6 Q34.8,115.8 36.1,116.5 Q34.8,117.1 34.2,118.4 Q33.5,117.1 32.2,116.5 Z" fill="#ffd8c8" opacity="0.4"/><path d="M435.9,9.8 Q436.2,9.3 436.6,9.1 Q437.1,9.3 437.3,9.8 Q437.1,10.2 436.6,10.5 Q436.2,10.2 435.9,9.8 Z" fill="#ffd8c8" opacity="0.6"/><path d="M63.8,45.8 Q63.9,45.5 64.3,45.3 Q64.7,45.5 64.8,45.8 Q64.7,46.2 64.3,46.3 Q63.9,46.2 63.8,45.8 Z" fill="#f4f8ff" opacity="0.4"/><path d="M119.6,38.7 Q121.8,38 122.5,35.8 Q123.2,38 125.4,38.7 Q123.2,39.4 122.5,41.6 Q121.8,39.4 119.6,38.7 Z" fill="#d8e4ff" opacity="0.6"/><path d="M376.8,34.5 Q377,34 377.4,33.9 Q377.9,34 378,34.5 Q377.9,34.9 377.4,35.1 Q377,34.9 376.8,34.5 Z" fill="#f4f8ff" opacity="0.5"/><path d="M322.9,59.7 Q323,59.3 323.5,59.1 Q323.9,59.3 324.1,59.7 Q323.9,60.1 323.5,60.3 Q323,60.1 322.9,59.7 Z" fill="#d8e4ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="5.1s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M40.9,20.3 Q41.2,19.9 41.7,19.5 Q42.2,19.9 42.6,20.3 Q42.2,20.8 41.7,21.2 Q41.2,20.8 40.9,20.3 Z" fill="#f4f8ff" opacity="0.5"/><path d="M210.6,86.8 Q210.8,86.4 211.2,86.2 Q211.6,86.4 211.7,86.8 Q211.6,87.2 211.2,87.3 Q210.8,87.2 210.6,86.8 Z" fill="#dfe8ff" opacity="0.7"/><path d="M91.4,131.5 Q91.6,131 92,130.8 Q92.5,131 92.7,131.5 Q92.5,131.9 92,132.1 Q91.6,131.9 91.4,131.5 Z" fill="#dfe8ff" opacity="0.3"/><path d="M420.1,52.9 Q420.2,52.6 420.5,52.5 Q420.9,52.6 421,52.9 Q420.9,53.2 420.5,53.3 Q420.2,53.2 420.1,52.9 Z" fill="#ffd8c8" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.7s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M58.2,77.7 Q60.4,77 61.1,74.9 Q61.8,77 63.9,77.7 Q61.8,78.4 61.1,80.6 Q60.4,78.4 58.2,77.7 Z" fill="#dfe8ff" opacity="0.4"/><path d="M323.8,50.1 Q324,49.6 324.4,49.5 Q324.9,49.6 325.1,50.1 Q324.9,50.5 324.4,50.7 Q324,50.5 323.8,50.1 Z" fill="#fff0d8" opacity="0.6"/><path d="M15.4,107.8 Q15.6,107.3 16,107.1 Q16.5,107.3 16.6,107.8 Q16.5,108.2 16,108.4 Q15.6,108.2 15.4,107.8 Z" fill="#dfe8ff" opacity="0.2"/><path d="M337.5,32 Q338.9,31.3 339.6,30 Q340.2,31.3 341.6,32 Q340.2,32.6 339.6,34 Q338.9,32.6 337.5,32 Z" fill="#dfe8ff" opacity="0.6"/><path d="M42.3,85.1 Q42.9,84.5 43.5,83.9 Q44,84.5 44.6,85.1 Q44,85.6 43.5,86.2 Q42.9,85.6 42.3,85.1 Z" fill="#ffd8c8" opacity="0.6"/><path d="M42,85.6 Q42.1,85.2 42.4,85.1 Q42.7,85.2 42.8,85.6 Q42.7,85.9 42.4,86 Q42.1,85.9 42,85.6 Z" fill="#ffd8c8" opacity="0.5"/><path d="M79.9,52.8 Q80,52.5 80.3,52.4 Q80.6,52.5 80.7,52.8 Q80.6,53.1 80.3,53.2 Q80,53.1 79.9,52.8 Z" fill="#d8e4ff" opacity="0.2"/><path d="M309.9,13 Q313.3,12.2 314,8.8 Q314.8,12.2 318.2,13 Q314.8,13.7 314,17.1 Q313.3,13.7 309.9,13 Z" fill="#f4f8ff" opacity="0.3"/><path d="M307.4,13 L314,12.3 L320.6,13 L314,13.6 Z" fill="#f4f8ff" opacity="0.1"/><path d="M314,6.4 L314.7,13 L314,19.6 L313.4,13 Z" fill="#f4f8ff" opacity="0.1"/><path d="M74.9,82 Q75.4,81.5 75.9,81 Q76.4,81.5 76.9,82 Q76.4,82.5 75.9,83 Q75.4,82.5 74.9,82 Z" fill="#ffd8c8" opacity="0.4"/><path d="M22.7,116 Q22.8,115.6 23.2,115.5 Q23.5,115.6 23.6,116 Q23.5,116.3 23.2,116.4 Q22.8,116.3 22.7,116 Z" fill="#ffd8c8" opacity="0.6"/><path d="M34.4,124.2 Q34.6,123.9 34.9,123.7 Q35.3,123.9 35.4,124.2 Q35.3,124.6 34.9,124.7 Q34.6,124.6 34.4,124.2 Z" fill="#ffd8c8" opacity="0.7"/><path d="M160.8,102.4 Q160.9,102 161.3,101.9 Q161.7,102 161.8,102.4 Q161.7,102.8 161.3,102.9 Q160.9,102.8 160.8,102.4 Z" fill="#f4f8ff" opacity="0.7"/><path d="M128.6,6.1 Q128.7,5.8 129.1,5.7 Q129.4,5.8 129.5,6.1 Q129.4,6.4 129.1,6.5 Q128.7,6.4 128.6,6.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M449.2,107.8 Q450.4,107.2 451,106 Q451.7,107.2 452.9,107.8 Q451.7,108.4 451,109.6 Q450.4,108.4 449.2,107.8 Z" fill="#fff0d8" opacity="0.6"/><path d="M438.4,77.7 Q438.6,77.3 439,77.1 Q439.5,77.3 439.7,77.7 Q439.5,78.1 439,78.3 Q438.6,78.1 438.4,77.7 Z" fill="#d8e4ff" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="5.8s" repeatCount="indefinite" begin="2.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M457.5,27.5 Q457.6,27.2 458,27 Q458.4,27.2 458.5,27.5 Q458.4,27.9 458,28.1 Q457.6,27.9 457.5,27.5 Z" fill="#dfe8ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.7s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M478.1,58.9 Q478.2,58.5 478.6,58.4 Q478.9,58.5 479.1,58.9 Q478.9,59.2 478.6,59.4 Q478.2,59.2 478.1,58.9 Z" fill="#fff0d8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.8s" repeatCount="indefinite" begin="2.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M435.9,27.8 Q436,27.5 436.3,27.4 Q436.6,27.5 436.7,27.8 Q436.6,28.1 436.3,28.2 Q436,28.1 435.9,27.8 Z" fill="#ffd8c8" opacity="0.2"/><path d="M107,37.3 Q107.5,36.8 108,36.2 Q108.5,36.8 109.1,37.3 Q108.5,37.8 108,38.3 Q107.5,37.8 107,37.3 Z" fill="#dfe8ff" opacity="0.4"/><path d="M398.1,9.1 Q399.7,8.4 400.3,6.9 Q401,8.4 402.6,9.1 Q401,9.8 400.3,11.3 Q399.7,9.8 398.1,9.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M53.6,99.9 Q53.8,99.5 54.2,99.3 Q54.6,99.5 54.8,99.9 Q54.6,100.3 54.2,100.5 Q53.8,100.3 53.6,99.9 Z" fill="#f4f8ff" opacity="0.6"/><path d="M175.2,145.6 Q175.9,145.1 176.4,144.4 Q177,145.1 177.6,145.6 Q177,146.2 176.4,146.8 Q175.9,146.2 175.2,145.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M476.5,31.5 Q476.7,31.1 477.1,30.9 Q477.5,31.1 477.7,31.5 Q477.5,31.9 477.1,32.1 Q476.7,31.9 476.5,31.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M62.6,19.9 Q63,19.4 63.5,19 Q64,19.4 64.4,19.9 Q64,20.4 63.5,20.8 Q63,20.4 62.6,19.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M339.2,13.1 Q341.1,12.4 341.8,10.5 Q342.5,12.4 344.4,13.1 Q342.5,13.8 341.8,15.7 Q341.1,13.8 339.2,13.1 Z" fill="#f4f8ff" opacity="0.3"/><path d="M94.1,145.2 Q94.6,144.7 95.1,144.2 Q95.6,144.7 96.1,145.2 Q95.6,145.8 95.1,146.3 Q94.6,145.8 94.1,145.2 Z" fill="#d8e4ff" opacity="0.3"/><path d="M266.8,145.9 Q266.9,145.6 267.2,145.5 Q267.6,145.6 267.7,145.9 Q267.6,146.3 267.2,146.4 Q266.9,146.3 266.8,145.9 Z" fill="#dfe8ff" opacity="0.2"/><path d="M46.7,148.7 Q47.3,148.1 47.8,147.5 Q48.4,148.1 49,148.7 Q48.4,149.2 47.8,149.8 Q47.3,149.2 46.7,148.7 Z" fill="#f4f8ff" opacity="0.4"/><path d="M282.5,92.7 Q285.2,91.9 285.9,89.2 Q286.6,91.9 289.3,92.7 Q286.6,93.4 285.9,96.1 Q285.2,93.4 282.5,92.7 Z" fill="#ffd8c8" opacity="0.5"/><path d="M279.9,92.7 L285.9,92.1 L291.9,92.7 L285.9,93.3 Z" fill="#ffd8c8" opacity="0.1"/><path d="M285.9,86.6 L286.5,92.7 L285.9,98.7 L285.3,92.7 Z" fill="#ffd8c8" opacity="0.1"/><path d="M447.6,65.2 Q448,64.7 448.5,64.3 Q449,64.7 449.3,65.2 Q449,65.7 448.5,66 Q448,65.7 447.6,65.2 Z" fill="#dfe8ff" opacity="0.6"/><path d="M453.7,48 Q454,47.6 454.4,47.4 Q454.9,47.6 455.1,48 Q454.9,48.5 454.4,48.7 Q454,48.5 453.7,48 Z" fill="#dfe8ff" opacity="0.4"/><path d="M474.3,124.1 Q474.4,123.8 474.7,123.7 Q475.1,123.8 475.2,124.1 Q475.1,124.4 474.7,124.5 Q474.4,124.4 474.3,124.1 Z" fill="#f4f8ff" opacity="0.5"/><path d="M174.8,129.4 Q175.9,128.8 176.5,127.7 Q177.1,128.8 178.2,129.4 Q177.1,130 176.5,131.1 Q175.9,130 174.8,129.4 Z" fill="#fff0d8" opacity="0.5"/><path d="M170.6,80.3 Q170.7,80 171,79.9 Q171.3,80 171.5,80.3 Q171.3,80.7 171,80.8 Q170.7,80.7 170.6,80.3 Z" fill="#f4f8ff" opacity="0.5"/><path d="M426.2,141.7 Q426.3,141.3 426.7,141.1 Q427.1,141.3 427.3,141.7 Q427.1,142.1 426.7,142.2 Q426.3,142.1 426.2,141.7 Z" fill="#dfe8ff" opacity="0.6"/><path d="M283.5,63 Q283.7,62.5 284.1,62.4 Q284.5,62.5 284.7,63 Q284.5,63.4 284.1,63.5 Q283.7,63.4 283.5,63 Z" fill="#f4f8ff" opacity="0.4"/><path d="M12.7,49.8 Q12.8,49.5 13.1,49.4 Q13.4,49.5 13.5,49.8 Q13.4,50.2 13.1,50.3 Q12.8,50.2 12.7,49.8 Z" fill="#ffd8c8" opacity="0.4"/><path d="M437.1,54.5 Q437.8,53.9 438.3,53.2 Q438.9,53.9 439.6,54.5 Q438.9,55 438.3,55.7 Q437.8,55 437.1,54.5 Z" fill="#ffd8c8" opacity="0.5"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4.7s" repeatCount="indefinite" begin="0.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M203.4,39.7 Q207.6,38.9 208.4,34.7 Q209.2,38.9 213.4,39.7 Q209.2,40.5 208.4,44.7 Q207.6,40.5 203.4,39.7 Z" fill="#f4f8ff" opacity="0.6"/><path d="M201.2,39.7 L208.4,39 L215.6,39.7 L208.4,40.4 Z" fill="#f4f8ff" opacity="0.1"/><path d="M208.4,32.5 L209.1,39.7 L208.4,46.9 L207.7,39.7 Z" fill="#f4f8ff" opacity="0.1"/><path d="M169.6,13.5 Q169.7,13.1 170.1,13 Q170.5,13.1 170.7,13.5 Q170.5,13.9 170.1,14.1 Q169.7,13.9 169.6,13.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M213.6,59.8 Q213.7,59.4 214.1,59.2 Q214.6,59.4 214.7,59.8 Q214.6,60.2 214.1,60.4 Q213.7,60.2 213.6,59.8 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.9s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M263.2,127.7 Q265.3,127 266,124.9 Q266.7,127 268.8,127.7 Q266.7,128.4 266,130.5 Q265.3,128.4 263.2,127.7 Z" fill="#fff0d8" opacity="0.2"/><path d="M450.9,21.1 Q451.1,20.8 451.4,20.6 Q451.8,20.8 451.9,21.1 Q451.8,21.5 451.4,21.6 Q451.1,21.5 450.9,21.1 Z" fill="#dfe8ff" opacity="0.7"/><path d="M344.3,10.2 Q345.8,9.6 346.5,8.1 Q347.1,9.6 348.6,10.2 Q347.1,10.9 346.5,12.4 Q345.8,10.9 344.3,10.2 Z" fill="#fff0d8" opacity="0.4"/><path d="M152.3,69.2 Q153.3,68.6 153.9,67.5 Q154.5,68.6 155.5,69.2 Q154.5,69.8 153.9,70.8 Q153.3,69.8 152.3,69.2 Z" fill="#dfe8ff" opacity="0.7"/><path d="M427.8,114.1 Q428,113.7 428.3,113.6 Q428.7,113.7 428.9,114.1 Q428.7,114.5 428.3,114.6 Q428,114.5 427.8,114.1 Z" fill="#f4f8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.8s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M198.3,128.2 Q198.4,127.8 198.7,127.7 Q199.1,127.8 199.2,128.2 Q199.1,128.5 198.7,128.6 Q198.4,128.5 198.3,128.2 Z" fill="#dfe8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="5.7s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M285.5,133.1 Q285.7,132.8 286.1,132.6 Q286.4,132.8 286.6,133.1 Q286.4,133.5 286.1,133.6 Q285.7,133.5 285.5,133.1 Z" fill="#dfe8ff" opacity="0.5"/><path d="M313.8,23.9 Q316.6,23.2 317.3,20.4 Q318,23.2 320.8,23.9 Q318,24.7 317.3,27.5 Q316.6,24.7 313.8,23.9 Z" fill="#dfe8ff" opacity="0.4"/><path d="M311.2,23.9 L317.3,23.3 L323.4,23.9 L317.3,24.5 Z" fill="#dfe8ff" opacity="0.1"/><path d="M317.3,17.8 L317.9,23.9 L317.3,30 L316.7,23.9 Z" fill="#dfe8ff" opacity="0.1"/><path d="M30.1,129.4 Q32.2,128.7 32.9,126.5 Q33.6,128.7 35.8,129.4 Q33.6,130.1 32.9,132.3 Q32.2,130.1 30.1,129.4 Z" fill="#ffd8c8" opacity="0.4"/><path d="M401,120.1 Q401.2,119.8 401.5,119.6 Q401.9,119.8 402,120.1 Q401.9,120.5 401.5,120.6 Q401.2,120.5 401,120.1 Z" fill="#ffd8c8" opacity="0.4"/><path d="M221.4,52.4 Q221.6,52.1 221.9,51.9 Q222.3,52.1 222.4,52.4 Q222.3,52.8 221.9,52.9 Q221.6,52.8 221.4,52.4 Z" fill="#dfe8ff" opacity="0.6"/><path d="M277.8,11 Q280,10.3 280.7,8.1 Q281.4,10.3 283.6,11 Q281.4,11.7 280.7,13.8 Q280,11.7 277.8,11 Z" fill="#d8e4ff" opacity="0.7"/><path d="M363,110.5 Q363.7,110 364.3,109.3 Q364.8,110 365.5,110.5 Q364.8,111.1 364.3,111.8 Q363.7,111.1 363,110.5 Z" fill="#dfe8ff" opacity="0.2"/><path d="M51.5,79 Q51.6,78.7 51.9,78.6 Q52.2,78.7 52.3,79 Q52.2,79.3 51.9,79.4 Q51.6,79.3 51.5,79 Z" fill="#f4f8ff" opacity="0.6"/><path d="M394,30.7 Q394.8,30.1 395.3,29.3 Q395.9,30.1 396.7,30.7 Q395.9,31.3 395.3,32.1 Q394.8,31.3 394,30.7 Z" fill="#f4f8ff" opacity="0.5"/><path d="M72.5,131.6 Q73.2,131 73.8,130.3 Q74.3,131 75.1,131.6 Q74.3,132.2 73.8,132.9 Q73.2,132.2 72.5,131.6 Z" fill="#fff0d8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="5.7s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M420.4,72.9 Q420.7,72.5 421.1,72.2 Q421.6,72.5 421.8,72.9 Q421.6,73.4 421.1,73.6 Q420.7,73.4 420.4,72.9 Z" fill="#f4f8ff" opacity="0.3"/><path d="M178.4,106 Q178.5,105.7 178.9,105.5 Q179.3,105.7 179.4,106 Q179.3,106.4 178.9,106.5 Q178.5,106.4 178.4,106 Z" fill="#f4f8ff" opacity="0.3"/><path d="M371.4,143 Q371.9,142.5 372.4,141.9 Q372.9,142.5 373.5,143 Q372.9,143.5 372.4,144 Q371.9,143.5 371.4,143 Z" fill="#dfe8ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.1s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M92.6,32.1 Q95.4,31.4 96.2,28.6 Q96.9,31.4 99.7,32.1 Q96.9,32.9 96.2,35.7 Q95.4,32.9 92.6,32.1 Z" fill="#f4f8ff" opacity="0.5"/><path d="M90,32.1 L96.2,31.5 L102.3,32.1 L96.2,32.8 Z" fill="#f4f8ff" opacity="0.1"/><path d="M96.2,26 L96.8,32.1 L96.2,38.3 L95.6,32.1 Z" fill="#f4f8ff" opacity="0.1"/><path d="M223.7,22.3 Q223.8,21.9 224.2,21.8 Q224.6,21.9 224.7,22.3 Q224.6,22.7 224.2,22.8 Q223.8,22.7 223.7,22.3 Z" fill="#fff0d8" opacity="0.4"/><path d="M424.1,124.4 Q425.9,123.7 426.6,121.9 Q427.3,123.7 429.1,124.4 Q427.3,125.1 426.6,126.9 Q425.9,125.1 424.1,124.4 Z" fill="#dfe8ff" opacity="0.5"/><path d="M167.6,29.2 Q167.7,28.8 168,28.7 Q168.3,28.8 168.4,29.2 Q168.3,29.5 168,29.6 Q167.7,29.5 167.6,29.2 Z" fill="#ffd8c8" opacity="0.3"/><path d="M176,79 Q176.1,78.6 176.5,78.5 Q176.8,78.6 176.9,79 Q176.8,79.3 176.5,79.4 Q176.1,79.3 176,79 Z" fill="#ffd8c8" opacity="0.6"/><path d="M47.8,27.9 Q50,27.2 50.7,25 Q51.4,27.2 53.5,27.9 Q51.4,28.6 50.7,30.8 Q50,28.6 47.8,27.9 Z" fill="#f4f8ff" opacity="0.3"/><path d="M275.4,63.4 Q275.5,63.1 275.8,63 Q276.1,63.1 276.2,63.4 Q276.1,63.7 275.8,63.8 Q275.5,63.7 275.4,63.4 Z" fill="#f4f8ff" opacity="0.6"/><path d="M144.9,6.7 Q145.5,6.2 146.1,5.6 Q146.6,6.2 147.2,6.7 Q146.6,7.2 146.1,7.8 Q145.5,7.2 144.9,6.7 Z" fill="#f4f8ff" opacity="0.6"/><path d="M329.2,113.2 Q329.3,112.9 329.7,112.7 Q330,112.9 330.1,113.2 Q330,113.5 329.7,113.6 Q329.3,113.5 329.2,113.2 Z" fill="#d8e4ff" opacity="0.5"/><path d="M359,21.9 Q359.1,21.6 359.5,21.5 Q359.8,21.6 359.9,21.9 Q359.8,22.3 359.5,22.4 Q359.1,22.3 359,21.9 Z" fill="#d8e4ff" opacity="0.5"/><path d="M236.6,130 Q236.9,129.5 237.4,129.2 Q237.9,129.5 238.2,130 Q237.9,130.5 237.4,130.8 Q236.9,130.5 236.6,130 Z" fill="#f4f8ff" opacity="0.3"/><path d="M485.3,17.4 Q485.5,17 485.9,16.8 Q486.3,17 486.5,17.4 Q486.3,17.8 485.9,18 Q485.5,17.8 485.3,17.4 Z" fill="#f4f8ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.7s" repeatCount="indefinite" begin="1.9s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M84.2,72.2 Q84.4,71.8 84.8,71.6 Q85.2,71.8 85.3,72.2 Q85.2,72.6 84.8,72.8 Q84.4,72.6 84.2,72.2 Z" fill="#d8e4ff" opacity="0.6"/><path d="M444.4,17.6 Q444.6,17.1 445.1,17 Q445.5,17.1 445.7,17.6 Q445.5,18 445.1,18.2 Q444.6,18 444.4,17.6 Z" fill="#fff0d8" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.6s" repeatCount="indefinite" begin="0.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M487.6,16.9 Q487.8,16.5 488.1,16.4 Q488.5,16.5 488.6,16.9 Q488.5,17.2 488.1,17.4 Q487.8,17.2 487.6,16.9 Z" fill="#dfe8ff" opacity="0.7"/><path d="M152.4,118.1 Q154.1,117.4 154.8,115.7 Q155.5,117.4 157.2,118.1 Q155.5,118.8 154.8,120.5 Q154.1,118.8 152.4,118.1 Z" fill="#f4f8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.3s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M74.7,124 Q75.2,123.5 75.7,123 Q76.2,123.5 76.7,124 Q76.2,124.5 75.7,125 Q75.2,124.5 74.7,124 Z" fill="#fff0d8" opacity="0.5"/><path d="M428.4,113.6 Q428.7,113.1 429.2,112.8 Q429.7,113.1 430.1,113.6 Q429.7,114.1 429.2,114.5 Q428.7,114.1 428.4,113.6 Z" fill="#f4f8ff" opacity="0.5"/><path d="M427.9,64.7 Q428,64.4 428.4,64.2 Q428.7,64.4 428.8,64.7 Q428.7,65 428.4,65.1 Q428,65 427.9,64.7 Z" fill="#fff0d8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="5.9s" repeatCount="indefinite" begin="2.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M53.3,141.1 Q56,140.4 56.7,137.7 Q57.4,140.4 60.2,141.1 Q57.4,141.8 56.7,144.6 Q56,141.8 53.3,141.1 Z" fill="#ffd8c8" opacity="0.2"/><path d="M50.7,141.1 L56.7,140.5 L62.8,141.1 L56.7,141.7 Z" fill="#ffd8c8" opacity="0.1"/><path d="M56.7,135.1 L57.3,141.1 L56.7,147.2 L56.1,141.1 Z" fill="#ffd8c8" opacity="0.1"/><path d="M58.5,65.3 Q58.6,65 59,64.9 Q59.3,65 59.4,65.3 Q59.3,65.7 59,65.8 Q58.6,65.7 58.5,65.3 Z" fill="#ffd8c8" opacity="0.6"/><path d="M42.9,8.6 Q43.5,8 44.1,7.4 Q44.6,8 45.3,8.6 Q44.6,9.1 44.1,9.7 Q43.5,9.1 42.9,8.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M287.4,72 Q287.6,71.6 288,71.4 Q288.4,71.6 288.6,72 Q288.4,72.4 288,72.6 Q287.6,72.4 287.4,72 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="3.5s" repeatCount="indefinite" begin="0.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M276.8,136.3 Q277.4,135.7 277.9,135.1 Q278.4,135.7 279,136.3 Q278.4,136.8 277.9,137.4 Q277.4,136.8 276.8,136.3 Z" fill="#ffd8c8" opacity="0.4"/><path d="M170.5,60.2 Q172.9,59.5 173.6,57.2 Q174.3,59.5 176.7,60.2 Q174.3,61 173.6,63.3 Q172.9,61 170.5,60.2 Z" fill="#dfe8ff" opacity="0.4"/><path d="M29.6,79.7 Q32.2,79 32.9,76.5 Q33.6,79 36.2,79.7 Q33.6,80.4 32.9,83 Q32.2,80.4 29.6,79.7 Z" fill="#fff0d8" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3.2s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M27,79.7 L32.9,79.1 L38.8,79.7 L32.9,80.3 Z" fill="#fff0d8" opacity="0.1"/><path d="M32.9,73.8 L33.5,79.7 L32.9,85.6 L32.3,79.7 Z" fill="#fff0d8" opacity="0.1"/><path d="M69.4,65.4 Q69.6,65 69.9,64.9 Q70.3,65 70.5,65.4 Q70.3,65.8 69.9,65.9 Q69.6,65.8 69.4,65.4 Z" fill="#d8e4ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.4s" repeatCount="indefinite" begin="4.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M278.2,206.4 Q278.9,205.8 279.4,205.2 Q280,205.8 280.7,206.4 Q280,206.9 279.4,207.6 Q278.9,206.9 278.2,206.4 Z" fill="#f4f8ff" opacity="0.7"/><path d="M90.6,180.8 Q91.9,180.1 92.6,178.7 Q93.2,180.1 94.6,180.8 Q93.2,181.4 92.6,182.8 Q91.9,181.4 90.6,180.8 Z" fill="#dfe8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="4.4s" repeatCount="indefinite" begin="3.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M433.6,195.3 Q433.7,194.9 434.1,194.8 Q434.5,194.9 434.6,195.3 Q434.5,195.7 434.1,195.8 Q433.7,195.7 433.6,195.3 Z" fill="#f4f8ff" opacity="0.3"/><path d="M66.1,181.9 Q66.5,181.4 67,181 Q67.5,181.4 67.9,181.9 Q67.5,182.4 67,182.8 Q66.5,182.4 66.1,181.9 Z" fill="#f4f8ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.4s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M439.6,174.7 Q439.9,174.2 440.3,174 Q440.8,174.2 441.1,174.7 Q440.8,175.2 440.3,175.4 Q439.9,175.2 439.6,174.7 Z" fill="#d8e4ff" opacity="0.5"/><path d="M81.7,195.1 Q81.9,194.7 82.2,194.6 Q82.6,194.7 82.7,195.1 Q82.6,195.4 82.2,195.6 Q81.9,195.4 81.7,195.1 Z" fill="#ffd8c8" opacity="0.2"/><path d="M313.8,192.6 Q315.4,191.9 316.1,190.3 Q316.8,191.9 318.3,192.6 Q316.8,193.2 316.1,194.8 Q315.4,193.2 313.8,192.6 Z" fill="#f4f8ff" opacity="0.5"/><path d="M151.4,187.1 Q151.5,186.8 151.8,186.7 Q152.1,186.8 152.3,187.1 Q152.1,187.4 151.8,187.5 Q151.5,187.4 151.4,187.1 Z" fill="#dfe8ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.7s" repeatCount="indefinite" begin="2.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M436.4,182.4 Q436.6,182.1 436.9,181.9 Q437.3,182.1 437.4,182.4 Q437.3,182.8 436.9,182.9 Q436.6,182.8 436.4,182.4 Z" fill="#dfe8ff" opacity="0.6"/><path d="M476.7,186.6 Q477,186.1 477.5,185.9 Q477.9,186.1 478.2,186.6 Q477.9,187.1 477.5,187.3 Q477,187.1 476.7,186.6 Z" fill="#fff0d8" opacity="0.7"/><path d="M109,206.2 Q109.8,205.6 110.4,204.8 Q111,205.6 111.8,206.2 Q111,206.8 110.4,207.6 Q109.8,206.8 109,206.2 Z" fill="#d8e4ff" opacity="0.3"/><path d="M50,162.7 Q50.1,162.4 50.4,162.3 Q50.7,162.4 50.8,162.7 Q50.7,163 50.4,163.2 Q50.1,163 50,162.7 Z" fill="#f4f8ff" opacity="0.7"/><path d="M385.2,157.3 Q385.3,156.9 385.7,156.8 Q386.1,156.9 386.2,157.3 Q386.1,157.7 385.7,157.8 Q385.3,157.7 385.2,157.3 Z" fill="#f4f8ff" opacity="0.4"/><path d="M288.4,163.8 Q288.6,163.4 289,163.2 Q289.4,163.4 289.6,163.8 Q289.4,164.2 289,164.4 Q288.6,164.2 288.4,163.8 Z" fill="#dfe8ff" opacity="0.7"/><path d="M45.5,190.4 Q46.1,189.8 46.7,189.2 Q47.2,189.8 47.8,190.4 Q47.2,190.9 46.7,191.6 Q46.1,190.9 45.5,190.4 Z" fill="#f4f8ff" opacity="0.5"/><path d="M20.1,183.9 Q20.5,183.4 21,182.9 Q21.5,183.4 22,183.9 Q21.5,184.4 21,184.8 Q20.5,184.4 20.1,183.9 Z" fill="#ffd8c8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.0s" repeatCount="indefinite" begin="2.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M223.5,152.6 Q224.2,152 224.8,151.3 Q225.4,152 226,152.6 Q225.4,153.1 224.8,153.8 Q224.2,153.1 223.5,152.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M23.9,166.8 Q24.5,166.2 25,165.7 Q25.5,166.2 26.1,166.8 Q25.5,167.3 25,167.8 Q24.5,167.3 23.9,166.8 Z" fill="#d8e4ff" opacity="0.3"/><path d="M437,164.4 Q437.1,164 437.6,163.8 Q438,164 438.2,164.4 Q438,164.9 437.6,165 Q437.1,164.9 437,164.4 Z" fill="#d8e4ff" opacity="0.6"/><path d="M346.7,159.8 Q347,159.3 347.4,159.1 Q347.9,159.3 348.1,159.8 Q347.9,160.2 347.4,160.5 Q347,160.2 346.7,159.8 Z" fill="#ffd8c8" opacity="0.5"/><path d="M87.4,192.4 Q87.6,192.1 87.9,191.9 Q88.3,192.1 88.4,192.4 Q88.3,192.8 87.9,192.9 Q87.6,192.8 87.4,192.4 Z" fill="#f4f8ff" opacity="0.6"/><path d="M300.5,166.2 Q301.8,165.6 302.4,164.3 Q303,165.6 304.2,166.2 Q303,166.8 302.4,168 Q301.8,166.8 300.5,166.2 Z" fill="#f4f8ff" opacity="0.2"/><path d="M114.5,155.1 Q114.6,154.7 115,154.5 Q115.5,154.7 115.6,155.1 Q115.5,155.5 115,155.7 Q114.6,155.5 114.5,155.1 Z" fill="#d8e4ff" opacity="0.4"/><path d="M154.1,152 Q154.3,151.6 154.7,151.4 Q155.2,151.6 155.4,152 Q155.2,152.5 154.7,152.7 Q154.3,152.5 154.1,152 Z" fill="#f4f8ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.0s" repeatCount="indefinite" begin="1.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M30.7,153.8 Q33.7,153 34.4,150.1 Q35.2,153 38.1,153.8 Q35.2,154.5 34.4,157.4 Q33.7,154.5 30.7,153.8 Z" fill="#f4f8ff" opacity="0.5"/><path d="M28.2,153.8 L34.4,153.1 L40.7,153.8 L34.4,154.4 Z" fill="#f4f8ff" opacity="0.1"/><path d="M34.4,147.5 L35.1,153.8 L34.4,160 L33.8,153.8 Z" fill="#f4f8ff" opacity="0.1"/><path d="M389.7,210.5 Q389.9,210.2 390.3,210 Q390.7,210.2 390.8,210.5 Q390.7,210.9 390.3,211.1 Q389.9,210.9 389.7,210.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M396.5,190.7 Q396.7,190.3 397.1,190.1 Q397.6,190.3 397.8,190.7 Q397.6,191.1 397.1,191.3 Q396.7,191.1 396.5,190.7 Z" fill="#f4f8ff" opacity="0.3"/><path d="M347.6,198.1 Q347.7,197.7 348.1,197.5 Q348.5,197.7 348.7,198.1 Q348.5,198.5 348.1,198.6 Q347.7,198.5 347.6,198.1 Z" fill="#ffd8c8" opacity="0.3"/><path d="M75.2,180.9 Q75.4,180.5 75.7,180.4 Q76.1,180.5 76.3,180.9 Q76.1,181.3 75.7,181.4 Q75.4,181.3 75.2,180.9 Z" fill="#fff0d8" opacity="0.6"/><path d="M223.2,154.8 Q223.5,154.3 223.9,154 Q224.4,154.3 224.7,154.8 Q224.4,155.3 223.9,155.6 Q223.5,155.3 223.2,154.8 Z" fill="#d8e4ff" opacity="0.6"/><path d="M189,176.9 Q189.1,176.6 189.4,176.5 Q189.7,176.6 189.9,176.9 Q189.7,177.2 189.4,177.4 Q189.1,177.2 189,176.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M88.9,184.6 Q90,183.9 90.6,182.8 Q91.3,183.9 92.4,184.6 Q91.3,185.2 90.6,186.3 Q90,185.2 88.9,184.6 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.3s" repeatCount="indefinite" begin="1.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M11,191.5 Q11.1,191.2 11.4,191.1 Q11.7,191.2 11.8,191.5 Q11.7,191.8 11.4,191.9 Q11.1,191.8 11,191.5 Z" fill="#fff0d8" opacity="0.5"/><path d="M167.5,161.7 Q170.8,160.9 171.6,157.6 Q172.3,160.9 175.6,161.7 Q172.3,162.4 171.6,165.7 Q170.8,162.4 167.5,161.7 Z" fill="#f4f8ff" opacity="0.3"/><path d="M165,161.7 L171.6,161 L178.1,161.7 L171.6,162.3 Z" fill="#f4f8ff" opacity="0.1"/><path d="M171.6,155.1 L172.2,161.7 L171.6,168.2 L170.9,161.7 Z" fill="#f4f8ff" opacity="0.1"/><path d="M195.4,197.3 Q197,196.7 197.7,195 Q198.3,196.7 200,197.3 Q198.3,198 197.7,199.7 Q197,198 195.4,197.3 Z" fill="#ffd8c8" opacity="0.7"/><path d="M365,162.7 Q365.8,162.1 366.4,161.2 Q367,162.1 367.8,162.7 Q367,163.2 366.4,164.1 Q365.8,163.2 365,162.7 Z" fill="#fff0d8" opacity="0.3"/><path d="M117.1,205.5 Q117.7,205 118.2,204.4 Q118.7,205 119.4,205.5 Q118.7,206.1 118.2,206.7 Q117.7,206.1 117.1,205.5 Z" fill="#fff0d8" opacity="0.2"/><path d="M83.9,195.7 Q85.6,195.1 86.3,193.4 Q86.9,195.1 88.6,195.7 Q86.9,196.4 86.3,198.1 Q85.6,196.4 83.9,195.7 Z" fill="#dfe8ff" opacity="0.7"/><path d="M401.4,187.6 Q401.6,187.3 401.9,187.1 Q402.3,187.3 402.4,187.6 Q402.3,188 401.9,188.2 Q401.6,188 401.4,187.6 Z" fill="#f4f8ff" opacity="0.6"/><path d="M103,189.8 Q103.1,189.5 103.5,189.3 Q103.9,189.5 104,189.8 Q103.9,190.2 103.5,190.3 Q103.1,190.2 103,189.8 Z" fill="#ffd8c8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="5.8s" repeatCount="indefinite" begin="3.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M36.5,160.5 Q36.6,160.2 36.9,160.1 Q37.2,160.2 37.3,160.5 Q37.2,160.8 36.9,160.9 Q36.6,160.8 36.5,160.5 Z" fill="#d8e4ff" opacity="0.7"/><path d="M353.9,209.7 Q354.4,209.2 355,208.6 Q355.5,209.2 356,209.7 Q355.5,210.2 355,210.7 Q354.4,210.2 353.9,209.7 Z" fill="#f4f8ff" opacity="0.4"/><path d="M124,188.4 Q125.7,187.8 126.4,186 Q127.1,187.8 128.9,188.4 Q127.1,189.1 126.4,190.9 Q125.7,189.1 124,188.4 Z" fill="#ffd8c8" opacity="0.4"/><path d="M394.1,209.7 Q395,209.1 395.5,208.3 Q396.1,209.1 396.9,209.7 Q396.1,210.3 395.5,211.1 Q395,210.3 394.1,209.7 Z" fill="#d8e4ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="3.6s" repeatCount="indefinite" begin="0.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M30.1,157.9 Q30.3,157.5 30.8,157.3 Q31.2,157.5 31.4,157.9 Q31.2,158.4 30.8,158.6 Q30.3,158.4 30.1,157.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M99.9,163 Q100,162.6 100.5,162.4 Q100.9,162.6 101,163 Q100.9,163.4 100.5,163.6 Q100,163.4 99.9,163 Z" fill="#fff0d8" opacity="0.3"/>
+<!-- ====================
+     THE THREE CONSTELLATIONS. Still eight, six and five stars in the S, K
+     and Y the puzzle needs, and still with NO connecting lines: the player
+     joins them. What changed is that each star is now a star, with a cross
+     of light on it, rather than a flat gold button.
+     ==================== -->
 <g filter="url(#constFilter)">
-  <!-- Top curve of S -->
-  <circle cx="130" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite"/></circle>
-  <circle cx="118" cy="52" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.15s"/></circle>
-  <circle cx="108" cy="57" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.3s"/></circle>
-  <!-- Middle crossing -->
-  <circle cx="112" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.45s"/></circle>
-  <circle cx="122" cy="78" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.6s"/></circle>
-  <!-- Bottom curve of S -->
-  <circle cx="132" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.75s"/></circle>
-  <circle cx="125" cy="95" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.9s"/></circle>
-  <circle cx="112" cy="98" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="1.05s"/></circle>
-  <!-- NO lines — player must connect the dots mentally -->
-  <circle cx="120" cy="75" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite"/></circle>
+<g opacity="0.9"><path d="M122,55 Q128.9,53.9 130,47 Q131.1,53.9 138,55 Q131.1,56.1 130,63 Q128.9,56.1 122,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M130,53.1 Q131.2,53.8 131.9,55 Q131.2,56.2 130,56.9 Q128.8,56.2 128.1,55 Q128.8,53.8 130,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M110,52 Q116.9,50.9 118,44 Q119.1,50.9 126,52 Q119.1,53.1 118,60 Q116.9,53.1 110,52 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M118,50.1 Q119.2,50.8 119.9,52 Q119.2,53.2 118,53.9 Q116.8,53.2 116.1,52 Q116.8,50.8 118,50.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M100,57 Q106.9,55.9 108,49 Q109.1,55.9 116,57 Q109.1,58.1 108,65 Q106.9,58.1 100,57 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M108,55.1 Q109.2,55.8 109.9,57 Q109.2,58.2 108,58.9 Q106.8,58.2 106.1,57 Q106.8,55.8 108,55.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,70 Q110.9,68.9 112,62 Q113.1,68.9 120,70 Q113.1,71.1 112,78 Q110.9,71.1 104,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,68.1 Q113.2,68.8 113.9,70 Q113.2,71.2 112,71.9 Q110.8,71.2 110.1,70 Q110.8,68.8 112,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M114,78 Q120.9,76.9 122,70 Q123.1,76.9 130,78 Q123.1,79.1 122,86 Q120.9,79.1 114,78 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M122,76.1 Q123.2,76.8 123.9,78 Q123.2,79.2 122,79.9 Q120.8,79.2 120.1,78 Q120.8,76.8 122,76.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M124,85 Q130.9,83.9 132,77 Q133.1,83.9 140,85 Q133.1,86.1 132,93 Q130.9,86.1 124,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M132,83.1 Q133.2,83.8 133.9,85 Q133.2,86.2 132,86.9 Q130.8,86.2 130.1,85 Q130.8,83.8 132,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M117,95 Q123.9,93.9 125,87 Q126.1,93.9 133,95 Q126.1,96.1 125,103 Q123.9,96.1 117,95 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M125,93.1 Q126.2,93.8 126.9,95 Q126.2,96.2 125,96.9 Q123.8,96.2 123.1,95 Q123.8,93.8 125,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,98 Q110.9,96.9 112,90 Q113.1,96.9 120,98 Q113.1,99.1 112,106 Q110.9,99.1 104,98 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,96.1 Q113.2,96.8 113.9,98 Q113.2,99.2 112,99.9 Q110.8,99.2 110.1,98 Q110.8,96.8 112,96.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="120" cy="75" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
-<!-- Constellation K — stars forming K shape, NO connecting lines (center area) -->
 <g filter="url(#constFilter)">
-  <!-- Vertical stroke -->
-  <circle cx="240" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.1s"/></circle>
-  <circle cx="240" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.3s"/></circle>
-  <circle cx="240" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
-  <circle cx="240" cy="100" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.7s"/></circle>
-  <!-- Upper diagonal -->
-  <circle cx="255" cy="60" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.4s"/></circle>
-  <!-- Lower diagonal -->
-  <circle cx="255" cy="95" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.6s"/></circle>
-  <!-- NO lines -->
-  <circle cx="245" cy="78" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="1s"/></circle>
+<g opacity="0.9"><path d="M232,55 Q238.9,53.9 240,47 Q241.1,53.9 248,55 Q241.1,56.1 240,63 Q238.9,56.1 232,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,53.1 Q241.2,53.8 241.9,55 Q241.2,56.2 240,56.9 Q238.8,56.2 238.1,55 Q238.8,53.8 240,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,70 Q238.9,68.9 240,62 Q241.1,68.9 248,70 Q241.1,71.1 240,78 Q238.9,71.1 232,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,68.1 Q241.2,68.8 241.9,70 Q241.2,71.2 240,71.9 Q238.8,71.2 238.1,70 Q238.8,68.8 240,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,85 Q238.9,83.9 240,77 Q241.1,83.9 248,85 Q241.1,86.1 240,93 Q238.9,86.1 232,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,83.1 Q241.2,83.8 241.9,85 Q241.2,86.2 240,86.9 Q238.8,86.2 238.1,85 Q238.8,83.8 240,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,100 Q238.9,98.9 240,92 Q241.1,98.9 248,100 Q241.1,101.1 240,108 Q238.9,101.1 232,100 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,98.1 Q241.2,98.8 241.9,100 Q241.2,101.2 240,101.9 Q238.8,101.2 238.1,100 Q238.8,98.8 240,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,60 Q253.9,58.9 255,52 Q256.1,58.9 263,60 Q256.1,61.1 255,68 Q253.9,61.1 247,60 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,58.1 Q256.2,58.8 256.9,60 Q256.2,61.2 255,61.9 Q253.8,61.2 253.1,60 Q253.8,58.8 255,58.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,95 Q253.9,93.9 255,87 Q256.1,93.9 263,95 Q256.1,96.1 255,103 Q253.9,96.1 247,95 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,93.1 Q256.2,93.8 256.9,95 Q256.2,96.2 255,96.9 Q253.8,96.2 253.1,95 Q253.8,93.8 255,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="245" cy="78" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="5.1s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
-<!-- Constellation Y — forking stars, NO connecting lines (right area) -->
 <g filter="url(#constFilter)">
-  <!-- Left branch top -->
-  <circle cx="370" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.2s"/></circle>
-  <!-- Right branch top -->
-  <circle cx="390" cy="55" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
-  <!-- Junction -->
-  <circle cx="380" cy="70" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.7s"/></circle>
-  <!-- Stem -->
-  <circle cx="380" cy="85" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="0.9s"/></circle>
-  <circle cx="380" cy="100" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" begin="1.1s"/></circle>
-  <!-- NO lines -->
-  <circle cx="380" cy="78" r="22" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite" begin="2s"/></circle>
+<g opacity="0.9"><path d="M362,55 Q368.9,53.9 370,47 Q371.1,53.9 378,55 Q371.1,56.1 370,63 Q368.9,56.1 362,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M370,53.1 Q371.2,53.8 371.9,55 Q371.2,56.2 370,56.9 Q368.8,56.2 368.1,55 Q368.8,53.8 370,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M382,55 Q388.9,53.9 390,47 Q391.1,53.9 398,55 Q391.1,56.1 390,63 Q388.9,56.1 382,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M390,53.1 Q391.2,53.8 391.9,55 Q391.2,56.2 390,56.9 Q388.8,56.2 388.1,55 Q388.8,53.8 390,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,70 Q378.9,68.9 380,62 Q381.1,68.9 388,70 Q381.1,71.1 380,78 Q378.9,71.1 372,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,68.1 Q381.2,68.8 381.9,70 Q381.2,71.2 380,71.9 Q378.8,71.2 378.1,70 Q378.8,68.8 380,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,85 Q378.9,83.9 380,77 Q381.1,83.9 388,85 Q381.1,86.1 380,93 Q378.9,86.1 372,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,83.1 Q381.2,83.8 381.9,85 Q381.2,86.2 380,86.9 Q378.8,86.2 378.1,85 Q378.8,83.8 380,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,100 Q378.9,98.9 380,92 Q381.1,98.9 388,100 Q381.1,101.1 380,108 Q378.9,101.1 372,100 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,98.1 Q381.2,98.8 381.9,100 Q381.2,101.2 380,101.9 Q378.8,101.2 378.1,100 Q378.8,98.8 380,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="380" cy="78" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.7s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
-<!-- Transparent dome outline (interior view) -->
-<path d="M30,240 Q30,30 250,15 Q470,30 470,240" fill="none" stroke="#8a9ab0" stroke-width="1" opacity="0.12"/>
-<path d="M50,240 Q50,45 250,25 Q450,45 450,240" fill="none" stroke="#8a9ab0" stroke-width="0.5" opacity="0.08"/>
-<circle cx="250" cy="240" r="230" fill="url(#domeEdge)"/>
-<!-- Observatory floor -->
-<rect x="0" y="220" width="500" height="40" fill="#0c1830" opacity="0.8"/>
-<rect x="0" y="220" width="500" height="2" fill="#8a9ab0" opacity="0.08"/>
-<!-- Telescope -->
-<rect x="238" y="180" width="4" height="42" fill="#5a6a80"/>
-<rect x="230" y="218" width="20" height="4" rx="2" fill="#4a5a70"/>
-<line x1="240" y1="185" x2="215" y2="150" stroke="#6a7a90" stroke-width="5" stroke-linecap="round"/>
-<ellipse cx="212" cy="147" rx="5" ry="3.5" fill="#7a8aa0" transform="rotate(-30,212,147)"/>
-<!-- Star Watcher silhouette (cross-legged, right of telescope) -->
-<ellipse cx="310" cy="215" rx="18" ry="6" fill="#0e1838"/>
-<path d="M295,215 Q298,195 305,188 Q310,185 315,188 Q322,195 325,215 Z" fill="#101c40"/>
-<!-- Cloak drape -->
-<path d="M292,215 Q290,200 296,190 Q300,186 305,188 L295,215 Z" fill="#141e48" opacity="0.7"/>
-<path d="M328,215 Q330,200 324,190 Q320,186 315,188 L325,215 Z" fill="#141e48" opacity="0.7"/>
-<!-- Head -->
-<circle cx="310" cy="182" r="7" fill="#c8a878"/>
-<!-- Hood/cloak collar -->
-<path d="M303,185 Q305,178 310,175 Q315,178 317,185" fill="#101c40"/>
-<!-- Eyes reflecting starlight -->
-<circle cx="308" cy="181" r="1" fill="#ffd700" opacity="0.7"><animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/></circle>
-<circle cx="312" cy="181" r="1" fill="#ffd700" opacity="0.7"><animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" begin="0.5s"/></circle>
+<!-- ====================
+     THE DOME, seen from inside. Two nested outline arcs is a rainbow. A dome
+     reads as a dome because its RIBS converge on the crown and its latitude
+     rings crowd together as they climb, and because the shutter is a real
+     opening with two leaves standing either side of it.
+     ==================== -->
+<path d="M480.7,236 Q376.9,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M470.6,236 Q371.4,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M450.9,236 Q360.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M422.4,236 Q344.8,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M386.4,236 Q325,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M344.4,236 Q301.9,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M298.2,236 Q276.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M250,236 Q250,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M201.8,236 Q223.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M155.6,236 Q198.1,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M113.6,236 Q175,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M77.6,236 Q155.2,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M49.1,236 Q139.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M29.4,236 Q128.6,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M19.3,236 Q123.1,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/>
+<path d="M28.7,171.8 Q250,136.4 471.3,171.8 Q250,207.2 28.7,171.8 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M56.2,118.3 Q250,87.3 443.8,118.3 Q250,149.3 56.2,118.3 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M94,77.6 Q250,52.7 406,77.6 Q250,102.6 94,77.6 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M139.8,47.7 Q250,30 360.2,47.7 Q250,65.3 139.8,47.7 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/>
+<!-- the crown ring the ribs land on -->
+<path d="M232,26 Q250,20 268,26 Q250,32 232,26 Z" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/>
+<!-- ====================
+     THE SHUTTER. The draft had none, so the sky was simply everywhere and
+     the dome was a decal over it. The slot is the reason a player is looking
+     at sky at all: two leaves, DARKER than the sky, standing either side of
+     an open band that runs over the crown, with the leaf edges catching what
+     comes through it.
+     ==================== -->
+<path d="M0,236 Q0,58 90,18 L216,18 Q170,56 170,236 Z" fill="#070d1c" opacity="0.55"/>
+<path d="M500,236 Q500,58 410,18 L284,18 Q330,56 330,236 Z" fill="#070d1c" opacity="0.55"/>
+<path d="M216,18 Q170,56 170,236 L174,236 Q174,58 220,20 Z" fill="#8a9ab0" opacity="0.06"/>
+<path d="M284,18 Q330,56 330,236 L326,236 Q326,58 280,20 Z" fill="#8a9ab0" opacity="0.045"/>
+<!-- the rails the leaves run on, and the ribs stiffening them -->
+<path d="M172,108 Q128,84 82,72" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.14"/>
+<path d="M328,108 Q372,84 418,72" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.11"/>
+<path d="M172,168 Q112,150 46,144" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.12"/>
+<path d="M328,168 Q388,150 454,144" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.1"/>
+<!-- the band of open sky between them, very slightly clearer than the rest -->
+<path d="M216,18 Q170,56 170,236 L330,236 Q330,56 284,18 Z" fill="#2a3a6a" opacity="0.055"/>
+<circle cx="250" cy="236" r="230" fill="url(#domeEdge)"/>
+<!-- ====================
+     THE FLOOR. A flat band across the frame is a horizon, not a floor. An
+     observatory floor is a ROUND deck: its edge curves away from the camera,
+     it is boarded in segments running to the pier at its centre, and the
+     dome wall meets it at a kerb.
+     ==================== -->
+<path d="M0,222 Q250,206 500,222 L500,260 L0,260 Z" fill="url(#obs2Floor)"/>
+<path d="M0,222 Q250,206 500,222 L500,225 Q250,209 0,225 Z" fill="#8a9ab0" opacity="0.13"/>
+<!-- the boards, converging on the pier -->
+<path d="M40,260 Q140,236 208,220" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M120,260 Q180,238 226,218" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M204,260 L240,217" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M296,260 L260,217" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M380,260 Q320,238 274,218" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M460,260 Q360,236 292,220" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<!-- the kerb where the dome wall lands on the deck -->
+<path d="M0,226 Q250,210 500,226 L500,231 Q250,215 0,231 Z" fill="#050a18" opacity="0.45"/>
+<!-- ====================
+     THE TELESCOPE. It was a stick, a puck and a line: a lamp post. A
+     telescope reads as an instrument because it is MOUNTED. A pier bolted to
+     the deck, a fork the tube swings in, a counterweight balancing it about
+     that axis, tube rings clamping the barrel, a finder scope alongside and
+     an eyepiece at the bottom end. The tube is drawn before the fork arms so
+     the near arm closes over it, which is what makes it read as held.
+     ==================== -->
+<!-- contact shadow, so the pier stands on the deck -->
+<path d="M212,225 Q244,219 276,225 Q278,231 244,234 Q210,231 212,225 Z" fill="#050a18" opacity="0.5"/>
+<!-- pier base: two steps, widest at the deck -->
+<path d="M218,219 L270,219 L276,226 L212,226 Z" fill="#2a3348"/>
+<path d="M218,219 L270,219 L269,221 L219,221 Z" fill="#6a7a9a" opacity="0.35"/>
+<path d="M226,211 L262,211 L266,219 L222,219 Z" fill="#2b3448"/>
+<path d="M226,211 L262,211 L261,213 L227,213 Z" fill="#6a7a9a" opacity="0.3"/>
+<!-- THE PIER: a tall tapered column. The draft's mount was a stub the same
+     height as its own head, which is a lamp post; a real pier stands the
+     instrument at eye height, so it is most of the way to the observer's
+     shoulder. -->
+<path d="M235,146 L253,146 L262,211 L226,211 Z" fill="url(#obs2Pier)"/>
+<path d="M237,146 L242,146 L235,211 L228,211 Z" fill="#8a9ab0" opacity="0.15"/>
+<path d="M249,146 L253,146 L262,211 L257,211 Z" fill="#0e1730" opacity="0.35"/>
+<!-- the flange bolting the head to the column -->
+<path d="M230,141 L258,141 L260,146 L228,146 Z" fill="#343e55"/>
+<path d="M230,141 L258,141 L258,142.8 L230,142.8 Z" fill="#8a9ab0" opacity="0.3"/>
+<circle cx="235" cy="143.6" r="1" fill="#8a9ab0" opacity="0.45"/>
+<circle cx="253" cy="143.6" r="1" fill="#8a9ab0" opacity="0.45"/>
+<!-- the equatorial head, tilted to the pole, which is what an equatorial
+     mount IS and the one detail that says this is an observatory instrument
+     rather than a spotting scope -->
+<g transform="rotate(-18 244 132)">
+  <path d="M232,120 L256,120 Q259,120 259,124 L259,140 Q259,144 256,144 L232,144 Q229,144 229,140 L229,124 Q229,120 232,120 Z" fill="#343e55"/>
+  <path d="M232,121 L256,121 L256,125 L232,125 Z" fill="#8a9ab0" opacity="0.25"/>
+  <!-- the setting circle on the polar axis -->
+  <path d="M229,132 Q225,126 229,120 L229,144 Q225,138 229,132 Z" fill="#2e3850"/>
+  <circle cx="230" cy="132" r="5.5" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.35"/>
+  <path d="M226,130 L228,130 M226,133 L228,133" stroke="#8a9ab0" stroke-width="0.5" opacity="0.3"/>
+</g>
+<!-- the far fork arm, behind the tube -->
+<path d="M252,126 Q260,110 256,92 L250,92 Q254,110 246,126 Z" fill="#2e3850"/>
+<!-- THE TUBE. Laid down before the near fork arm and before the eyepiece
+     fittings, so the arm closes over it and the barrel reads as CLAMPED
+     rather than as leaning against the mount. Its length is 7.5 times its
+     diameter: a barrel drawn as wide as it is long is a camera body. -->
+<g transform="rotate(-34 244 110)">
+  <path d="M188,102 Q188,97 194,97 L292,97 Q298,97 298,102 L298,118 Q298,123 292,123 L194,123 Q188,123 188,118 Z" fill="#3e4a62"/>
+  <path d="M190,101 Q190,99 194,99 L292,99 Q296,99 296,101 L296,106 L190,106 Z" fill="#8a9ab0" opacity="0.3"/>
+  <path d="M190,116 L296,116 L296,119 Q296,121 292,121 L194,121 Q190,121 190,119 Z" fill="#2a3348" opacity="0.55"/>
+  <!-- the dew shield, a collar proud of the barrel at the sky end -->
+  <path d="M292,94 L302,94 Q306,94 306,99 L306,121 Q306,126 302,126 L292,126 Z" fill="#3c4760"/>
+  <path d="M293,95.5 L302,95.5 L302,102 L293,102 Z" fill="#8a9ab0" opacity="0.28"/>
+  <path d="M292,94 L302,94 L302,96 L292,96 Z" fill="#8a9ab0" opacity="0.35"/>
+  <!-- the objective, set back inside the shield -->
+  <path d="M301,99 Q304,110 301,121 Q299,110 301,99 Z" fill="#0e1730"/>
+  <path d="M301.4,101 Q303,105 302.4,109" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.3"/>
+  <!-- tube rings, which is what clamps a barrel into a cradle -->
+  <path d="M222,95 L228,95 L228,125 L222,125 Z" fill="#2a3348"/>
+  <path d="M222,95 L228,95 L228,97.4 L222,97.4 Z" fill="#8a9ab0" opacity="0.35"/>
+  <path d="M224,124 L226,124 L226,128 L224,128 Z" fill="#2a3348"/>
+  <path d="M262,95 L268,95 L268,125 L262,125 Z" fill="#2a3348"/>
+  <path d="M262,95 L268,95 L268,97.4 L262,97.4 Z" fill="#8a9ab0" opacity="0.35"/>
+  <path d="M264,124 L266,124 L266,128 L264,128 Z" fill="#2a3348"/>
+  <!-- the finder scope, riding on the rings, its own little tube -->
+  <path d="M232,86 L276,86 Q280,86 280,89 L280,93 L232,93 Q228,93 228,89.5 Q228,86 232,86 Z" fill="#3c4760"/>
+  <path d="M232,87 L279,87" stroke="#8a9ab0" stroke-width="0.8" opacity="0.35"/>
+  <path d="M276,85 L282,85 L282,94 L276,94 Z" fill="#343e55"/>
+  <path d="M226,88 Q222,89.5 226,91 Q228,89.5 226,88 Z" fill="#0e1730"/>
+  <path d="M236,93 L240,93 L240,96 L236,96 Z" fill="#2a3348"/>
+  <path d="M266,93 L270,93 L270,96 L266,96 Z" fill="#2a3348"/>
+  <!-- the focuser drawtube and the eyepiece, where an eye would go -->
+  <path d="M182,104 L188,104 L188,116 L182,116 Z" fill="#2b3448"/>
+  <path d="M182,104 L188,104 L188,106 L182,106 Z" fill="#8a9ab0" opacity="0.3"/>
+  <path d="M172,106 Q169,106 169,108.5 L169,111.5 Q169,114 172,114 L182,114 L182,106 Z" fill="#2e3850"/>
+  <path d="M170,107.4 L182,107.4" stroke="#8a9ab0" stroke-width="0.6" opacity="0.3"/>
+  <path d="M169,108 Q166,110 169,112 Q171,110 169,108 Z" fill="#0e1730"/>
+  <!-- the focus knob, on the side of the drawtube -->
+  <circle cx="185" cy="118.5" r="2.2" fill="#343e55"/>
+  <circle cx="185" cy="118.5" r="0.9" fill="#8a9ab0" opacity="0.4"/>
+</g>
+<!-- the near fork arm, closing over the tube -->
+<path d="M236,126 Q228,110 232,92 L238,92 Q234,110 242,126 Z" fill="#3b4560"/>
+<path d="M236,126 Q228,110 232,92 L234,92 Q230,110 238,126 Z" fill="#8a9ab0" opacity="0.2"/>
+<!-- the declination axis the tube swings about -->
+<circle cx="240" cy="110" r="3.2" fill="#343e55"/>
+<circle cx="240" cy="110" r="1.3" fill="#8a9ab0" opacity="0.4"/>
+<!-- the counterweight shaft and its weight, balancing the tube about that
+     axis. A telescope without one topples, so its presence is what says the
+     instrument is real. -->
+<path d="M250,116 L272,133" stroke="#3f4a63" stroke-width="2"/>
+<path d="M251,116 L271,131" stroke="#8a9ab0" stroke-width="0.6" opacity="0.25"/>
+<path d="M270,128 Q277,128 278,134 Q277,140 270,140 Q264,140 263,134 Q264,128 270,128 Z" fill="#2e3850"/>
+<path d="M269,129.5 Q274,129.5 275,133" fill="none" stroke="#8a9ab0" stroke-width="0.9" opacity="0.3"/>
+<path d="M274,138 L277,141" stroke="#4a5772" stroke-width="1.4"/>
+<!-- the slow-motion cable hanging from the head. Anything that hangs, hangs
+     PLUMB, whatever the mount it hangs off is tilted to. -->
+<path d="M258,146 Q259,158 258,172" fill="none" stroke="#3f4a63" stroke-width="1" opacity="0.75"/>
+<path d="M256.6,172 Q258,170 259.4,172 L259.4,179 Q258,181 256.6,179 Z" fill="#3c4760" opacity="0.8"/>
+<!-- ====================
+     THE STAR WATCHER, from the shared cast rather than hand built: the draft
+     drew its own head, its own cloak and its own eyes, which is exactly the
+     opt out of consistency the cast exists to prevent. Canon, in a brimmed
+     hat, standing at the eyepiece.
+     ==================== -->
+${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
+<!-- the light off the sky, catching the side of him that faces the slot -->
+<path d="M310,152 Q302,180 304,224 L310,224 Q308,180 314,152 Z" fill="#8a9ab0" opacity="0.07"/>
+<!-- his notebook, on a stand beside him, because a watcher is RECORDING -->
+<path d="M352,224 Q362,220 372,224 Q373,228 362,230 Q351,228 352,224 Z" fill="#050a18" opacity="0.45"/>
+<path d="M360,196 L364,196 L363,224 L361,224 Z" fill="#2a3348"/>
+<path d="M354,224 L370,224 L371,226 L353,226 Z" fill="#2a3348"/>
+<path d="M350,190 Q362,186 374,190 L374,197 Q362,193 350,197 Z" fill="#343e55"/>
+<path d="M352,191 Q362,188 372,191 L372,193 Q362,190 352,193 Z" fill="#c8a878" opacity="0.4"/>
+<path d="M355,192.4 L369,192.4" stroke="#0e1730" stroke-width="0.5" opacity="0.4"/>
+<path d="M355,194.2 L365,194.2" stroke="#0e1730" stroke-width="0.5" opacity="0.3"/>
+<!-- ====================
+     Dust in the beam from the slot, drifting up, each fading out at the top
+     of its run so the loop has no seam.
+     ==================== -->
+<circle cx="228" cy="200" r="0.7" fill="#c8d4e8" opacity="0.16"><animate attributeName="cy" values="200;172;146" dur="15s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.2;0" dur="15s" repeatCount="indefinite"/></circle>
+<circle cx="272" cy="208" r="0.8" fill="#c8d4e8" opacity="0.13"><animate attributeName="cy" values="208;180;154" dur="17.5s" repeatCount="indefinite" begin="4s"/><animate attributeName="opacity" values="0;0.17;0" dur="17.5s" repeatCount="indefinite" begin="4s"/></circle>
+<circle cx="250" cy="212" r="0.6" fill="#c8d4e8" opacity="0.14"><animate attributeName="cy" values="212;186;160" dur="13.5s" repeatCount="indefinite" begin="7.5s"/><animate attributeName="opacity" values="0;0.18;0" dur="13.5s" repeatCount="indefinite" begin="7.5s"/></circle>
 </svg>`;
 
-// Scene 3 (puzzle): Same interior with constellations — reuse scene 2
+// Scene 3 (puzzle): Same interior with constellations, reusing scene 2
 STORY_SCENES['observatory_3'] = STORY_SCENES['observatory_2'];
 
 // Scene 4: Observatory flooded with projected starlight, golden projections
 STORY_SCENES['observatory_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <linearGradient id="obsFloodBg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#080e22"/><stop offset="50%" stop-color="#0e1838"/><stop offset="100%" stop-color="#141e48"/>
+  <linearGradient id="obsInteriorBg4" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#080e26"/><stop offset="50%" stop-color="#101a3e"/><stop offset="100%" stop-color="#1a2452"/>
   </linearGradient>
-  <radialGradient id="floodCenter" cx="50%" cy="40%" r="55%">
-    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.12"/><stop offset="50%" stop-color="#ffd700" stop-opacity="0.04"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  <radialGradient id="domeEdge4" cx="50%" cy="100%" r="60%">
+    <stop offset="74%" stop-color="#101a3e" stop-opacity="0"/><stop offset="100%" stop-color="#ffd070" stop-opacity="0.11"/>
+  </radialGradient>
+  <radialGradient id="constGlow4" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.35"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="obs4Pier4" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#1e2536"/><stop offset="38%" stop-color="#3e485e"/><stop offset="100%" stop-color="#181e2d"/>
+  </linearGradient>
+  <linearGradient id="obs4Floor4" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1c2650"/><stop offset="100%" stop-color="#101838"/>
+  </linearGradient>
+  <filter id="starSoft4"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <filter id="constFilter4"><feGaussianBlur stdDeviation="0.8" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <radialGradient id="nebulaA4" cx="30%" cy="25%" r="25%">
+    <stop offset="0%" stop-color="#8040c0" stop-opacity="0.12"/><stop offset="100%" stop-color="#8040c0" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="nebulaB4" cx="75%" cy="35%" r="20%">
+    <stop offset="0%" stop-color="#4060d0" stop-opacity="0.1"/><stop offset="100%" stop-color="#4060d0" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="floodCenter" cx="50%" cy="34%" r="54%">
+    <stop offset="0%" stop-color="#ffd070" stop-opacity="0.16"/><stop offset="42%" stop-color="#e09858" stop-opacity="0.06"/><stop offset="100%" stop-color="#a06090" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="projGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffd700" stop-opacity="0.5"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="nebulaPurple" cx="25%" cy="30%" r="30%">
-    <stop offset="0%" stop-color="#8040c0" stop-opacity="0.1"/><stop offset="100%" stop-color="#8040c0" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="nebulaBlue" cx="70%" cy="25%" r="25%">
-    <stop offset="0%" stop-color="#4060d0" stop-opacity="0.08"/><stop offset="100%" stop-color="#4060d0" stop-opacity="0"/>
-  </radialGradient>
   <filter id="projFilter"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <filter id="goldSoft"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
 </defs>
-<rect width="500" height="260" fill="url(#obsFloodBg)"/>
-<!-- Central golden flood -->
-<circle cx="250" cy="100" r="180" fill="url(#floodCenter)"/>
+<rect width="500" height="260" fill="url(#obsInteriorBg4)"/>
+<!-- ====================
+     THE FLOOD. The scene before this one is this same room, dark. This is it
+     with the projection running, so everything that scene draws is here too
+     and lit differently: the flood IS the difference between them.
+
+     It runs amber into rose rather than lemon. Flat lemon gold over a blue
+     ground makes olive, and olive is what greyed the first pass out.
+     ==================== -->
+<circle cx="250" cy="90" r="182" fill="url(#floodCenter)"/>
 <!-- Nebula washes -->
-<circle cx="120" cy="80" r="100" fill="url(#nebulaPurple)"/>
-<circle cx="380" cy="65" r="80" fill="url(#nebulaBlue)"/>
-<!-- Dense starfield (brighter than scene 2) -->
-<circle cx="30" cy="20" r="1" fill="#fff" opacity="0.7"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/></circle>
-<circle cx="70" cy="45" r="0.7" fill="#fff" opacity="0.5"/>
-<circle cx="105" cy="15" r="0.9" fill="#fff" opacity="0.65"><animate attributeName="opacity" values="0.5;0.9;0.5" dur="3s" repeatCount="indefinite" begin="0.5s"/></circle>
-<circle cx="150" cy="35" r="0.6" fill="#fff" opacity="0.45"/>
-<circle cx="190" cy="22" r="0.8" fill="#fff" opacity="0.55"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.5s" repeatCount="indefinite" begin="1s"/></circle>
-<circle cx="230" cy="50" r="0.7" fill="#fff" opacity="0.5"/>
-<circle cx="270" cy="18" r="1" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="4s" repeatCount="indefinite" begin="0.3s"/></circle>
-<circle cx="315" cy="40" r="0.6" fill="#fff" opacity="0.4"/>
-<circle cx="355" cy="12" r="0.8" fill="#fff" opacity="0.55"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.2s" repeatCount="indefinite" begin="1.5s"/></circle>
-<circle cx="395" cy="30" r="0.7" fill="#fff" opacity="0.5"/>
-<circle cx="440" cy="48" r="0.9" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.8s" repeatCount="indefinite" begin="0.8s"/></circle>
-<circle cx="480" cy="25" r="0.6" fill="#fff" opacity="0.45"/>
-<circle cx="50" cy="75" r="0.5" fill="#fff" opacity="0.35"/>
-<circle cx="160" cy="68" r="0.6" fill="#fff" opacity="0.4"/>
-<circle cx="290" cy="65" r="0.5" fill="#fff" opacity="0.3"/>
-<circle cx="420" cy="70" r="0.6" fill="#fff" opacity="0.4"/>
-<!-- Projected golden star-lines radiating from telescope -->
-<g filter="url(#projFilter)" opacity="0.3">
-  <line x1="250" y1="175" x2="60" y2="30" stroke="#ffd700" stroke-width="1"/>
-  <line x1="250" y1="175" x2="140" y2="15" stroke="#ffd700" stroke-width="0.8"/>
-  <line x1="250" y1="175" x2="250" y2="10" stroke="#ffd700" stroke-width="1"/>
-  <line x1="250" y1="175" x2="360" y2="20" stroke="#ffd700" stroke-width="0.8"/>
-  <line x1="250" y1="175" x2="450" y2="35" stroke="#ffd700" stroke-width="1"/>
-  <line x1="250" y1="175" x2="100" y2="60" stroke="#ffd700" stroke-width="0.6"/>
-  <line x1="250" y1="175" x2="400" y2="55" stroke="#ffd700" stroke-width="0.6"/>
+<circle cx="150" cy="65" r="80" fill="url(#nebulaA4)"/>
+<circle cx="375" cy="90" r="70" fill="url(#nebulaB4)"/>
+<!-- ====================
+     THE MILKY WAY, a band of unresolved light running across the opening.
+     It is what makes the gap in the shutter read as a view of the real sky
+     rather than as a dark panel with dots on it.
+     ==================== -->
+<path d="M0,44 Q120,84 250,66 Q380,48 500,90 L500,126 Q380,86 250,104 Q120,122 0,82 Z" fill="#3a4a80" opacity="0.055"/>
+<path d="M0,58 Q120,92 250,76 Q380,60 500,98 L500,114 Q380,78 250,94 Q120,110 0,76 Z" fill="#6a7ab0" opacity="0.04"/>
+<!-- ====================
+     THE STARFIELD. The draft laid 23 identical white circles in a grid of
+     rows. A sky is not uniform: stars vary in SIZE, in COLOUR temperature
+     from cold blue to warm amber, and the brightest few throw a diffraction
+     cross. They also clear the three constellations, so the puzzle shapes
+     stay legible against them.
+     ==================== -->
+<path d="M252.9,32.7 Q253.2,32.2 253.7,31.8 Q254.2,32.2 254.6,32.7 Q254.2,33.1 253.7,33.5 Q253.2,33.1 252.9,32.7 Z" fill="#f4f8ff" opacity="0.5"/><path d="M444.7,143.9 Q444.8,143.6 445.1,143.5 Q445.5,143.6 445.6,143.9 Q445.5,144.2 445.1,144.3 Q444.8,144.2 444.7,143.9 Z" fill="#f4f8ff" opacity="0.4"/><path d="M237,138.6 Q237.1,138.2 237.4,138.1 Q237.7,138.2 237.9,138.6 Q237.7,138.9 237.4,139 Q237.1,138.9 237,138.6 Z" fill="#f4f8ff" opacity="0.3"/><path d="M313.4,38.8 Q314.6,38.2 315.2,37.1 Q315.8,38.2 316.9,38.8 Q315.8,39.4 315.2,40.6 Q314.6,39.4 313.4,38.8 Z" fill="#f4f8ff" opacity="0.7"/><path d="M93.8,40.2 Q95,39.6 95.6,38.3 Q96.3,39.6 97.5,40.2 Q96.3,40.8 95.6,42.1 Q95,40.8 93.8,40.2 Z" fill="#ffd8c8" opacity="0.3"/><path d="M111.6,11.4 Q114.8,10.6 115.6,7.4 Q116.3,10.6 119.5,11.4 Q116.3,12.1 115.6,15.3 Q114.8,12.1 111.6,11.4 Z" fill="#fff0d8" opacity="0.7"/><path d="M109.1,11.4 L115.6,10.7 L122,11.4 L115.6,12 Z" fill="#fff0d8" opacity="0.2"/><path d="M115.6,4.9 L116.2,11.4 L115.6,17.8 L114.9,11.4 Z" fill="#fff0d8" opacity="0.2"/><path d="M293.7,40.7 Q293.8,40.4 294.1,40.2 Q294.4,40.4 294.5,40.7 Q294.4,41 294.1,41.1 Q293.8,41 293.7,40.7 Z" fill="#fff0d8" opacity="0.5"/><path d="M219.1,125.4 Q219.2,125 219.6,124.9 Q220,125 220.1,125.4 Q220,125.8 219.6,125.9 Q219.2,125.8 219.1,125.4 Z" fill="#fff0d8" opacity="0.2"/><path d="M432.9,68.3 Q433.1,68 433.4,67.8 Q433.8,68 434,68.3 Q433.8,68.7 433.4,68.9 Q433.1,68.7 432.9,68.3 Z" fill="#f4f8ff" opacity="0.4"/><path d="M137.2,140.4 Q137.4,140.1 137.7,140 Q138,140.1 138.2,140.4 Q138,140.7 137.7,140.9 Q137.4,140.7 137.2,140.4 Z" fill="#ffd8c8" opacity="0.3"/><path d="M285.9,142.9 Q287.2,142.3 287.9,140.9 Q288.5,142.3 289.9,142.9 Q288.5,143.6 287.9,144.9 Q287.2,143.6 285.9,142.9 Z" fill="#ffd8c8" opacity="0.2"/><path d="M430.4,105.9 Q430.5,105.6 430.8,105.5 Q431.1,105.6 431.3,105.9 Q431.1,106.2 430.8,106.3 Q430.5,106.2 430.4,105.9 Z" fill="#d8e4ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="4.2s" repeatCount="indefinite" begin="1.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M223.1,28.2 Q223.2,27.9 223.6,27.8 Q223.9,27.9 224,28.2 Q223.9,28.5 223.6,28.6 Q223.2,28.5 223.1,28.2 Z" fill="#ffd8c8" opacity="0.6"/><path d="M365.8,33.6 Q365.9,33.2 366.4,33 Q366.8,33.2 367,33.6 Q366.8,34.1 366.4,34.2 Q365.9,34.1 365.8,33.6 Z" fill="#dfe8ff" opacity="0.4"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.6s" repeatCount="indefinite" begin="0.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M134.6,34.7 Q134.8,34.3 135.2,34.1 Q135.6,34.3 135.8,34.7 Q135.6,35.1 135.2,35.3 Q134.8,35.1 134.6,34.7 Z" fill="#dfe8ff" opacity="0.3"/><path d="M412.6,30.4 Q414.4,29.7 415.1,27.9 Q415.8,29.7 417.6,30.4 Q415.8,31 415.1,32.9 Q414.4,31 412.6,30.4 Z" fill="#fff0d8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.2s" repeatCount="indefinite" begin="0.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M256.5,114.1 Q256.8,113.6 257.3,113.2 Q257.8,113.6 258.2,114.1 Q257.8,114.6 257.3,114.9 Q256.8,114.6 256.5,114.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M70.4,64.6 Q71.2,64.1 71.8,63.3 Q72.3,64.1 73.1,64.6 Q72.3,65.2 71.8,66 Q71.2,65.2 70.4,64.6 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.9s" repeatCount="indefinite" begin="3.9s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M442,63 Q443.4,62.4 444.1,61 Q444.7,62.4 446.1,63 Q444.7,63.7 444.1,65.1 Q443.4,63.7 442,63 Z" fill="#d8e4ff" opacity="0.4"/><path d="M481.7,40.7 Q481.9,40.3 482.2,40.2 Q482.6,40.3 482.7,40.7 Q482.6,41 482.2,41.1 Q481.9,41 481.7,40.7 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="4.7s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M53.2,124.7 Q53.5,124.3 54,123.9 Q54.4,124.3 54.8,124.7 Q54.4,125.2 54,125.5 Q53.5,125.2 53.2,124.7 Z" fill="#ffd8c8" opacity="0.6"><animate attributeName="opacity" values="0.3;1;0.3" dur="4.3s" repeatCount="indefinite" begin="1.3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M293.2,47 Q293.5,46.5 294,46.2 Q294.5,46.5 294.7,47 Q294.5,47.4 294,47.7 Q293.5,47.4 293.2,47 Z" fill="#f4f8ff" opacity="0.4"/><path d="M458.5,80.5 Q459,79.9 459.5,79.4 Q460.1,79.9 460.6,80.5 Q460.1,81 459.5,81.5 Q459,81 458.5,80.5 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="5.3s" repeatCount="indefinite" begin="3.3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M203.8,116.1 Q203.9,115.7 204.2,115.6 Q204.5,115.7 204.6,116.1 Q204.5,116.4 204.2,116.5 Q203.9,116.4 203.8,116.1 Z" fill="#fff0d8" opacity="0.5"/><path d="M429.4,22.6 Q431.8,21.9 432.5,19.6 Q433.2,21.9 435.5,22.6 Q433.2,23.3 432.5,25.7 Q431.8,23.3 429.4,22.6 Z" fill="#f4f8ff" opacity="0.6"/><path d="M32.2,116.5 Q33.5,115.8 34.2,114.6 Q34.8,115.8 36.1,116.5 Q34.8,117.1 34.2,118.4 Q33.5,117.1 32.2,116.5 Z" fill="#ffd8c8" opacity="0.4"/><path d="M435.9,9.8 Q436.2,9.3 436.6,9.1 Q437.1,9.3 437.3,9.8 Q437.1,10.2 436.6,10.5 Q436.2,10.2 435.9,9.8 Z" fill="#ffd8c8" opacity="0.6"/><path d="M63.8,45.8 Q63.9,45.5 64.3,45.3 Q64.7,45.5 64.8,45.8 Q64.7,46.2 64.3,46.3 Q63.9,46.2 63.8,45.8 Z" fill="#f4f8ff" opacity="0.4"/><path d="M119.6,38.7 Q121.8,38 122.5,35.8 Q123.2,38 125.4,38.7 Q123.2,39.4 122.5,41.6 Q121.8,39.4 119.6,38.7 Z" fill="#d8e4ff" opacity="0.6"/><path d="M376.8,34.5 Q377,34 377.4,33.9 Q377.9,34 378,34.5 Q377.9,34.9 377.4,35.1 Q377,34.9 376.8,34.5 Z" fill="#f4f8ff" opacity="0.5"/><path d="M322.9,59.7 Q323,59.3 323.5,59.1 Q323.9,59.3 324.1,59.7 Q323.9,60.1 323.5,60.3 Q323,60.1 322.9,59.7 Z" fill="#d8e4ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="5.1s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M40.9,20.3 Q41.2,19.9 41.7,19.5 Q42.2,19.9 42.6,20.3 Q42.2,20.8 41.7,21.2 Q41.2,20.8 40.9,20.3 Z" fill="#f4f8ff" opacity="0.5"/><path d="M210.6,86.8 Q210.8,86.4 211.2,86.2 Q211.6,86.4 211.7,86.8 Q211.6,87.2 211.2,87.3 Q210.8,87.2 210.6,86.8 Z" fill="#dfe8ff" opacity="0.7"/><path d="M91.4,131.5 Q91.6,131 92,130.8 Q92.5,131 92.7,131.5 Q92.5,131.9 92,132.1 Q91.6,131.9 91.4,131.5 Z" fill="#dfe8ff" opacity="0.3"/><path d="M420.1,52.9 Q420.2,52.6 420.5,52.5 Q420.9,52.6 421,52.9 Q420.9,53.2 420.5,53.3 Q420.2,53.2 420.1,52.9 Z" fill="#ffd8c8" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.7s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M58.2,77.7 Q60.4,77 61.1,74.9 Q61.8,77 63.9,77.7 Q61.8,78.4 61.1,80.6 Q60.4,78.4 58.2,77.7 Z" fill="#dfe8ff" opacity="0.4"/><path d="M323.8,50.1 Q324,49.6 324.4,49.5 Q324.9,49.6 325.1,50.1 Q324.9,50.5 324.4,50.7 Q324,50.5 323.8,50.1 Z" fill="#fff0d8" opacity="0.6"/><path d="M15.4,107.8 Q15.6,107.3 16,107.1 Q16.5,107.3 16.6,107.8 Q16.5,108.2 16,108.4 Q15.6,108.2 15.4,107.8 Z" fill="#dfe8ff" opacity="0.2"/><path d="M337.5,32 Q338.9,31.3 339.6,30 Q340.2,31.3 341.6,32 Q340.2,32.6 339.6,34 Q338.9,32.6 337.5,32 Z" fill="#dfe8ff" opacity="0.6"/><path d="M42.3,85.1 Q42.9,84.5 43.5,83.9 Q44,84.5 44.6,85.1 Q44,85.6 43.5,86.2 Q42.9,85.6 42.3,85.1 Z" fill="#ffd8c8" opacity="0.6"/><path d="M42,85.6 Q42.1,85.2 42.4,85.1 Q42.7,85.2 42.8,85.6 Q42.7,85.9 42.4,86 Q42.1,85.9 42,85.6 Z" fill="#ffd8c8" opacity="0.5"/><path d="M79.9,52.8 Q80,52.5 80.3,52.4 Q80.6,52.5 80.7,52.8 Q80.6,53.1 80.3,53.2 Q80,53.1 79.9,52.8 Z" fill="#d8e4ff" opacity="0.2"/><path d="M309.9,13 Q313.3,12.2 314,8.8 Q314.8,12.2 318.2,13 Q314.8,13.7 314,17.1 Q313.3,13.7 309.9,13 Z" fill="#f4f8ff" opacity="0.3"/><path d="M307.4,13 L314,12.3 L320.6,13 L314,13.6 Z" fill="#f4f8ff" opacity="0.1"/><path d="M314,6.4 L314.7,13 L314,19.6 L313.4,13 Z" fill="#f4f8ff" opacity="0.1"/><path d="M74.9,82 Q75.4,81.5 75.9,81 Q76.4,81.5 76.9,82 Q76.4,82.5 75.9,83 Q75.4,82.5 74.9,82 Z" fill="#ffd8c8" opacity="0.4"/><path d="M22.7,116 Q22.8,115.6 23.2,115.5 Q23.5,115.6 23.6,116 Q23.5,116.3 23.2,116.4 Q22.8,116.3 22.7,116 Z" fill="#ffd8c8" opacity="0.6"/><path d="M34.4,124.2 Q34.6,123.9 34.9,123.7 Q35.3,123.9 35.4,124.2 Q35.3,124.6 34.9,124.7 Q34.6,124.6 34.4,124.2 Z" fill="#ffd8c8" opacity="0.7"/><path d="M160.8,102.4 Q160.9,102 161.3,101.9 Q161.7,102 161.8,102.4 Q161.7,102.8 161.3,102.9 Q160.9,102.8 160.8,102.4 Z" fill="#f4f8ff" opacity="0.7"/><path d="M128.6,6.1 Q128.7,5.8 129.1,5.7 Q129.4,5.8 129.5,6.1 Q129.4,6.4 129.1,6.5 Q128.7,6.4 128.6,6.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M449.2,107.8 Q450.4,107.2 451,106 Q451.7,107.2 452.9,107.8 Q451.7,108.4 451,109.6 Q450.4,108.4 449.2,107.8 Z" fill="#fff0d8" opacity="0.6"/><path d="M438.4,77.7 Q438.6,77.3 439,77.1 Q439.5,77.3 439.7,77.7 Q439.5,78.1 439,78.3 Q438.6,78.1 438.4,77.7 Z" fill="#d8e4ff" opacity="0.4"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="5.8s" repeatCount="indefinite" begin="2.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M457.5,27.5 Q457.6,27.2 458,27 Q458.4,27.2 458.5,27.5 Q458.4,27.9 458,28.1 Q457.6,27.9 457.5,27.5 Z" fill="#dfe8ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.7s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M478.1,58.9 Q478.2,58.5 478.6,58.4 Q478.9,58.5 479.1,58.9 Q478.9,59.2 478.6,59.4 Q478.2,59.2 478.1,58.9 Z" fill="#fff0d8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.8s" repeatCount="indefinite" begin="2.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M435.9,27.8 Q436,27.5 436.3,27.4 Q436.6,27.5 436.7,27.8 Q436.6,28.1 436.3,28.2 Q436,28.1 435.9,27.8 Z" fill="#ffd8c8" opacity="0.2"/><path d="M107,37.3 Q107.5,36.8 108,36.2 Q108.5,36.8 109.1,37.3 Q108.5,37.8 108,38.3 Q107.5,37.8 107,37.3 Z" fill="#dfe8ff" opacity="0.4"/><path d="M398.1,9.1 Q399.7,8.4 400.3,6.9 Q401,8.4 402.6,9.1 Q401,9.8 400.3,11.3 Q399.7,9.8 398.1,9.1 Z" fill="#f4f8ff" opacity="0.4"/><path d="M53.6,99.9 Q53.8,99.5 54.2,99.3 Q54.6,99.5 54.8,99.9 Q54.6,100.3 54.2,100.5 Q53.8,100.3 53.6,99.9 Z" fill="#f4f8ff" opacity="0.6"/><path d="M175.2,145.6 Q175.9,145.1 176.4,144.4 Q177,145.1 177.6,145.6 Q177,146.2 176.4,146.8 Q175.9,146.2 175.2,145.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M476.5,31.5 Q476.7,31.1 477.1,30.9 Q477.5,31.1 477.7,31.5 Q477.5,31.9 477.1,32.1 Q476.7,31.9 476.5,31.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M62.6,19.9 Q63,19.4 63.5,19 Q64,19.4 64.4,19.9 Q64,20.4 63.5,20.8 Q63,20.4 62.6,19.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M339.2,13.1 Q341.1,12.4 341.8,10.5 Q342.5,12.4 344.4,13.1 Q342.5,13.8 341.8,15.7 Q341.1,13.8 339.2,13.1 Z" fill="#f4f8ff" opacity="0.3"/><path d="M94.1,145.2 Q94.6,144.7 95.1,144.2 Q95.6,144.7 96.1,145.2 Q95.6,145.8 95.1,146.3 Q94.6,145.8 94.1,145.2 Z" fill="#d8e4ff" opacity="0.3"/><path d="M266.8,145.9 Q266.9,145.6 267.2,145.5 Q267.6,145.6 267.7,145.9 Q267.6,146.3 267.2,146.4 Q266.9,146.3 266.8,145.9 Z" fill="#dfe8ff" opacity="0.2"/><path d="M46.7,148.7 Q47.3,148.1 47.8,147.5 Q48.4,148.1 49,148.7 Q48.4,149.2 47.8,149.8 Q47.3,149.2 46.7,148.7 Z" fill="#f4f8ff" opacity="0.4"/><path d="M282.5,92.7 Q285.2,91.9 285.9,89.2 Q286.6,91.9 289.3,92.7 Q286.6,93.4 285.9,96.1 Q285.2,93.4 282.5,92.7 Z" fill="#ffd8c8" opacity="0.5"/><path d="M279.9,92.7 L285.9,92.1 L291.9,92.7 L285.9,93.3 Z" fill="#ffd8c8" opacity="0.1"/><path d="M285.9,86.6 L286.5,92.7 L285.9,98.7 L285.3,92.7 Z" fill="#ffd8c8" opacity="0.1"/><path d="M447.6,65.2 Q448,64.7 448.5,64.3 Q449,64.7 449.3,65.2 Q449,65.7 448.5,66 Q448,65.7 447.6,65.2 Z" fill="#dfe8ff" opacity="0.6"/><path d="M453.7,48 Q454,47.6 454.4,47.4 Q454.9,47.6 455.1,48 Q454.9,48.5 454.4,48.7 Q454,48.5 453.7,48 Z" fill="#dfe8ff" opacity="0.4"/><path d="M474.3,124.1 Q474.4,123.8 474.7,123.7 Q475.1,123.8 475.2,124.1 Q475.1,124.4 474.7,124.5 Q474.4,124.4 474.3,124.1 Z" fill="#f4f8ff" opacity="0.5"/><path d="M174.8,129.4 Q175.9,128.8 176.5,127.7 Q177.1,128.8 178.2,129.4 Q177.1,130 176.5,131.1 Q175.9,130 174.8,129.4 Z" fill="#fff0d8" opacity="0.5"/><path d="M170.6,80.3 Q170.7,80 171,79.9 Q171.3,80 171.5,80.3 Q171.3,80.7 171,80.8 Q170.7,80.7 170.6,80.3 Z" fill="#f4f8ff" opacity="0.5"/><path d="M426.2,141.7 Q426.3,141.3 426.7,141.1 Q427.1,141.3 427.3,141.7 Q427.1,142.1 426.7,142.2 Q426.3,142.1 426.2,141.7 Z" fill="#dfe8ff" opacity="0.6"/><path d="M283.5,63 Q283.7,62.5 284.1,62.4 Q284.5,62.5 284.7,63 Q284.5,63.4 284.1,63.5 Q283.7,63.4 283.5,63 Z" fill="#f4f8ff" opacity="0.4"/><path d="M12.7,49.8 Q12.8,49.5 13.1,49.4 Q13.4,49.5 13.5,49.8 Q13.4,50.2 13.1,50.3 Q12.8,50.2 12.7,49.8 Z" fill="#ffd8c8" opacity="0.4"/><path d="M437.1,54.5 Q437.8,53.9 438.3,53.2 Q438.9,53.9 439.6,54.5 Q438.9,55 438.3,55.7 Q437.8,55 437.1,54.5 Z" fill="#ffd8c8" opacity="0.5"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4.7s" repeatCount="indefinite" begin="0.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M203.4,39.7 Q207.6,38.9 208.4,34.7 Q209.2,38.9 213.4,39.7 Q209.2,40.5 208.4,44.7 Q207.6,40.5 203.4,39.7 Z" fill="#f4f8ff" opacity="0.6"/><path d="M201.2,39.7 L208.4,39 L215.6,39.7 L208.4,40.4 Z" fill="#f4f8ff" opacity="0.1"/><path d="M208.4,32.5 L209.1,39.7 L208.4,46.9 L207.7,39.7 Z" fill="#f4f8ff" opacity="0.1"/><path d="M169.6,13.5 Q169.7,13.1 170.1,13 Q170.5,13.1 170.7,13.5 Q170.5,13.9 170.1,14.1 Q169.7,13.9 169.6,13.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M213.6,59.8 Q213.7,59.4 214.1,59.2 Q214.6,59.4 214.7,59.8 Q214.6,60.2 214.1,60.4 Q213.7,60.2 213.6,59.8 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.9s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M263.2,127.7 Q265.3,127 266,124.9 Q266.7,127 268.8,127.7 Q266.7,128.4 266,130.5 Q265.3,128.4 263.2,127.7 Z" fill="#fff0d8" opacity="0.2"/><path d="M450.9,21.1 Q451.1,20.8 451.4,20.6 Q451.8,20.8 451.9,21.1 Q451.8,21.5 451.4,21.6 Q451.1,21.5 450.9,21.1 Z" fill="#dfe8ff" opacity="0.7"/><path d="M344.3,10.2 Q345.8,9.6 346.5,8.1 Q347.1,9.6 348.6,10.2 Q347.1,10.9 346.5,12.4 Q345.8,10.9 344.3,10.2 Z" fill="#fff0d8" opacity="0.4"/><path d="M152.3,69.2 Q153.3,68.6 153.9,67.5 Q154.5,68.6 155.5,69.2 Q154.5,69.8 153.9,70.8 Q153.3,69.8 152.3,69.2 Z" fill="#dfe8ff" opacity="0.7"/><path d="M427.8,114.1 Q428,113.7 428.3,113.6 Q428.7,113.7 428.9,114.1 Q428.7,114.5 428.3,114.6 Q428,114.5 427.8,114.1 Z" fill="#f4f8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.8s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M198.3,128.2 Q198.4,127.8 198.7,127.7 Q199.1,127.8 199.2,128.2 Q199.1,128.5 198.7,128.6 Q198.4,128.5 198.3,128.2 Z" fill="#dfe8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="5.7s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M285.5,133.1 Q285.7,132.8 286.1,132.6 Q286.4,132.8 286.6,133.1 Q286.4,133.5 286.1,133.6 Q285.7,133.5 285.5,133.1 Z" fill="#dfe8ff" opacity="0.5"/><path d="M313.8,23.9 Q316.6,23.2 317.3,20.4 Q318,23.2 320.8,23.9 Q318,24.7 317.3,27.5 Q316.6,24.7 313.8,23.9 Z" fill="#dfe8ff" opacity="0.4"/><path d="M311.2,23.9 L317.3,23.3 L323.4,23.9 L317.3,24.5 Z" fill="#dfe8ff" opacity="0.1"/><path d="M317.3,17.8 L317.9,23.9 L317.3,30 L316.7,23.9 Z" fill="#dfe8ff" opacity="0.1"/><path d="M30.1,129.4 Q32.2,128.7 32.9,126.5 Q33.6,128.7 35.8,129.4 Q33.6,130.1 32.9,132.3 Q32.2,130.1 30.1,129.4 Z" fill="#ffd8c8" opacity="0.4"/><path d="M401,120.1 Q401.2,119.8 401.5,119.6 Q401.9,119.8 402,120.1 Q401.9,120.5 401.5,120.6 Q401.2,120.5 401,120.1 Z" fill="#ffd8c8" opacity="0.4"/><path d="M221.4,52.4 Q221.6,52.1 221.9,51.9 Q222.3,52.1 222.4,52.4 Q222.3,52.8 221.9,52.9 Q221.6,52.8 221.4,52.4 Z" fill="#dfe8ff" opacity="0.6"/><path d="M277.8,11 Q280,10.3 280.7,8.1 Q281.4,10.3 283.6,11 Q281.4,11.7 280.7,13.8 Q280,11.7 277.8,11 Z" fill="#d8e4ff" opacity="0.7"/><path d="M363,110.5 Q363.7,110 364.3,109.3 Q364.8,110 365.5,110.5 Q364.8,111.1 364.3,111.8 Q363.7,111.1 363,110.5 Z" fill="#dfe8ff" opacity="0.2"/><path d="M51.5,79 Q51.6,78.7 51.9,78.6 Q52.2,78.7 52.3,79 Q52.2,79.3 51.9,79.4 Q51.6,79.3 51.5,79 Z" fill="#f4f8ff" opacity="0.6"/><path d="M394,30.7 Q394.8,30.1 395.3,29.3 Q395.9,30.1 396.7,30.7 Q395.9,31.3 395.3,32.1 Q394.8,31.3 394,30.7 Z" fill="#f4f8ff" opacity="0.5"/><path d="M72.5,131.6 Q73.2,131 73.8,130.3 Q74.3,131 75.1,131.6 Q74.3,132.2 73.8,132.9 Q73.2,132.2 72.5,131.6 Z" fill="#fff0d8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="5.7s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M420.4,72.9 Q420.7,72.5 421.1,72.2 Q421.6,72.5 421.8,72.9 Q421.6,73.4 421.1,73.6 Q420.7,73.4 420.4,72.9 Z" fill="#f4f8ff" opacity="0.3"/><path d="M178.4,106 Q178.5,105.7 178.9,105.5 Q179.3,105.7 179.4,106 Q179.3,106.4 178.9,106.5 Q178.5,106.4 178.4,106 Z" fill="#f4f8ff" opacity="0.3"/><path d="M371.4,143 Q371.9,142.5 372.4,141.9 Q372.9,142.5 373.5,143 Q372.9,143.5 372.4,144 Q371.9,143.5 371.4,143 Z" fill="#dfe8ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.1s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M92.6,32.1 Q95.4,31.4 96.2,28.6 Q96.9,31.4 99.7,32.1 Q96.9,32.9 96.2,35.7 Q95.4,32.9 92.6,32.1 Z" fill="#f4f8ff" opacity="0.5"/><path d="M90,32.1 L96.2,31.5 L102.3,32.1 L96.2,32.8 Z" fill="#f4f8ff" opacity="0.1"/><path d="M96.2,26 L96.8,32.1 L96.2,38.3 L95.6,32.1 Z" fill="#f4f8ff" opacity="0.1"/><path d="M223.7,22.3 Q223.8,21.9 224.2,21.8 Q224.6,21.9 224.7,22.3 Q224.6,22.7 224.2,22.8 Q223.8,22.7 223.7,22.3 Z" fill="#fff0d8" opacity="0.4"/><path d="M424.1,124.4 Q425.9,123.7 426.6,121.9 Q427.3,123.7 429.1,124.4 Q427.3,125.1 426.6,126.9 Q425.9,125.1 424.1,124.4 Z" fill="#dfe8ff" opacity="0.5"/><path d="M167.6,29.2 Q167.7,28.8 168,28.7 Q168.3,28.8 168.4,29.2 Q168.3,29.5 168,29.6 Q167.7,29.5 167.6,29.2 Z" fill="#ffd8c8" opacity="0.3"/><path d="M176,79 Q176.1,78.6 176.5,78.5 Q176.8,78.6 176.9,79 Q176.8,79.3 176.5,79.4 Q176.1,79.3 176,79 Z" fill="#ffd8c8" opacity="0.6"/><path d="M47.8,27.9 Q50,27.2 50.7,25 Q51.4,27.2 53.5,27.9 Q51.4,28.6 50.7,30.8 Q50,28.6 47.8,27.9 Z" fill="#f4f8ff" opacity="0.3"/><path d="M275.4,63.4 Q275.5,63.1 275.8,63 Q276.1,63.1 276.2,63.4 Q276.1,63.7 275.8,63.8 Q275.5,63.7 275.4,63.4 Z" fill="#f4f8ff" opacity="0.6"/><path d="M144.9,6.7 Q145.5,6.2 146.1,5.6 Q146.6,6.2 147.2,6.7 Q146.6,7.2 146.1,7.8 Q145.5,7.2 144.9,6.7 Z" fill="#f4f8ff" opacity="0.6"/><path d="M329.2,113.2 Q329.3,112.9 329.7,112.7 Q330,112.9 330.1,113.2 Q330,113.5 329.7,113.6 Q329.3,113.5 329.2,113.2 Z" fill="#d8e4ff" opacity="0.5"/><path d="M359,21.9 Q359.1,21.6 359.5,21.5 Q359.8,21.6 359.9,21.9 Q359.8,22.3 359.5,22.4 Q359.1,22.3 359,21.9 Z" fill="#d8e4ff" opacity="0.5"/><path d="M236.6,130 Q236.9,129.5 237.4,129.2 Q237.9,129.5 238.2,130 Q237.9,130.5 237.4,130.8 Q236.9,130.5 236.6,130 Z" fill="#f4f8ff" opacity="0.3"/><path d="M485.3,17.4 Q485.5,17 485.9,16.8 Q486.3,17 486.5,17.4 Q486.3,17.8 485.9,18 Q485.5,17.8 485.3,17.4 Z" fill="#f4f8ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.7s" repeatCount="indefinite" begin="1.9s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M84.2,72.2 Q84.4,71.8 84.8,71.6 Q85.2,71.8 85.3,72.2 Q85.2,72.6 84.8,72.8 Q84.4,72.6 84.2,72.2 Z" fill="#d8e4ff" opacity="0.6"/><path d="M444.4,17.6 Q444.6,17.1 445.1,17 Q445.5,17.1 445.7,17.6 Q445.5,18 445.1,18.2 Q444.6,18 444.4,17.6 Z" fill="#fff0d8" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.6s" repeatCount="indefinite" begin="0.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M487.6,16.9 Q487.8,16.5 488.1,16.4 Q488.5,16.5 488.6,16.9 Q488.5,17.2 488.1,17.4 Q487.8,17.2 487.6,16.9 Z" fill="#dfe8ff" opacity="0.7"/><path d="M152.4,118.1 Q154.1,117.4 154.8,115.7 Q155.5,117.4 157.2,118.1 Q155.5,118.8 154.8,120.5 Q154.1,118.8 152.4,118.1 Z" fill="#f4f8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.3s" repeatCount="indefinite" begin="2.1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M74.7,124 Q75.2,123.5 75.7,123 Q76.2,123.5 76.7,124 Q76.2,124.5 75.7,125 Q75.2,124.5 74.7,124 Z" fill="#fff0d8" opacity="0.5"/><path d="M428.4,113.6 Q428.7,113.1 429.2,112.8 Q429.7,113.1 430.1,113.6 Q429.7,114.1 429.2,114.5 Q428.7,114.1 428.4,113.6 Z" fill="#f4f8ff" opacity="0.5"/><path d="M427.9,64.7 Q428,64.4 428.4,64.2 Q428.7,64.4 428.8,64.7 Q428.7,65 428.4,65.1 Q428,65 427.9,64.7 Z" fill="#fff0d8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="5.9s" repeatCount="indefinite" begin="2.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M53.3,141.1 Q56,140.4 56.7,137.7 Q57.4,140.4 60.2,141.1 Q57.4,141.8 56.7,144.6 Q56,141.8 53.3,141.1 Z" fill="#ffd8c8" opacity="0.2"/><path d="M50.7,141.1 L56.7,140.5 L62.8,141.1 L56.7,141.7 Z" fill="#ffd8c8" opacity="0.1"/><path d="M56.7,135.1 L57.3,141.1 L56.7,147.2 L56.1,141.1 Z" fill="#ffd8c8" opacity="0.1"/><path d="M58.5,65.3 Q58.6,65 59,64.9 Q59.3,65 59.4,65.3 Q59.3,65.7 59,65.8 Q58.6,65.7 58.5,65.3 Z" fill="#ffd8c8" opacity="0.6"/><path d="M42.9,8.6 Q43.5,8 44.1,7.4 Q44.6,8 45.3,8.6 Q44.6,9.1 44.1,9.7 Q43.5,9.1 42.9,8.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M287.4,72 Q287.6,71.6 288,71.4 Q288.4,71.6 288.6,72 Q288.4,72.4 288,72.6 Q287.6,72.4 287.4,72 Z" fill="#d8e4ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="3.5s" repeatCount="indefinite" begin="0.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M276.8,136.3 Q277.4,135.7 277.9,135.1 Q278.4,135.7 279,136.3 Q278.4,136.8 277.9,137.4 Q277.4,136.8 276.8,136.3 Z" fill="#ffd8c8" opacity="0.4"/><path d="M170.5,60.2 Q172.9,59.5 173.6,57.2 Q174.3,59.5 176.7,60.2 Q174.3,61 173.6,63.3 Q172.9,61 170.5,60.2 Z" fill="#dfe8ff" opacity="0.4"/><path d="M29.6,79.7 Q32.2,79 32.9,76.5 Q33.6,79 36.2,79.7 Q33.6,80.4 32.9,83 Q32.2,80.4 29.6,79.7 Z" fill="#fff0d8" opacity="0.2"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3.2s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M27,79.7 L32.9,79.1 L38.8,79.7 L32.9,80.3 Z" fill="#fff0d8" opacity="0.1"/><path d="M32.9,73.8 L33.5,79.7 L32.9,85.6 L32.3,79.7 Z" fill="#fff0d8" opacity="0.1"/><path d="M69.4,65.4 Q69.6,65 69.9,64.9 Q70.3,65 70.5,65.4 Q70.3,65.8 69.9,65.9 Q69.6,65.8 69.4,65.4 Z" fill="#d8e4ff" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.4s" repeatCount="indefinite" begin="4.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M278.2,206.4 Q278.9,205.8 279.4,205.2 Q280,205.8 280.7,206.4 Q280,206.9 279.4,207.6 Q278.9,206.9 278.2,206.4 Z" fill="#f4f8ff" opacity="0.7"/><path d="M90.6,180.8 Q91.9,180.1 92.6,178.7 Q93.2,180.1 94.6,180.8 Q93.2,181.4 92.6,182.8 Q91.9,181.4 90.6,180.8 Z" fill="#dfe8ff" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="4.4s" repeatCount="indefinite" begin="3.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M433.6,195.3 Q433.7,194.9 434.1,194.8 Q434.5,194.9 434.6,195.3 Q434.5,195.7 434.1,195.8 Q433.7,195.7 433.6,195.3 Z" fill="#f4f8ff" opacity="0.3"/><path d="M66.1,181.9 Q66.5,181.4 67,181 Q67.5,181.4 67.9,181.9 Q67.5,182.4 67,182.8 Q66.5,182.4 66.1,181.9 Z" fill="#f4f8ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.4s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M439.6,174.7 Q439.9,174.2 440.3,174 Q440.8,174.2 441.1,174.7 Q440.8,175.2 440.3,175.4 Q439.9,175.2 439.6,174.7 Z" fill="#d8e4ff" opacity="0.5"/><path d="M81.7,195.1 Q81.9,194.7 82.2,194.6 Q82.6,194.7 82.7,195.1 Q82.6,195.4 82.2,195.6 Q81.9,195.4 81.7,195.1 Z" fill="#ffd8c8" opacity="0.2"/><path d="M313.8,192.6 Q315.4,191.9 316.1,190.3 Q316.8,191.9 318.3,192.6 Q316.8,193.2 316.1,194.8 Q315.4,193.2 313.8,192.6 Z" fill="#f4f8ff" opacity="0.5"/><path d="M151.4,187.1 Q151.5,186.8 151.8,186.7 Q152.1,186.8 152.3,187.1 Q152.1,187.4 151.8,187.5 Q151.5,187.4 151.4,187.1 Z" fill="#dfe8ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.7s" repeatCount="indefinite" begin="2.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M436.4,182.4 Q436.6,182.1 436.9,181.9 Q437.3,182.1 437.4,182.4 Q437.3,182.8 436.9,182.9 Q436.6,182.8 436.4,182.4 Z" fill="#dfe8ff" opacity="0.6"/><path d="M476.7,186.6 Q477,186.1 477.5,185.9 Q477.9,186.1 478.2,186.6 Q477.9,187.1 477.5,187.3 Q477,187.1 476.7,186.6 Z" fill="#fff0d8" opacity="0.7"/><path d="M109,206.2 Q109.8,205.6 110.4,204.8 Q111,205.6 111.8,206.2 Q111,206.8 110.4,207.6 Q109.8,206.8 109,206.2 Z" fill="#d8e4ff" opacity="0.3"/><path d="M50,162.7 Q50.1,162.4 50.4,162.3 Q50.7,162.4 50.8,162.7 Q50.7,163 50.4,163.2 Q50.1,163 50,162.7 Z" fill="#f4f8ff" opacity="0.7"/><path d="M385.2,157.3 Q385.3,156.9 385.7,156.8 Q386.1,156.9 386.2,157.3 Q386.1,157.7 385.7,157.8 Q385.3,157.7 385.2,157.3 Z" fill="#f4f8ff" opacity="0.4"/><path d="M288.4,163.8 Q288.6,163.4 289,163.2 Q289.4,163.4 289.6,163.8 Q289.4,164.2 289,164.4 Q288.6,164.2 288.4,163.8 Z" fill="#dfe8ff" opacity="0.7"/><path d="M45.5,190.4 Q46.1,189.8 46.7,189.2 Q47.2,189.8 47.8,190.4 Q47.2,190.9 46.7,191.6 Q46.1,190.9 45.5,190.4 Z" fill="#f4f8ff" opacity="0.5"/><path d="M20.1,183.9 Q20.5,183.4 21,182.9 Q21.5,183.4 22,183.9 Q21.5,184.4 21,184.8 Q20.5,184.4 20.1,183.9 Z" fill="#ffd8c8" opacity="0.6"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="5.0s" repeatCount="indefinite" begin="2.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M223.5,152.6 Q224.2,152 224.8,151.3 Q225.4,152 226,152.6 Q225.4,153.1 224.8,153.8 Q224.2,153.1 223.5,152.6 Z" fill="#dfe8ff" opacity="0.4"/><path d="M23.9,166.8 Q24.5,166.2 25,165.7 Q25.5,166.2 26.1,166.8 Q25.5,167.3 25,167.8 Q24.5,167.3 23.9,166.8 Z" fill="#d8e4ff" opacity="0.3"/><path d="M437,164.4 Q437.1,164 437.6,163.8 Q438,164 438.2,164.4 Q438,164.9 437.6,165 Q437.1,164.9 437,164.4 Z" fill="#d8e4ff" opacity="0.6"/><path d="M346.7,159.8 Q347,159.3 347.4,159.1 Q347.9,159.3 348.1,159.8 Q347.9,160.2 347.4,160.5 Q347,160.2 346.7,159.8 Z" fill="#ffd8c8" opacity="0.5"/><path d="M87.4,192.4 Q87.6,192.1 87.9,191.9 Q88.3,192.1 88.4,192.4 Q88.3,192.8 87.9,192.9 Q87.6,192.8 87.4,192.4 Z" fill="#f4f8ff" opacity="0.6"/><path d="M300.5,166.2 Q301.8,165.6 302.4,164.3 Q303,165.6 304.2,166.2 Q303,166.8 302.4,168 Q301.8,166.8 300.5,166.2 Z" fill="#f4f8ff" opacity="0.2"/><path d="M114.5,155.1 Q114.6,154.7 115,154.5 Q115.5,154.7 115.6,155.1 Q115.5,155.5 115,155.7 Q114.6,155.5 114.5,155.1 Z" fill="#d8e4ff" opacity="0.4"/><path d="M154.1,152 Q154.3,151.6 154.7,151.4 Q155.2,151.6 155.4,152 Q155.2,152.5 154.7,152.7 Q154.3,152.5 154.1,152 Z" fill="#f4f8ff" opacity="0.2"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.0s" repeatCount="indefinite" begin="1.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M30.7,153.8 Q33.7,153 34.4,150.1 Q35.2,153 38.1,153.8 Q35.2,154.5 34.4,157.4 Q33.7,154.5 30.7,153.8 Z" fill="#f4f8ff" opacity="0.5"/><path d="M28.2,153.8 L34.4,153.1 L40.7,153.8 L34.4,154.4 Z" fill="#f4f8ff" opacity="0.1"/><path d="M34.4,147.5 L35.1,153.8 L34.4,160 L33.8,153.8 Z" fill="#f4f8ff" opacity="0.1"/><path d="M389.7,210.5 Q389.9,210.2 390.3,210 Q390.7,210.2 390.8,210.5 Q390.7,210.9 390.3,211.1 Q389.9,210.9 389.7,210.5 Z" fill="#ffd8c8" opacity="0.7"/><path d="M396.5,190.7 Q396.7,190.3 397.1,190.1 Q397.6,190.3 397.8,190.7 Q397.6,191.1 397.1,191.3 Q396.7,191.1 396.5,190.7 Z" fill="#f4f8ff" opacity="0.3"/><path d="M347.6,198.1 Q347.7,197.7 348.1,197.5 Q348.5,197.7 348.7,198.1 Q348.5,198.5 348.1,198.6 Q347.7,198.5 347.6,198.1 Z" fill="#ffd8c8" opacity="0.3"/><path d="M75.2,180.9 Q75.4,180.5 75.7,180.4 Q76.1,180.5 76.3,180.9 Q76.1,181.3 75.7,181.4 Q75.4,181.3 75.2,180.9 Z" fill="#fff0d8" opacity="0.6"/><path d="M223.2,154.8 Q223.5,154.3 223.9,154 Q224.4,154.3 224.7,154.8 Q224.4,155.3 223.9,155.6 Q223.5,155.3 223.2,154.8 Z" fill="#d8e4ff" opacity="0.6"/><path d="M189,176.9 Q189.1,176.6 189.4,176.5 Q189.7,176.6 189.9,176.9 Q189.7,177.2 189.4,177.4 Q189.1,177.2 189,176.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M88.9,184.6 Q90,183.9 90.6,182.8 Q91.3,183.9 92.4,184.6 Q91.3,185.2 90.6,186.3 Q90,185.2 88.9,184.6 Z" fill="#f4f8ff" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.3s" repeatCount="indefinite" begin="1.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M11,191.5 Q11.1,191.2 11.4,191.1 Q11.7,191.2 11.8,191.5 Q11.7,191.8 11.4,191.9 Q11.1,191.8 11,191.5 Z" fill="#fff0d8" opacity="0.5"/><path d="M167.5,161.7 Q170.8,160.9 171.6,157.6 Q172.3,160.9 175.6,161.7 Q172.3,162.4 171.6,165.7 Q170.8,162.4 167.5,161.7 Z" fill="#f4f8ff" opacity="0.3"/><path d="M165,161.7 L171.6,161 L178.1,161.7 L171.6,162.3 Z" fill="#f4f8ff" opacity="0.1"/><path d="M171.6,155.1 L172.2,161.7 L171.6,168.2 L170.9,161.7 Z" fill="#f4f8ff" opacity="0.1"/><path d="M195.4,197.3 Q197,196.7 197.7,195 Q198.3,196.7 200,197.3 Q198.3,198 197.7,199.7 Q197,198 195.4,197.3 Z" fill="#ffd8c8" opacity="0.7"/><path d="M365,162.7 Q365.8,162.1 366.4,161.2 Q367,162.1 367.8,162.7 Q367,163.2 366.4,164.1 Q365.8,163.2 365,162.7 Z" fill="#fff0d8" opacity="0.3"/><path d="M117.1,205.5 Q117.7,205 118.2,204.4 Q118.7,205 119.4,205.5 Q118.7,206.1 118.2,206.7 Q117.7,206.1 117.1,205.5 Z" fill="#fff0d8" opacity="0.2"/><path d="M83.9,195.7 Q85.6,195.1 86.3,193.4 Q86.9,195.1 88.6,195.7 Q86.9,196.4 86.3,198.1 Q85.6,196.4 83.9,195.7 Z" fill="#dfe8ff" opacity="0.7"/><path d="M401.4,187.6 Q401.6,187.3 401.9,187.1 Q402.3,187.3 402.4,187.6 Q402.3,188 401.9,188.2 Q401.6,188 401.4,187.6 Z" fill="#f4f8ff" opacity="0.6"/><path d="M103,189.8 Q103.1,189.5 103.5,189.3 Q103.9,189.5 104,189.8 Q103.9,190.2 103.5,190.3 Q103.1,190.2 103,189.8 Z" fill="#ffd8c8" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="5.8s" repeatCount="indefinite" begin="3.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M36.5,160.5 Q36.6,160.2 36.9,160.1 Q37.2,160.2 37.3,160.5 Q37.2,160.8 36.9,160.9 Q36.6,160.8 36.5,160.5 Z" fill="#d8e4ff" opacity="0.7"/><path d="M353.9,209.7 Q354.4,209.2 355,208.6 Q355.5,209.2 356,209.7 Q355.5,210.2 355,210.7 Q354.4,210.2 353.9,209.7 Z" fill="#f4f8ff" opacity="0.4"/><path d="M124,188.4 Q125.7,187.8 126.4,186 Q127.1,187.8 128.9,188.4 Q127.1,189.1 126.4,190.9 Q125.7,189.1 124,188.4 Z" fill="#ffd8c8" opacity="0.4"/><path d="M394.1,209.7 Q395,209.1 395.5,208.3 Q396.1,209.1 396.9,209.7 Q396.1,210.3 395.5,211.1 Q395,210.3 394.1,209.7 Z" fill="#d8e4ff" opacity="0.5"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="3.6s" repeatCount="indefinite" begin="0.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M30.1,157.9 Q30.3,157.5 30.8,157.3 Q31.2,157.5 31.4,157.9 Q31.2,158.4 30.8,158.6 Q30.3,158.4 30.1,157.9 Z" fill="#f4f8ff" opacity="0.5"/><path d="M99.9,163 Q100,162.6 100.5,162.4 Q100.9,162.6 101,163 Q100.9,163.4 100.5,163.6 Q100,163.4 99.9,163 Z" fill="#fff0d8" opacity="0.3"/>
+<!-- ====================
+     THE THREE CONSTELLATIONS. Still eight, six and five stars in the S, K
+     and Y the puzzle needs, and still with NO connecting lines: the player
+     joins them. What changed is that each star is now a star, with a cross
+     of light on it, rather than a flat gold button.
+     ==================== -->
+<g filter="url(#constFilter4)">
+<g opacity="0.9"><path d="M122,55 Q128.9,53.9 130,47 Q131.1,53.9 138,55 Q131.1,56.1 130,63 Q128.9,56.1 122,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M130,53.1 Q131.2,53.8 131.9,55 Q131.2,56.2 130,56.9 Q128.8,56.2 128.1,55 Q128.8,53.8 130,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M110,52 Q116.9,50.9 118,44 Q119.1,50.9 126,52 Q119.1,53.1 118,60 Q116.9,53.1 110,52 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M118,50.1 Q119.2,50.8 119.9,52 Q119.2,53.2 118,53.9 Q116.8,53.2 116.1,52 Q116.8,50.8 118,50.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M100,57 Q106.9,55.9 108,49 Q109.1,55.9 116,57 Q109.1,58.1 108,65 Q106.9,58.1 100,57 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M108,55.1 Q109.2,55.8 109.9,57 Q109.2,58.2 108,58.9 Q106.8,58.2 106.1,57 Q106.8,55.8 108,55.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,70 Q110.9,68.9 112,62 Q113.1,68.9 120,70 Q113.1,71.1 112,78 Q110.9,71.1 104,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,68.1 Q113.2,68.8 113.9,70 Q113.2,71.2 112,71.9 Q110.8,71.2 110.1,70 Q110.8,68.8 112,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M114,78 Q120.9,76.9 122,70 Q123.1,76.9 130,78 Q123.1,79.1 122,86 Q120.9,79.1 114,78 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M122,76.1 Q123.2,76.8 123.9,78 Q123.2,79.2 122,79.9 Q120.8,79.2 120.1,78 Q120.8,76.8 122,76.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M124,85 Q130.9,83.9 132,77 Q133.1,83.9 140,85 Q133.1,86.1 132,93 Q130.9,86.1 124,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M132,83.1 Q133.2,83.8 133.9,85 Q133.2,86.2 132,86.9 Q130.8,86.2 130.1,85 Q130.8,83.8 132,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M117,95 Q123.9,93.9 125,87 Q126.1,93.9 133,95 Q126.1,96.1 125,103 Q123.9,96.1 117,95 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M125,93.1 Q126.2,93.8 126.9,95 Q126.2,96.2 125,96.9 Q123.8,96.2 123.1,95 Q123.8,93.8 125,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,98 Q110.9,96.9 112,90 Q113.1,96.9 120,98 Q113.1,99.1 112,106 Q110.9,99.1 104,98 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,96.1 Q113.2,96.8 113.9,98 Q113.2,99.2 112,99.9 Q110.8,99.2 110.1,98 Q110.8,96.8 112,96.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="120" cy="75" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
-<!-- Floating golden projection dots -->
-<circle cx="80" cy="100" r="3" fill="url(#projGlow)" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/></circle>
-<circle cx="170" cy="120" r="4" fill="url(#projGlow)" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.5s" repeatCount="indefinite" begin="0.5s"/></circle>
-<circle cx="250" cy="90" r="5" fill="url(#projGlow)" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.5;0.9;0.5" dur="3.5s" repeatCount="indefinite" begin="1s"/></circle>
-<circle cx="330" cy="115" r="4" fill="url(#projGlow)" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.8s" repeatCount="indefinite" begin="0.3s"/></circle>
-<circle cx="420" cy="95" r="3" fill="url(#projGlow)" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.2s" repeatCount="indefinite" begin="1.5s"/></circle>
-<!-- Smaller floating gold motes -->
-<circle cx="120" cy="140" r="1.5" fill="#ffd700" opacity="0.4" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="4s" repeatCount="indefinite" begin="0.8s"/><animate attributeName="cy" values="140;130;140" dur="6s" repeatCount="indefinite"/></circle>
-<circle cx="200" cy="150" r="1.5" fill="#ffd700" opacity="0.35" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3.5s" repeatCount="indefinite" begin="1.2s"/><animate attributeName="cy" values="150;140;150" dur="5s" repeatCount="indefinite"/></circle>
-<circle cx="300" cy="135" r="1.5" fill="#ffd700" opacity="0.4" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="4.5s" repeatCount="indefinite" begin="2s"/><animate attributeName="cy" values="135;125;135" dur="7s" repeatCount="indefinite"/></circle>
-<circle cx="380" cy="145" r="1.5" fill="#ffd700" opacity="0.35" filter="url(#goldSoft)"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3.8s" repeatCount="indefinite" begin="0.6s"/><animate attributeName="cy" values="145;135;145" dur="5.5s" repeatCount="indefinite"/></circle>
-<!-- Transparent dome outline -->
-<path d="M30,240 Q30,30 250,15 Q470,30 470,240" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.06"/>
-<path d="M50,240 Q50,45 250,25 Q450,45 450,240" fill="none" stroke="#ffd700" stroke-width="0.5" opacity="0.04"/>
-<!-- Observatory floor -->
-<rect x="0" y="220" width="500" height="40" fill="#0e1838" opacity="0.85"/>
-<rect x="0" y="220" width="500" height="2" fill="#ffd700" opacity="0.06"/>
-<!-- Floor reflections -->
-<ellipse cx="250" cy="240" rx="180" ry="15" fill="#ffd700" opacity="0.03"/>
-<!-- Telescope -->
-<rect x="238" y="180" width="4" height="42" fill="#5a6a80"/>
-<rect x="230" y="218" width="20" height="4" rx="2" fill="#4a5a70"/>
-<line x1="240" y1="185" x2="218" y2="155" stroke="#6a7a90" stroke-width="5" stroke-linecap="round"/>
-<ellipse cx="215" cy="152" rx="5" ry="3.5" fill="#7a8aa0" transform="rotate(-30,215,152)"/>
-<!-- Golden glow at telescope eyepiece -->
-<circle cx="215" cy="152" r="8" fill="url(#projGlow)" opacity="0.5"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/></circle>
-<!-- Star Watcher standing, arms raised -->
-<ellipse cx="310" cy="218" rx="10" ry="3" fill="#000" opacity="0.15"/>
-<path d="M300,218 Q302,190 305,178 Q310,172 315,178 Q318,190 320,218 Z" fill="#101c40"/>
-<!-- Arms raised outward -->
-<line x1="304" y1="190" x2="280" y2="170" stroke="#101c40" stroke-width="4" stroke-linecap="round"/>
-<line x1="316" y1="190" x2="340" y2="170" stroke="#101c40" stroke-width="4" stroke-linecap="round"/>
-<!-- Hands -->
-<circle cx="278" cy="168" r="2.5" fill="#c8a878"/>
-<circle cx="342" cy="168" r="2.5" fill="#c8a878"/>
-<!-- Head -->
-<circle cx="310" cy="172" r="7" fill="#c8a878"/>
-<!-- Hood -->
-<path d="M303,175 Q305,168 310,165 Q315,168 317,175" fill="#101c40"/>
+<g filter="url(#constFilter4)">
+<g opacity="0.9"><path d="M232,55 Q238.9,53.9 240,47 Q241.1,53.9 248,55 Q241.1,56.1 240,63 Q238.9,56.1 232,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,53.1 Q241.2,53.8 241.9,55 Q241.2,56.2 240,56.9 Q238.8,56.2 238.1,55 Q238.8,53.8 240,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,70 Q238.9,68.9 240,62 Q241.1,68.9 248,70 Q241.1,71.1 240,78 Q238.9,71.1 232,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,68.1 Q241.2,68.8 241.9,70 Q241.2,71.2 240,71.9 Q238.8,71.2 238.1,70 Q238.8,68.8 240,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,85 Q238.9,83.9 240,77 Q241.1,83.9 248,85 Q241.1,86.1 240,93 Q238.9,86.1 232,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,83.1 Q241.2,83.8 241.9,85 Q241.2,86.2 240,86.9 Q238.8,86.2 238.1,85 Q238.8,83.8 240,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,100 Q238.9,98.9 240,92 Q241.1,98.9 248,100 Q241.1,101.1 240,108 Q238.9,101.1 232,100 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,98.1 Q241.2,98.8 241.9,100 Q241.2,101.2 240,101.9 Q238.8,101.2 238.1,100 Q238.8,98.8 240,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,60 Q253.9,58.9 255,52 Q256.1,58.9 263,60 Q256.1,61.1 255,68 Q253.9,61.1 247,60 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,58.1 Q256.2,58.8 256.9,60 Q256.2,61.2 255,61.9 Q253.8,61.2 253.1,60 Q253.8,58.8 255,58.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,95 Q253.9,93.9 255,87 Q256.1,93.9 263,95 Q256.1,96.1 255,103 Q253.9,96.1 247,95 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,93.1 Q256.2,93.8 256.9,95 Q256.2,96.2 255,96.9 Q253.8,96.2 253.1,95 Q253.8,93.8 255,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="245" cy="78" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="5.1s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+</g>
+<g filter="url(#constFilter4)">
+<g opacity="0.9"><path d="M362,55 Q368.9,53.9 370,47 Q371.1,53.9 378,55 Q371.1,56.1 370,63 Q368.9,56.1 362,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M370,53.1 Q371.2,53.8 371.9,55 Q371.2,56.2 370,56.9 Q368.8,56.2 368.1,55 Q368.8,53.8 370,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M382,55 Q388.9,53.9 390,47 Q391.1,53.9 398,55 Q391.1,56.1 390,63 Q388.9,56.1 382,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M390,53.1 Q391.2,53.8 391.9,55 Q391.2,56.2 390,56.9 Q388.8,56.2 388.1,55 Q388.8,53.8 390,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,70 Q378.9,68.9 380,62 Q381.1,68.9 388,70 Q381.1,71.1 380,78 Q378.9,71.1 372,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,68.1 Q381.2,68.8 381.9,70 Q381.2,71.2 380,71.9 Q378.8,71.2 378.1,70 Q378.8,68.8 380,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,85 Q378.9,83.9 380,77 Q381.1,83.9 388,85 Q381.1,86.1 380,93 Q378.9,86.1 372,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,83.1 Q381.2,83.8 381.9,85 Q381.2,86.2 380,86.9 Q378.8,86.2 378.1,85 Q378.8,83.8 380,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,100 Q378.9,98.9 380,92 Q381.1,98.9 388,100 Q381.1,101.1 380,108 Q378.9,101.1 372,100 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,98.1 Q381.2,98.8 381.9,100 Q381.2,101.2 380,101.9 Q378.8,101.2 378.1,100 Q378.8,98.8 380,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
+<circle cx="380" cy="78" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.7s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+</g>
+<!-- ====================
+     THE DOME, seen from inside. Two nested outline arcs is a rainbow. A dome
+     reads as a dome because its RIBS converge on the crown and its latitude
+     rings crowd together as they climb, and because the shutter is a real
+     opening with two leaves standing either side of it.
+     ==================== -->
+<path d="M480.7,236 Q376.9,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M470.6,236 Q371.4,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M450.9,236 Q360.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M422.4,236 Q344.8,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M386.4,236 Q325,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M344.4,236 Q301.9,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M298.2,236 Q276.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M250,236 Q250,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M201.8,236 Q223.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M155.6,236 Q198.1,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M113.6,236 Q175,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M77.6,236 Q155.2,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M49.1,236 Q139.5,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/><path d="M29.4,236 Q128.6,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/><path d="M19.3,236 Q123.1,39.1 250,22" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0"/>
+<path d="M28.7,171.8 Q250,136.4 471.3,171.8 Q250,207.2 28.7,171.8 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M56.2,118.3 Q250,87.3 443.8,118.3 Q250,149.3 56.2,118.3 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M94,77.6 Q250,52.7 406,77.6 Q250,102.6 94,77.6 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/><path d="M139.8,47.7 Q250,30 360.2,47.7 Q250,65.3 139.8,47.7 Z" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.05"/>
+<!-- the crown ring the ribs land on -->
+<path d="M232,26 Q250,20 268,26 Q250,32 232,26 Z" fill="none" stroke="#8a9ab0" stroke-width="0.8" opacity="0.1"/>
+<!-- ====================
+     THE SHUTTER. The draft had none, so the sky was simply everywhere and
+     the dome was a decal over it. The slot is the reason a player is looking
+     at sky at all: two leaves, DARKER than the sky, standing either side of
+     an open band that runs over the crown, with the leaf edges catching what
+     comes through it.
+     ==================== -->
+<path d="M0,236 Q0,58 90,18 L216,18 Q170,56 170,236 Z" fill="#0c1332" opacity="0.5"/>
+<path d="M500,236 Q500,58 410,18 L284,18 Q330,56 330,236 Z" fill="#0c1332" opacity="0.5"/>
+<path d="M216,18 Q170,56 170,236 L174,236 Q174,58 220,20 Z" fill="#ffd070" opacity="0.055"/>
+<path d="M284,18 Q330,56 330,236 L326,236 Q326,58 280,20 Z" fill="#ffd070" opacity="0.04"/>
+<!-- the rails the leaves run on, and the ribs stiffening them -->
+<path d="M172,108 Q128,84 82,72" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.14"/>
+<path d="M328,108 Q372,84 418,72" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.11"/>
+<path d="M172,168 Q112,150 46,144" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.12"/>
+<path d="M328,168 Q388,150 454,144" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.1"/>
+<!-- the band of open sky between them, very slightly clearer than the rest -->
+<path d="M216,18 Q170,56 170,236 L330,236 Q330,56 284,18 Z" fill="#2e4278" opacity="0.07"/>
+<circle cx="250" cy="236" r="230" fill="url(#domeEdge4)"/>
+<!-- ====================
+     THE FLOOR. A flat band across the frame is a horizon, not a floor. An
+     observatory floor is a ROUND deck: its edge curves away from the camera,
+     it is boarded in segments running to the pier at its centre, and the
+     dome wall meets it at a kerb.
+     ==================== -->
+<path d="M0,222 Q250,206 500,222 L500,260 L0,260 Z" fill="url(#obs4Floor4)"/>
+<path d="M0,222 Q250,206 500,222 L500,225 Q250,209 0,225 Z" fill="#ffd070" opacity="0.12"/>
+<!-- the pool the projection puts back down on the deck -->
+<path d="M144,230 Q250,216 356,230 Q358,246 250,252 Q142,246 144,230 Z" fill="#ffd070" opacity="0.06"/>
+<!-- the boards, converging on the pier -->
+<path d="M40,260 Q140,236 208,220" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M120,260 Q180,238 226,218" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M204,260 L240,217" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M296,260 L260,217" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M380,260 Q320,238 274,218" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<path d="M460,260 Q360,236 292,220" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
+<!-- the kerb where the dome wall lands on the deck -->
+<path d="M0,226 Q250,210 500,226 L500,231 Q250,215 0,231 Z" fill="#050a18" opacity="0.45"/>
+<!-- ====================
+     THE TELESCOPE. It was a stick, a puck and a line: a lamp post. A
+     telescope reads as an instrument because it is MOUNTED. A pier bolted to
+     the deck, a fork the tube swings in, a counterweight balancing it about
+     that axis, tube rings clamping the barrel, a finder scope alongside and
+     an eyepiece at the bottom end. The tube is drawn before the fork arms so
+     the near arm closes over it, which is what makes it read as held.
+     ==================== -->
+<!-- ====================
+     THE PROJECTION. The draft fanned seven hairline <line>s out of a point
+     below the mount, so its light came from nowhere on the instrument. A beam
+     leaves the SKY END of the tube, and it DIVERGES, so each ray is a wedge,
+     narrow at the objective and wide where it lands on the dome. It goes down
+     BEFORE the instrument so the barrel occludes it, which is what makes the
+     light read as leaving the glass rather than as painted over the tube.
+     ==================== -->
+<g filter="url(#projFilter)">
+<path d="M293.4,75.5 L70.9,-0.4 L67.9,9.1 Z" fill="#ffd700" opacity="0.042"><animate attributeName="opacity" values="0.025;0.063;0.025" dur="5.4s" repeatCount="indefinite" begin="0.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M293.8,75.7 L137.4,-40.7 L132.9,-34.5 Z" fill="#ffd700" opacity="0.055"><animate attributeName="opacity" values="0.033;0.083;0.033" dur="6.7s" repeatCount="indefinite" begin="0.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M294.2,76.1 L196.6,-60.7 L191.7,-57.2 Z" fill="#ffd700" opacity="0.068"><animate attributeName="opacity" values="0.041;0.102;0.041" dur="8.0s" repeatCount="indefinite" begin="1.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M294.4,76.5 L249.7,-68.8 L242.1,-66.3 Z" fill="#ffd700" opacity="0.042"><animate attributeName="opacity" values="0.025;0.063;0.025" dur="9.3s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M294.5,77.1 L300.9,-72.8 L295.3,-73.0 Z" fill="#ffd700" opacity="0.055"><animate attributeName="opacity" values="0.033;0.083;0.033" dur="5.4s" repeatCount="indefinite" begin="2.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M294.4,77.6 L358.2,-73.5 L350.4,-76.6 Z" fill="#ffd700" opacity="0.068"><animate attributeName="opacity" values="0.041;0.102;0.041" dur="6.7s" repeatCount="indefinite" begin="3.0s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M294.1,78.1 L431.4,-61.8 L426.8,-66.2 Z" fill="#ffd700" opacity="0.042"><animate attributeName="opacity" values="0.025;0.063;0.025" dur="8.0s" repeatCount="indefinite" begin="3.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M293.6,78.4 L508.8,-23.2 L504.8,-31.5 Z" fill="#ffd700" opacity="0.055"><animate attributeName="opacity" values="0.033;0.083;0.033" dur="9.3s" repeatCount="indefinite" begin="4.2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+</g>
+<!-- contact shadow, so the pier stands on the deck -->
+<path d="M212,225 Q244,219 276,225 Q278,231 244,234 Q210,231 212,225 Z" fill="#050a18" opacity="0.5"/>
+<!-- pier base: two steps, widest at the deck -->
+<path d="M218,219 L270,219 L276,226 L212,226 Z" fill="#2a3348"/>
+<path d="M218,219 L270,219 L269,221 L219,221 Z" fill="#6a7a9a" opacity="0.35"/>
+<path d="M226,211 L262,211 L266,219 L222,219 Z" fill="#2b3448"/>
+<path d="M226,211 L262,211 L261,213 L227,213 Z" fill="#6a7a9a" opacity="0.3"/>
+<!-- THE PIER: a tall tapered column. The draft's mount was a stub the same
+     height as its own head, which is a lamp post; a real pier stands the
+     instrument at eye height, so it is most of the way to the observer's
+     shoulder. -->
+<path d="M235,146 L253,146 L262,211 L226,211 Z" fill="url(#obs4Pier4)"/>
+<path d="M237,146 L242,146 L235,211 L228,211 Z" fill="#8a9ab0" opacity="0.15"/>
+<path d="M249,146 L253,146 L262,211 L257,211 Z" fill="#0e1730" opacity="0.35"/>
+<!-- the flange bolting the head to the column -->
+<path d="M230,141 L258,141 L260,146 L228,146 Z" fill="#343e55"/>
+<path d="M230,141 L258,141 L258,142.8 L230,142.8 Z" fill="#8a9ab0" opacity="0.3"/>
+<circle cx="235" cy="143.6" r="1" fill="#8a9ab0" opacity="0.45"/>
+<circle cx="253" cy="143.6" r="1" fill="#8a9ab0" opacity="0.45"/>
+<!-- the equatorial head, tilted to the pole, which is what an equatorial
+     mount IS and the one detail that says this is an observatory instrument
+     rather than a spotting scope -->
+<g transform="rotate(-18 244 132)">
+  <path d="M232,120 L256,120 Q259,120 259,124 L259,140 Q259,144 256,144 L232,144 Q229,144 229,140 L229,124 Q229,120 232,120 Z" fill="#343e55"/>
+  <path d="M232,121 L256,121 L256,125 L232,125 Z" fill="#8a9ab0" opacity="0.25"/>
+  <!-- the setting circle on the polar axis -->
+  <path d="M229,132 Q225,126 229,120 L229,144 Q225,138 229,132 Z" fill="#2e3850"/>
+  <circle cx="230" cy="132" r="5.5" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.35"/>
+  <path d="M226,130 L228,130 M226,133 L228,133" stroke="#8a9ab0" stroke-width="0.5" opacity="0.3"/>
+</g>
+<!-- the far fork arm, behind the tube -->
+<path d="M252,126 Q260,110 256,92 L250,92 Q254,110 246,126 Z" fill="#2e3850"/>
+<!-- THE TUBE. Laid down before the near fork arm and before the eyepiece
+     fittings, so the arm closes over it and the barrel reads as CLAMPED
+     rather than as leaning against the mount. Its length is 7.5 times its
+     diameter: a barrel drawn as wide as it is long is a camera body. -->
+<g transform="rotate(-34 244 110)">
+  <path d="M188,102 Q188,97 194,97 L292,97 Q298,97 298,102 L298,118 Q298,123 292,123 L194,123 Q188,123 188,118 Z" fill="#3e4a62"/>
+  <path d="M190,101 Q190,99 194,99 L292,99 Q296,99 296,101 L296,106 L190,106 Z" fill="#8a9ab0" opacity="0.3"/>
+  <path d="M190,116 L296,116 L296,119 Q296,121 292,121 L194,121 Q190,121 190,119 Z" fill="#2a3348" opacity="0.55"/>
+  <!-- the dew shield, a collar proud of the barrel at the sky end -->
+  <path d="M292,94 L302,94 Q306,94 306,99 L306,121 Q306,126 302,126 L292,126 Z" fill="#3c4760"/>
+  <path d="M293,95.5 L302,95.5 L302,102 L293,102 Z" fill="#8a9ab0" opacity="0.28"/>
+  <path d="M292,94 L302,94 L302,96 L292,96 Z" fill="#8a9ab0" opacity="0.35"/>
+  <!-- the objective, set back inside the shield -->
+  <path d="M301,99 Q304,110 301,121 Q299,110 301,99 Z" fill="#0e1730"/>
+  <path d="M301.4,101 Q303,105 302.4,109" fill="none" stroke="#8a9ab0" stroke-width="0.7" opacity="0.3"/>
+  <!-- tube rings, which is what clamps a barrel into a cradle -->
+  <path d="M222,95 L228,95 L228,125 L222,125 Z" fill="#2a3348"/>
+  <path d="M222,95 L228,95 L228,97.4 L222,97.4 Z" fill="#8a9ab0" opacity="0.35"/>
+  <path d="M224,124 L226,124 L226,128 L224,128 Z" fill="#2a3348"/>
+  <path d="M262,95 L268,95 L268,125 L262,125 Z" fill="#2a3348"/>
+  <path d="M262,95 L268,95 L268,97.4 L262,97.4 Z" fill="#8a9ab0" opacity="0.35"/>
+  <path d="M264,124 L266,124 L266,128 L264,128 Z" fill="#2a3348"/>
+  <!-- the finder scope, riding on the rings, its own little tube -->
+  <path d="M232,86 L276,86 Q280,86 280,89 L280,93 L232,93 Q228,93 228,89.5 Q228,86 232,86 Z" fill="#3c4760"/>
+  <path d="M232,87 L279,87" stroke="#8a9ab0" stroke-width="0.8" opacity="0.35"/>
+  <path d="M276,85 L282,85 L282,94 L276,94 Z" fill="#343e55"/>
+  <path d="M226,88 Q222,89.5 226,91 Q228,89.5 226,88 Z" fill="#0e1730"/>
+  <path d="M236,93 L240,93 L240,96 L236,96 Z" fill="#2a3348"/>
+  <path d="M266,93 L270,93 L270,96 L266,96 Z" fill="#2a3348"/>
+  <!-- the focuser drawtube and the eyepiece, where an eye would go -->
+  <path d="M182,104 L188,104 L188,116 L182,116 Z" fill="#2b3448"/>
+  <path d="M182,104 L188,104 L188,106 L182,106 Z" fill="#8a9ab0" opacity="0.3"/>
+  <path d="M172,106 Q169,106 169,108.5 L169,111.5 Q169,114 172,114 L182,114 L182,106 Z" fill="#2e3850"/>
+  <path d="M170,107.4 L182,107.4" stroke="#8a9ab0" stroke-width="0.6" opacity="0.3"/>
+  <path d="M169,108 Q166,110 169,112 Q171,110 169,108 Z" fill="#0e1730"/>
+  <!-- the focus knob, on the side of the drawtube -->
+  <circle cx="185" cy="118.5" r="2.2" fill="#343e55"/>
+  <circle cx="185" cy="118.5" r="0.9" fill="#8a9ab0" opacity="0.4"/>
+</g>
+<!-- the near fork arm, closing over the tube -->
+<path d="M236,126 Q228,110 232,92 L238,92 Q234,110 242,126 Z" fill="#3b4560"/>
+<path d="M236,126 Q228,110 232,92 L234,92 Q230,110 238,126 Z" fill="#8a9ab0" opacity="0.2"/>
+<!-- the declination axis the tube swings about -->
+<circle cx="240" cy="110" r="3.2" fill="#343e55"/>
+<circle cx="240" cy="110" r="1.3" fill="#8a9ab0" opacity="0.4"/>
+<!-- the counterweight shaft and its weight, balancing the tube about that
+     axis. A telescope without one topples, so its presence is what says the
+     instrument is real. -->
+<path d="M250,116 L272,133" stroke="#3f4a63" stroke-width="2"/>
+<path d="M251,116 L271,131" stroke="#8a9ab0" stroke-width="0.6" opacity="0.25"/>
+<path d="M270,128 Q277,128 278,134 Q277,140 270,140 Q264,140 263,134 Q264,128 270,128 Z" fill="#2e3850"/>
+<path d="M269,129.5 Q274,129.5 275,133" fill="none" stroke="#8a9ab0" stroke-width="0.9" opacity="0.3"/>
+<path d="M274,138 L277,141" stroke="#4a5772" stroke-width="1.4"/>
+<!-- the slow-motion cable hanging from the head. Anything that hangs, hangs
+     PLUMB, whatever the mount it hangs off is tilted to. -->
+<path d="M258,146 Q259,158 258,172" fill="none" stroke="#3f4a63" stroke-width="1" opacity="0.75"/>
+<path d="M256.6,172 Q258,170 259.4,172 L259.4,179 Q258,181 256.6,179 Z" fill="#3c4760" opacity="0.8"/>
+<!-- the cone at the objective, which is what makes the fan read as coming
+     out of the glass rather than as starting in mid air -->
+<path d="M289,80 Q293,72 297,80 Q296,86 293,86 Q290,86 289,80 Z" fill="#ffeaa7" opacity="0.4">
+  <animate attributeName="opacity" values="0.26;0.5;0.26" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</path>
+<circle cx="293" cy="79" r="9" fill="url(#projGlow)" opacity="0.55"><animate attributeName="opacity" values="0.34;0.68;0.34" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<!-- and a smaller one at the eyepiece, because light leaks both ways -->
+<circle cx="181" cy="152" r="6" fill="url(#projGlow)" opacity="0.4"><animate attributeName="opacity" values="0.22;0.5;0.22" dur="3.1s" repeatCount="indefinite" begin="0.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<!-- ====================
+     THE PROJECTION NODES, the bright points the fan resolves into where it
+     lands on the dome. Each is a disc with a cross of light on it, matching
+     how the constellations are drawn, because it is the same light.
+     ==================== -->
+<g filter="url(#goldSoft)">
+<path d="M68,100 Q78,98 88,100 Q78,102 68,100 Z" fill="#ffd700" opacity="0.3"/><circle cx="78" cy="100" r="2.4" fill="#ffeaa7" opacity="0.55"><animate attributeName="opacity" values="0.34;0.72;0.34" dur="3.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<path d="M158,120 Q170,118 182,120 Q170,122 158,120 Z" fill="#ffd700" opacity="0.32"/><circle cx="170" cy="120" r="2.8" fill="#ffeaa7" opacity="0.6"><animate attributeName="opacity" values="0.38;0.78;0.38" dur="2.7s" repeatCount="indefinite" begin="0.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<path d="M332,116 Q344,114 356,116 Q344,118 332,116 Z" fill="#ffd700" opacity="0.32"/><circle cx="344" cy="116" r="2.8" fill="#ffeaa7" opacity="0.6"><animate attributeName="opacity" values="0.38;0.76;0.38" dur="3s" repeatCount="indefinite" begin="0.3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<path d="M412,96 Q422,94 432,96 Q422,98 412,96 Z" fill="#ffd700" opacity="0.3"/><circle cx="422" cy="96" r="2.4" fill="#ffeaa7" opacity="0.55"><animate attributeName="opacity" values="0.32;0.7;0.32" dur="3.7s" repeatCount="indefinite" begin="1.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+</g>
+<!-- motes drifting through the beam. Each closes its own loop rather than
+     snapping back, so there is no pop at the seam. -->
+<circle cx="120" cy="142" r="1.4" fill="#ffd700" opacity="0.4" filter="url(#goldSoft)"><animate attributeName="cy" values="142;128;142" dur="6.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.18;0.56;0.18" dur="4.2s" repeatCount="indefinite" begin="0.8s"/></circle>
+<circle cx="204" cy="152" r="1.3" fill="#ffd700" opacity="0.35" filter="url(#goldSoft)"><animate attributeName="cy" values="152;140;152" dur="5.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.16;0.48;0.16" dur="3.6s" repeatCount="indefinite" begin="1.2s"/></circle>
+<circle cx="356" cy="146" r="1.5" fill="#ffd700" opacity="0.4" filter="url(#goldSoft)"><animate attributeName="cy" values="146;132;146" dur="7.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.2;0.54;0.2" dur="4.7s" repeatCount="indefinite" begin="2s"/></circle>
+<circle cx="424" cy="156" r="1.2" fill="#ffd700" opacity="0.32" filter="url(#goldSoft)"><animate attributeName="cy" values="156;144;156" dur="5.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.14;0.44;0.14" dur="3.9s" repeatCount="indefinite" begin="0.6s"/></circle>
+<!-- ====================
+     THE STAR WATCHER, from the shared cast rather than hand built: the draft
+     drew its own head, its own cloak and its own eyes, which is exactly the
+     opt out of consistency the cast exists to prevent. Canon, in a brimmed
+     hat, standing at the eyepiece.
+     ==================== -->
+${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
+<!-- the projection landing on him, warm on the side facing the beam -->
+<path d="M310,150 Q302,182 304,224 L312,224 Q309,182 316,150 Z" fill="#ffd070" opacity="0.09"/>
+<!-- his notebook, on a stand beside him, because a watcher is RECORDING -->
+<path d="M352,224 Q362,220 372,224 Q373,228 362,230 Q351,228 352,224 Z" fill="#0c142c" opacity="0.45"/>
+<path d="M360,196 L364,196 L363,224 L361,224 Z" fill="#2a3348"/>
+<path d="M354,224 L370,224 L371,226 L353,226 Z" fill="#2a3348"/>
+<path d="M350,190 Q362,186 374,190 L374,197 Q362,193 350,197 Z" fill="#343e55"/>
+<path d="M352,191 Q362,188 372,191 L372,193 Q362,190 352,193 Z" fill="#ffeaa7" opacity="0.45"/>
+<path d="M355,192.4 L369,192.4" stroke="#0e1730" stroke-width="0.5" opacity="0.4"/>
+<path d="M355,194.2 L365,194.2" stroke="#0e1730" stroke-width="0.5" opacity="0.3"/>
+<!-- ====================
+     Dust in the beam from the slot, drifting up, each fading out at the top
+     of its run so the loop has no seam.
+     ==================== -->
+<circle cx="228" cy="200" r="0.7" fill="#ffeaa7" opacity="0.22"><animate attributeName="cy" values="200;172;146" dur="15s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.2;0" dur="15s" repeatCount="indefinite"/></circle>
+<circle cx="272" cy="208" r="0.8" fill="#ffeaa7" opacity="0.19"><animate attributeName="cy" values="208;180;154" dur="17.5s" repeatCount="indefinite" begin="4s"/><animate attributeName="opacity" values="0;0.17;0" dur="17.5s" repeatCount="indefinite" begin="4s"/></circle>
+<circle cx="250" cy="212" r="0.6" fill="#ffeaa7" opacity="0.2"><animate attributeName="cy" values="212;186;160" dur="13.5s" repeatCount="indefinite" begin="7.5s"/><animate attributeName="opacity" values="0;0.18;0" dur="13.5s" repeatCount="indefinite" begin="7.5s"/></circle>
 </svg>`;
 
-// Scene 5 (NOVA puzzle — "Stellar explosion from river reflected (4)"): Same interior with constellations
+// Scene 5 (NOVA puzzle, "Stellar explosion from river reflected (4)"): Same interior with constellations
 STORY_SCENES['observatory_5'] = STORY_SCENES['observatory_2'];
 
 // Scene 6 (narrative after NOVA): Interior
 STORY_SCENES['observatory_6'] = STORY_SCENES['observatory_2'];
 
-// Scene 7 (COMET puzzle — "Company encountered celestial visitor (5)"): Interior
+// Scene 7 (COMET puzzle, "Company encountered celestial visitor (5)"): Interior
 STORY_SCENES['observatory_7'] = STORY_SCENES['observatory_2'];
 
 // Scene 8 (narrative after COMET): Observatory flooded with starlight

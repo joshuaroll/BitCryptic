@@ -28,6 +28,10 @@ const BCWSave = (() => {
     'bitcryptic_benson',
     'bitcryptic_cheese',
     'bitcryptic_cheese_cooldown',
+    // Materials a solved clue drops, and the furniture built from them. Both
+    // are progress: a player who loses these loses an afternoon of solving.
+    'bitcryptic_materials',
+    'bitcryptic_built',
     'bcw_audio_settings',
     'bcw_accessibility',
     'bcw_settings',
@@ -37,6 +41,38 @@ const BCWSave = (() => {
     'bcw_tutorial_p1',
     'bcw_tutorial_p2',
     'bcw_anatomy_taught',
+    // The transport at the docks, and which dailies have been solved.
+    'bcw_graduation',
+    'bcw_daily_solved',
+    // Best run through Maddie's hold.
+    'bcw_yacht_best',
+    // Pets living at the cottage.
+    'bcw_pets',
+    // Which unlocked cosmetic codes are switched off.
+    'bcw_cosmetics_off',
+    // Which hedgehog quill style is chosen.
+    'bcw_quill_style',
+    // The means of catching a pet, earned from Canon's quest.
+    'bcw_pet_catcher',
+    // Fredward's lure: the one-shot version anybody can reach by boat,
+    // without a terminal code. '' none, '1' held, '2' spent.
+    'bcw_lure_fredward',
+    // Canon's questline: which artifacts are recovered, and this save's
+    // seed for the one randomised step in each mission.
+    'bcw_quest',
+    // Highest material yield tier announced, so it is said once.
+    'bcw_mat_tier_seen',
+    // Whether the player has been down to the wreck.
+    'bcw_wreck_seen',
+    // How many dives, so the page Fredward shows you rotates.
+    'bcw_wreck_visits',
+    // The three pieces of the dock keeper's diving suit, and whether it
+    // has been put on.
+    'bcw_diving_suit',
+    // The notebook is deliberately NOT synced (canvases would swamp the
+    // 256 KB cloud payload) but it IS the player's own work, so export,
+    // backup and account deletion must all see it.
+    'bcw_notebook',
     'bcw_auto_lesson_seen',
     'bcw_text_pace',
     'bcw_orientation'
@@ -287,6 +323,14 @@ const BCWSave = (() => {
   }
 
   return {
+    // Exported so a test can assert a new key was registered here.
+    //
+    // This list has drifted before, twice, and the failure is always silent:
+    // the key works perfectly in play and is invisible to export, to backup
+    // and to account deletion, so nobody finds out until a player restores a
+    // save and part of it is gone. It could not be checked from outside
+    // because it was not reachable from outside. Now it is.
+    ALL_KEYS,
     safeGet,
     safeSet,
     exportSave,

@@ -13,11 +13,11 @@ const dailyClues = [
 
   {
     id: 1,
-    clue: "Gaze from confused rates",
+    clue: "Gaze from confused rates (5)",
     answer: "STARE",
     definition: "Gaze",
-    clueType: "anagram",
     difficulty: 1,
+    clueType: "anagram",
     explanation: "'Confused' is the anagram indicator. Rearrange RATES to get STARE. Definition: 'Gaze'.",
     author: "by Bit Cryptic",
     hints: [
@@ -28,11 +28,11 @@ const dailyClues = [
   },
   {
     id: 2,
-    clue: "Fire old sweetheart",
+    clue: "Fire old sweetheart (5)",
     answer: "FLAME",
     definition: "Fire",
-    clueType: "double_definition",
     difficulty: 1,
+    clueType: "double",
     explanation: "Double definition. FLAME = fire AND FLAME = an old sweetheart/lover.",
     author: "by Bit Cryptic",
     hints: [
@@ -41,11 +41,11 @@ const dailyClues = [
   },
   {
     id: 3,
-    clue: "Canoe wrecked in the deep blue",
+    clue: "Canoe wrecked in the deep blue (5)",
     answer: "OCEAN",
     definition: "the deep blue",
-    clueType: "anagram",
     difficulty: 1,
+    clueType: "anagram",
     explanation: "'Wrecked' is the anagram indicator. Rearrange CANOE to get OCEAN. Definition: 'the deep blue'.",
     author: "by Bit Cryptic",
     hints: [
@@ -56,11 +56,11 @@ const dailyClues = [
   },
   {
     id: 4,
-    clue: "Flower flourish",
+    clue: "Flower flourish (5)",
     answer: "BLOOM",
     definition: "Flower",
-    clueType: "double_definition",
     difficulty: 1,
+    clueType: "double",
     explanation: "Double definition. BLOOM = a flower AND BLOOM = to flourish/thrive.",
     author: "by Bit Cryptic",
     hints: [
@@ -69,11 +69,11 @@ const dailyClues = [
   },
   {
     id: 5,
-    clue: "Bird brought north for the royal headpiece",
+    clue: "Bird brought north for the royal headpiece (5)",
     answer: "CROWN",
     definition: "the royal headpiece",
-    clueType: "charade",
     difficulty: 1,
+    clueType: "charade",
     explanation: "CROW (bird) + N (north) = CROWN. Definition: 'the royal headpiece'.",
     author: "by Bit Cryptic",
     hints: [
@@ -84,11 +84,11 @@ const dailyClues = [
   },
   {
     id: 6,
-    clue: "Crest partly in hybrid gears",
+    clue: "Crest partly in hybrid gears (5)",
     answer: "RIDGE",
     definition: "Crest",
-    clueType: "hidden_word",
     difficulty: 1,
+    clueType: "hidden",
     explanation: "'Partly in' is the hidden-word indicator. RIDGE is hidden across 'hyb-RIDGE-ars'. Definition: 'Crest'.",
     author: "by Bit Cryptic",
     hints: [
@@ -99,11 +99,11 @@ const dailyClues = [
   },
   {
     id: 7,
-    clue: "Smile about a seed",
+    clue: "Smile about a seed (5)",
     answer: "GRAIN",
     definition: "seed",
-    clueType: "container",
     difficulty: 1,
+    clueType: "container",
     explanation: "GRIN (smile) placed about A gives GRAIN. Definition: 'seed'.",
     author: "by Bit Cryptic",
     hints: [
@@ -114,11 +114,11 @@ const dailyClues = [
   },
   {
     id: 8,
-    clue: "Pines, broken, form the backbone",
+    clue: "Pines, broken, form the backbone (5)",
     answer: "SPINE",
     definition: "the backbone",
-    clueType: "anagram",
     difficulty: 1,
+    clueType: "anagram",
     explanation: "'Broken' is the anagram indicator. Rearrange PINES to get SPINE. Definition: 'the backbone'.",
     author: "by Bit Cryptic",
     hints: [
@@ -129,11 +129,11 @@ const dailyClues = [
   },
   {
     id: 9,
-    clue: "Damaged pears are extra",
+    clue: "Damaged pears are extra (5)",
     answer: "SPARE",
     definition: "extra",
-    clueType: "anagram",
     difficulty: 1,
+    clueType: "anagram",
     explanation: "'Damaged' is the anagram indicator. Rearrange PEARS to get SPARE. Definition: 'extra'.",
     author: "by Bit Cryptic",
     hints: [
@@ -144,11 +144,11 @@ const dailyClues = [
   },
   {
     id: 10,
-    clue: "Cried, shattered, over the drink",
+    clue: "Cried, shattered, over the drink (5)",
     answer: "CIDER",
     definition: "the drink",
-    clueType: "anagram",
     difficulty: 1,
+    clueType: "anagram",
     explanation: "'Shattered' is the anagram indicator. Rearrange CRIED to get CIDER. Definition: 'the drink'.",
     author: "by Bit Cryptic",
     hints: [
@@ -162,11 +162,11 @@ const dailyClues = [
 
   {
     id: 11,
-    clue: "Bared, oddly, the loaf",
+    clue: "Bared, oddly, the loaf (5)",
     answer: "BREAD",
     definition: "the loaf",
-    clueType: "anagram",
     difficulty: 2,
+    clueType: "anagram",
     explanation: "'Oddly' is the anagram indicator. Rearrange BARED to get BREAD. Definition: 'the loaf'.",
     author: "by Bit Cryptic",
     hints: [
@@ -177,11 +177,11 @@ const dailyClues = [
   },
   {
     id: 12,
-    clue: "Trial disrupted the path",
+    clue: "Trial disrupted the path (5)",
     answer: "TRAIL",
     definition: "the path",
-    clueType: "anagram",
     difficulty: 2,
+    clueType: "anagram",
     explanation: "'Disrupted' is the anagram indicator. Rearrange TRIAL to get TRAIL. Definition: 'the path'.",
     author: "by Bit Cryptic",
     hints: [
@@ -192,11 +192,11 @@ const dailyClues = [
   },
   {
     id: 13,
-    clue: "Paint tool brief encounter",
+    clue: "Paint tool brief encounter (5)",
     answer: "BRUSH",
     definition: "Paint tool",
-    clueType: "double_definition",
     difficulty: 2,
+    clueType: "double",
     explanation: "Double definition. BRUSH = a paint tool AND BRUSH = a brief encounter ('a brush with danger').",
     author: "by Bit Cryptic",
     hints: [
@@ -205,11 +205,11 @@ const dailyClues = [
   },
   {
     id: 14,
-    clue: "Float aimlessly, getting the meaning",
+    clue: "Float aimlessly, getting the meaning (5)",
     answer: "DRIFT",
     definition: "Float aimlessly",
-    clueType: "double_definition",
     difficulty: 2,
+    clueType: "double",
     explanation: "Double definition. DRIFT = to float aimlessly AND DRIFT = the meaning/gist of something ('catch my drift').",
     author: "by Bit Cryptic",
     hints: [
@@ -218,11 +218,11 @@ const dailyClues = [
   },
   {
     id: 15,
-    clue: "Stride out in the third month",
+    clue: "Stride out in the third month (5)",
     answer: "MARCH",
     definition: "Stride out",
-    clueType: "double_definition",
     difficulty: 2,
+    clueType: "double",
     explanation: "Double definition. MARCH = to stride out/walk AND MARCH = the third month of the year.",
     author: "by Bit Cryptic",
     hints: [
@@ -231,11 +231,11 @@ const dailyClues = [
   },
   {
     id: 16,
-    clue: "Heats ruined, causing urgency",
+    clue: "Heats ruined, causing urgency (5)",
     answer: "HASTE",
     definition: "urgency",
-    clueType: "anagram",
     difficulty: 2,
+    clueType: "anagram",
     explanation: "'Ruined' is the anagram indicator. Rearrange HEATS to get HASTE. Definition: 'urgency'.",
     author: "by Bit Cryptic",
     hints: [
@@ -246,11 +246,11 @@ const dailyClues = [
   },
   {
     id: 17,
-    clue: "Rats turned into a celestial body",
+    clue: "Rats turned into a celestial body (4)",
     answer: "STAR",
     definition: "a celestial body",
-    clueType: "reversal",
     difficulty: 2,
+    clueType: "reversal",
     explanation: "'Turned' is the reversal indicator. Reverse RATS to get STAR. Definition: 'a celestial body'.",
     author: "by Bit Cryptic",
     hints: [
@@ -264,11 +264,11 @@ const dailyClues = [
 
   {
     id: 18,
-    clue: "Forts rebuilt in the cold snap",
+    clue: "Forts rebuilt in the cold snap (5)",
     answer: "FROST",
     definition: "the cold snap",
-    clueType: "anagram",
     difficulty: 3,
+    clueType: "anagram",
     explanation: "'Rebuilt' is the anagram indicator. Rearrange FORTS to get FROST. Definition: 'the cold snap'.",
     author: "by Bit Cryptic",
     hints: [
@@ -279,11 +279,11 @@ const dailyClues = [
   },
   {
     id: 19,
-    clue: "Notes rearranged on rock",
+    clue: "Notes rearranged on rock (5)",
     answer: "STONE",
     definition: "rock",
-    clueType: "anagram",
     difficulty: 3,
+    clueType: "anagram",
     explanation: "'Rearranged' is the anagram indicator. Rearrange NOTES to get STONE. Definition: 'rock'.",
     author: "by Bit Cryptic",
     hints: [
@@ -294,11 +294,11 @@ const dailyClues = [
   },
   {
     id: 20,
-    clue: "Large, wild angry look",
+    clue: "Large, wild angry look (5)",
     answer: "GLARE",
     definition: "angry look",
-    clueType: "anagram",
     difficulty: 3,
+    clueType: "anagram",
     explanation: "'Wild' is the anagram indicator. Rearrange LARGE to get GLARE. Definition: 'angry look'.",
     author: "by Bit Cryptic",
     hints: [
@@ -309,11 +309,11 @@ const dailyClues = [
   },
   {
     id: 21,
-    clue: "Enchantment found in march armour",
+    clue: "Enchantment found in march armour (5)",
     answer: "CHARM",
     definition: "Enchantment",
-    clueType: "hidden_word",
     difficulty: 3,
+    clueType: "hidden",
     explanation: "'Found in' is the hidden-word indicator. CHARM is hidden inside 'mar-CHARM-our'. Definition: 'Enchantment'.",
     author: "by Bit Cryptic",
     hints: [
@@ -324,11 +324,11 @@ const dailyClues = [
   },
   {
     id: 22,
-    clue: "Feats, unusually, make a banquet",
+    clue: "Feats, unusually, make a banquet (5)",
     answer: "FEAST",
     definition: "banquet",
-    clueType: "anagram",
     difficulty: 3,
+    clueType: "anagram",
     explanation: "'Unusually' is the anagram indicator. Rearrange FEATS to get FEAST. Definition: 'banquet'.",
     author: "by Bit Cryptic",
     hints: [
@@ -339,11 +339,11 @@ const dailyClues = [
   },
   {
     id: 23,
-    clue: "Create counterfeit",
+    clue: "Create counterfeit (5)",
     answer: "FORGE",
     definition: "Create",
-    clueType: "double_definition",
     difficulty: 3,
+    clueType: "double",
     explanation: "Double definition. FORGE = to create/shape metal AND FORGE = to counterfeit/fake.",
     author: "by Bit Cryptic",
     hints: [
@@ -355,11 +355,11 @@ const dailyClues = [
 
   {
     id: 24,
-    clue: "Cape conceals",
+    clue: "Cape conceals (5)",
     answer: "CLOAK",
     definition: "Cape",
-    clueType: "double_definition",
     difficulty: 4,
+    clueType: "double",
     explanation: "Double definition. CLOAK = a cape AND CLOAK = conceals/hides from view.",
     author: "by Bit Cryptic",
     hints: [
@@ -368,11 +368,11 @@ const dailyClues = [
   },
   {
     id: 25,
-    clue: "Delta remodelled distribution",
+    clue: "Delta remodelled distribution (5)",
     answer: "DEALT",
     definition: "distribution",
-    clueType: "anagram",
     difficulty: 4,
+    clueType: "anagram",
     explanation: "'Remodelled' is the anagram indicator. Rearrange DELTA to get DEALT. Definition: 'distribution'.",
     author: "by Bit Cryptic",
     hints: [
@@ -383,11 +383,11 @@ const dailyClues = [
   },
   {
     id: 26,
-    clue: "Taros cooked for the mockery",
+    clue: "Taros cooked for the mockery (5)",
     answer: "ROAST",
     definition: "the mockery",
-    clueType: "anagram",
     difficulty: 4,
+    clueType: "anagram",
     explanation: "'Cooked' is the anagram indicator. Rearrange TAROS to get ROAST. Definition: 'the mockery'.",
     author: "by Bit Cryptic",
     hints: [
@@ -401,11 +401,12 @@ const dailyClues = [
 
   {
     id: 27,
-    clue: "Happiness curtailed before morning's shimmer",
+    clue: "Happiness curtailed before morning's shimmer (5)",
     answer: "GLEAM",
     definition: "shimmer",
-    clueType: "charade_deletion",
     difficulty: 5,
+    clueType: "deletion",
+    secondaryType: "charade",
     explanation: "GLEE (happiness) curtailed (remove last letter) = GLE + AM (morning) = GLEAM. Definition: 'shimmer'.",
     author: "by Bit Cryptic",
     hints: [

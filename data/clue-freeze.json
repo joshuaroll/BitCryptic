@@ -1,8 +1,8 @@
 {
   "_comment": "Clue-freeze proof. Regenerate ONLY after Joshua signs off on a clue change: node scripts/ci/check-clues.mjs --update",
-  "generated": "2026-08-29",
+  "generated": "2026-09-04",
   "count": 12,
-  "digest": "44988f4035f5cc0e67eea0aed7a9ab254c7b2d6722f4a41be1d3bf873bdd4ce9",
+  "digest": "1357e386021d769d2a94109c5ff80035d31cd3ce188bdc372d768f6339efc93f",
   "clues": [
     {
       "clue": "Scheme with the alien for a world (6)",
@@ -60,9 +60,9 @@
       "hash": "8591cb5631c5084e"
     },
     {
-      "clue": "Fine mast rebuilt: cargo list, plain to see (8)",
+      "clue": "Fine mast rebuilt: cargo list (8)",
       "answer": "MANIFEST",
-      "hash": "b17a5cfc990db7f8"
+      "hash": "6e165c322d2f86eb"
     }
   ]
 }

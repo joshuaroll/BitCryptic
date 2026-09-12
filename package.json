@@ -33,7 +33,12 @@
     "check:clues": "node scripts/ci/check-clues.mjs",
     "check:spoilers": "node scripts/ci/check-spoilers.mjs",
     "check:secrets": "node scripts/ci/scan-secrets.mjs",
-    "verify": "npm run check:syntax && npm run check:clues && npm run check:spoilers"
+    "verify": "npm run check:syntax && npm run check:clues && npm run check:pets && npm run check:quest && npm run check:suit && npm run check:scenes && npm run check:character && npm run check:spoilers",
+    "check:pets": "node scripts/ci/check-pets.mjs",
+    "check:quest": "node scripts/ci/check-quest.mjs",
+    "check:scenes": "node scripts/ci/check-scenes.mjs",
+    "check:suit": "node scripts/ci/check-suit.mjs",
+    "check:character": "node scripts/ci/check-character.mjs"
   },
   "eslintConfig": {
     "extends": [

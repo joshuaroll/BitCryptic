@@ -28,7 +28,8 @@ const BCWAchievements = (() => {
     first_fish: { title: 'Gone Fishing', desc: 'Catch your first fish', icon: '🐟', category: 'fishing' },
     big_catch: { title: 'Big Catch', desc: 'Catch a fish over 5 lbs', icon: '🐋', category: 'fishing' },
     legendary_catch: { title: 'Legendary Angler', desc: 'Catch a legendary fish', icon: '👑', category: 'fishing' },
-    fish_collection: { title: 'Ichthyologist', desc: 'Catch 10 unique fish species', icon: '🏅', category: 'fishing' },
+    fish_collection: { title: 'Ichthyologist', desc: 'Catch 5 unique fish species', icon: '🏅', category: 'fishing' },
+    fish_complete: { title: 'The Full Shoal', desc: 'Catch every species in the pond', icon: '🎣', category: 'fishing' },
 
     // House
     decorator: { title: 'Interior Designer', desc: 'Place 5 items in your house', icon: '🏠', category: 'house' },
@@ -38,6 +39,21 @@ const BCWAchievements = (() => {
     dragon_tamer: { title: 'Worth the Hoard', desc: 'Complete Liam\'s Lair story', icon: '🐉', category: 'story' },
     sky_hunter: { title: 'Ship\'s Log', desc: 'Complete Simon\'s Skyship story', icon: '🔭', category: 'story' },
     moonwalker: { title: 'Moonwalker', desc: 'Complete The Moon story', icon: '🌙', category: 'story' },
+
+    // The wreck, the room under the fountain, and what came of both.
+    //
+    // Named for the chair Canon keeps beside him rather than for the errand,
+    // because the errand is not the thing that happened.
+    // The badge KEEPS THE SPOON. A reward that is only a picture of a reward
+    // teaches a player the next one will be too: Club Penguin sold puffle hats
+    // for 200 coins, they did nothing, and nobody remembers them.
+    second_chair: { title: 'The Second Chair', desc: 'Bring something back, and the Sounding Spoon is yours to keep', icon: '🪑', category: 'story' },
+    the_manifest: { title: 'What a Crossing Sheds', desc: 'Recover all five artifacts', icon: '🧭', category: 'story' },
+    // The dock keeper's suit, whole again after years in three places.
+    suited: { title: 'Sound, and Complete', desc: 'Put the diving suit back together', icon: '🪔', category: 'story' },
+    // Pets. Adopting one at all is the milestone; the full five is the shelf.
+    first_pet: { title: 'Followed You Out', desc: 'Take a creature home', icon: '🐾', category: 'house' },
+    full_menagerie: { title: 'A Full House', desc: 'All five creatures living at the cottage', icon: '🏘️', category: 'house' },
 
     // Social
     first_share: { title: 'Social Butterfly', desc: 'Share your progress for the first time', icon: '🦋', category: 'social' },
@@ -161,7 +177,27 @@ const BCWAchievements = (() => {
     if (fishData.caught) unlock('first_fish');
     if (fishData.weight > 5) unlock('big_catch');
     if (fishData.rarity === 'legendary') unlock('legendary_catch');
-    if (fishData.uniqueSpecies >= 10) unlock('fish_collection');
+    if (fishData.uniqueSpecies >= 5) unlock('fish_collection');
+    // Every species in the table. Was unreachable: the old bar was 10 and
+    // there are 9 fish, so the achievement could never fire.
+    if (fishData.totalSpecies && fishData.uniqueSpecies >= fishData.totalSpecies) unlock('fish_complete');
+  }
+
+  // Three pieces from three places, and a suit that works again.
+  function checkSuit(have, total) {
+    if (total && have >= total) unlock('suited');
+  }
+
+  // Canon's errands. The first is the badge; the fifth is the manifest.
+  function checkQuest(recovered, total) {
+    if (recovered >= 1) unlock('second_chair');
+    if (total && recovered >= total) unlock('the_manifest');
+  }
+
+  // Creatures at the cottage.
+  function checkPets(adopted, total) {
+    if (adopted >= 1) unlock('first_pet');
+    if (total && adopted >= total) unlock('full_menagerie');
   }
 
   function checkHouseItems(count) {
@@ -208,6 +244,9 @@ const BCWAchievements = (() => {
     checkPuzzleFailed,
     checkFishing,
     checkHouseItems,
+    checkQuest,
+    checkPets,
+    checkSuit,
     checkTerminalCodes,
     checkIntroComplete,
     checkShare,
