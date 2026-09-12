@@ -1176,7 +1176,8 @@
        not a rule, and the thing it decides is whether a player can click
        "cancel" on erasing their save. This is the top of the stack; nothing in
        the game should ever render over a destructive confirm. */
-    .game-modal-overlay.game-modal-confirm { z-index: 10002; }
+    /* A confirm outranks every other layer, the swag panel (10041) included; e2e/hardening asserts this. */
+    .game-modal-overlay.game-modal-confirm { z-index: 10060; }
 
     /* Confirm variant: two buttons side by side. Cancel is the quiet one and
        comes first, so the destructive action is never what a fast click lands
