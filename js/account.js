@@ -42,6 +42,14 @@ const BCWAccount = (() => {
     try {
       if (!cfg.BC_AUTH_CONFIGURED) return false;
 
+      // The shared modules exist only on the composed site, where the island
+      // is mounted at /world/. Served anywhere else (the repo opened directly,
+      // a local static server, the e2e harness) there is no site root to load
+      // them from, and the browser logs that 404 to the console however the
+      // request is made. There is nothing to probe: the mount point is the
+      // signal, and off the site the island plays as a guest, as it should.
+      if (!/(^|\/)world\/(index\.html)?$/.test(location.pathname)) return false;
+
       // Loaded from the site root so both games share one implementation.
       await import('/shared/auth/bc-auth.js');
       await import('/shared/auth/bc-sync.js');
