@@ -1,6 +1,8 @@
 # Fredward — Character Design Context
 
-**Last updated:** 2026-09-05
+**Current character approval:** Fredward uses the refined otter design in the [official model library](../../Bit_Cryptic_Character_Models/README.md), with a smooth head, consistent cheek patch, brass collar, tapered tail, and six static poses. The document below is a **legacy underwater-scene implementation reference** for the existing closed-helmet diver. Its helper-function requirements remain relevant to those unmigrated scenes; they do not override the newly approved character appearance.
+
+**Last updated:** 2026-09-08
 **Status:** MODEL LOCKED. Function: `fred(opts)`, defined at the top of
 `scenes/wreck.js`. **Scenes must call it. Never hand build Fredward again.**
 
@@ -69,13 +71,13 @@ centre of the helmet**, so one scale change moves the whole figure together.
 | Landmark | Value |
 |---|---|
 | Helmet radius | `h` |
-| Faceplate glass radius | `0.674 h` |
+| Faceplate glass radius | `0.78 h` |
 | Neck ring | `1.15 h` down, `0.78 h` half width, `0.28 h` deep |
-| Shoulders (top of torso) | `1.55 h` down, half width `1.6 h` |
-| Hips | `4.15 h` down, half width `1.32 h` |
+| Shoulders (top of torso) | `1.55 h` down, half width `1.22 h` |
+| Hips | `4.15 h` down, half width `1.08 h` |
 | Knee | `5.90 h` down |
 | Sole | `7.65 h` down |
-| Limb thickness (arms) | `0.52 h` |
+| Limb thickness (arms) | `0.46 h` |
 | Leg thickness | `0.84 h` (`limb * 1.62`) |
 | Hand | `0.46 h` base unit |
 | Boot | `1.15 h` wide, `0.52 h` tall, origin at the **sole** |
@@ -106,6 +108,8 @@ If a pose hides one of these, the pose is wrong. `wreck_7` shipped with no legs.
 all. All three were bugs.
 
 ---
+
+The face inside the helmet comes from `bcCharacter("fredward", radius, { headOnly: true })` in `scenes/characters.js`. The brass shell, gloves, boots, hose, and posed suit remain in `fred()`. Custom arm poses start at 1.12 helmet radii from the center to meet the fitted shoulders.
 
 ## The faceplate treatment
 

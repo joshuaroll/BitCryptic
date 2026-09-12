@@ -1,11 +1,17 @@
+
+function hidCloseHand(x,y,scale,rot,skin,sleeve) {
+  return '<g transform="translate('+x+' '+y+') rotate('+rot+') scale('+scale+')">'+
+    '<path d="M-10 80 L-10 20 Q-17 12 -17 0 L-17 -25 Q-17 -31 -13 -31 Q-9 -31 -9 -25 L-9 -5 L-8 -36 Q-8 -42 -4 -42 Q0 -42 0 -36 L1 -6 L2 -38 Q2 -44 6 -44 Q10 -44 10 -38 L10 -5 L12 -29 Q12 -35 16 -34 Q20 -33 19 -27 L18 0 L24 -10 Q28 -16 32 -12 Q35 -9 31 -3 L23 12 Q19 20 11 23 L11 80 Z" fill="'+skin+'"/>'+
+    '<path d="M-9 -5 L-8 4 M1 -6 L1 3 M10 -5 L9 4 M23 0 Q15 3 14 11" fill="none" stroke="#94745c" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>'+
+    '<path d="M-13 33 L14 33 L17 90 L-17 90 Z" fill="'+sleeve+'"/><rect x="-14" y="29" width="29" height="9" rx="2" fill="'+sleeve+'"/></g>';
+}
 // Hidden story scenes — "The Listening Post"
 // Canon's questline. Entered by typing HIDDEN at the Town Square terminal.
 //
 // Keys: hidden_0..hidden_10 (intro), hidden_m1..hidden_m5 (mission beats),
 //       hidden_end_0..hidden_end_16 (the ending).
 //
-// COMPOSITION RULE, ENFORCED THROUGHOUT: Canon is never shown facing the player.
-// Every scene he appears in draws a back, a head, a chair. No face, ever.
+// Canon uses the complete current shared cast model in every full-figure shot.
 //
 // PALETTE: room is Deep Ink #0a1224 / #05080f. Screen glow is cold grey-green
 // (#16323a, #3d5a75, #5fa0b8). Amber #F2C14E is reserved for exactly two things:
@@ -28,7 +34,7 @@
 // pencil ranged 46 to 130 units long across scenes whose own comments insisted
 // it had not moved.
 //
-// Canon is a SILHOUETTE. He is never shown facing the player and he has no
+// Canon uses the current cast palette, swept hair, and headset. He has no
 // face, ever. That is a composition rule, not a shortcut: the hands below are
 // dark shapes, but they are shaped like hands, with a wrist, a palm, four
 // fingers and a thumb that opposes them.
@@ -49,7 +55,7 @@ var HID_HEAD = 14;
 // Set to the skin value so every existing call site becomes a no-op rather
 // than 79 separate edits, and so a future pass can reinstate it in ONE place
 // if it is ever done correctly (on the outer edge, following the light).
-var HID_SKIN = '#05070e', HID_SKIN_L = '#0b0f19', HID_RIM = '#05070e';
+var HID_SKIN = '#c9a88f', HID_SKIN_L = '#dfbea5', HID_RIM = '#9a8276';
 var HID_CHAIR = '#2e3849', HID_CHAIR_L = '#3d4a60', HID_CHAIR_D = '#28313f';
 
 // ---------------------------------------------------------------------------
@@ -366,7 +372,7 @@ function hidGrip(r, dir, gt, opts) {
 function hidWarmHand(r, dir, opts) {
   opts = opts || {};
   var w = r * 1.15, o = '';
-  var SKIN = opts.skin || '#c39a72', SHADE = opts.shade || '#a67c56', LIT = opts.lit || '#ffdf9e';
+  var SKIN = opts.skin || '#e0b48c', SHADE = opts.shade || '#a67c56', LIT = opts.lit || '#ffdf9e';
   // the palm, short, stopping at the knuckles
   o += '<path d="M' + hidn(-w * 0.62 * dir) + ',' + hidn(w * 0.44) +
     ' Q' + hidn(-w * 0.74 * dir) + ',' + hidn(w * 0.02) + ' ' + hidn(-w * 0.58 * dir) + ',' + hidn(-w * 0.2) +
@@ -469,7 +475,7 @@ function hidWarmHand(r, dir, opts) {
 // arc rather than articulating at a joint, so `bend` is the whole performance.
 function hidArm(r, sx, sy, wx, wy, bend, opts) {
   opts = opts || {};
-  var fill = opts.fill || HID_SKIN;
+  var fill = opts.fill || '#3a353f';
 
   // ONE width, the whole length. This is the entire idea.
   var w = hidHoseW(r);
@@ -525,54 +531,9 @@ function hidWristRot(ex, ey, wx, wy) {
 //          head centre, as [x, y]. Omit for a hand resting in the lap.
 // opts.gripL / gripR    close that hand on something
 // opts.lean  how far the tired line falls forward, in degrees
+// Place the complete shared Canon figure; never combine a cast head with legacy anatomy.
 function hidCanon(r, x, y, opts) {
-  opts = opts || {};
-  var o = '';
-  // Skeleton, all in head radii, measured down from the head centre.
-  var neckY = r * 1.55;
-  var shoulderY = r * 2.05;
-  var halfW = r * 1.85;             // shoulder half width
-  var hipY = shoulderY + r * 3.1;
-  var th = r * 0.62;                // arm thickness
-
-  // ---- SHOULDERS AND BACK. The line falls forward: he has been here a while.
-  o += '<path d="M' + hidn(-halfW) + ',' + hidn(hipY) +
-    ' Q' + hidn(-halfW * 0.92) + ',' + hidn(shoulderY + r * 0.5) + ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.16) +
-    ' Q0,' + hidn(shoulderY - r * 0.58) + ' ' + hidn(r * 0.86) + ',' + hidn(shoulderY - r * 0.16) +
-    ' Q' + hidn(halfW * 0.92) + ',' + hidn(shoulderY + r * 0.5) + ' ' + hidn(halfW) + ',' + hidn(hipY) +
-    ' Z" fill="' + HID_SKIN + '"/>';
-  o += '<path d="M' + hidn(-halfW * 0.72) + ',' + hidn(shoulderY + r * 0.86) + ' Q0,' + hidn(shoulderY + r * 0.28) +
-    ' ' + hidn(halfW * 0.72) + ',' + hidn(shoulderY + r * 0.86) + '" fill="none" stroke="#1a2334" stroke-width="1" opacity="0.7"/>';
-
-  // ---- ARMS. Two of them, each with an elbow and each ending in a hand.
-  var lw = opts.reachL || [-halfW * 0.94, hipY - r * 0.5];
-  var rw = opts.reachR || [halfW * 0.94, hipY - r * 0.5];
-  var lsx = -halfW * 0.78, rsx = halfW * 0.78, sy = shoulderY + r * 0.18;
-  o += hidArm(r, lsx, sy, lw[0], lw[1], -r * 0.62, { rim: true });
-  o += hidArm(r, rsx, sy, rw[0], rw[1], r * 0.62);
-  // hands go down AFTER the arms and BEFORE anything they hold is closed on
-  o += hidHand(r, -1, { x: lw[0], y: lw[1], grip: opts.gripL, rot: opts.rotL || 0 });
-  o += hidHand(r, 1, { x: rw[0], y: rw[1], grip: opts.gripR, rot: opts.rotR || 0, rim: false });
-
-  // ---- NECK AND HEAD
-  o += '<rect x="' + hidn(-r * 0.4) + '" y="' + hidn(neckY - r * 0.3) + '" width="' + hidn(r * 0.84) +
-    '" height="' + hidn(r * 0.8) + '" fill="' + HID_SKIN + '"/>';
-  o += '<circle cx="' + hidn(r * 0.07) + '" cy="0" r="' + hidn(r) + '" fill="' + HID_SKIN + '"/>';
-  o += '<path d="M' + hidn(-r * 0.93) + ',' + hidn(-r * 0.14) + ' Q' + hidn(-r * 0.64) + ',' + hidn(-r * 1.14) +
-    ' ' + hidn(r * 0.07) + ',' + hidn(-r * 1) + ' Q' + hidn(r * 0.79) + ',' + hidn(-r * 1.14) +
-    ' ' + hidn(r * 1.07) + ',' + hidn(-r * 0.14) + '" fill="' + HID_SKIN_L + '"/>';
-
-  // ---- THE COLD RIM. A dark silhouette needs one lit edge or it is a hole.
-  o += '<path d="M' + hidn(-halfW * 0.96) + ',' + hidn(hipY - r * 0.6) + ' Q' + hidn(-halfW * 0.9) + ',' + hidn(shoulderY + r * 0.3) +
-    ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.12) + '" fill="none" stroke="#5fa0b8" stroke-width="' + hidn(r * 0.29) + '" opacity="0.22"/>';
-  o += '<path d="M' + hidn(-halfW * 0.96) + ',' + hidn(hipY - r * 0.6) + ' Q' + hidn(-halfW * 0.9) + ',' + hidn(shoulderY + r * 0.3) +
-    ' ' + hidn(-r * 0.86) + ',' + hidn(shoulderY - r * 0.12) + '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(r * 0.11) + '" opacity="0.75"/>';
-  o += '<path d="M' + hidn(-r * 0.93) + ',' + hidn(-r * 0.86) + ' Q' + hidn(-r * 1.07) + ',' + hidn(-r * 0.21) +
-    ' ' + hidn(-r * 0.86) + ',' + hidn(r * 0.29) + '" fill="none" stroke="' + HID_RIM + '" stroke-width="' + hidn(r * 0.1) + '" opacity="0.6"/>';
-
-  var t = 'translate(' + hidn(x) + ',' + hidn(y) + ')';
-  if (opts.lean) t += ' rotate(' + opts.lean + ',0,' + hidn(hipY) + ')';
-  return '<g data-canon-r="' + r + '" transform="' + t + '">' + o + '</g>';
+  return bcPlace('canon', r, x, y + 104, { stance: 'seated', expr: 'tired' });
 }
 
 // ---------------------------------------------------------------------------
@@ -893,10 +854,10 @@ STORY_SCENES['hidden_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
     <stop offset="0%" stop-color="#0a1224"/><stop offset="55%" stop-color="#16233a"/><stop offset="100%" stop-color="#28384c"/>
   </linearGradient>
   <linearGradient id="hidShaftDark0" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0d1422"/><stop offset="100%" stop-color="#05080f"/>
+    <stop offset="0%" stop-color="#101e23"/><stop offset="100%" stop-color="#254d3c"/>
   </linearGradient>
-  <radialGradient id="hidShaft0" cx="50%" cy="12%" r="70%">
-    <stop offset="0%" stop-color="#5fa0b8" stop-opacity="0.2"/><stop offset="55%" stop-color="#3d5a75" stop-opacity="0.06"/><stop offset="100%" stop-color="#05080f" stop-opacity="0"/>
+  <radialGradient id="hidShaft0" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#64D9A0" stop-opacity="0.18"/><stop offset="55%" stop-color="#64D9A0" stop-opacity="0.06"/><stop offset="100%" stop-color="#64D9A0" stop-opacity="0"/>
   </radialGradient>
 </defs>
 <rect width="500" height="260" fill="url(#hidSky0)"/>
@@ -918,21 +879,42 @@ STORY_SCENES['hidden_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="374" y="120" width="12" height="9" rx="1" fill="#3d5a75" opacity="0.38"/>
 <!-- MID PLANE: cobbles -->
 <rect x="0" y="170" width="500" height="90" fill="#18202e"/>
-<ellipse cx="70" cy="200" rx="15" ry="6" fill="#202839" opacity="0.6"/>
-<ellipse cx="150" cy="222" rx="13" ry="5" fill="#1e2534" opacity="0.5"/>
-<ellipse cx="360" cy="206" rx="14" ry="6" fill="#202839" opacity="0.55"/>
-<ellipse cx="430" cy="234" rx="13" ry="5" fill="#1e2534" opacity="0.45"/>
-<ellipse cx="110" cy="248" rx="12" ry="5" fill="#202839" opacity="0.4"/>
-` + hidFountain('0', 250, 180, { lit: false }) + `
-<!-- NEAR PLANE: the service hatch, open, and the cold coming up out of it.
-     It is in the cobbles in FRONT of the fountain, over the valve chamber
-     that feeds it, which is why a fountain marks the way down and why the
-     water goes on running while the hatch stands open. -->
-<ellipse cx="196" cy="220" rx="72" ry="28" fill="url(#hidShaft0)"/>
-` + hidHatch(196, 226, true, '0') + `
-<!-- Boot scuff on the second step down -->
-<path d="M180,222 Q191,220 200,223" fill="none" stroke="#4a5568" stroke-width="1.3" stroke-linecap="round" opacity="0.5"/>
-<path d="M184,225 Q192,223 198,225" fill="none" stroke="#4a5568" stroke-width="0.8" stroke-linecap="round" opacity="0.32"/>
+<!-- Staggered stone courses sit behind the fountain and hatch. -->
+<g fill="#293242" opacity=".38"><path d="M-28 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M5 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M38 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M71 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M104 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M137 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M170 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M203 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M236 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M269 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M302 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M335 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M368 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M401 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M434 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M467 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M500 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M-17 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M24 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M65 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M106 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M147 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M188 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M229 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M270 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M311 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M352 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M393 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M434 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M475 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M-44 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M5 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M54 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M103 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M152 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M201 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M250 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M299 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M348 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M397 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M446 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M495 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M-25 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M32 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M89 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M146 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M203 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M260 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M317 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M374 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M431 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M488 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M-60 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M5 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M70 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M135 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M200 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M265 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M330 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M395 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M460 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/></g>
+<!-- Grounded basin: contact shadow, continuous stone wall, then water. -->
+<ellipse cx="300" cy="199" rx="101" ry="12" fill="#0b1220" opacity=".45"/>
+<path d="M202 164A98 27 0 0 0 398 164L398 181A98 27 0 0 1 202 181Z" fill="#364153"/>
+<path d="M204 181A96 25 0 0 0 396 181L399 184A99 26 0 0 1 201 184Z" fill="#465164"/>
+<ellipse cx="300" cy="164" rx="98" ry="27" fill="#526078"/>
+<ellipse cx="300" cy="163" rx="88" ry="21" fill="#355871"/>
+<path d="M216 167Q300 203 384 167" fill="none" stroke="#67788c" stroke-width="2" opacity=".55"/>
+<path d="M237 192V198 M276 201V205 M323 201V205 M365 192V198" stroke="#263344" stroke-width="1" opacity=".6"/>
+<path d="M289 116H311V166Q300 171 289 166Z" fill="#526078"/>
+<path d="M291 118H297V166H291Z" fill="#718097" opacity=".45"/>
+<ellipse cx="300" cy="117" rx="32" ry="10" fill="#647189"/>
+<ellipse cx="300" cy="115" rx="26" ry="7" fill="#426c85"/>
+<!-- Blue water uses the town fountain's upright jet and outward falls. -->
+<path d="M300 111V95" stroke="#aaddff" stroke-width="1.5" opacity=".65"><animate attributeName="opacity" values=".45;.7;.45" dur="2s" repeatCount="indefinite"/></path>
+<path d="M280 119Q267 139 264 161 M320 119Q333 139 336 161" fill="none" stroke="#aaddff" stroke-width="1.5" opacity=".5"/>
+<path d="M278 121Q263 143 260 163 M322 121Q337 143 340 163" fill="none" stroke="#7fb4d1" stroke-width=".8" opacity=".35"/>
+<g fill="none" stroke="#9bcbe3" stroke-width=".8" opacity=".4"><ellipse cx="264" cy="165" rx="10" ry="2.5"/><ellipse cx="336" cy="165" rx="10" ry="2.5"/><path d="M229 164Q239 161 249 164 M314 178Q333 180 348 176"/></g>
+<circle cx="300" cy="93" r="1.8" fill="#aaddff" opacity=".6"/>
+
+<!-- Service hatch beside the fountain, aligned with the square's paving. -->
+<ellipse cx="121" cy="231" rx="71" ry="25" fill="url(#hidShaft0)"/>
+<!-- Raised lid and hinge sit behind the opening. -->
+<path d="M72 216L76 180H165L170 216Z" fill="#263443"/>
+<path d="M77 183H163L167 211H75Z" fill="#182630"/>
+<path d="M88 184L86 211 M103 184L102 211 M119 184V211 M135 184L136 211 M151 184L153 211" stroke="#344553" stroke-width="2"/>
+<path d="M77 181H164 M76 201H166" stroke="#485765" stroke-width="1.3"/>
+<!-- A shallow ground-plane opening; its inner walls catch light from below. -->
+<path d="M70 213H172L181 246H61Z" fill="#34414c"/>
+<path d="M75 217H167L174 241H68Z" fill="url(#hidShaftDark0)"/>
+<path d="M75 217L68 241L75 237L81 220Z M167 217L174 241L167 237L161 220Z" fill="#385d4b" opacity=".65"/>
+<path d="M80 222H162V224H80Z M85 228H157V230H85Z M91 234H151V236H91Z" fill="#50745d" opacity=".55"/>
+<path d="M71 214H171" stroke="#566571" stroke-width="2"/>
+<path d="M64 244H178" stroke="#64796c" stroke-width="1.4" opacity=".7"/>
+<path d="M83 213V217 M158 213V217" stroke="#65727a" stroke-width="3"/>
 </svg>`;
 
 // Scene 1: The listening post, establishing. Canon from behind, one big screen
@@ -1161,19 +1143,11 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
      off the left edge and the arm reaches across to where the pencil went
      down. Head radius 18 here because the camera is closer, and nothing else
      about him changes. -->
-<g transform="translate(58,168)">
-  <path d="M-60,92 Q-52,26 -10,10 Q10,6 24,20 Q40,44 44,92 Z" fill="#05070e"/>
-  <!-- the arm, with an elbow in it, reaching to the table -->
-` + hidArm(18, 24, 22, 112, -20, -13) + `
-  <circle cx="-2" cy="-4" r="18" fill="#05070e"/>
-  <path d="M-20,-6 Q-14,-24 -2,-22 Q10,-24 16,-6" fill="#0b0f19"/>
-  <path d="M-56,86 Q-48,32 -14,14" fill="none" stroke="#5fa0b8" stroke-width="5" opacity="0.2"/>
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-</g>
+<g transform="translate(56 158)">` + bcCharacter('canon',24,{"expr":"tired","stance":"standing"}) + `</g>
 <!-- His hand, resting flat where the pencil was put down. Drawn AFTER the
      table and the pencil, so the hand closes on the surface rather than the
      arm lying across it. Sized off his head, not off the frame. -->
-` + hidHand(18, 1, { x: 172, y: 150, rot: -150, grip: true }) + `
+
 <!-- THE SECOND CHAIR. Big in frame. It has been there a while. -->
 ` + hidChair(398, 206, -6, 250, { w: 58, d: 20, backH: 56 }) + `
 <!-- dust settled on the seat rail, the "a while" of it -->
@@ -1252,14 +1226,7 @@ STORY_SCENES['hidden_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <!-- Canon, silhouette at the bottom edge, back to us. The arm goes UP to the
      screen with an elbow in it, and it ends in a hand: two fingers out of a
      loose fist, which is the gesture, rather than two sticks off a stump. -->
-<g transform="translate(140,214)">
-  <path d="M-52,46 Q-46,10 -8,0 Q10,-2 22,10 Q36,26 40,46 Z" fill="#03050a"/>
-` + hidArm(17, 22, 12, 68, -28, 12, { fill: '#03050a' }) + `
-` + hidHand(17, 1, { x: 68, y: -28, rot: 36, fill: '#03050a', rim: false }) + `
-  <circle cx="0" cy="-16" r="17" fill="#03050a"/>
-  <path d="M-17,-18 Q-11,-36 0,-34 Q11,-36 17,-18" fill="#080d18"/>
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-</g>
+<g transform="translate(140 200)">` + bcCharacter('canon',17,{"expr":"tired","stance":"standing","armPose":{"right":{"ex":1.5,"ey":-0.5,"wx":2.6,"wy":-2.1}}}) + `</g>
 <!-- second chair, edge of frame, still empty -->
 ` + hidChair(452, 226, -5, 258, { w: 44, d: 14, backH: 44, seat: '#0e1521', seatEdge: '#39465c' }) + `
 </svg>`;
@@ -1374,18 +1341,7 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 ` + hidChair(238, 210, 0, 253, { w: 68, d: 20, backH: 58, seat: '#333e52', seatEdge: '#46536b' }) + `
 <!-- CANON from behind, centre, low. Head slightly down. Two arms: the left
      resting, the right out toward the cards without looking at them. -->
-<g transform="translate(238,150)">
-  <path d="M-30,96 Q-27,46 -13,32 Q0,25 13,32 Q27,46 30,96 Z" fill="#05070e"/>
-` + hidArm(15, -22, 40, -44, 44, -8) + `
-` + hidHand(15, -1, { x: -44, y: 44, rot: 172 }) + `
-` + hidArm(15, 24, 40, 62, 42, 10) + `
-` + hidHand(15, 1, { x: 62, y: 42, rot: -166, grip: true, rim: false }) + `
-  <circle cx="1" cy="13" r="15" fill="#05070e"/>
-  <path d="M-14,11 Q-10,-5 1,-3 Q12,-5 16,11" fill="#0b0f19"/>
-  <rect x="-6" y="24" width="13" height="9" fill="#05070e"/>
-  <path d="M-29,88 Q-26,48 -13,34" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-</g>
+<g transform="translate(238 152)">` + bcCharacter('canon',15,{"expr":"tired","stance":"seated"}) + `</g>
 <!-- second chair, angled toward him -->
 ` + hidChair(360, 226, -5, 253, { w: 48, d: 16, backH: 48 }) + `
 <rect x="0" y="253" width="500" height="7" fill="#0a121e" opacity="0.7"/>
@@ -1460,31 +1416,7 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 ` + hidChair(262, 216, 8, 253, { w: 56, d: 20, backH: 54, seat: '#333e52', seatEdge: '#46536b' }) + `
 <!-- CANON, TURNED. Three-quarters away. We get the far side of a jaw and a
      temple in silhouette and nothing else. Still no face. -->
-<g transform="translate(258,148)">
-  <!-- torso turned: the shoulder line runs away from us -->
-  <path d="M-34,96 Q-34,48 -20,34 Q-6,26 10,32 Q28,44 34,96 Z" fill="#05070e"/>
-  <path d="M-22,44 Q-4,36 14,44" fill="none" stroke="#1a2334" stroke-width="1" opacity="0.6"/>
-  <!-- the near arm, laid along the table: upper arm, elbow, forearm, hand
-       open on the wood, not holding anything -->
-` + hidArm(15, -26, 40, -76, 44, 8) + `
-` + hidHand(15, -1, { x: -76, y: 44, rot: -102 }) + `
-  <!-- head in three-quarter back view: skull, ear, jawline going away.
-       The face plane points off-frame left and is not drawn. -->
-  <g transform="translate(-8,10)">
-    <circle cx="0" cy="0" r="15" fill="#05070e"/>
-    <path d="M-15,-3 Q-10,-19 1,-17 Q13,-19 15,-2" fill="#0b0f19"/>
-    <!-- jaw, receding, no features on it -->
-    <path d="M-14,4 Q-16,14 -6,17 Q2,18 8,13" fill="#05070e"/>
-    <!-- ear -->
-    <ellipse cx="7" cy="2" rx="3" ry="4.6" fill="#0b0f19"/>
-    <!-- cold rim off the temple, the tell that he has turned -->
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-  </g>
-  <rect x="-14" y="24" width="14" height="10" fill="#05070e"/>
-  <path d="M-32,88 Q-32,50 -20,36" fill="none" stroke="#5fa0b8" stroke-width="4.4" opacity="0.22"/>
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-</g>
+<g transform="translate(258 151)">` + bcCharacter('canon',15,{"expr":"tired","stance":"seated"}) + `</g>
 <!-- second chair, and he is turned toward it -->
 ` + hidChair(392, 228, -7, 253, { w: 48, d: 16, backH: 48 }) + `
 <rect x="0" y="253" width="500" height="7" fill="#0a121e" opacity="0.7"/>
@@ -1763,14 +1695,7 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <ellipse cx="150" cy="120" rx="230" ry="180" fill="#5fa0b8" opacity="0.07"/>
 <!-- THE FIXING: his fingers at the top, holding the line. Dark against the
      lit wall, so the line has somewhere to come from. -->
-<g transform="translate(250,14)">
-  <path d="M-46,-14 Q-40,16 -18,24 L18,26 Q42,20 46,-8 L46,-20 L-46,-20 Z" fill="#05070e"/>
-  <!-- index finger and thumb pinching the line -->
-  <path d="M-16,22 Q-14,42 -4,44 Q6,44 6,26" fill="#05070e"/>
-  <path d="M8,26 Q12,44 22,42 Q30,38 26,20" fill="#05070e"/>
-  <!-- rim light down the finger edge -->
-  <!-- rim stroke removed: it ran INSIDE the silhouette and read as a tear -->
-</g>
+<g transform="translate(250 4)"><path d="M-18 -8 L18 -8 L18 18 Q18 28 9 34 L3 48 Q0 54 -5 50 Q-8 48 -5 41 L0 28 L-10 28 L-8 42 Q-6 49 -12 50 Q-17 49 -18 42 L-23 25 Q-27 13 -18 -8Z" fill="#c9a88f"/><path d="M0 28 Q8 24 11 18 M-10 28 L-13 17" stroke="#94745c" stroke-width="1.2" fill="none"/><path d="M-23 -8 H23 V7 H-23Z" fill="#3a353f"/></g>
 <!-- THE LINE. One clear unbroken run from the fingers to the handle hole.
      It swings a little, and the whole tool swings with it. -->
 <g transform="translate(250,58)">
@@ -1913,12 +1838,7 @@ STORY_SCENES['hidden_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <!-- a faint guide line on the table where the pencil always goes -->
 <line x1="40" y1="230" x2="214" y2="230" stroke="#F2C14E" stroke-width="0.5" opacity="0.1"/>
 <!-- his hand withdrawing from the card, top edge, fingers only -->
-<g transform="translate(266,88)">
-  <path d="M-42,0 Q-38,16 -26,20 L26,18 Q42,12 40,0 Z" fill="#05070e"/>
-  <path d="M-24,19 Q-22,28 -14,28 Q-8,26 -9,17" fill="#05070e"/>
-  <path d="M-6,19 Q-4,29 4,29 Q10,27 9,17" fill="#05070e"/>
-  <path d="M12,18 Q15,27 22,26 Q27,24 26,16" fill="#05070e"/>
-</g>
+` + hidCloseHand(266,75,0.65,180,"#c9a88f","#3a353f") + `
 <!-- the screenlight in the room shifting, very slightly -->
 <ellipse cx="250" cy="130" rx="250" ry="110" fill="#5fa0b8" opacity="0.02">
   <animate attributeName="opacity" values="0.012;0.042;0.012" dur="12.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
@@ -1955,20 +1875,33 @@ STORY_SCENES['hidden_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 <rect x="374" y="120" width="12" height="9" rx="1" fill="#5fa0b8" opacity="0.36"/>
 <!-- MID PLANE: cobbles -->
 <rect x="0" y="170" width="500" height="90" fill="#18202e"/>
-<ellipse cx="72" cy="200" rx="15" ry="6" fill="#202839" opacity="0.6"/>
-<ellipse cx="150" cy="224" rx="13" ry="5" fill="#1e2534" opacity="0.5"/>
-<ellipse cx="358" cy="206" rx="14" ry="6" fill="#202839" opacity="0.55"/>
-<ellipse cx="432" cy="234" rx="13" ry="5" fill="#1e2534" opacity="0.45"/>
-<ellipse cx="110" cy="248" rx="12" ry="5" fill="#202839" opacity="0.4"/>
-<!-- THE SAME FOUNTAIN, lit from within: the held note released. -->
-` + hidFountain('10', 250, 180, { lit: true }) + `
-<!-- the jet, running higher than it was, and a drop falling back off it -->
-<line x1="250" y1="128" x2="250" y2="102" stroke="url(#hidWat10)" stroke-width="2.4" opacity="0.8">` + hidAnim('opacity', '0.52;0.9;0.52', '2.9s') + `</line>
-<circle cx="250" cy="100" r="2.2" fill="#9fd0e0" opacity="0">` + hidAnim('cy', '100;124;150', '2.3s', { curve: HID_EASE_IN }) + hidAnim('opacity', '0;0.7;0', '2.3s') + `</circle>
-<circle cx="256" cy="104" r="1.5" fill="#9fd0e0" opacity="0">` + hidAnim('cy', '104;128;152', '3.1s', { begin: '-1.4s', curve: HID_EASE_IN }) + hidAnim('opacity', '0;0.55;0', '3.1s', { begin: '-1.4s' }) + `</circle>
-<ellipse cx="250" cy="166" rx="62" ry="26" fill="url(#hidMist10)"/>
-<!-- NEAR PLANE: the same hatch, shut again. Nothing marks it. -->
-` + hidHatch(250, 229, false, '10') + `
+<!-- Staggered stone courses sit behind the fountain and hatch. -->
+<g fill="#293242" opacity=".38"><path d="M-28 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M5 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M38 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M71 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M104 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M137 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M170 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M203 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M236 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M269 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M302 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M335 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M368 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M401 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M434 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M467 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M500 174h26l2 2v6l-2 2h-26l-2 -2v-6Z"/><path d="M-17 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M24 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M65 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M106 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M147 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M188 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M229 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M270 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M311 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M352 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M393 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M434 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M475 188h34l2 2v7l-2 2h-34l-2 -2v-7Z"/><path d="M-44 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M5 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M54 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M103 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M152 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M201 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M250 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M299 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M348 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M397 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M446 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M495 202h42l2 2v8l-2 2h-42l-2 -2v-8Z"/><path d="M-25 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M32 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M89 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M146 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M203 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M260 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M317 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M374 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M431 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M488 216h50l2 2v9l-2 2h-50l-2 -2v-9Z"/><path d="M-60 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M5 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M70 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M135 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M200 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M265 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M330 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M395 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/><path d="M460 230h58l2 2v10l-2 2h-58l-2 -2v-10Z"/></g>
+<!-- Grounded basin: contact shadow, continuous stone wall, then water. -->
+<ellipse cx="300" cy="199" rx="101" ry="12" fill="#0b1220" opacity=".45"/>
+<path d="M202 164A98 27 0 0 0 398 164L398 181A98 27 0 0 1 202 181Z" fill="#364153"/>
+<path d="M204 181A96 25 0 0 0 396 181L399 184A99 26 0 0 1 201 184Z" fill="#465164"/>
+<ellipse cx="300" cy="164" rx="98" ry="27" fill="#526078"/>
+<ellipse cx="300" cy="163" rx="88" ry="21" fill="#355871"/>
+<path d="M216 167Q300 203 384 167" fill="none" stroke="#67788c" stroke-width="2" opacity=".55"/>
+<path d="M237 192V198 M276 201V205 M323 201V205 M365 192V198" stroke="#263344" stroke-width="1" opacity=".6"/>
+<path d="M289 116H311V166Q300 171 289 166Z" fill="#526078"/>
+<path d="M291 118H297V166H291Z" fill="#718097" opacity=".45"/>
+<ellipse cx="300" cy="117" rx="32" ry="10" fill="#647189"/>
+<ellipse cx="300" cy="115" rx="26" ry="7" fill="#426c85"/>
+<!-- Blue water uses the town fountain's upright jet and outward falls. -->
+<path d="M300 111V85" stroke="#aaddff" stroke-width="1.5" opacity=".65"><animate attributeName="opacity" values=".45;.7;.45" dur="2s" repeatCount="indefinite"/></path>
+<path d="M280 119Q267 139 264 161 M320 119Q333 139 336 161" fill="none" stroke="#aaddff" stroke-width="1.5" opacity=".5"/>
+<path d="M278 121Q263 143 260 163 M322 121Q337 143 340 163" fill="none" stroke="#7fb4d1" stroke-width=".8" opacity=".35"/>
+<g fill="none" stroke="#9bcbe3" stroke-width=".8" opacity=".4"><ellipse cx="264" cy="165" rx="10" ry="2.5"/><ellipse cx="336" cy="165" rx="10" ry="2.5"/><path d="M229 164Q239 161 249 164 M314 178Q333 180 348 176"/></g>
+<circle cx="300" cy="83" r="1.8" fill="#aaddff" opacity=".6"/>
+
+<!-- The same hatch, closed flush with the paving. -->
+<path d="M70 213H172L181 246H61Z" fill="#34414c"/>
+<path d="M75 217H167L174 241H68Z" fill="#283643"/>
+<path d="M87 218L83 240 M102 218L100 240 M119 218V240 M135 218L137 240 M151 218L155 240" stroke="#182630" stroke-width="2"/>
+<path d="M71 214H171 M64 244H178" stroke="#566571" stroke-width="1.4"/>
+<path d="M113 224H128V227H113Z" fill="#182630"/>
 </svg>`;
 
 // ---------------------------------------------------------------------------
@@ -2615,13 +2548,7 @@ STORY_SCENES['hidden_end_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <rect x="78" y="0" width="6" height="4.4" rx="1.6" fill="#525f79"/>
 </g>
 <!-- Canon from behind at the edge of frame, looking down the row -->
-<g transform="translate(-10,150)">
-  <path d="M-40,110 Q-34,50 4,34 Q26,28 42,42 Q58,62 62,110 Z" fill="#05070e"/>
-  <circle cx="16" cy="16" r="19" fill="#05070e"/>
-  <path d="M-3,14 Q3,-6 16,-4 Q30,-6 35,14" fill="#0b0f19"/>
-  <path d="M-38,102 Q-32,52 2,36" fill="none" stroke="#5fa0b8" stroke-width="5" opacity="0.2"/>
-  <path d="M-38,102 Q-32,52 2,36" fill="none" stroke="#9fd4e4" stroke-width="1.8" opacity="0.75"/>
-</g>
+
 </svg>`;
 
 // E2: "Here is the whole of my plan, and I would like you to hear how thin it
@@ -2669,26 +2596,7 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <path d="M140,194 L360,194 L420,260 L80,260 Z" fill="#5fa0b8" opacity="0.07"/>
 <!-- CANON STANDING. He does not sit down for this. Full height, from behind,
      near-black against the bright screen. This is his biggest silhouette. -->
-<g transform="translate(216,60)">
-  <path d="M-30,200 Q-32,110 -22,72 Q-12,52 2,50 Q18,52 28,72 Q38,110 36,200 Z" fill="#05070e"/>
-  <circle cx="3" cy="30" r="20" fill="#05070e"/>
-  <path d="M-17,28 Q-11,4 3,6 Q17,4 23,28" fill="#0b0f19"/>
-  <rect x="-6" y="46" width="18" height="12" fill="#05070e"/>
-  <!-- Arms down, hands empty. There is nothing in them, and that is the shot,
-       which is exactly why they have to BE hands: they were two 15-wide
-       strokes hanging free and ending in round caps, so the frame's whole
-       point (empty hands) had nothing in it to read. Head is r=20 in this
-       standing shot, so the hands are sized off 20. -->
-` + hidArm(20, -24, 84, -34, 156, -7) + `
-` + hidArm(20, 30, 84, 40, 156, 7) + `
-` + hidHand(20, -1, { x: -34, y: 156, rot: -6, rim: false }) + `
-` + hidHand(20, 1, { x: 40, y: 156, rot: 6, rim: false }) + `
-  <!-- the rim, hard: he is standing in front of a lit screen -->
-  <path d="M-29,196 Q-31,112 -22,74 Q-14,56 0,51" fill="none" stroke="#5fa0b8" stroke-width="6" opacity="0.2"/>
-  <path d="M-29,196 Q-31,112 -22,74 Q-14,56 0,51" fill="none" stroke="#9fd4e4" stroke-width="2" opacity="0.8"/>
-  <path d="M-17,20 Q-21,32 -18,44" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.65"/>
-  <path d="M-37,120 Q-40,146 -37,166" fill="none" stroke="#9fd4e4" stroke-width="1.6" opacity="0.55"/>
-</g>
+<g transform="translate(219 90)">` + bcCharacter('canon',20,{"expr":"tired","stance":"standing"}) + `</g>
 <!-- the empty second chair, pushed back, still there -->
 <!-- the empty second chair, pushed back, still there. Legs used to end at
      278.7 and 266.8 against a floor of 260: both of them through the deck. -->
@@ -2794,51 +2702,7 @@ STORY_SCENES['hidden_end_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
       <circle cx="-16" cy="-10" r="1.8"/><circle cx="16" cy="-10" r="1.8"/><circle cx="-16" cy="10" r="1.8"/><circle cx="16" cy="10" r="1.8"/>
     </g>
   </g>
-  <!-- body: the canvas suit, sleeves rolled to the elbow -->
-  <path d="M-34,96 Q-36,44 -22,26 Q-8,16 6,20 Q22,28 28,50 Q34,74 32,96 Z" fill="#6b6350"/>
-  <path d="M-34,96 Q-36,44 -22,26 Q-8,16 6,20 Q22,28 28,50 Q34,74 32,96 Z" fill="#8a8168" opacity="0.5"/>
-  <!-- LEGS. The torso used to close at y=96 with nothing under it, so he was
-       a bust on a table. Seated at the bolted table: thigh forward, shin
-       down, one boot on the deck and the far leg reading behind it. -->
-  <path d="M-24,92 Q-26,108 -22,120 L-4,120 Q-2,104 -4,92 Z" fill="#4f4a3a"/>
-  <path d="M4,92 Q2,108 6,120 L24,120 Q26,104 24,92 Z" fill="#5c5644"/>
-  <rect x="-24" y="118" width="22" height="9" rx="3" fill="#3a3428"/>
-  <rect x="4" y="118" width="22" height="9" rx="3" fill="#453e30"/>
-  <!-- the rolled cuffs -->
-  <rect x="-38" y="56" width="16" height="9" rx="3" fill="#a89d7e"/>
-  <rect x="24" y="52" width="16" height="9" rx="3" fill="#a89d7e"/>
-  <!-- forearms, bare, working -->
-  <path d="M-30,64 Q-14,76 8,80" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
-  <path d="M32,60 Q46,68 58,76" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
-  <!-- hands: one on the straight edge, one steadying the page -->
-  <!-- Hands. Bare ellipses before; a mass plus a thumb lobe on the side,
-       which is the minimum that reads at this size. -->
-  <path d="M2,78 Q13,74 20,79 Q23,84 18,88 Q9,90 3,86 Z" fill="#c39a72"/>
-  <path d="M4,79 Q-2,80 -3,84 Q-2,88 3,87" fill="#c39a72"/>
-  <path d="M6,83 Q12,82 17,84" fill="none" stroke="#a37f5b" stroke-width="0.9" opacity="0.7"/>
-  <g transform="rotate(-14,62,78)">
-    <path d="M53,74 Q64,70 71,75 Q74,80 69,84 Q60,86 54,82 Z" fill="#c39a72"/>
-    <path d="M55,75 Q49,76 48,80 Q49,84 54,83" fill="#c39a72"/>
-    <path d="M57,79 Q63,78 68,80" fill="none" stroke="#a37f5b" stroke-width="0.9" opacity="0.7"/>
-  </g>
-  <!-- head, DOWN at the ledger. Face is allowed here: he is not Canon. -->
-  <circle cx="-2" cy="0" r="17" fill="#c39a72"/>
-  <path d="M-19,-4 Q-14,-20 -2,-18 Q11,-20 15,-4" fill="#5a4a34"/>
-  <!-- brow and the line of a nose, seen from three quarters, looking down -->
-  <path d="M-14,4 Q-10,2 -6,4" fill="none" stroke="#8a6748" stroke-width="1.4" stroke-linecap="round"/>
-  <!-- EYES, closed and down at the page. The face shipped with a brow, a
-       nose and a moustache and no eyes, which is what made it read blank. -->
-  <path d="M-13,7 Q-9.5,9.5 -6,7" fill="none" stroke="#5a4a34" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M4,6 Q7.5,8.5 11,6" fill="none" stroke="#5a4a34" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M-13,4.5 Q-9.5,2.5 -6,4.5" fill="none" stroke="#8a6748" stroke-width="1.1" stroke-linecap="round" opacity="0.7"/>
-  <path d="M4,3.5 Q7.5,1.5 11,3.5" fill="none" stroke="#8a6748" stroke-width="1.1" stroke-linecap="round" opacity="0.7"/>
-  <path d="M2,2 Q6,8 2,11" fill="none" stroke="#8a6748" stroke-width="1.4" stroke-linecap="round"/>
-  <!-- the moustache, and a mouth that is not doing anything in particular -->
-  <path d="M-6,13 Q-1,15 6,12" fill="none" stroke="#5a4a34" stroke-width="2.6" stroke-linecap="round"/>
-  <!-- warm key on the near cheek, from the lamp above -->
-  <path d="M-16,-6 Q-19,4 -14,12" fill="none" stroke="#ffe0a0" stroke-width="2" opacity="0.6"/>
-  <rect x="-8" y="16" width="14" height="10" fill="#c39a72"/>
-</g>
+` + bcCharacter('fredward',16,{expr:'open',armPose:{left:{ex:-1.2,ey:1.1,wx:.5,wy:1.7},right:{ex:1.7,ey:.3,wx:2.2,wy:.0}}}) + `</g>
 <!-- the crab, which does not move -->
 <g transform="translate(408,222)">
   <ellipse cx="0" cy="0" rx="11" ry="7" fill="#8a3b2a"/>
@@ -2945,43 +2809,7 @@ STORY_SCENES['hidden_end_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 </g>
 <!-- HIS HAND, FLAT ON THE TABLE. The way you do on a boat. Warm, lit, and
      absolutely still: no animation on this element at all. -->
-<g transform="translate(304,214)">
-  <!-- the shadow it casts, soft and close: the hand is pressed down -->
-  <ellipse cx="4" cy="18" rx="62" ry="14" fill="#3a2c19" opacity="0.4"/>
-  <!-- The PALM: a shorter block than it was. The hand read as a bread roll
-       because the palm ran the full 130 units and the four fingers were 20
-       unit lumps on top of it. On a real hand the fingers are about as long
-       as the palm, so the palm shrinks and the fingers grow. -->
-  <path d="M-52,18 Q-58,0 -46,-8 Q-22,-16 6,-15 L40,-13 Q58,-10 56,4 Q50,20 24,24 L-26,26 Z" fill="#c39a72"/>
-  <!-- FINGERS, spread flat and each one its own length: index, middle, ring,
-       little, with the middle longest. Each runs a full palm-length. -->
-  <path d="M-44,-9 Q-50,-44 -38,-52 Q-26,-56 -22,-40 L-20,-12 Z" fill="#c39a72"/>
-  <path d="M-20,-13 Q-24,-54 -10,-62 Q4,-64 6,-46 L8,-13 Z" fill="#c39a72"/>
-  <path d="M8,-13 Q6,-52 20,-58 Q34,-58 34,-42 L34,-12 Z" fill="#c39a72"/>
-  <path d="M34,-12 Q34,-42 48,-44 Q58,-42 56,-28 L54,-8 Z" fill="#c39a72"/>
-  <!-- the creases between them, so four fingers read as four -->
-  <g stroke="#a67c56" stroke-width="1.2" opacity="0.5" stroke-linecap="round">
-    <path d="M-21,-40 L-21,-13"/><path d="M7,-46 L7,-13"/><path d="M34,-42 L34,-12"/>
-  </g>
-  <!-- the knuckle creases across each finger -->
-  <g stroke="#a67c56" stroke-width="1" opacity="0.4" stroke-linecap="round">
-    <path d="M-44,-30 L-22,-32"/><path d="M-20,-38 L6,-40"/>
-    <path d="M8,-36 L34,-36"/><path d="M35,-28 L55,-27"/>
-  </g>
-  <!-- THUMB, laid along the near edge, thicker than a finger and set lower -->
-  <path d="M-50,12 Q-70,8 -76,-6 Q-78,-20 -64,-20 Q-52,-18 -46,-6 Z" fill="#c39a72"/>
-  <path d="M-64,-16 Q-70,-8 -66,2" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
-  <!-- tendons: the hand is pressing, not resting -->
-  <g stroke="#a67c56" stroke-width="1.4" opacity="0.5" stroke-linecap="round">
-    <line x1="-36" y1="-4" x2="-30" y2="12"/><line x1="-12" y1="-6" x2="-8" y2="14"/>
-    <line x1="14" y1="-6" x2="16" y2="14"/><line x1="38" y1="-4" x2="38" y2="12"/>
-  </g>
-  <!-- warm rim off the knuckles -->
-  <path d="M-44,-10 Q-20,-17 8,-15 L40,-13" fill="none" stroke="#ffdf9e" stroke-width="2" opacity="0.6"/>
-  <!-- rolled cuff and forearm, running off the bottom of frame -->
-  <path d="M-24,24 Q-14,50 -10,80" fill="none" stroke="#c39a72" stroke-width="26" stroke-linecap="round"/>
-  <rect x="-34" y="40" width="46" height="14" rx="4" fill="#a89d7e" transform="rotate(6,-11,47)"/>
-</g>
+` + hidCloseHand(302,214,0.9,-8,"#e0b48c","#40614e") + `
 </svg>`;
 
 // E6: Fredward with both hands full and looking at NEITHER of them. Framed on
@@ -3011,67 +2839,23 @@ STORY_SCENES['hidden_end_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <path d="M-10,240 Q20,110 110,64"/><path d="M510,240 Q480,110 390,64"/>
 </g>
 <!-- FREDWARD, CLOSE. The face is the shot. He has stopped mid sentence. -->
-<g transform="translate(250,132)">
-  <!-- shoulders, cropped by the frame -->
-  <path d="M-150,150 Q-140,74 -74,52 Q-30,40 0,42 Q34,40 76,52 Q142,74 152,150 Z" fill="#6b6350"/>
-  <path d="M-150,150 Q-140,74 -74,52 Q-30,40 0,42 Q34,40 76,52 Q142,74 152,150 Z" fill="#8a8168" opacity="0.45"/>
-  <!-- collar -->
-  <path d="M-46,52 Q-20,78 0,80 Q20,78 46,52" fill="none" stroke="#4e4838" stroke-width="5"/>
-  <!-- neck -->
-  <rect x="-20" y="10" width="40" height="44" fill="#a8805e"/>
-  <!-- HEAD, large. Looking at neither hand: the eyeline goes off, at nothing. -->
-  <ellipse cx="0" cy="-28" rx="52" ry="58" fill="#c39a72"/>
-  <!-- the lit side, from the lamp above left -->
-  <path d="M-52,-32 Q-48,-78 -6,-86 Q10,-87 22,-80 Q-10,-64 -18,-22 Q-24,14 -6,28 Q-34,22 -46,-2 Z" fill="#dcae80" opacity="0.55"/>
-  <!-- and the shadow side -->
-  <path d="M52,-30 Q50,10 20,26 Q34,4 34,-30 Q34,-62 18,-80 Q44,-68 52,-30 Z" fill="#9c7452" opacity="0.6"/>
-  <!-- hair, grey at the sides, salt-worn -->
-  <path d="M-52,-40 Q-48,-92 0,-94 Q48,-92 52,-40 Q40,-72 0,-74 Q-40,-72 -52,-40 Z" fill="#5a4a34"/>
-  <path d="M-52,-40 Q-50,-64 -40,-76" fill="none" stroke="#9a8a72" stroke-width="4" opacity="0.6"/>
-  <path d="M52,-40 Q50,-62 42,-74" fill="none" stroke="#9a8a72" stroke-width="3.4" opacity="0.5"/>
-  <!-- brows, level. Not distressed. Not anything yet. -->
-  <path d="M-34,-42 Q-22,-48 -10,-44" fill="none" stroke="#5a4a34" stroke-width="3.4" stroke-linecap="round"/>
-  <path d="M10,-44 Q22,-48 34,-42" fill="none" stroke="#5a4a34" stroke-width="3.4" stroke-linecap="round"/>
-  <!-- EYES. Open, and aimed at nothing in the frame. This is the whole beat. -->
-  <ellipse cx="-21" cy="-30" rx="10" ry="6" fill="#f3e6d4"/>
-  <ellipse cx="21" cy="-30" rx="10" ry="6" fill="#f3e6d4"/>
-  <circle cx="-22" cy="-30" r="4.4" fill="#4a5a52"/>
-  <circle cx="20" cy="-30" r="4.4" fill="#4a5a52"/>
-  <circle cx="-22" cy="-30" r="2" fill="#160f0a"/>
-  <circle cx="20" cy="-30" r="2" fill="#160f0a"/>
-  <!-- one warm catchlight each, from the lamp: the only bright point in a face
-       that has otherwise gone still -->
-  <circle cx="-24.4" cy="-32" r="1.4" fill="#fff3d4"/>
-  <circle cx="17.6" cy="-32" r="1.4" fill="#fff3d4"/>
-  <!-- lower lids, heavy: he is not staring, he has simply stopped -->
-  <path d="M-31,-26 Q-21,-22 -11,-26" fill="none" stroke="#a67c56" stroke-width="1.6" opacity="0.7"/>
-  <path d="M11,-26 Q21,-22 31,-26" fill="none" stroke="#a67c56" stroke-width="1.6" opacity="0.7"/>
-  <!-- nose -->
-  <path d="M0,-28 Q6,-10 -2,-4" fill="none" stroke="#a67c56" stroke-width="2.4" stroke-linecap="round"/>
-  <!-- moustache -->
-  <path d="M-18,4 Q0,10 18,3" fill="none" stroke="#5a4a34" stroke-width="7" stroke-linecap="round"/>
-  <!-- THE MOUTH, caught OPEN, mid word. He was saying something and stopped. -->
-  <path d="M-11,15 Q0,22 11,15 Q0,19 -11,15 Z" fill="#4a2c22"/>
-  <path d="M-11,15 Q0,12 11,15" fill="none" stroke="#a67c56" stroke-width="1.4" opacity="0.6"/>
-  <!-- the line at the corner of the mouth that was not there a second ago -->
-  <path d="M-15,12 Q-19,17 -17,22" fill="none" stroke="#a67c56" stroke-width="1.4" opacity="0.5"/>
-</g>
-<!-- BOTH HANDS FULL, and both are at the bottom edge, dark and UNREADABLE.
+<g transform="translate(250 91)">` + bcCharacter('fredward',42,{expr:'wary',armPose:{left:{ex:-1.6,ey:1.7,wx:-2.4,wy:.6},right:{ex:1.6,ey:1.7,wx:2.4,wy:.6}}}) + `</g>
+<!-- BOTH HANDS FULL, both at the bottom edge, dark and UNREADABLE.
      Something rope-shaped, something paper-shaped. Neither is legible, and
      that is on purpose: he is not looking at them either. -->
-<!-- BOTH HANDS FULL, and both at the bottom edge. WHAT they hold stays
-     deliberately unreadable, because he is not looking at either of them --
+<!-- BOTH HANDS FULL, both at the bottom edge. WHAT they hold stays
+     deliberately unreadable, because he is not looking at either of them,
      but the HANDS have to be hands. They were two brown blobs with nothing in
      them: no fingers, no wrists, no thumbs. Sized off the head in this shot
      (ry 58, so r = 29 x 0.62), which is the same rule as everywhere else. -->
 <g opacity="0.9">
   <!-- the rope-shaped thing, laid across the fingers before they close -->
-  <path d="M64,228 Q34,218 8,226" fill="none" stroke="#3a3830" stroke-width="15" stroke-linecap="round"/>
-  <path d="M64,228 Q34,218 8,226" fill="none" stroke="#6a6558" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
-` + hidWarmHand(34, 1, { x: 96, y: 244, rot: -16, skin: '#a8825e', shade: '#8a6a4c' }) + `
+  <path d="M157,223 Q125,211 108,224" fill="none" stroke="#3a3830" stroke-width="15" stroke-linecap="round"/>
+  <path d="M157,223 Q125,211 108,224" fill="none" stroke="#6a6558" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
+
   <!-- the paper-shaped thing, held against the other palm -->
-  <rect x="418" y="192" width="60" height="34" rx="1" fill="#d8cfb4" opacity="0.7" transform="rotate(-14,448,209)"/>
-` + hidWarmHand(34, -1, { x: 408, y: 242, rot: 14, skin: '#a8825e', shade: '#8a6a4c' }) + `
+  <rect x="336" y="203" width="60" height="34" rx="1" fill="#d8cfb4" opacity="0.7" transform="rotate(-14,366,220)"/>
+
 </g>
 </svg>`;
 
@@ -3149,7 +2933,7 @@ STORY_SCENES['hidden_end_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
      by a few units. Through the helper it is a short palm with four fingers
      lying flat along the page, which is what a hand that has stopped writing
      actually does. -->
-` + hidWarmHand(34, 1, { x: 412, y: 158, rot: -100 }) + `
+` + hidCloseHand(422,169,.7,-76,"#e0b48c","#40614e") + `
 <!-- the pen, put down across the gutter, which he would never normally do -->
 <g transform="translate(196,126) rotate(-8)">
   <rect x="0" y="0" width="66" height="4" rx="2" fill="#2f2418"/>
@@ -3200,54 +2984,8 @@ STORY_SCENES['hidden_end_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <line x1="-62" y1="-55" x2="58" y2="-55" stroke="#fff8e2" stroke-width="2" opacity="0.8"/>
 </g>
 <!-- both hands, squaring: one on each edge, coming in square to the block -->
-<g transform="translate(120,188)">
-  <!-- The hand squaring the block, seen from the side. It was ONE closed blob
-       with a single stub for a thumb and no fingers at all: two of them side
-       by side filled 54% of the frame and read as paws. Now the palm is edge
-       on to us and the four fingers curl over the far side of the paper,
-       which is what squaring a stack actually looks like. -->
-  <!-- the palm, edge on -->
-  <path d="M2,30 Q-10,8 4,-8 Q24,-22 50,-19 L76,-16 Q92,-10 88,4 Q80,22 54,26 L20,31 Z" fill="#c39a72"/>
-  <!-- four fingers, curling over the top edge of the block and down the far
-       side: each one a full palm-length, the middle one longest -->
-  <path d="M50,-19 Q52,-42 64,-44 Q76,-44 75,-30 Q74,-20 68,-15 Z" fill="#b78d64"/>
-  <path d="M62,-17 Q66,-40 78,-41 Q89,-40 87,-27 Q86,-18 80,-13 Z" fill="#c39a72"/>
-  <path d="M74,-14 Q79,-35 90,-35 Q99,-33 96,-21 Q94,-13 88,-9 Z" fill="#b78d64"/>
-  <path d="M85,-10 Q90,-28 99,-27 Q107,-25 104,-15 Q102,-8 96,-5 Z" fill="#c39a72"/>
-  <!-- the knuckle line, where the fingers bend over the edge -->
-  <path d="M52,-19 Q68,-15 86,-9 Q97,-6 103,-4" fill="none" stroke="#a67c56" stroke-width="1.3" opacity="0.5"/>
-  <!-- the thumb, on OUR side of the block, pressing down -->
-  <path d="M18,-2 Q30,-14 48,-11 Q58,-8 54,2 Q46,10 30,9 Q20,7 18,-2 Z" fill="#d0a97f"/>
-  <path d="M30,-8 Q42,-8 50,-3" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
-  <!-- warm rim off the wrist and the heel of the hand -->
-  <path d="M4,26 Q-6,6 8,-8" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
-  <!-- the rolled cuff -->
-  <rect x="-16" y="14" width="44" height="15" rx="4" fill="#a89d7e" transform="rotate(-8,6,21)"/>
-</g>
-<g transform="translate(380,188) scale(-1,1)">
-  <!-- The hand squaring the block, seen from the side. It was ONE closed blob
-       with a single stub for a thumb and no fingers at all: two of them side
-       by side filled 54% of the frame and read as paws. Now the palm is edge
-       on to us and the four fingers curl over the far side of the paper,
-       which is what squaring a stack actually looks like. -->
-  <!-- the palm, edge on -->
-  <path d="M2,30 Q-10,8 4,-8 Q24,-22 50,-19 L76,-16 Q92,-10 88,4 Q80,22 54,26 L20,31 Z" fill="#c39a72"/>
-  <!-- four fingers, curling over the top edge of the block and down the far
-       side: each one a full palm-length, the middle one longest -->
-  <path d="M50,-19 Q52,-42 64,-44 Q76,-44 75,-30 Q74,-20 68,-15 Z" fill="#b78d64"/>
-  <path d="M62,-17 Q66,-40 78,-41 Q89,-40 87,-27 Q86,-18 80,-13 Z" fill="#c39a72"/>
-  <path d="M74,-14 Q79,-35 90,-35 Q99,-33 96,-21 Q94,-13 88,-9 Z" fill="#b78d64"/>
-  <path d="M85,-10 Q90,-28 99,-27 Q107,-25 104,-15 Q102,-8 96,-5 Z" fill="#c39a72"/>
-  <!-- the knuckle line, where the fingers bend over the edge -->
-  <path d="M52,-19 Q68,-15 86,-9 Q97,-6 103,-4" fill="none" stroke="#a67c56" stroke-width="1.3" opacity="0.5"/>
-  <!-- the thumb, on OUR side of the block, pressing down -->
-  <path d="M18,-2 Q30,-14 48,-11 Q58,-8 54,2 Q46,10 30,9 Q20,7 18,-2 Z" fill="#d0a97f"/>
-  <path d="M30,-8 Q42,-8 50,-3" fill="none" stroke="#a67c56" stroke-width="1.1" opacity="0.45"/>
-  <!-- warm rim off the wrist and the heel of the hand -->
-  <path d="M4,26 Q-6,6 8,-8" fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.6"/>
-  <!-- the rolled cuff -->
-  <rect x="-16" y="14" width="44" height="15" rx="4" fill="#a89d7e" transform="rotate(-8,6,21)"/>
-</g>
+` + hidCloseHand(178,188,0.65,90,"#e0b48c","#40614e") + `
+` + hidCloseHand(320,188,0.65,-90,"#e0b48c","#40614e") + `
 <!-- the tin, open, empty now -->
 <g transform="translate(60,142) rotate(-6)">
   <rect x="-30" y="-14" width="60" height="34" rx="4" fill="#4f717c"/>
@@ -3337,66 +3075,7 @@ STORY_SCENES['hidden_end_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
        edge overlapping the page corner, so the ledger still reads as a ledger.
        Low angle: four splayed fingers pressing, knuckles up and catching the
        lamp, thumb hooked back along the near edge. -->
-  <g transform="translate(-118,30)">
-    <!-- contact shadow, tight under the palm: it is pressed down, not resting -->
-    <ellipse cx="6" cy="16" rx="52" ry="12" fill="#2a1f12" opacity="0.45"/>
-    <!-- FOUR FINGERS, splayed, each a separate tapered digit with a knuckle.
-         Drawn first so the palm mass overlaps their bases. -->
-    <!-- index -->
-    <path d="M-30,-2 C-40,-12 -46,-26 -42,-36 C-39,-43 -31,-42 -28,-35
-             C-25,-27 -21,-16 -17,-6 Z" fill="#c39a72"/>
-    <ellipse cx="-34" cy="-20" rx="7.4" ry="8.4" fill="#cea681" transform="rotate(-18,-34,-20)"/>
-    <!-- middle -->
-    <path d="M-14,-6 C-19,-19 -20,-35 -14,-43 C-8,-49 -1,-45 -1,-36
-             C-1,-26 -1,-14 -1,-4 Z" fill="#c39a72"/>
-    <ellipse cx="-11" cy="-24" rx="7.8" ry="9" fill="#cea681" transform="rotate(-6,-11,-24)"/>
-    <!-- ring -->
-    <path d="M2,-4 C1,-18 4,-33 11,-39 C18,-44 24,-39 22,-30
-             C20,-21 18,-11 16,-2 Z" fill="#c39a72"/>
-    <ellipse cx="10" cy="-21" rx="7.4" ry="8.6" fill="#cea681" transform="rotate(8,10,-21)"/>
-    <!-- little -->
-    <path d="M18,-2 C20,-14 25,-26 32,-30 C39,-33 43,-27 40,-19
-             C37,-12 33,-4 31,2 Z" fill="#c39a72"/>
-    <ellipse cx="30" cy="-16" rx="6.4" ry="7.4" fill="#cea681" transform="rotate(20,30,-16)"/>
-    <!-- THE PALM / back of the hand, a broad low wedge over the finger bases -->
-    <path d="M-34,2 C-40,-6 -36,-14 -26,-14
-             L34,-8 C46,-6 50,4 44,14
-             C38,23 18,27 -2,26 L-22,22 C-32,19 -36,10 -34,2 Z" fill="#c39a72"/>
-    <!-- THUMB, hooked back along the near edge of the table -->
-    <path d="M-32,10 C-46,10 -58,6 -62,-2 C-65,-9 -58,-14 -50,-11
-             C-42,-8 -36,-4 -31,1 Z" fill="#c39a72"/>
-    <ellipse cx="-52" cy="-6" rx="7.4" ry="6.4" fill="#cea681" transform="rotate(-28,-52,-6)"/>
-    <!-- KNUCKLES catching the lamp: four bright caps across the back of the
-         hand, which is what makes it read as a hand at a glance -->
-    <g fill="#f0c795" opacity="0.75">
-      <ellipse cx="-28" cy="-10" rx="6" ry="4.2" transform="rotate(-16,-28,-10)"/>
-      <ellipse cx="-10" cy="-12" rx="6.4" ry="4.4" transform="rotate(-5,-10,-12)"/>
-      <ellipse cx="9" cy="-10" rx="6" ry="4.2" transform="rotate(7,9,-10)"/>
-      <ellipse cx="26" cy="-6" rx="5.2" ry="3.8" transform="rotate(18,26,-6)"/>
-    </g>
-    <!-- TENDONS running back from each knuckle. The hand is PRESSING. -->
-    <g stroke="#a67c56" stroke-width="1.5" opacity="0.5" stroke-linecap="round">
-      <path d="M-27,-6 C-26,3 -25,11 -23,18"/>
-      <path d="M-9,-8 C-9,2 -8,11 -7,19"/>
-      <path d="M10,-6 C11,3 12,12 12,19"/>
-      <path d="M26,-3 C27,4 28,11 28,17"/>
-    </g>
-    <!-- the gaps between the splayed fingers, so they separate -->
-    <g stroke="#9c7452" stroke-width="1.4" opacity="0.55" stroke-linecap="round">
-      <path d="M-22,-8 C-21,-16 -21,-24 -22,-31"/>
-      <path d="M-3,-9 C-2,-18 0,-27 2,-33"/>
-      <path d="M17,-6 C19,-14 22,-21 25,-26"/>
-    </g>
-    <!-- warm rim along the top of the knuckle line, from the lamp above -->
-    <path d="M-36,-8 C-24,-16 -4,-18 16,-13 C28,-10 38,-6 44,0"
-          fill="none" stroke="#ffdf9e" stroke-width="2.2" opacity="0.7"/>
-    <!-- and along the thumb edge -->
-    <path d="M-60,-3 C-54,-10 -44,-10 -33,-2" fill="none" stroke="#ffdf9e" stroke-width="1.6" opacity="0.5"/>
-    <!-- rolled cuff and forearm, running off the bottom of frame -->
-    <path d="M6,26 C10,44 12,58 12,74" fill="none" stroke="#c39a72" stroke-width="30" stroke-linecap="round"/>
-    <rect x="-14" y="34" width="46" height="15" rx="4" fill="#a89d7e" transform="rotate(5,9,41)"/>
-    <path d="M-8,30 C-5,46 -4,58 -4,72" fill="none" stroke="#ffdf9e" stroke-width="2" opacity="0.4"/>
-  </g>
+  ` + hidCloseHand(-118,30,0.72,-12,"#e0b48c","#40614e") + `
 </g>
 <!-- and nobody looking at him. The frame has no watcher in it and no screen. -->
 </svg>`;
@@ -3473,34 +3152,7 @@ STORY_SCENES['hidden_end_10'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <!-- FREDWARD AT THE RAIL. From behind, and that is a choice, not the rule:
      the rule is about Canon. Here it is because he is looking at the water and
      so are we. Hands on the rail, weight on them. -->
-<g transform="translate(360,196)">
-  <!-- legs -->
-  <rect x="-16" y="-8" width="13" height="8" fill="#6b6350"/>
-  <rect x="3" y="-8" width="13" height="8" fill="#6b6350"/>
-  <!-- body: the canvas suit, and the shoulders are DOWN -->
-  <path d="M-30,-6 Q-32,-58 -22,-84 Q-10,-100 2,-100 Q16,-100 26,-84 Q36,-58 34,-6 Z" fill="#6b6350"/>
-  <path d="M-30,-6 Q-32,-58 -22,-84 Q-10,-100 2,-100 Q16,-100 26,-84 Q36,-58 34,-6 Z" fill="#8a8168" opacity="0.4"/>
-  <!-- rolled cuffs, and forearms out to the rail -->
-  <rect x="-38" y="-64" width="15" height="9" rx="3" fill="#a89d7e"/>
-  <rect x="24" y="-64" width="15" height="9" rx="3" fill="#a89d7e"/>
-  <path d="M-32,-58 Q-44,-52 -52,-46" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
-  <path d="M32,-58 Q44,-52 52,-46" fill="none" stroke="#c39a72" stroke-width="10" stroke-linecap="round"/>
-  <!-- hands ON the rail, taking his weight -->
-  <ellipse cx="-56" cy="-44" rx="10" ry="7" fill="#c39a72"/>
-  <ellipse cx="56" cy="-44" rx="10" ry="7" fill="#c39a72"/>
-  <!-- head, back of it, tipped very slightly up at the water -->
-  <circle cx="2" cy="-114" r="17" fill="#c39a72"/>
-  <path d="M-15,-116 Q-10,-134 2,-132 Q15,-134 19,-116" fill="#5a4a34"/>
-  <path d="M-15,-116 Q-14,-104 -4,-100" fill="#c39a72"/>
-  <rect x="-7" y="-100" width="18" height="8" fill="#a8805e"/>
-  <!-- the cold rim, from the open water. He is lit from the OTHER side now:
-       he has walked out of the lamplight and into the wide dark. -->
-  <path d="M32,-8 Q36,-58 26,-84" fill="none" stroke="#7fc4d8" stroke-width="2.2" opacity="0.55"/>
-  <path d="M18,-124 Q22,-116 19,-106" fill="none" stroke="#7fc4d8" stroke-width="1.8" opacity="0.5"/>
-  <path d="M52,-48 Q58,-46 60,-42" fill="none" stroke="#7fc4d8" stroke-width="1.6" opacity="0.45"/>
-  <!-- and one last warm edge off the far shoulder, from the lamp behind -->
-  <path d="M-29,-10 Q-31,-58 -22,-82" fill="none" stroke="#ffdf9e" stroke-width="1.8" opacity="0.4"/>
-</g>
+<g transform="translate(360 81)">` + bcCharacter('fredward',15,{expr:'tired',armPose:{left:{ex:-1.3,ey:.7,wx:-1.6,wy:.1},right:{ex:1.3,ey:.7,wx:1.6,wy:.1}}}) + `</g>
 <!-- the distance between the man and the table he left the pages on -->
 <line x1="150" y1="130" x2="300" y2="130" stroke="#F2C14E" stroke-width="0.5" opacity="0.07"/>
 </svg>`;
@@ -3630,18 +3282,7 @@ STORY_SCENES['hidden_end_12'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <circle cx="404" cy="176" r="3.4" fill="#ffe9a8" opacity="0.55" filter="url(#hidWaterTakeE12)"/>
 <!-- FREDWARD, WAVING, and the water is taking the shape of him. He is drawn
      entirely through the blur filter: still a man, no longer a person. -->
-<g transform="translate(292,150)" filter="url(#hidWaterTakeE12)" opacity="0.62">
-  <path d="M-22,62 Q-24,18 -16,-2 Q-6,-16 2,-16 Q12,-16 20,-2 Q28,18 26,62 Z" fill="#8a8168"/>
-  <circle cx="2" cy="-28" r="13" fill="#c39a72"/>
-  <path d="M-11,-30 Q-7,-44 2,-42 Q11,-44 15,-30" fill="#5a4a34"/>
-  <!-- THE ARM, UP. Still waving. -->
-  <g>
-    <path d="M20,4 Q40,-16 46,-42" fill="none" stroke="#c39a72" stroke-width="9" stroke-linecap="round"/>
-    <ellipse cx="47" cy="-48" rx="8" ry="9" fill="#c39a72"/>
-    <animateTransform attributeName="transform" type="rotate" values="-7;7;-7" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  </g>
-  <path d="M-20,4 Q-30,22 -30,44" fill="none" stroke="#c39a72" stroke-width="9" stroke-linecap="round"/>
-</g>
+<g transform="translate(292 117)" filter="url(#hidWaterTakeE12)" opacity=".62">` + bcCharacter('fredward',12,{expr:'happy',armPose:{right:{ex:1.7,ey:0,wx:2.5,wy:-1.8}}}) + `</g>
 <!-- and the water closing over the shape: bands drifting across him -->
 <path d="M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z" fill="#2f7d92" opacity="0.16">
   <animate attributeName="d" values="M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z;M180,118 Q250,110 320,118 Q390,126 460,118 L460,134 Q390,142 320,134 Q250,126 180,134Z;M180,110 Q250,102 320,110 Q390,118 460,110 L460,126 Q390,134 320,126 Q250,118 180,126Z" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
@@ -3826,17 +3467,7 @@ STORY_SCENES['hidden_end_16'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
        The ledger is CLOSED and pushed to the far end, which is the one detail
        in this frame that is doing any work. -->
   <rect x="196" y="172" width="24" height="8" rx="1" fill="#7a4a30"/>
-  <g transform="translate(250,150)">
-    <!-- seated, side on, hands not on anything -->
-    <path d="M-13,30 Q-14,10 -7,2 Q0,-2 7,2 Q14,10 13,30 Z" fill="#0d1a16"/>
-    <circle cx="0" cy="-9" r="8" fill="#0d1a16"/>
-    <path d="M-8,-10 Q-4,-19 0,-18 Q5,-19 8,-10" fill="#0a140f"/>
-    <!-- the warm edge the lamp puts on him. He is inside the light. -->
-    <path d="M-12,26 Q-13,10 -7,3" fill="none" stroke="#ffd894" stroke-width="1.4" opacity="0.6"/>
-    <path d="M-7,-14 Q-9,-8 -7,-3" fill="none" stroke="#ffd894" stroke-width="1.2" opacity="0.55"/>
-    <!-- forearms out to the table, and nothing in the hands -->
-    <path d="M9,10 Q22,16 32,20" fill="none" stroke="#0d1a16" stroke-width="6" stroke-linecap="round"/>
-  </g>
+  <g transform="translate(250 132)">` + bcCharacter('fredward',7,{stance:'seated',expr:'tired'}) + `</g>
   <!-- the chair he is on, and the crate he is not -->
   <rect x="232" y="152" width="5" height="30" fill="#0d1a16"/>
   <!-- screen curvature -->

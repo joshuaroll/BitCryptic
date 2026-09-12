@@ -37,6 +37,17 @@ const warnings = [];
 let scenes = 0;
 
 let files;
+// SHARED KITS. Scenes used to be wholly self-contained, so evaluating one file
+// on its own was the same as how the browser ran it. That stopped being true
+// when the cast and the environment kits were factored out: index.html loads
+// them BEFORE the scene files, and a scene calling bcPlace() or townSkyline()
+// is not broken just because this checker evaluated it alone.
+//
+// A kit is any scenes/*.js that defines no scenes. They are evaluated first and
+// their exported functions passed into every scene file, which is exactly the
+// browser's load order.
+const KIT_FILES = ['characters.js'];
+
 try {
   files = readdirSync('scenes').filter((f) => f.endsWith('.js'));
 } catch {
@@ -47,13 +58,37 @@ try {
 // Which file each id came from, so a collision report names both sides.
 const idOwners = new Map();
 
+// Evaluate the kits once and collect what they expose, so every scene file
+// below sees the same helpers the browser gives it.
+const kitNames = [];
+const kitValues = [];
+for (const kit of KIT_FILES) {
+  if (!files.includes(kit)) continue;
+  const src = readFileSync(`scenes/${kit}`, 'utf8');
+  try {
+    // The kits are plain scripts that declare functions; run them in a scope
+    // that hands the declarations back.
+    const exported = new Function(
+      'STORY_SCENES', 'module', 'exports',
+      src + String.fromCharCode(10) + ';return typeof module !== "undefined" && module.exports ? module.exports : {};'
+    )({}, { exports: {} }, {});
+    for (const [k, v] of Object.entries(exported)) {
+      if (typeof v === 'function' || typeof v === 'object') { kitNames.push(k); kitValues.push(v); }
+    }
+  } catch (e) {
+    problems.push(`${kit}: kit does not evaluate (${e.message})`);
+  }
+}
+
 for (const file of files) {
+  if (KIT_FILES.includes(file)) continue;   // kits define no scenes
   const src = readFileSync(`scenes/${file}`, 'utf8');
 
-  // Evaluate the file the way the browser does: it assigns into a global.
+  // Evaluate the file the way the browser does: it assigns into a global, with
+  // the shared kits already loaded.
   const store = {};
   try {
-    new Function('STORY_SCENES', src)(store);
+    new Function('STORY_SCENES', ...kitNames, src)(store, ...kitValues);
   } catch (e) {
     problems.push(`${file}: does not evaluate (${e.message})`);
     continue;

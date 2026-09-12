@@ -81,29 +81,7 @@ function wFace(s, r, expr, dur, flip) {
   var o = '';
   var g = function (v) { return wn(v * k); };
   o += '<circle cx="0" cy="0" r="' + wn(r) + '" fill="url(#wGlass' + s + ')"/>';
-  o += '<g opacity="0.82"' + (flip ? ' transform="rotate(180,0,' + g(2.69) + ')"' : '') + '>';
-  o += '<ellipse cx="0" cy="' + g(2.69) + '" rx="' + g(8.68) + '" ry="' + g(9.92) + '" fill="#9c7a5e"/>';
-  o += '<path d="M' + g(-8.68) + ',' + g(1.03) + ' Q0,' + g(-7.85) + ' ' + g(8.68) + ',' + g(1.03) +
-    ' L' + g(8.68) + ',' + g(-4.13) + ' Q0,' + g(-9.71) + ' ' + g(-8.68) + ',' + g(-4.13) + ' Z" fill="#6d523d" opacity="0.55"/>';
-  o += '<path d="M' + g(-6.82) + ',' + g(-1.45) + ' Q0,' + g(-4.34) + ' ' + g(6.82) + ',' + g(-1.45) +
-    '" fill="none" stroke="#5a4131" stroke-width="' + g(1.55) + '" stroke-linecap="round" opacity="0.8"/>';
-  o += '<path d="M0,' + g(0.41) + ' L' + g(-0.83) + ',' + g(4.34) + ' Q0,' + g(5.37) + ' ' + g(1.45) + ',' + g(4.55) +
-    '" fill="none" stroke="#7a5c45" stroke-width="' + g(1.24) + '" stroke-linecap="round" opacity="0.8"/>';
-  if (expr === 'closed') {
-    o += (flip ? '<g transform="rotate(180,0,' + g(2.69) + ')">' : '<g>') +
-      '<path d="M' + g(-5.04) + ',' + g(0.56) + ' Q' + g(-3.17) + ',' + g(-1.49) + ' ' + g(-1.31) + ',' + g(0.56) +
-      '" fill="none" stroke="#2a1d12" stroke-width="' + g(1.4) + '" stroke-linecap="round"/>' +
-      '<path d="M' + g(1.31) + ',' + g(0.56) + ' Q' + g(3.17) + ',' + g(-1.49) + ' ' + g(5.04) + ',' + g(0.56) +
-      '" fill="none" stroke="#2a1d12" stroke-width="' + g(1.4) + '" stroke-linecap="round"/></g>';
-  } else {
-    o += '<ellipse cx="' + g(-3.51) + '" cy="' + g(0.21) + '" rx="' + g(2.07) + '" ry="' + g(1.65) + '" fill="#e8dcc4"/>' +
-      '<ellipse cx="' + g(3.51) + '" cy="' + g(0.21) + '" rx="' + g(2.07) + '" ry="' + g(1.65) + '" fill="#e8dcc4"/>' +
-      '<circle cx="' + g(-3.31) + '" cy="' + g(0.41) + '" r="' + g(1.14) + '" fill="#2a1d12"/>' +
-      '<circle cx="' + g(3.72) + '" cy="' + g(0.41) + '" r="' + g(1.14) + '" fill="#2a1d12"/>';
-  }
-  o += '<path d="M' + g(-5.79) + ',' + g(6.61) + ' Q' + g(-2.48) + ',' + g(4.96) + ' 0,' + g(6.2) +
-    ' Q' + g(2.48) + ',' + g(4.96) + ' ' + g(5.79) + ',' + g(6.61) + '" fill="#7a6248" opacity="0.85"/>';
-  o += '</g>';
+  o += '<g' + (flip ? ' transform="rotate(180)"' : '') + '>' + bcCharacter('fredward', r * 0.88, { headOnly: true, expr: expr === 'closed' ? 'tired' : 'happy' }) + '</g>';
   o += '<circle cx="0" cy="0" r="' + wn(r) + '" fill="none" stroke="' + WBRASS_B + '" stroke-width="' + g(3.51) + '"/>';
   o += '<circle cx="0" cy="0" r="' + g(16.95) + '" fill="none" stroke="' + WBRASS_A + '" stroke-width="' + g(1.03) + '" opacity="0.75"/>';
   for (var i = 0; i < 8; i++) {
@@ -133,7 +111,7 @@ function wHelmet(s, h, expr, dur, flip) {
   o += '<circle cx="' + wn(-h * 0.52) + '" cy="' + wn(-h * 0.74) + '" r="' + wn(h * 0.057) + '" fill="' + WBRASS_A + '"/>' +
     '<circle cx="0" cy="' + wn(-h * 0.91) + '" r="' + wn(h * 0.057) + '" fill="' + WBRASS_A + '"/>' +
     '<circle cx="' + wn(h * 0.52) + '" cy="' + wn(-h * 0.74) + '" r="' + wn(h * 0.057) + '" fill="' + WBRASS_A + '"/>';
-  o += '<g transform="translate(0,' + wn(h * 0.043) + ')">' + wFace(s, h * 0.674, expr, dur, flip) + '</g>';
+  o += '<g transform="translate(0,' + wn(h * 0.043) + ')">' + wFace(s, h * 0.78, expr, dur, flip) + '</g>';
   return o;
 }
 
@@ -595,9 +573,9 @@ function fred(opts) {
   var hipY = shoulderY + h * 2.6;
   var kneeY = hipY + h * 1.75;
   var footY = hipY + h * 3.5;
-  var halfW = h * 1.6;           // shoulder half width
-  var hipW = h * 1.32;
-  var limb = h * 0.52;           // the suit is bulky
+  var halfW = h * 1.22;           // shoulder half width
+  var hipW = h * 1.08;
+  var limb = h * 0.46;           // the suit is bulky
 
   var lean = pose === 'leaning' ? h * 0.28 : 0;
 
@@ -997,6 +975,10 @@ STORY_SCENES['wreck_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <circle cx="350" cy="70" r="0.9" fill="#cfeee0" opacity="0.22"><animate attributeName="cy" values="70;52;70" dur="14.63s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.08;0.28;0.08" dur="5.72s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- Deep haze at the bottom of frame -->
 <rect x="0" y="190" width="500" height="70" fill="#07141a" opacity="0.5"/>
+<!-- Sparse foreground sea grass gives depth without revealing the wreck. -->
+<path d="M34 260Q42 246 36 231Q48 245 43 260 M47 260Q48 239 57 226Q52 246 54 260 M66 260Q62 249 69 238Q68 252 72 260 M452 260Q443 241 449 227Q448 245 460 260 M469 260Q467 246 479 231Q471 250 476 260" fill="#183238" opacity=".52"/>
+<path d="M81 255L96 248L108 253L112 260H80Z M409 258L420 249L435 253L441 260Z" fill="#14282e" opacity=".6"/>
+<path d="M83 255L96 250L104 253 M411 257L420 251L430 254" fill="none" stroke="#294349" stroke-width=".8" opacity=".45"/>
 </svg>`;
 
 // Scene 1: The wreck in full. On her side, sand banked along the hull like a
@@ -1234,8 +1216,8 @@ STORY_SCENES['wreck_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 STORY_SCENES['wreck_3'] = (function () {
 var H3 = 21;
 var hand3x = (186 + H3 * 4.4 * 0.3) - 292, hand3y = (196 - H3 * 4.4 * 0.2) - (236 - fredFootDrop(H3));
-var arms3 = wArm('3', H3, -H3 * 1.5, H3 * 1.55, hand3x, hand3y, -1)
-  + wArm('3', H3, H3 * 1.5, H3 * 1.55, H3 * 2.02, H3 * 4.45, 1);
+var arms3 = wArm('3', H3, -H3 * 1.12, H3 * 1.55, hand3x, hand3y, -1)
+  + wArm('3', H3, H3 * 1.12, H3 * 1.55, H3 * 2.02, H3 * 4.45, 1);
 return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="wreckWater3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#133440"/>
 <stop offset="45%" stop-color="#133440"/>
 <stop offset="100%" stop-color="#07141a"/>
@@ -1353,8 +1335,8 @@ return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/sv
 STORY_SCENES['wreck_4'] = (function () {
 var H4 = 21;
 var page4x = (246 + H4 * 4.4 * 0.3) - 350, page4y = (194 - H4 * 4.4 * 0.16) - (232 - fredFootDrop(H4));
-var arms4 = wArm('4', H4, -H4 * 1.5, H4 * 1.55, page4x, page4y, -1)
-  + wArm('4', H4, H4 * 1.5, H4 * 1.55, H4 * 2.05, H4 * 4.5, 1);
+var arms4 = wArm('4', H4, -H4 * 1.12, H4 * 1.55, page4x, page4y, -1)
+  + wArm('4', H4, H4 * 1.12, H4 * 1.55, H4 * 2.05, H4 * 4.5, 1);
 return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="wreckWater4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a4a55"/>
 <stop offset="45%" stop-color="#133440"/>
 <stop offset="100%" stop-color="#07141a"/>
@@ -1456,8 +1438,8 @@ return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/sv
 STORY_SCENES['wreck_5'] = (function () {
 var H5 = 21;
 var hy5 = H5 * 3.55, hx5 = H5 * 2.6;
-var arms5 = wArm('5', H5, -H5 * 1.5, H5 * 1.55, -hx5, hy5, -1, { rot: -16 })
-  + wArm('5', H5, H5 * 1.5, H5 * 1.55, hx5, hy5, 1, { rot: 16 });
+var arms5 = wArm('5', H5, -H5 * 1.12, H5 * 1.55, -hx5, hy5, -1, { rot: -16 })
+  + wArm('5', H5, H5 * 1.12, H5 * 1.55, hx5, hy5, 1, { rot: 16 });
 return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="wreckWater5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#133440"/>
 <stop offset="55%" stop-color="#0d2028"/>
 <stop offset="100%" stop-color="#07141a"/>
@@ -1584,7 +1566,7 @@ STORY_SCENES['wreck_6'] = (function () {
   // inward instead puts the fingers and the brass cuff on the side of the
   // hand the camera can see, and the glove reads as a glove.
   var arms = [-1, 1].map(function (d) {
-    var sx = d * CH * 1.45, sy = CH * 1.55;                 // the model's shoulder
+    var sx = d * CH * 1.12, sy = CH * 1.55;                 // the model's shoulder
     var ex = d * CH * 2.05, ey = CH * 2.6;                  // elbow, at waist height
     var wx = d * CH * 1.2, wy = HANDS_Y - HEAD_Y;           // wrist, in on the jar
     return '<path d="M' + wn(sx) + ',' + wn(sy) + ' Q' + wn(ex) + ',' + wn(ey) + ' ' + wn(wx) + ',' + wn(wy) +
@@ -1723,8 +1705,8 @@ STORY_SCENES['wreck_6'] = (function () {
 STORY_SCENES['wreck_7'] = (function () {
 var H7 = 21;
 var off7x = 258 - 186 - H7 * 0.7, off7y = 178 - (226 - fredFootDrop(H7));
-var arms7 = wArm('7', H7, H7 * 1.5, H7 * 1.55, off7x, off7y, 1, { rot: 12 })
-  + wArm('7', H7, -H7 * 1.5, H7 * 1.55, -H7 * 2.05, H7 * 4.5, -1);
+var arms7 = wArm('7', H7, H7 * 1.12, H7 * 1.55, off7x, off7y, 1, { rot: 12 })
+  + wArm('7', H7, -H7 * 1.12, H7 * 1.55, -H7 * 2.05, H7 * 4.5, -1);
 return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="wreckWater7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a4a55"/>
 <stop offset="45%" stop-color="#133440"/>
 <stop offset="100%" stop-color="#07141a"/>
@@ -2147,8 +2129,8 @@ var page10x = (188 + H10 * 4.4 * 0.3) - 344, page10y = (192 - H10 * 4.4 * 0.16) 
 //
 // Now it goes through wArm(), which puts the elbow at waist height and lets
 // the FOREARM do the reaching, which is what a reaching arm actually does.
-var arms10 = wArm('10', H10, -H10 * 1.5, H10 * 1.55, page10x, page10y, -1, { rot: -14 })
-  + wArm('10', H10, H10 * 1.5, H10 * 1.55, H10 * 2.05, H10 * 4.3, 1);
+var arms10 = wArm('10', H10, -H10 * 1.12, H10 * 1.55, page10x, page10y, -1, { rot: -14 })
+  + wArm('10', H10, H10 * 1.12, H10 * 1.55, H10 * 2.05, H10 * 4.3, 1);
 return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="wreckWater10" x1="0" y1="0" x2="0" y2="1">
@@ -2459,7 +2441,7 @@ STORY_SCENES['wreck_return_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
   // both arms come in to the book's board corners, measured: the book spans
   // x 188.4..303.6 in scene space, so in body space the wrists land at +/-55.
   var arm = function (d) {
-    var sx = d * 28, sy = 56, ex = d * 62, ey = 100, wx = d * 55, wy = 136;
+    var sx = d * 21, sy = 35, ex = d * 62, ey = 100, wx = d * 55, wy = 136;
     var path = function (dy) {
       return 'M' + sx + ',' + sy + ' Q' + ex + ',' + (ey - dy) + ' ' + wx + ',' + (wy - dy);
     };
@@ -2680,7 +2662,7 @@ STORY_SCENES['wreck_return_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
   var hx = 250 - HEAD_X, hy = 214 - HEAD_Y;
   // upper arm down from the shoulder to an elbow, then forearm across to
   // the page: two lengths with a joint, so it reads as an arm and not a slab
-  var ex = (-CH * 1.42 + hx) / 2 - CH * 0.2, ey = (CH * 1.75 + hy) / 2 + CH * 0.35;
+  var ex = (-CH * 1.12 + hx) / 2 - CH * 0.2, ey = (CH * 1.75 + hy) / 2 + CH * 0.35;
   // THE PENCIL. It used to be a rect placed at hx + CH * 0.5 with rotate(-24)
   // -- which is exactly where the forearm passes -- so it emerged from the
   // middle of his arm and read as a pencil stabbed through it. It is drawn
@@ -2703,7 +2685,7 @@ STORY_SCENES['wreck_return_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
     + '<path d="M' + wn(CH * 0.92) + ',' + wn(-CH * 0.032) + ' L' + wn(CH * 1.0) + ',0 L'
     + wn(CH * 0.92) + ',' + wn(CH * 0.032) + ' Z" fill="#2a2a2a"/>'
     + '</g>';
-  var arms = '<path d="M' + wn(-CH * 1.42) + ',' + wn(CH * 1.75) + ' L' + wn(ex) + ',' + wn(ey)
+  var arms = '<path d="M' + wn(-CH * 1.12) + ',' + wn(CH * 1.75) + ' L' + wn(ex) + ',' + wn(ey)
       + '" fill="none" stroke="url(#wSuitR2)" stroke-width="' + wn(CH * 0.5) + '" stroke-linecap="round"/>'
     + '<path d="M' + wn(ex) + ',' + wn(ey) + ' Q' + wn((ex + hx) / 2) + ',' + wn((ey + hy) / 2 + CH * 0.1)
       + ' ' + wn(hx + CH * 0.42) + ',' + wn(hy - CH * 0.06)
@@ -2793,8 +2775,8 @@ STORY_SCENES['wreck_return_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
   var lx = (BX - BW / 2) - HEAD_X, rx = (BX + BW / 2) - HEAD_X;
   var wy = (BY - 8) - HEAD_Y;
   var arms = '<g transform="translate(' + HEAD_X + ',' + HEAD_Y + ')">'
-    + wArm('R3', CH, -CH * 1.42, CH * 1.6, lx, wy, -1, { rot: -18, bend: CH * 0.34 })
-    + wArm('R3', CH, CH * 1.42, CH * 1.6, rx, wy, 1, { rot: 18, bend: -CH * 0.34 })
+    + wArm('R3', CH, -CH * 1.12, CH * 1.6, lx, wy, -1, { rot: -18, bend: CH * 0.34 })
+    + wArm('R3', CH, CH * 1.12, CH * 1.6, rx, wy, 1, { rot: 18, bend: -CH * 0.34 })
     + '</g>';
   return body
     + book('R3', BW, { x: BX, y: BY })
@@ -3029,8 +3011,8 @@ STORY_SCENES['wreck_return_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
   // space that is a little above the wrist's resting height, and the arm
   // reaches slightly up and across to it.
   var handX = 268 - 268, handY = 212 - hy;
-  var arms = wArm('R5', H, -H * 1.5, H * 1.55, -H * 1.05, handY, -1, { rot: -12 })
-    + wArm('R5', H, H * 1.5, H * 1.55, H * 2.0, H * 4.3, 1);
+  var arms = wArm('R5', H, -H * 1.12, H * 1.55, -H * 1.05, handY, -1, { rot: -12 })
+    + wArm('R5', H, H * 1.12, H * 1.55, H * 2.0, H * 4.3, 1);
   return '<g><animateTransform attributeName="transform" type="translate" values="0,0;0,1.6;0,0"' +
     ' dur="8.33s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1"' +
     ' keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>' +

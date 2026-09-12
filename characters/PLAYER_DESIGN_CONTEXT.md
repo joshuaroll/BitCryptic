@@ -1,5 +1,7 @@
 # The Player Figure — Character Design Context
 
+**Current character approval:** the protagonist is **Webby**. The [official model library](../../Bit_Cryptic_Character_Models/README.md) governs the new appearance and six static poses. The document below is a **legacy underwater-scene implementation reference**; its mask, fins, and helper-function requirements describe the existing wreck scenes. Those scenes have not yet been migrated.
+
 **Last updated:** 2026-09-05
 **Status:** MODEL LOCKED. Function: `player(opts)`, defined at the top of
 `scenes/wreck.js`, beside `fred()`. **Scenes must call it.**

@@ -49,7 +49,8 @@ if (hasModel) {
   // scene that draws its own helmet has opted out of consistency.
   const store = {};
   try {
-    new Function('STORY_SCENES', src)(store);
+    const kit = new Function(readFileSync(join(root, 'scenes', 'characters.js'), 'utf8') + '\nreturn {bcCharacter, bcPlace};')();
+    new Function('STORY_SCENES', 'bcCharacter', 'bcPlace', src)(store, kit.bcCharacter, kit.bcPlace);
   } catch (e) {
     problems.push(`scenes/wreck.js does not evaluate: ${e.message}`);
   }
