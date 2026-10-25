@@ -196,6 +196,13 @@
             done: Array.isArray(raw.done) ? raw.done.filter((d) => BY_ID[d]) : [],
             seed: typeof raw.seed === 'number' && raw.seed > 0 ? raw.seed : 0,
             told: Array.isArray(raw.told) ? raw.told : [],
+            // Which errands Canon has set out loud, and which returns he has
+            // taken in. Missing on saves from before the scenes were wired,
+            // which the story hooks treat as "not yet", so an old save gets
+            // the briefing it never saw rather than skipping it.
+            briefed: Array.isArray(raw.briefed) ? raw.briefed.filter((d) => BY_ID[d]) : [],
+            debriefed: Array.isArray(raw.debriefed) ? raw.debriefed.filter((d) => BY_ID[d]) : [],
+            ended: !!raw.ended,
           };
     } catch {
       state = blank();
@@ -216,7 +223,7 @@
   }
 
   function blank() {
-    return { started: false, done: [], seed: 0, told: [] };
+    return { started: false, done: [], seed: 0, told: [], briefed: [], debriefed: [], ended: false };
   }
 
   function newSeed() {
@@ -315,6 +322,55 @@
     return load().done.slice();
   }
 
+  // The scenes around an errand. Canon sets it (briefed), the player goes,
+  // the player comes back and he takes it in (debriefed). Both idempotent.
+  function markBriefed(missionId) {
+    if (!BY_ID[missionId]) return false;
+    const state = load();
+    if (state.briefed.includes(missionId)) return false;
+    state.briefed.push(missionId);
+    save(state);
+    return true;
+  }
+
+  function isBriefed(missionId) {
+    return load().briefed.includes(missionId);
+  }
+
+  function markDebriefed(missionId) {
+    if (!BY_ID[missionId]) return false;
+    const state = load();
+    if (state.debriefed.includes(missionId)) return false;
+    state.debriefed.push(missionId);
+    save(state);
+    return true;
+  }
+
+  function isDebriefed(missionId) {
+    return load().debriefed.includes(missionId);
+  }
+
+  /** The first recovered artifact Canon has not yet been handed, in order. */
+  function awaitingDebrief() {
+    const state = load();
+    return MISSIONS.find((m) => state.done.includes(m.id) && !state.debriefed.includes(m.id)) || null;
+  }
+
+  // The ending has run. After it the room talks differently, so the rotation
+  // of lines starts over on the new pool.
+  function markEnded() {
+    const state = load();
+    if (state.ended) return false;
+    state.ended = true;
+    state.told = [];
+    save(state);
+    return true;
+  }
+
+  function hasEnded() {
+    return load().ended;
+  }
+
   function isRecovered(missionId) {
     return load().done.includes(missionId);
   }
@@ -361,7 +417,7 @@
    * nothing, and nobody remembers them. A reward that is only a picture of a
    * reward teaches a player that the next one will be too.
    *
-   * So the badge KEEPS THE SPOON. Canon lends you the Sounding Spoon for the
+   * So the badge KEEPS THE FORK. Canon lends you the Sounding Fork for the
    * first errand; bringing something back is what makes it yours, and from
    * then on it works anywhere on the island rather than only where he sent
    * you. It is small, it is permanent, and it is the difference between being
@@ -407,6 +463,13 @@
     recover: recover,
     recovered: recovered,
     isRecovered: isRecovered,
+    markBriefed: markBriefed,
+    isBriefed: isBriefed,
+    markDebriefed: markDebriefed,
+    isDebriefed: isDebriefed,
+    awaitingDebrief: awaitingDebrief,
+    markEnded: markEnded,
+    hasEnded: hasEnded,
     current: current,
     complete: complete,
     progress: progress,

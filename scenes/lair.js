@@ -1,6 +1,301 @@
 // Lair story scenes — "Liam's Lair"
 // Keys: lair_0 through lair_9
 
+// ======================================================================
+// THE HOARD FLOOR. One helper, every lair scene, so the treasure is the
+// same treasure wherever you stand. Pale rolled scrolls on the floor read
+// as eggs, so the floor is gold: coin heaps (a mound with a lit left slope
+// and a shaded right one, coins tumbling over it), cut gems, goblets, and
+// the kit chest. Kept LOW: heaps are sized per scene so nothing rises past
+// the floor line a figure or the dragon stands on.
+//   lairHoard(idp, {
+//     heaps:   [[cx, baseY, halfWidth, height], ...],
+//     chest:   {x, y, scale, flip} | null      (bcArt chest, open, gold)
+//     goblets: [[x, y, scale, tilt], ...]
+//     spill:   [[x0, x1, y0, y1, count], ...]  (loose coins on the floor)
+//     seed:    number,  dim: 0..1 (veil toward the cave dark)
+//   })
+// ======================================================================
+function lairHoard(idp, o) {
+  o = o || {};
+  var seed = (o.seed || 7) >>> 0;
+  function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+  function r1(v) { return Math.round(v * 10) / 10; }
+  var G = { deep: '#4a2c0a', shade: '#7a4e12', base: '#a8721c', mid: '#c8922a', hi: '#e8b844', glint: '#fff0b8', rim: '#5a360c' };
+  var GEMS = [['#b8202e', '#ff6a70'], ['#1e7a4a', '#6ae0a0'], ['#2a4ea8', '#8ab4ff'], ['#7a2a9a', '#d08aff']];
+  var s = '<g data-lair-hoard="' + idp + '">';
+  var glints = [];
+  // edge-on coins only inside a heap, where the pile props them up; loose on
+  // the floor a standing coin reads as a stick
+  function coin(x, y, big, loose) {
+    var rx = big ? 3.4 : 2.6 + rnd() * 0.8, edge = !loose && rnd() < 0.1;
+    if (edge) return '<ellipse cx="' + r1(x) + '" cy="' + r1(y - 1.6) + '" rx="1" ry="' + r1(rx * 0.85) + '" fill="' + G.mid + '" stroke="' + G.rim + '" stroke-width="0.5"/>';
+    return '<ellipse cx="' + r1(x) + '" cy="' + r1(y) + '" rx="' + r1(rx) + '" ry="' + r1(rx * 0.38) + '" fill="' + (rnd() < 0.45 ? G.hi : G.mid) + '" stroke="' + G.rim + '" stroke-width="0.5"/>';
+  }
+  function gem(x, y, k) {
+    var c = GEMS[k % GEMS.length], z = 2.6 + rnd() * 1.2;
+    return '<path d="M' + r1(x) + ',' + r1(y - z) + ' L' + r1(x + z) + ',' + r1(y) + ' L' + r1(x) + ',' + r1(y + z * 0.8) + ' L' + r1(x - z) + ',' + r1(y) + ' Z" fill="' + c[0] + '" stroke="' + G.rim + '" stroke-width="0.4"/>' +
+      '<path d="M' + r1(x) + ',' + r1(y - z) + ' L' + r1(x) + ',' + r1(y) + ' L' + r1(x - z) + ',' + r1(y) + ' Z" fill="' + c[1] + '" opacity="0.8"/>';
+  }
+  // loose coins first: they lie on the floor around and under the heaps
+  (o.spill || []).forEach(function (sp) {
+    for (var i = 0; i < sp[4]; i++) s += coin(sp[0] + rnd() * (sp[1] - sp[0]), sp[2] + rnd() * (sp[3] - sp[2]), false, true);
+  });
+  (o.heaps || []).forEach(function (hp, hi) {
+    var cx = hp[0], b = hp[1], w = hp[2], h = hp[3], x0 = cx - w, x1 = cx + w;
+    // a lumpy mound: three bumps along the crest so it is a pile, not a dome
+    var d = 'M' + x0 + ',' + b + ' C' + r1(x0 + w * 0.3) + ',' + r1(b - h * 0.7) + ' ' + r1(cx - w * 0.45) + ',' + r1(b - h * 1.02) + ' ' + r1(cx - w * 0.15) + ',' + r1(b - h * 0.98) +
+      ' Q' + r1(cx) + ',' + r1(b - h * 0.9) + ' ' + r1(cx + w * 0.15) + ',' + r1(b - h) +
+      ' C' + r1(cx + w * 0.45) + ',' + r1(b - h * 1.02) + ' ' + r1(x1 - w * 0.3) + ',' + r1(b - h * 0.6) + ' ' + x1 + ',' + b +
+      // the front foot bows toward the viewer: a heap seen from above the floor, not a slab
+      ' Q' + r1(cx + w * 0.5) + ',' + r1(b + 2 + h * 0.08) + ' ' + cx + ',' + r1(b + 1.5 + h * 0.08) + ' Q' + r1(cx - w * 0.5) + ',' + r1(b + 2 + h * 0.08) + ' ' + x0 + ',' + b + ' Z';
+    s += '<ellipse cx="' + cx + '" cy="' + r1(b + 0.5) + '" rx="' + r1(w * 1.05) + '" ry="' + r1(Math.max(2, h * 0.16)) + '" fill="#0e0604" opacity="0.45"/>';
+    s += '<path d="' + d + '" fill="' + G.base + '"/>';
+    // shaded right flank, away from the torch side
+    s += '<path d="M' + r1(cx + w * 0.15) + ',' + r1(b - h) + ' C' + r1(cx + w * 0.45) + ',' + r1(b - h * 1.02) + ' ' + r1(x1 - w * 0.3) + ',' + r1(b - h * 0.6) + ' ' + x1 + ',' + b + ' L' + r1(cx + w * 0.1) + ',' + b + ' Q' + r1(cx + w * 0.3) + ',' + r1(b - h * 0.5) + ' ' + r1(cx + w * 0.15) + ',' + r1(b - h) + ' Z" fill="' + G.shade + '"/>';
+    // lit upper-left slope
+    s += '<path d="M' + r1(x0 + w * 0.2) + ',' + r1(b - h * 0.55) + ' C' + r1(x0 + w * 0.4) + ',' + r1(b - h * 0.92) + ' ' + r1(cx - w * 0.35) + ',' + r1(b - h * 0.98) + ' ' + r1(cx - w * 0.1) + ',' + r1(b - h * 0.92) + ' Q' + r1(cx - w * 0.4) + ',' + r1(b - h * 0.8) + ' ' + r1(x0 + w * 0.2) + ',' + r1(b - h * 0.55) + ' Z" fill="' + G.hi + '" opacity="0.55"/>';
+    // dark base where the pile meets the floor
+    s += '<path d="M' + x0 + ',' + b + ' Q' + cx + ',' + r1(b - h * 0.28) + ' ' + x1 + ',' + b + ' Q' + r1(cx + w * 0.5) + ',' + r1(b + 2 + h * 0.08) + ' ' + cx + ',' + r1(b + 1.5 + h * 0.08) + ' Q' + r1(cx - w * 0.5) + ',' + r1(b + 2 + h * 0.08) + ' ' + x0 + ',' + b + ' Z" fill="' + G.deep + '" opacity="0.45"/>';
+    // coins tumbling over the surface, denser near the crest
+    var nC = Math.round(w * 0.55 + h * 0.6);
+    for (var i = 0; i < nC; i++) {
+      var u = (rnd() * 2 - 1) * 0.88, top = b - h * (1 - u * u) * 0.92;
+      var y = top + 1.5 + Math.pow(rnd(), 1.6) * (b - top - 2.5);
+      s += coin(cx + u * w, y, rnd() < 0.2);
+    }
+    // gems pressed into the heap
+    var nG = Math.max(1, Math.round(w / 22));
+    for (var g = 0; g < nG; g++) {
+      var ug = (rnd() * 2 - 1) * 0.6, tg = b - h * (1 - ug * ug) * 0.9;
+      s += gem(cx + ug * w, tg + 2 + rnd() * (b - tg) * 0.4, hi + g);
+    }
+    glints.push([cx - w * 0.25, b - h * 0.85], [cx + w * 0.3, b - h * 0.55]);
+  });
+  (o.goblets || []).forEach(function (gb) {
+    var z = gb[2] || 1, t = gb[3] || 0;
+    s += '<g transform="translate(' + gb[0] + ',' + gb[1] + ') rotate(' + t + ') scale(' + z + ')">' +
+      '<ellipse cx="0" cy="0" rx="6" ry="1.6" fill="#0e0604" opacity="0.45"/>' +
+      '<path d="M-5,0 Q-5,-2 -1.2,-2.4 L-1,-8 Q-7,-9 -7.5,-17 L7.5,-17 Q7,-9 1,-8 L1.2,-2.4 Q5,-2 5,0 Z" fill="' + G.mid + '" stroke="' + G.rim + '" stroke-width="0.6"/>' +
+      '<path d="M1,-8 Q7,-9 7.5,-17 L3.5,-17 Q3.5,-10 1,-8 Z M1.2,-2.4 Q5,-2 5,0 L1,0 Z" fill="' + G.shade + '"/>' +
+      '<path d="M-6,-15.5 Q-5.5,-11 -3,-9.4" fill="none" stroke="' + G.glint + '" stroke-width="0.9" opacity="0.7"/>' +
+      '<ellipse cx="0" cy="-17" rx="7.5" ry="1.8" fill="' + G.deep + '" stroke="' + G.rim + '" stroke-width="0.6"/>' +
+      '<path d="M0,-14.6 L1.6,-12.8 L0,-11 L-1.6,-12.8 Z" fill="#b8202e"/>' +
+      '</g>';
+    glints.push([gb[0] - 4 * z, gb[1] - 14 * z]);
+  });
+  if (o.chest && typeof bcArt !== 'undefined') {
+    s += bcArt.prop('chest', { x: o.chest.x, y: o.chest.y, scale: o.chest.scale || 0.6, flip: !!o.chest.flip, open: true, contents: 'gold', biome: 'workshop', depth: 'mid', idp: idp + 'ch' });
+    glints.push([o.chest.x - 6 * (o.chest.scale || 0.6), o.chest.y - 44 * (o.chest.scale || 0.6)]);
+  }
+  // glints: a four-point twinkle that swells and fades, never in unison
+  glints.forEach(function (p, i) {
+    var dur = (2.3 + ((i * 0.73 + (o.seed || 0) * 0.11) % 1.9)).toFixed(2), beg = ((i * 0.61) % 2.2).toFixed(2);
+    s += '<path d="M' + r1(p[0]) + ',' + r1(p[1] - 3.5) + ' L' + r1(p[0] + 0.8) + ',' + r1(p[1] - 0.8) + ' L' + r1(p[0] + 3.5) + ',' + r1(p[1]) + ' L' + r1(p[0] + 0.8) + ',' + r1(p[1] + 0.8) + ' L' + r1(p[0]) + ',' + r1(p[1] + 3.5) + ' L' + r1(p[0] - 0.8) + ',' + r1(p[1] + 0.8) + ' L' + r1(p[0] - 3.5) + ',' + r1(p[1]) + ' L' + r1(p[0] - 0.8) + ',' + r1(p[1] - 0.8) + ' Z" fill="' + G.glint + '" opacity="0">' +
+      '<animate attributeName="opacity" values="0;0.9;0" keyTimes="0;0.5;1" dur="' + dur + 's" begin="' + beg + 's" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>';
+  });
+  return s + '</g>';
+}
+
+// ======================================================================
+// LIAM. One dragon, every lair scene. The geometry is lair_6's reviewed
+// profile dragon (wedge skull, swept horns, finger-boned wings, clawed
+// forefoot, ox-blood hide), lifted into a helper so the chamber, the bow
+// and the farewell all draw the SAME animal, posed per step. lair_6 itself
+// keeps its own inline copy (reviewed; not touched).
+//   lairLiam(idp, {
+//     x, y          translate of the whole animal
+//     wings         'raised' (lair_6 V) | 'folded' (furled against the back)
+//     neck, head    degrees: neck about its root (262,172), head about the
+//                   neck top (284,88). Positive lowers the snout.
+//     jaw           'open' | 'closed'
+//     eye           'red' (glare) | 'amber' (calm); lid: true for half-lids
+//     farEye        glint of the far eye past the brow (the pair the text names)
+//     leg           'planted' | 'offer' (forefoot held out, palm up)
+//     held          svg drawn in the offer claw's frame, palm at (0,0)
+//     smoke, breath nostril smoke puffs (true) or curling S-wisps ('curl') | exhale plume
+//   })
+// ======================================================================
+function lairLiam(idp, o) {
+  o = o || {};
+  var H = idp + 'Hide', HH = idp + 'HideHead', M = idp + 'Memb', F = idp + 'Glow', B = idp + 'Breath';
+  var red = o.eye !== 'amber';
+  var EYE = red ? '#ff2200' : '#ffaa44', PUPIL = red ? '#ffaa00' : '#ffdd88';
+  var s = '<g data-lair-liam="' + idp + '" transform="translate(' + (o.x || 0) + ',' + (o.y || 0) + ')">' +
+    '<defs>' +
+    '<linearGradient id="' + H + '" gradientUnits="userSpaceOnUse" x1="202" y1="110" x2="312" y2="150"><stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#3a1616"/><stop offset="100%" stop-color="#140606"/></linearGradient>' +
+    '<linearGradient id="' + HH + '" x1="0" y1="0" x2="1" y2="0.4"><stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#3a1616"/><stop offset="100%" stop-color="#1a0808"/></linearGradient>' +
+    '<linearGradient id="' + M + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#140606"/><stop offset="100%" stop-color="#0c0404"/></linearGradient>' +
+    '<filter id="' + F + '" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3"/></filter>' +
+    (o.breath ? '<linearGradient id="' + B + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ffe2a8" stop-opacity="0.75"/><stop offset="45%" stop-color="#ffb060" stop-opacity="0.4"/><stop offset="100%" stop-color="#c86a30" stop-opacity="0"/></linearGradient>' : '') +
+    '</defs>';
+
+  // WINGS. Folded = the same wing frame furled: rotated down about its root
+  // and drawn in, so the arm bone, finger bones and claw are still there.
+  var fold = o.wings === 'folded';
+  // Furl = align the arm bone with x, squeeze the finger fan shut across it,
+  // then lay the closed wing up and back along the spine.
+  // Squashing the spread frame (the old furl) left four loose spikes with no
+  // membrane between them, so the folded wing is drawn as its own closed
+  // shape: the arm bone rises from the shoulder root to a wrist knuckle above
+  // the back (thumb claw on it), the finger bones fold back DOWN from the
+  // wrist, and the membrane is one solid blade between them with the
+  // trailing edge scalloped between the fingertips. Same bones, same colours
+  // as lair_6; the right wing is the left mirrored about x=260, as there.
+  function furled(mirror) {
+    var g = '<g' + (mirror ? ' transform="translate(520,0) scale(-1,1)"' : '') + '>' +
+      '<path d="M242,158 Q216,122 196,86 Q172,108 160,148 Q172,152 168,166 Q180,166 182,180 Q196,178 204,190 Q220,180 236,176 Z" fill="url(#' + M + ')"/>' +
+      '<path d="M196,86 Q172,108 160,148 Q172,152 168,166 Q180,166 182,180 Q196,178 204,190" fill="none" stroke="' + (mirror ? '#5a2220' : '#4a1c1c') + '" stroke-width="1.2" stroke-linejoin="round" opacity="0.85"/>' +
+      '<path d="M196,86 Q174,114 162,146 M196,86 Q180,124 169,164 M196,86 Q186,134 183,178 M196,86 Q198,140 204,188" fill="none" stroke="#3e1818" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<path d="M242,158 Q216,122 196,86" fill="none" stroke="#3a1616" stroke-width="5.5" stroke-linecap="round"/>' +
+      '<path d="M238,150 Q216,120 198,92" fill="none" stroke="#5a2626" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>' +
+      '<path d="M194,88 Q192,74 199,66 Q200,78 199,89 Z" fill="#3a1616"/></g>';
+    return g;
+  }
+  if (fold) s += furled(false) + furled(true);
+  var wl = '', wr = '';
+  if (!fold) s += '<g' + wl + '>' +
+    '<path d="M240,156 Q198,96 162,46 Q124,20 80,16 Q84,38 44,48 Q78,66 52,90 Q96,86 104,112 Q166,124 216,178 Z" fill="url(#' + M + ')"/>' +
+    '<path d="M80,16 Q84,38 44,48 Q78,66 52,90 Q96,86 104,112 Q166,124 216,178" fill="none" stroke="#4a1c1c" stroke-width="' + (fold ? 2 : 1) + '" stroke-linejoin="round" opacity="0.8"/>' +
+    '<path d="M162,46 Q118,30 82,18 M162,46 Q98,48 46,48 M162,46 Q102,68 54,88 M162,46 Q128,82 106,110" fill="none" stroke="#3e1818" stroke-width="' + (fold ? 3.6 : 2.2) + '" stroke-linecap="round"/>' +
+    '<path d="M240,156 Q198,96 162,46" fill="none" stroke="#3a1616" stroke-width="' + (fold ? 8 : 5.5) + '" stroke-linecap="round"/>' +
+    '<path d="M236,148 Q198,94 164,50" fill="none" stroke="#5a2626" stroke-width="' + (fold ? 2.2 : 1.4) + '" stroke-linecap="round" opacity="0.7"/>' +
+    '<path d="M160,46 Q160,32 168,24 Q168,36 166,48 Z" fill="#3a1616"/></g>';
+  if (!fold) s += '<g' + wr + '>' +
+    '<path d="M280,156 Q322,96 358,46 Q396,20 440,16 Q436,38 476,48 Q442,66 468,90 Q424,86 416,112 Q354,124 304,178 Z" fill="url(#' + M + ')"/>' +
+    '<path d="M440,16 Q436,38 476,48 Q442,66 468,90 Q424,86 416,112 Q354,124 304,178" fill="none" stroke="#5a2220" stroke-width="' + (fold ? 2 : 1) + '" stroke-linejoin="round" opacity="0.85"/>' +
+    '<path d="M358,46 Q402,30 438,18 M358,46 Q422,48 474,48 M358,46 Q418,68 466,88 M358,46 Q392,82 414,110" fill="none" stroke="#3e1818" stroke-width="' + (fold ? 3.6 : 2.2) + '" stroke-linecap="round"/>' +
+    '<path d="M280,156 Q322,96 358,46" fill="none" stroke="#3a1616" stroke-width="' + (fold ? 8 : 5.5) + '" stroke-linecap="round"/>' +
+    '<path d="M284,148 Q322,94 356,50" fill="none" stroke="#5a2626" stroke-width="' + (fold ? 2.2 : 1.4) + '" stroke-linecap="round" opacity="0.7"/>' +
+    '<path d="M360,46 Q360,32 352,24 Q352,36 354,48 Z" fill="#3a1616"/></g>';
+
+  // tail, haunch, body, belly: lair_6 verbatim
+  s += '<path d="M290,206 Q334,204 368,214 Q398,224 416,242 Q396,246 376,236 Q350,224 322,219 Q302,216 288,218 Z" fill="#1a0808"/>' +
+    '<path d="M416,242 Q430,234 442,240 Q436,250 422,250 Q414,248 416,242 Z" fill="#2a1212" opacity="0.85"/>' +
+    '<path d="M268,178 Q296,172 310,190 Q316,208 302,222 Q280,232 264,218 Q256,198 268,178 Z" fill="#1a0808"/>' +
+    '<path d="M202,178 Q204,152 230,143 Q262,134 290,148 Q312,161 310,188 Q306,212 278,222 Q240,228 214,212 Q198,198 202,178 Z" fill="url(#' + H + ')"/>' +
+    '<path d="M216,210 Q244,220 278,214 Q276,220 254,224 Q228,223 216,210 Z" fill="#4a1c18" opacity="0.45"/>';
+
+  // forefoot. Planted = lair_6's clawed forefoot. Offering = the same leg
+  // and foot mirrored to reach FORWARD, drawn after the head (nearest).
+  var foot = '<path d="M222,190 Q210,202 202,216 Q206,222 214,220 Q220,206 232,196 Z" fill="#1a0808"/>' +
+    '<path d="M198,216 Q208,212 218,218 Q216,224 206,224 Q196,222 198,216 Z" fill="#2a1212"/>' +
+    '<path d="M198,222 Q196,227 193,229" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.75" stroke-linecap="round"/>' +
+    '<path d="M206,224 Q205,229 203,231" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.75" stroke-linecap="round"/>' +
+    '<path d="M214,222 Q215,227 214,229" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.75" stroke-linecap="round"/>';
+  if (o.leg !== 'offer') s += foot;
+
+  // NECK + HEAD. Nested joints: placement on the outer group, the head turn
+  // on the inner one, so lowering the head never detaches it from the neck.
+  s += '<g transform="rotate(' + (o.neck || 0) + ',262,172)">' +
+    '<path d="M222,168 Q230,140 244,118 Q256,98 266,74 L298,98 Q276,114 276,134 Q278,154 304,170 Q262,180 222,168 Z" fill="url(#' + H + ')"/>' +
+    '<path d="M258,92 L244,86 L254,102 Z" fill="#2a1212"/>' +
+    '<path d="M249,110 L233,106 L244,122 Z" fill="#2a1212"/>' +
+    '<path d="M240,128 L224,126 L236,141 Z" fill="#2a1212"/>' +
+    '<path d="M232,146 L217,146 L229,158 Z" fill="#2a1212" opacity="0.9"/>' +
+    '<path d="M292,104 Q276,116 276,134 Q277,150 292,162 Q274,152 270,134 Q270,114 286,102 Z" fill="#5a2420" opacity="0.5"/>' +
+    '<path d="M277,118 L284,121 M273,130 L281,131 M273,142 L281,141" fill="none" stroke="#1e0a0a" stroke-width="1" opacity="0.6"/>' +
+    '<g transform="rotate(' + (o.head || 0) + ',284,88)">';
+  // far horn behind the skull
+  s += '<path d="M282,56 Q272,36 264,16 Q284,30 294,52 Z" fill="#1e0a0a"/>';
+  if (o.jaw === 'open') {
+    s += '<path d="M262,78 Q260,60 278,53 Q298,48 314,58 Q324,64 332,68 L350,76 Q358,80 357,87 Q355,93 347,94 L306,99 L340,113 Q347,116 344,121 Q339,125 328,123 L306,118 Q290,113 279,105 Q266,95 262,78 Z" fill="url(#' + HH + ')"/>' +
+      '<path d="M347,94 L306,99 L340,113 Q350,104 347,94 Z" fill="#0e0404"/>' +
+      '<path d="M316,98 L318,104 L321,97 Z M326,97 L328,102 L331,96 Z M336,95 L338,100 L341,95 Z" fill="#e8d8c0" opacity="0.85"/>' +
+      '<path d="M306,118 L328,123 Q339,125 344,121 Q338,121 328,120 L308,115 Z" fill="#6a2a20" opacity="0.5"/>';
+  } else {
+    // jaw shut: the lower jaw swung up about the same hinge (306,99)
+    s += '<path d="M262,78 Q260,60 278,53 Q298,48 314,58 Q324,64 332,68 L350,76 Q358,80 357,87 Q355,93 349,96 Q346,102 336,104 L310,109 Q292,111 279,104 Q266,95 262,78 Z" fill="url(#' + HH + ')"/>' +
+      '<path d="M348,95 Q330,99 306,100" fill="none" stroke="#0e0404" stroke-width="1.3" stroke-linecap="round"/>' +
+      '<path d="M337,97 L339,102 L341,96 Z" fill="#e8d8c0" opacity="0.8"/>' +
+      '<path d="M310,109 L336,104 Q346,102 349,96 Q345,104 336,106.5 L312,111 Z" fill="#6a2a20" opacity="0.45"/>';
+  }
+  s += '<path d="M314,60 Q332,68 350,76 Q356,79 357,84 Q336,78 316,70 Q308,64 314,60 Z" fill="#4a1e1e" opacity="0.55"/>' +
+    '<path d="M278,88 Q294,86 306,99 Q296,108 282,102 Q272,96 278,88 Z" fill="#2a1212" opacity="0.5"/>' +
+    // far eye: a sliver peeking over the brow ridge just behind and above
+    // the near eye, its lower half hidden by the ridge drawn over it
+    '<path d="M286,66 Q300,57 316,63 Q302,64 290,71 Z" fill="#2a1212"/>' +
+    // far eye (3/4 turn): the second almond seen past the bridge of the snout,
+    // forward of and above the near eye, so the pair the text names both glow
+    (o.farEye ? '<circle cx="312" cy="61" r="7" fill="' + EYE + '" opacity="0.16" filter="url(#' + F + ')"/>' +
+      '<path d="M305,62.5 Q310,57 318,59.5 Q312,65 305,62.5 Z" fill="' + EYE + '" opacity="0.85"><animate attributeName="opacity" values="0.65;0.95;0.65" keyTimes="0;0.5;1" dur="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>' +
+      '<path d="M311,58.4 Q312.2,61 311,63.4 Q309.8,61 311,58.4 Z" fill="' + PUPIL + '" opacity="0.8"/>' : '') +
+    '<path d="M266,68 Q246,48 224,32 Q252,40 280,56 Z" fill="#2a1212"/>' +
+    '<path d="M262,62 Q246,48 232,38 Q250,44 270,56 Z" fill="#4a2020" opacity="0.45"/>' +
+    '<path d="M266,90 L250,94 L264,98 Z" fill="#2a1212"/>';
+  // nostril
+  s += '<path d="M346,79 Q352,77 354,81 Q351,84 346,83 Z" fill="' + (red ? '#ff4400' : '#ffaa44') + '" opacity="' + (red ? 0.5 : 0.4) + '"/>';
+  if (o.smoke && o.smoke !== 'curl') {
+    s += '<circle cx="354" cy="78" r="3" fill="#4a4a4a" opacity="0"><animate attributeName="cy" values="78;62;46" keyTimes="0;0.5;1" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0;0.2;0" keyTimes="0;0.3;1" dur="4s" repeatCount="indefinite"/></circle>' +
+      '<circle cx="358" cy="80" r="2.6" fill="#4a4a4a" opacity="0"><animate attributeName="cy" values="80;64;50" keyTimes="0;0.5;1" dur="3.5s" begin="1.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0;0.18;0" keyTimes="0;0.3;1" dur="3.5s" begin="1.1s" repeatCount="indefinite"/></circle>';
+  }
+  if (o.smoke === 'curl') {
+    // smoke curling from the nostrils: two S-wisps, thick at the nostril and
+    // thinning as they rise, drifting up and swaying; visible at every frame
+    [[351, 78, 0, 4.6, 1], [348, 81, 2.1, 5.2, -1]].forEach(function (w) {
+      var x = w[0], y = w[1], d = w[4];
+      var path = 'M' + x + ',' + y + ' Q' + (x + 7 * d) + ',' + (y - 8) + ' ' + x + ',' + (y - 16) + ' Q' + (x - 7 * d) + ',' + (y - 24) + ' ' + (x + 1 * d) + ',' + (y - 32) + ' Q' + (x + 6 * d) + ',' + (y - 38) + ' ' + (x + 2 * d) + ',' + (y - 44);
+      var anim = '<animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;' + (1.5 * d) + ' -2.5;0 0" keyTimes="0;0.5;1" dur="' + w[3] + 's" begin="-' + w[2] + 's" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+        '<animate attributeName="opacity" values="0.55;0.3;0.55" keyTimes="0;0.5;1" dur="' + w[3] + 's" begin="-' + w[2] + 's" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>';
+      s += '<g opacity="0.5" transform="translate(0,0)">' + anim +
+        '<path d="' + path + '" fill="none" stroke="#6a5e58" stroke-width="5" stroke-linecap="round" opacity="0.35" filter="url(#' + F + ')"/>' +
+        '<path d="' + path + '" fill="none" stroke="#9a8a80" stroke-width="2" stroke-linecap="round" opacity="0.8"/></g>';
+    });
+  }
+  if (o.breath) {
+    // a long slow exhale: warm, pale, spreading along the snout line and
+    // fading at its far end; swells and settles, never pops
+    s += '<g opacity="0.8" transform="translate(352,84)"><path d="M0,-3 Q14,-12 34,-10 Q56,-14 74,-4 Q98,0 104,18 Q110,38 86,42 Q64,50 44,36 Q22,26 0,6 Z" fill="url(#' + B + ')" filter="url(#' + F + ')">' +
+      '<animateTransform attributeName="transform" type="scale" additive="sum" values="0.8 0.85;1.04 1.08;0.8 0.85" keyTimes="0;0.4;1" dur="5.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+      '<animate attributeName="opacity" values="0.4;0.9;0.4" keyTimes="0;0.4;1" dur="5.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>';
+    // puffs rolling off the plume and thinning as they drift
+    [[0, 6.1, 4, 12, 70, 8], [1.9, 6.7, 2, 10, 84, 30], [3.6, 5.8, -4, 9, 62, -12]].forEach(function (p) {
+      s += '<circle cx="12" cy="' + p[2] + '" r="4" fill="#ffd8a0" opacity="0" filter="url(#' + F + ')">' +
+        '<animate attributeName="cx" values="12;' + p[4] + '" dur="' + p[1] + 's" begin="' + p[0] + 's" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.4 1"/>' +
+        '<animate attributeName="cy" values="' + p[2] + ';' + p[5] + '" dur="' + p[1] + 's" begin="' + p[0] + 's" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.4 1"/>' +
+        '<animate attributeName="r" values="4;' + p[3] + '" dur="' + p[1] + 's" begin="' + p[0] + 's" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.4 1"/>' +
+        '<animate attributeName="opacity" values="0;0.32;0" keyTimes="0;0.3;1" dur="' + p[1] + 's" begin="' + p[0] + 's" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>';
+    });
+    s += '</g>';
+  }
+  // EYE: almond with a slit, glow spilling onto the scale around it
+  s += '<circle cx="300" cy="72" r="13" fill="' + EYE + '" opacity="' + (red ? 0.2 : 0.16) + '" filter="url(#' + F + ')"/>';
+  s += '<path d="M291,73 Q298,65 308,70 Q300,78 291,73 Z" fill="' + EYE + '" opacity="0.92"><animate attributeName="opacity" values="' + (red ? '0.78;1;0.78' : '0.55;0.8;0.55') + '" keyTimes="0;0.5;1" dur="' + (red ? '3s' : '5s') + '" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>' +
+    '<path d="M299,67 Q301,72 299,77 Q297,72 299,67 Z" fill="' + PUPIL + '" opacity="0.8"/>';
+  if (o.lid) {
+    // upper lid half down: the brow relaxes over the eye, which reads as calm
+    s += '<path d="M290,72 Q298,63 309,69 Q299,68 291,75 Z" fill="#1e0c0a" opacity="0.85"/>';
+  }
+  s += '</g></g>';
+
+  if (o.leg === 'offer') {
+    // the forefoot reaching out of the chest toward the viewer, turned palm
+    // up. The held item sits in the pad BEFORE the claws curl up over it.
+    // lair_6's forefoot built forward: a limb that tapers from a thick
+    // shoulder to a narrow wrist, a wrist knuckle where it bends level, a
+    // pad under the item, and digits that curl up round it with the claws
+    // grown out of their tips (one digit behind the item, two in front).
+    s += '<path d="M282,170 Q304,172 316,186 Q321,193 326,198 L322,210 Q314,206 304,202 Q292,198 281,199 Q270,186 282,170 Z" fill="#2e1212"/>' +
+      '<path d="M282,190 Q298,193 310,200 Q317,204 322,209 Q312,206 302,202 Q291,198 280,199 Z" fill="#140606" opacity="0.75"/>' +
+      '<path d="M284,173 Q304,176 314,188 Q319,194 323,198" fill="none" stroke="#6a2c26" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>' +
+      '<path d="M322,199 Q336,195 350,198 Q360,198 364,195 Q366,203 357,208 Q340,213 324,210 Z" fill="#2a1212"/>' +
+      // wrist knuckle: the joint where the limb turns level into the paw
+      '<circle cx="324" cy="204" r="6.4" fill="#2e1212"/>' +
+      '<path d="M319,199 Q324,196.5 329,199" fill="none" stroke="#6a2c26" stroke-width="1.3" stroke-linecap="round" opacity="0.8"/>' +
+      '<path d="M326,200 Q340,197 352,199 Q358,199 362,197" fill="none" stroke="#5a2626" stroke-width="1" opacity="0.7"/>' +
+      // far digit, behind the item: curls up its right side
+      '<path d="M352,201 Q360,196 361,186 L357.5,186 Q357,194 349,199 Z" fill="#1a0808"/>' +
+      '<path d="M361,186 Q361,180 356.5,177.5 Q358,182 357.5,186 Z" fill="#d8c4a8" opacity="0.85"/>';
+    if (o.held) s += '<g transform="translate(' + o.heldAt[0] + ',' + o.heldAt[1] + ')">' + o.held + '</g>';
+    // near digits, in front of the item, closing over its lower half
+    s += '<path d="M328,205 Q327,196 332,190 L335.5,191.5 Q332,197 335,204 Z" fill="#2a1212"/>' +
+      '<path d="M332,190 Q334,185 339,184.5 Q337,188 335.5,191.5 Z" fill="#d8c4a8" opacity="0.85"/>' +
+      '<path d="M340,207 Q339,199 343,194 L346.5,195.5 Q343,200 347,206 Z" fill="#2a1212"/>' +
+      '<path d="M343,194 Q345.5,189.5 350,189.5 Q347.5,192.5 346.5,195.5 Z" fill="#d8c4a8" opacity="0.85"/>';
+  }
+  return s + '</g>';
+}
+
 // Scene 0: The Descent — dark passage, stone steps, heat rising
 STORY_SCENES['lair_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -79,42 +374,56 @@ STORY_SCENES['lair_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M71 28L85 78L72 125L92 172 M427 26L411 74L430 119L407 174" fill="none" stroke="#6c4230" stroke-width="1.3" opacity=".32"/>
 <path d="M55 113L68 116V104 M441 113L431 116V104" fill="none" stroke="#77604a" stroke-width="2"/>
 <path d="M67 101V119 M430 101V119" stroke="#45382d" stroke-width="3"/>
-<path d="M79 240L91 230L103 235L110 248H83Z M392 250L403 237L417 240L425 252Z" fill="#473025"/>
-<path d="M79 240L91 230L98 234L89 239 M392 250L403 237L410 241" fill="#7e4b30" opacity=".35"/>
+<!-- the hoard starts here: gold drifted to the foot of each wall and onto the
+     lowest tread, the same lairHoard() gold as the chamber below -->
+` + lairHoard('lairH0', {
+  seed: 5,
+  spill: [[150, 350, 244, 256, 9]],
+  heaps: [[94, 249, 24, 10], [408, 253, 22, 8]],
+  goblets: [[118, 251, 0.75, 10]]
+}) + `
 
 <!-- Torch on wall (left) -->
 <rect x="55" y="100" width="4" height="20" fill="#6a4a20"/>
 <ellipse cx="57" cy="98" rx="6" ry="8" fill="#ff6622" opacity="0.7">
-  <animate attributeName="ry" values="8;10;7;9;8" dur="2s" repeatCount="indefinite"/>
+  <animate attributeName="ry" values="8;10;7;9;8" dur="2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
 <ellipse cx="57" cy="95" rx="3" ry="5" fill="#ffaa44" opacity="0.5">
-  <animate attributeName="ry" values="5;7;4;6;5" dur="1.5s" repeatCount="indefinite"/>
+  <animate attributeName="ry" values="5;7;4;6;5" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
 <!-- Torch on wall (right) -->
 <rect x="441" y="100" width="4" height="20" fill="#6a4a20"/>
 <ellipse cx="443" cy="98" rx="6" ry="8" fill="#ff6622" opacity="0.7">
-  <animate attributeName="ry" values="7;9;8;10;7" dur="2.2s" repeatCount="indefinite"/>
+  <animate attributeName="ry" values="7;9;8;10;7" dur="2.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
 <ellipse cx="443" cy="95" rx="3" ry="5" fill="#ffaa44" opacity="0.5">
-  <animate attributeName="ry" values="4;6;5;7;4" dur="1.7s" repeatCount="indefinite"/>
+  <animate attributeName="ry" values="4;6;5;7;4" dur="1.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
 </svg>`;
 
 // Scene 1: The Dragon's Chamber — vast cavern, dragon silhouette, glowing red eyes
-STORY_SCENES['lair_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+// The chamber is one room drawn for several steps, so it is a builder:
+// k suffixes the ids, liam poses the dragon, warm (step 8) lifts the
+// cavern from a red glare to a brighter hearth glow.
+function lairChamber(k, liam, warm) {
+  return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <linearGradient id="lairChamber" x1="0" y1="0" x2="0" y2="1">
+  <linearGradient id="lairChamber` + k + `" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#1a0808"/><stop offset="40%" stop-color="#2a1010"/><stop offset="100%" stop-color="#0a0404"/>
   </linearGradient>
-  <radialGradient id="lairDrGlow" cx="50%" cy="50%" r="50%">
+  <radialGradient id="lairDrGlow` + k + `" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ff2200" stop-opacity="0.1"/><stop offset="100%" stop-color="#ff2200" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="lairHide1" x1="0" y1="0" x2="1" y2="0.4">
-    <stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#341414"/><stop offset="100%" stop-color="#140606"/>
-  </linearGradient>
-  <filter id="lairFireGlow1"><feGaussianBlur stdDeviation="3"/></filter>
+  </radialGradient>` + (warm ? `
+  <radialGradient id="lairWarm` + k + `" cx="55%" cy="52%" r="62%">
+    <stop offset="0%" stop-color="#ffb24a" stop-opacity="0.55"/><stop offset="50%" stop-color="#e0702a" stop-opacity="0.26"/><stop offset="100%" stop-color="#c04a1a" stop-opacity="0.12"/>
+  </radialGradient>` : '') + `
 </defs>
-<rect width="500" height="260" fill="url(#lairChamber)"/>
+<rect width="500" height="260" fill="url(#lairChamber` + k + `)"/>` + (warm ? `
+<!-- the cavern glowing brighter: a warm wash behind everything, breathing
+     up slowly with his exhale -->
+<rect width="500" height="260" fill="url(#lairWarm` + k + `)">
+  <animate attributeName="opacity" values="0.8;1;0.8" keyTimes="0;0.4;1" dur="5.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</rect>` : '') + `
 
 <!-- ====================================================================
      CAVERN WALLS. Rock breaks in flat planes, so the walls step in and
@@ -135,144 +444,31 @@ STORY_SCENES['lair_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M360,0 Q363,-1 366,0 Q365,12 363,24 Q362,12 360,0 Z" fill="#2a1814" opacity="0.7"/>
 
 <!-- Cryptic clue carvings scratched into the rock -->
-<text x="30" y="50" fill="#ff4422" font-family="monospace" font-size="6" opacity="0.3" transform="rotate(-5,30,50)">8 down</text>
-<text x="25" y="90" fill="#ff6644" font-family="monospace" font-size="5" opacity="0.25" transform="rotate(-8,25,90)">(5,4)</text>
-<text x="455" y="55" fill="#ff4422" font-family="monospace" font-size="6" opacity="0.3" transform="rotate(5,455,55)">3 across</text>
-<text x="460" y="100" fill="#ff6644" font-family="monospace" font-size="5" opacity="0.25" transform="rotate(8,460,100)">ANAG.</text>
+<text x="30" y="50" fill="#ff4422" font-family="Georgia,serif" font-size="6" opacity="0.3" transform="rotate(-5,30,50)">8 down</text>
+<text x="25" y="90" fill="#ff6644" font-family="Georgia,serif" font-size="5" opacity="0.25" transform="rotate(-8,25,90)">(5,4)</text>
+<text x="455" y="55" fill="#ff4422" font-family="Georgia,serif" font-size="6" opacity="0.3" transform="rotate(5,455,55)">3 across</text>
+<text x="460" y="100" fill="#ff6644" font-family="Georgia,serif" font-size="5" opacity="0.25" transform="rotate(8,460,100)">ANAG.</text>
 
 <!-- ====================================================================
-     THE FLOOR. Drawn before the hoard so the scrolls sit ON it.
+     THE FLOOR. Drawn before the hoard so the gold sits ON it.
      ==================================================================== -->
 <path d="M0,236 Q60,228 128,232 Q200,236 250,229 Q320,224 396,231 Q452,236 500,230 L500,260 L0,260 Z" fill="#1a0a08"/>
 <path d="M0,248 Q100,242 200,246 Q300,250 400,244 Q456,248 500,244 L500,260 L0,260 Z" fill="#120606"/>
 
-<!-- ====================================================================
-     THE HOARD. Scrolls are not identical rectangles: they are rolled
-     tubes at different angles, some furled tight, some spilling open,
-     with dark ends where you look into the roll.
-     ==================================================================== -->
-<path d="M50,238 Q76,224 108,222 Q142,221 158,232 Q142,244 106,246 Q70,246 50,238 Z" fill="#3a2a18" opacity="0.75"/>
-<path d="M64,236 Q62,225 70,220 L82,217 Q88,220 88,229 Q88,238 80,241 L70,242 Q64,241 64,236 Z" fill="#d4c090" opacity="0.62"/>
-<path d="M70,220 Q76,222 76,229 Q76,237 70,242 Q64,241 64,236 Q62,225 70,220 Z" fill="#a89468" opacity="0.65"/>
-<path d="M92,234 Q88,224 96,219 L108,218 Q113,222 112,230 Q110,238 102,240 L96,239 Q92,238 92,234 Z" fill="#c8b880" opacity="0.55"/>
-<path d="M96,219 Q102,221 103,229 Q103,236 98,240 Q92,238 92,234 Q88,224 96,219 Z" fill="#9c8a5e" opacity="0.6"/>
-<path d="M118,236 Q114,228 122,223 L134,223 Q139,227 137,234 Q134,240 126,242 Q119,241 118,236 Z" fill="#d4c090" opacity="0.55"/>
-<path d="M122,223 Q128,226 128,233 Q127,239 122,242 Q118,241 118,236 Q114,228 122,223 Z" fill="#a89468" opacity="0.6"/>
-<!-- one lying flat, half unrolled, so the pile is not all tubes -->
-<path d="M84,244 Q106,240 130,243 Q126,247 106,248 Q88,247 84,244 Z" fill="#c8b880" opacity="0.4"/>
-
-<path d="M352,238 Q376,226 406,224 Q436,223 450,233 Q434,244 402,246 Q370,246 352,238 Z" fill="#3a2a18" opacity="0.72"/>
-<path d="M370,236 Q367,226 375,222 L386,221 Q391,225 390,232 Q388,240 380,242 Q371,241 370,236 Z" fill="#d4c090" opacity="0.6"/>
-<path d="M375,222 Q381,225 381,231 Q380,238 375,242 Q371,241 370,236 Q367,226 375,222 Z" fill="#a89468" opacity="0.62"/>
-<path d="M398,234 Q394,225 402,220 L414,220 Q419,224 417,231 Q414,238 406,240 Q399,239 398,234 Z" fill="#c8b880" opacity="0.55"/>
-<path d="M402,220 Q408,223 408,230 Q407,236 402,240 Q398,239 398,234 Q394,225 402,220 Z" fill="#9c8a5e" opacity="0.58"/>
-<path d="M424,236 Q421,229 428,225 L437,225 Q441,229 439,235 Q436,240 430,241 Q424,240 424,236 Z" fill="#d4c090" opacity="0.5"/>
-<path d="M428,225 Q433,228 433,233 Q432,238 428,241 Q424,240 424,236 Q421,229 428,225 Z" fill="#a89468" opacity="0.55"/>
-<path d="M382,245 Q404,241 428,244 Q422,248 402,249 Q386,248 382,245 Z" fill="#c8b880" opacity="0.35"/>
+<!-- THE HOARD: shared lairHoard() floor, gold under and around him -->
+` + lairHoard('lairH1' + k, {
+  seed: 11,
+  spill: [[20, 480, 238, 258, 46]],
+  heaps: [[250, 258, 250, 9], [92, 248, 58, 17], [168, 252, 34, 9], [398, 248, 56, 15], [326, 254, 30, 8]],
+  chest: { x: 112, y: 249, scale: 0.55 },
+  goblets: [[54, 250, 0.9, -8], [372, 249, 0.85, 6], [452, 252, 0.8, -4]]
+}) + `
 
 <!-- Dragon aura -->
-<circle cx="250" cy="145" r="90" fill="url(#lairDrGlow)"/>
+<circle cx="250" cy="145" r="90" fill="url(#lairDrGlow` + k + `)"/>
 
-<!-- ====================================================================
-     LIAM. A dragon, not a snowman. Painted back to front: far wing, tail,
-     haunch, body, near wing, neck, head. The silhouette that says DRAGON
-     is a deep chest tapering to a long neck, a WEDGE head with a snout and
-     a jaw line, spines running the ridge of the back, and a tail that
-     leaves the body rather than stopping at it.
-     ==================================================================== -->
-<!-- far wing, folded, behind the body -->
-<path d="M284,156 Q318,138 352,144 Q374,149 378,162 Q366,158 356,164 Q348,156 338,164 Q330,156 320,166 Q310,158 300,168 Q290,163 284,164 Z" fill="#120808" opacity="0.62"/>
-<path d="M286,157 Q320,148 350,146" fill="none" stroke="#2a1010" stroke-width="1" opacity="0.35"/>
-<path d="M290,159 Q306,158 300,168" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.3"/>
-<path d="M298,157 Q318,157 320,166" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.3"/>
-<path d="M310,153 Q334,155 338,164" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.28"/>
-<!-- tail sweeping out to the right and lying along the floor -->
-<path d="M296,196 Q344,188 388,198 Q424,208 452,228 Q428,234 402,224 Q372,212 342,208 Q314,205 294,210 Z" fill="#1a0808"/>
-<path d="M300,199 Q344,192 384,201 Q416,210 442,226" fill="none" stroke="#3e1818" stroke-width="1.2" opacity="0.4"/>
-
-<!-- spade at the tail tip -->
-<path d="M452,228 Q466,220 478,226 Q472,236 458,236 Q450,234 452,228 Z" fill="#2a1212" opacity="0.85"/>
-<path d="M456,227 Q466,223 474,226 Q466,229 456,227 Z" fill="#4a2020" opacity="0.4"/>
-<!-- haunch: the big rear muscle, which is what gives a dragon its weight -->
-<path d="M268,182 Q296,174 312,192 Q320,208 306,220 Q284,228 268,216 Q258,198 268,182 Z" fill="#1a0808"/>
-<!-- body: deep chest, drawn as one mass with the shoulder -->
-<path d="M196,186 Q198,162 224,154 Q256,146 284,158 Q306,170 304,194 Q300,216 272,224 Q234,230 208,216 Q192,204 196,186 Z" fill="url(#lairHide1)"/>
-<!-- belly plates, the lighter scutes on the underside -->
-<path d="M212,214 Q240,224 274,218 Q272,224 250,227 Q224,226 212,214 Z" fill="#4a1c18" opacity="0.45"/>
-<path d="M216,206 Q244,214 272,209" fill="none" stroke="#4a1c18" stroke-width="1.2" opacity="0.3"/>
-<!-- foreleg planted on the floor, so he is standing not floating -->
-<path d="M216,208 Q210,224 210,238 Q216,242 224,240 Q224,224 228,210 Z" fill="#1a0808"/>
-<path d="M206,238 Q216,234 228,238 Q228,244 218,245 Q208,244 206,238 Z" fill="#2a1212"/>
-<path d="M208,243 Q210,247 208,249" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<path d="M216,244 Q217,248 216,250" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<path d="M224,243 Q226,247 225,249" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<!-- near wing, folded over the shoulder, with a visible finger frame -->
-<path d="M220,158 Q184,136 148,143 Q124,149 118,164 Q132,159 144,167 Q154,157 166,168 Q176,157 188,170 Q200,162 212,170 Z" fill="#120808" opacity="0.8"/>
-<path d="M220,158 Q182,146 148,143" fill="none" stroke="#3a1616" stroke-width="1.3" opacity="0.55"/>
-<path d="M212,161 Q182,157 188,170" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.45"/>
-<path d="M204,157 Q170,155 166,168" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.42"/>
-<path d="M188,151 Q152,152 144,167" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.4"/>
-<path d="M166,146 Q134,150 118,164" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.38"/>
-<!-- the wing claw at the fold, which is what says WING and not cape -->
-<path d="M120,160 Q110,152 100,152 Q108,160 118,166 Z" fill="#2a1212" opacity="0.85"/>
-
-<!-- neck rising out of the chest toward the head -->
-<path d="M226,158 Q222,136 232,120 Q244,108 260,110 Q272,116 272,132 Q270,150 258,160 Q240,166 226,158 Z" fill="url(#lairHide1)"/>
-<!-- spines running the ridge of the neck -->
-<path d="M232,120 Q228,112 230,104 Q236,110 238,118 Z" fill="#2a1212"/>
-<path d="M242,112 Q239,104 242,96 Q247,103 248,111 Z" fill="#2a1212"/>
-<path d="M254,110 Q252,102 256,95 Q260,102 260,110 Z" fill="#2a1212" opacity="0.9"/>
-
-<!-- ====================================================================
-     THE HEAD. A wedge: broad at the skull, narrowing along the snout to
-     the nostrils, with a jaw line under it and a brow over the eye. This
-     is the difference between a dragon and a ball.
-     ==================================================================== -->
-<path d="M236,110 Q234,96 246,90 Q264,84 280,90 Q294,96 300,108 Q306,118 300,126 L272,134 Q252,136 240,128 Q234,120 236,110 Z" fill="url(#lairHide1)"/>
-<!-- snout, tapering forward from the skull -->
-<path d="M282,110 Q300,108 312,116 Q318,122 314,130 Q302,136 286,132 Q278,124 282,110 Z" fill="#1e0a0a"/>
-<!-- jaw line: a lit edge under the snout is what separates it from the neck -->
-<path d="M284,132 Q300,136 314,130 Q304,140 286,138 Z" fill="#3e1818" opacity="0.75"/>
-<path d="M244,128 Q266,138 288,138" fill="none" stroke="#3e1818" stroke-width="1.2" opacity="0.5"/>
-<!-- brow ridges, jutting over each eye -->
-<path d="M240,102 Q252,96 264,100 Q254,102 244,106 Z" fill="#2a1212"/>
-<path d="M268,98 Q280,94 290,100 Q280,101 270,104 Z" fill="#2a1212" opacity="0.9"/>
-<!-- horns, sweeping back off the skull -->
-<path d="M244,94 Q234,74 224,58 Q238,66 248,84 Q250,90 248,94 Z" fill="#2a1212"/>
-<path d="M240,88 Q234,76 228,66 Q236,72 242,84 Z" fill="#4a2020" opacity="0.45"/>
-<path d="M272,90 Q278,70 286,54 Q284,72 280,88 Q277,93 274,93 Z" fill="#2a1212"/>
-<path d="M274,86 Q278,74 282,64 Q280,76 277,86 Z" fill="#4a2020" opacity="0.4"/>
-<!-- a smaller pair of jaw horns -->
-<path d="M246,124 Q240,132 236,140 Q244,134 250,128 Z" fill="#2a1212" opacity="0.8"/>
-
-<!-- nostrils, set at the tip of the snout where they belong -->
-<path d="M304,120 Q308,118 310,121 Q308,124 304,123 Z" fill="#ff2200" opacity="0.35"/>
-<path d="M306,127 Q310,125 312,128 Q310,131 306,130 Z" fill="#ff2200" opacity="0.3"/>
-<!-- smoke curling out of them -->
-<circle cx="310" cy="118" r="3" fill="#4a4a4a" opacity="0.2">
-  <animate attributeName="cy" values="118;102;86" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <animate attributeName="opacity" values="0.2;0.1;0" dur="4s" repeatCount="indefinite"/>
-</circle>
-<circle cx="314" cy="126" r="3" fill="#4a4a4a" opacity="0.2">
-  <animate attributeName="cy" values="126;108;90" dur="3.5s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <animate attributeName="opacity" values="0.2;0.1;0" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
-</circle>
-
-<!-- ====================================================================
-     THE EYES. The best thing in this location. A reptile eye is an ALMOND
-     with a vertical slit, set under the brow, and the glow spills onto the
-     scale around it.
-     ==================================================================== -->
-<circle cx="252" cy="108" r="13" fill="#ff2200" opacity="0.14" filter="url(#lairFireGlow1)"/>
-<circle cx="279" cy="107" r="13" fill="#ff2200" opacity="0.14" filter="url(#lairFireGlow1)"/>
-<path d="M245,108 Q251,101 259,106 Q253,113 245,108 Z" fill="#ff2200" opacity="0.92">
-  <animate attributeName="opacity" values="0.72;1;0.72" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M272,107 Q278,100 286,105 Q280,112 272,107 Z" fill="#ff2200" opacity="0.92">
-  <animate attributeName="opacity" values="0.72;1;0.72" dur="3.4s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M251,103 Q253,108 251,112 Q249,108 251,103 Z" fill="#ffaa00" opacity="0.7"/>
-<path d="M278,102 Q280,107 278,111 Q276,107 278,102 Z" fill="#ffaa00" opacity="0.7"/>
+<!-- LIAM: the shared lairLiam() dragon (lair_6's animal), posed per step -->
+` + lairLiam('lairL1' + k, liam) + `
 
 <!-- ====================================================================
      TORCHES. A flame is a teardrop that leans and licks, not an ellipse.
@@ -295,8 +491,17 @@ STORY_SCENES['lair_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 </path>
 <!-- pools of torchlight on the wall behind each bracket -->
 <path d="M38,90 Q52,80 66,90 Q68,108 52,118 Q36,108 38,90 Z" fill="#ff6622" opacity="0.05"/>
-<path d="M434,90 Q448,80 462,90 Q464,108 448,118 Q432,108 434,90 Z" fill="#ff6622" opacity="0.05"/>
+<path d="M434,90 Q448,80 462,90 Q464,108 448,118 Q432,108 434,90 Z" fill="#ff6622" opacity="0.05"/>` + (warm ? `
+<!-- the lift in the light reaches the near plane too, gently -->
+<rect width="500" height="260" fill="url(#lairWarm` + k + `)" opacity="0.26">
+  <animate attributeName="opacity" values="0.2;0.32;0.2" keyTimes="0;0.4;1" dur="5.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</rect>` : '') + `
 </svg>`;
+}
+
+// Scene 1: the glare. Wings furled, jaw shut, head dipped to watch you;
+// both red eyes catch the light.
+STORY_SCENES['lair_1'] = lairChamber('', { wings: 'folded', neck: 4, head: 10, jaw: 'closed', eye: 'red', farEye: true, smoke: true });
 
 // Scene 2: Dragon speaks, challenges the solver — reuse dragon chamber scene
 STORY_SCENES['lair_2'] = STORY_SCENES['lair_1'];
@@ -374,11 +579,11 @@ STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M414,230 Q414,224 424,224 Q434,224 434,230 Q434,236 424,236 Q424,236 414,230 Z" fill="#6a4a20"/>
 
 <!-- Header, rule, and the clue. Text unchanged. -->
-<text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S FIRST CLUE</text>
+<text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="Georgia,serif" font-size="10" opacity="0.6">THE DRAGON'S FIRST CLUE</text>
 <path d="M140,92 Q196,89 250,91 Q304,93 360,90" fill="none" stroke="#2a1a10" stroke-width="0.7" opacity="0.3"/>
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Tough about love,</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">a dragon's pile (5)"</text>
-<text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
+<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="Georgia,serif" font-size="14" font-weight="bold">"Tough about love,</text>
+<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="Georgia,serif" font-size="14" font-weight="bold">a dragon's pile (5)"</text>
+<text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="Georgia,serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
 
 <!-- ====================================================================
      DRAGON EYES watching from the dark either side. Almond and slit, the
@@ -392,6 +597,14 @@ STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4.4s" begin="1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M447,127 Q449,130 447,133 Q445,130 447,127 Z" fill="#ffaa00" opacity="0.45"/>
+
+<!-- the hoard at the foot of the scroll: shared lairHoard() gold -->
+` + lairHoard('lairH3', {
+  seed: 3,
+  spill: [[60, 440, 252, 259, 14]],
+  heaps: [[28, 262, 44, 24], [474, 262, 40, 22], [120, 266, 52, 12], [388, 266, 50, 12]],
+  goblets: [[58, 258, 0.8, -8]]
+}) + `
 
 <!-- Embers drifting up out of the dark -->
 <circle cx="40" cy="200" r="1.5" fill="#ff6622" opacity="0.4">
@@ -409,7 +622,7 @@ STORY_SCENES['lair_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 </svg>`;
 
 // Scene 4: Dragon responds, impressed — reuse dragon chamber scene
-STORY_SCENES['lair_4'] = STORY_SCENES['lair_1'];
+STORY_SCENES['lair_4'] = lairChamber('4', { wings: 'folded', neck: 4, head: 10, jaw: 'closed', eye: 'red', farEye: true, smoke: 'curl' });
 
 // Scene 5: Puzzle — "Iron fen forged into a blaze (7)" INFERNO on scorched scroll
 STORY_SCENES['lair_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -488,11 +701,11 @@ STORY_SCENES['lair_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M414,230 Q414,224 424,224 Q434,224 434,230 Q434,236 424,236 Q424,236 414,230 Z" fill="#6a4a20"/>
 
 <!-- Header, rule, and the clue. Text unchanged. -->
-<text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S SECOND CLUE</text>
+<text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="Georgia,serif" font-size="10" opacity="0.6">THE DRAGON'S SECOND CLUE</text>
 <path d="M140,92 Q196,89 250,91 Q304,93 360,90" fill="none" stroke="#2a1a10" stroke-width="0.7" opacity="0.3"/>
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Iron fen forged</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">into a blaze (7)"</text>
-<text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
+<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="Georgia,serif" font-size="14" font-weight="bold">"Iron fen forged</text>
+<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="Georgia,serif" font-size="14" font-weight="bold">into a blaze (7)"</text>
+<text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="Georgia,serif" font-size="8" opacity="0.5">Solve the clue to proceed</text>
 
 <!-- ====================================================================
      DRAGON EYES watching from the dark either side. Almond and slit, the
@@ -506,6 +719,14 @@ STORY_SCENES['lair_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4.4s" begin="1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M452,122 Q454,126 452,130 Q450,126 452,122 Z" fill="#ffaa00" opacity="0.55"/>
+
+<!-- the hoard at the foot of the scroll: shared lairHoard() gold -->
+` + lairHoard('lairH5', {
+  seed: 13,
+  spill: [[60, 440, 252, 259, 14]],
+  heaps: [[30, 262, 42, 22], [470, 262, 42, 24], [118, 266, 50, 12], [390, 266, 52, 12]],
+  goblets: [[444, 258, 0.8, 8]]
+}) + `
 
 <!-- claw scratches gouged in the floor beneath the scroll -->
 <path d="M180,238 Q190,244 200,252" fill="none" stroke="#3a1a10" stroke-width="1.6" opacity="0.35" stroke-linecap="round"/>
@@ -539,13 +760,21 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <radialGradient id="lairDrGlow6" cx="50%" cy="45%" r="50%">
     <stop offset="0%" stop-color="#ff2200" stop-opacity="0.15"/><stop offset="100%" stop-color="#ff2200" stop-opacity="0"/>
   </radialGradient>
-  <linearGradient id="lairHide6" x1="0" y1="0" x2="1" y2="0.4">
+  <!-- body and neck share ONE gradient field (user space), so where the
+       neck overlaps the chest there is no seam -->
+  <linearGradient id="lairHide6" gradientUnits="userSpaceOnUse" x1="202" y1="110" x2="312" y2="150">
     <stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#3a1616"/><stop offset="100%" stop-color="#140606"/>
   </linearGradient>
+  <linearGradient id="lairHideHead6" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#3a1616"/><stop offset="100%" stop-color="#1a0808"/>
+  </linearGradient>
   <linearGradient id="lairMembrane6" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#2a1010"/><stop offset="100%" stop-color="#100606"/>
+    <stop offset="0%" stop-color="#140606"/><stop offset="100%" stop-color="#0c0404"/>
   </linearGradient>
   <filter id="lairFireGlow6"><feGaussianBlur stdDeviation="3"/></filter>
+  <linearGradient id="lairBreath6" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#fff0b8" stop-opacity="0.95"/><stop offset="28%" stop-color="#ffbb44" stop-opacity="0.9"/><stop offset="65%" stop-color="#ff6622" stop-opacity="0.7"/><stop offset="100%" stop-color="#cc2200" stop-opacity="0.15"/>
+  </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#lairRise)"/>
 
@@ -565,6 +794,14 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <!-- Floor -->
 <path d="M0,238 Q60,231 128,235 Q200,239 250,232 Q320,227 396,234 Q452,238 500,233 L500,260 L0,260 Z" fill="#1a0a08"/>
 <path d="M0,249 Q100,243 200,247 Q300,251 400,245 Q456,249 500,245 L500,260 L0,260 Z" fill="#120606"/>
+<!-- THE HOARD: shared lairHoard() floor, the same gold he guards in the chamber -->
+` + lairHoard('lairH6', {
+  seed: 17,
+  spill: [[20, 480, 240, 258, 40]],
+  heaps: [[250, 259, 250, 8], [70, 250, 50, 14], [168, 254, 30, 8], [420, 250, 52, 13]],
+  chest: { x: 104, y: 252, scale: 0.5 },
+  goblets: [[40, 252, 0.85, -6], [372, 253, 0.8, 8]]
+}) + `
 
 <!-- Dragon aura, intensified -->
 <circle cx="250" cy="120" r="110" fill="url(#lairDrGlow6)"/>
@@ -576,36 +813,35 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      its ribs; without them it is a cape.
      ==================================================================== -->
 <!-- far wing (his right, our left), spread -->
-<path d="M196,138 Q152,86 88,88 Q54,92 44,116 Q66,110 84,124 Q92,108 110,124 Q120,110 138,130 Q150,118 166,140 Q180,132 196,146 Z" fill="url(#lairMembrane6)" opacity="0.92"/>
-<path d="M196,138 Q150,96 88,88" fill="none" stroke="#4a1e1e" stroke-width="1.6" opacity="0.6"/>
-<path d="M192,141 Q160,116 166,140" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.45"/>
-<path d="M186,140 Q140,110 138,130" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.42"/>
-<path d="M178,136 Q118,102 110,124" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.4"/>
-<path d="M168,130 Q98,92 84,124" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.38"/>
-<path d="M148,116 Q80,88 44,116" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.35"/>
-<!-- wing claw at the leading edge -->
-<path d="M88,88 Q74,80 62,82 Q72,90 86,94 Z" fill="#2a1212" opacity="0.9"/>
+<!-- Both wings root INSIDE the shoulders (drawn before the body, which
+     covers the root). Arm bone shoulder to wrist, then four finger bones
+     radiate from the wrist to the scallop tips: one joint, not loose arcs. -->
+<!-- Wings RAISED in a V as he rears: a solid dark membrane silhouette
+     against the lit cavern, finger bones lighter than the skin. -->
+<path d="M240,156 Q198,96 162,46 Q124,20 80,16 Q84,38 44,48 Q78,66 52,90 Q96,86 104,112 Q166,124 216,178 Z" fill="url(#lairMembrane6)"/>
+<path d="M80,16 Q84,38 44,48 Q78,66 52,90 Q96,86 104,112 Q166,124 216,178" fill="none" stroke="#4a1c1c" stroke-width="1" stroke-linejoin="round" opacity="0.8"/>
+<path d="M162,46 Q118,30 82,18 M162,46 Q98,48 46,48 M162,46 Q102,68 54,88 M162,46 Q128,82 106,110" fill="none" stroke="#3e1818" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M240,156 Q198,96 162,46" fill="none" stroke="#3a1616" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M236,148 Q198,94 164,50" fill="none" stroke="#5a2626" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+<!-- wing claw (thumb) at the wrist -->
+<path d="M160,46 Q160,32 168,24 Q168,36 166,48 Z" fill="#3a1616"/>
 
-<!-- near wing (his left, our right), spread -->
-<path d="M304,138 Q348,86 412,88 Q446,92 456,116 Q434,110 416,124 Q408,108 390,124 Q380,110 362,130 Q350,118 334,140 Q320,132 304,146 Z" fill="url(#lairMembrane6)" opacity="0.92"/>
-<path d="M304,138 Q350,96 412,88" fill="none" stroke="#4a1e1e" stroke-width="1.6" opacity="0.6"/>
-<path d="M308,141 Q340,116 334,140" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.45"/>
-<path d="M314,140 Q360,110 362,130" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.42"/>
-<path d="M322,136 Q382,102 390,124" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.4"/>
-<path d="M332,130 Q402,92 416,124" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.38"/>
-<path d="M352,116 Q420,88 456,116" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.35"/>
-<path d="M412,88 Q426,80 438,82 Q428,90 414,94 Z" fill="#2a1212" opacity="0.9"/>
+<!-- near wing (his left, our right): mirror about x=260 -->
+<path d="M280,156 Q322,96 358,46 Q396,20 440,16 Q436,38 476,48 Q442,66 468,90 Q424,86 416,112 Q354,124 304,178 Z" fill="url(#lairMembrane6)"/>
+<path d="M440,16 Q436,38 476,48 Q442,66 468,90 Q424,86 416,112 Q354,124 304,178" fill="none" stroke="#5a2220" stroke-width="1" stroke-linejoin="round" opacity="0.85"/>
+<path d="M358,46 Q402,30 438,18 M358,46 Q422,48 474,48 M358,46 Q418,68 466,88 M358,46 Q392,82 414,110" fill="none" stroke="#3e1818" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M280,156 Q322,96 358,46" fill="none" stroke="#3a1616" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M284,148 Q322,94 356,50" fill="none" stroke="#5a2626" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+<path d="M360,46 Q360,32 352,24 Q352,36 354,48 Z" fill="#3a1616"/>
 
 <!-- tail, thrown out behind and curling up as he rears -->
 <path d="M290,206 Q334,204 368,214 Q398,224 416,242 Q396,246 376,236 Q350,224 322,219 Q302,216 288,218 Z" fill="#1a0808"/>
-<path d="M294,209 Q334,208 366,217 Q392,226 408,240" fill="none" stroke="#3e1818" stroke-width="1.2" opacity="0.4"/>
 <path d="M416,242 Q430,234 442,240 Q436,250 422,250 Q414,248 416,242 Z" fill="#2a1212" opacity="0.85"/>
 
 <!-- haunch and body: reared, so the chest rides higher and the belly shows -->
 <path d="M268,178 Q296,172 310,190 Q316,208 302,222 Q280,232 264,218 Q256,198 268,178 Z" fill="#1a0808"/>
 <path d="M202,178 Q204,152 230,143 Q262,134 290,148 Q312,161 310,188 Q306,212 278,222 Q240,228 214,212 Q198,198 202,178 Z" fill="url(#lairHide6)"/>
 <path d="M216,210 Q244,220 278,214 Q276,220 254,224 Q228,223 216,210 Z" fill="#4a1c18" opacity="0.45"/>
-<path d="M220,200 Q248,209 276,204" fill="none" stroke="#4a1c18" stroke-width="1.2" opacity="0.3"/>
 <!-- forelegs, raised as he rises, ending in claws -->
 <path d="M222,190 Q210,202 202,216 Q206,222 214,220 Q220,206 232,196 Z" fill="#1a0808"/>
 <path d="M198,216 Q208,212 218,218 Q216,224 206,224 Q196,222 198,216 Z" fill="#2a1212"/>
@@ -614,56 +850,60 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M214,222 Q215,227 214,229" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.75" stroke-linecap="round"/>
 
 <!-- neck, longer and straighter in the rearing pose -->
-<path d="M228,148 Q222,120 232,100 Q244,86 262,88 Q276,94 276,114 Q274,136 260,150 Q242,158 228,148 Z" fill="url(#lairHide6)"/>
-<path d="M232,100 Q228,90 230,80 Q237,88 240,98 Z" fill="#2a1212"/>
-<path d="M242,90 Q239,80 243,70 Q249,79 250,89 Z" fill="#2a1212"/>
-<path d="M256,86 Q254,76 259,67 Q264,76 264,86 Z" fill="#2a1212" opacity="0.9"/>
+<!-- one column that widens from the back of the skull into both shoulders -->
+<!-- An S-curved neck, ~32 wide at mid-height, flaring into both shoulders
+     at the base and running up INSIDE the skull at the top (head covers it). -->
+<path d="M222,168 Q230,140 244,118 Q256,98 266,74 L298,98 Q276,114 276,134 Q278,154 304,170 Q262,180 222,168 Z" fill="url(#lairHide6)"/>
+<!-- dorsal spines down the back of the neck -->
+<path d="M258,92 L244,86 L254,102 Z" fill="#2a1212"/>
+<path d="M249,110 L233,106 L244,122 Z" fill="#2a1212"/>
+<path d="M240,128 L224,126 L236,141 Z" fill="#2a1212"/>
+<path d="M232,146 L217,146 L229,158 Z" fill="#2a1212" opacity="0.9"/>
+<!-- throat plates: lit underside sitting ON the front edge of the neck -->
+<path d="M292,104 Q276,116 276,134 Q277,150 292,162 Q274,152 270,134 Q270,114 286,102 Z" fill="#5a2420" opacity="0.5"/>
+<path d="M277,118 L284,121 M273,130 L281,131 M273,142 L281,141" fill="none" stroke="#1e0a0a" stroke-width="1" opacity="0.6"/>
 
 <!-- ====================================================================
      HEAD, raised and turned so the snout points across the chamber, which
      is what lets the fire actually come out of his mouth.
      ==================================================================== -->
-<path d="M234,88 Q232,72 245,66 Q264,58 281,65 Q296,72 302,86 Q308,97 302,105 L272,113 Q250,115 238,106 Q232,98 234,88 Z" fill="url(#lairHide6)"/>
-<!-- snout -->
-<path d="M284,86 Q304,84 317,93 Q324,100 320,109 Q306,116 289,111 Q280,101 284,86 Z" fill="#241010"/>
-<!-- the jaw, OPEN: a dark gape with teeth, so the breath has somewhere to -->
-<!-- come from. A closed mouth breathing fire is the tell of a diagram. -->
-<path d="M290,110 Q306,114 320,109 Q324,118 314,124 Q298,126 288,120 Q285,114 290,110 Z" fill="#0e0404"/>
-<path d="M294,113 L297,119 L300,113 Z" fill="#e8d8c0" opacity="0.7"/>
-<path d="M303,114 L306,120 L309,114 Z" fill="#e8d8c0" opacity="0.65"/>
-<path d="M312,113 L314,118 L317,112 Z" fill="#e8d8c0" opacity="0.6"/>
-<path d="M292,121 L295,116 L298,122 Z" fill="#e8d8c0" opacity="0.5"/>
-<path d="M304,123 L307,118 L310,124 Z" fill="#e8d8c0" opacity="0.45"/>
-<path d="M242,106 Q264,116 288,118" fill="none" stroke="#4a1e1e" stroke-width="1.2" opacity="0.5"/>
-<!-- brow ridges -->
-<path d="M238,80 Q250,74 262,78 Q252,80 242,84 Z" fill="#2a1212"/>
-<path d="M266,76 Q278,72 288,78 Q278,79 268,82 Z" fill="#2a1212" opacity="0.9"/>
-<!-- horns swept back -->
-<path d="M242,72 Q230,50 218,32 Q234,42 246,62 Q248,68 246,72 Z" fill="#2a1212"/>
-<path d="M238,66 Q231,52 224,40 Q233,48 240,62 Z" fill="#4a2020" opacity="0.45"/>
-<path d="M272,68 Q280,46 290,28 Q287,48 282,66 Q279,71 275,71 Z" fill="#2a1212"/>
-<path d="M275,64 Q280,50 285,38 Q282,52 278,64 Z" fill="#4a2020" opacity="0.4"/>
-<path d="M246,102 Q240,110 236,118 Q244,112 250,106 Z" fill="#2a1212" opacity="0.8"/>
+<!-- skull, snout and lower jaw are ONE silhouette; the gape is a notch cut
+     into it, hinged at the back of the mouth (286,110), so the jaw cannot
+     float free of the skull. -->
+<!-- Profile, facing the fire. Wedge skull: domed cranium, long tapering
+     snout, open jaw hinged under the eye at (304,99). One silhouette. -->
+<!-- far horn, behind the skull -->
+<path d="M282,56 Q272,36 264,16 Q284,30 294,52 Z" fill="#1e0a0a"/>
+<path d="M262,78 Q260,60 278,53 Q298,48 314,58 Q324,64 332,68 L350,76 Q358,80 357,87 Q355,93 347,94 L306,99 L340,113 Q347,116 344,121 Q339,125 328,123 L306,118 Q290,113 279,105 Q266,95 262,78 Z" fill="url(#lairHideHead6)"/>
+<!-- the jaw, OPEN: dark gape with teeth so the breath has somewhere to come from -->
+<path d="M347,94 L306,99 L340,113 Q350,104 347,94 Z" fill="#0e0404"/>
+<path d="M316,98 L318,104 L321,97 Z M326,97 L328,102 L331,96 Z M336,95 L338,100 L341,95 Z" fill="#e8d8c0" opacity="0.85"/>
+<path d="M320,106 L323,101 L325,108 Z M331,110 L334,105 L336,112 Z" fill="#e8d8c0" opacity="0.75"/>
+<!-- snout top plane, lighter, so the muzzle reads as projecting -->
+<path d="M314,60 Q332,68 350,76 Q356,79 357,84 Q336,78 316,70 Q308,64 314,60 Z" fill="#4a1e1e" opacity="0.55"/>
+<!-- lower-jaw underside rim, catching the fire -->
+<path d="M306,118 L328,123 Q339,125 344,121 Q338,121 328,120 L308,115 Z" fill="#6a2a20" opacity="0.5"/>
+<!-- cheek over the hinge -->
+<path d="M278,88 Q294,86 306,99 Q296,108 282,102 Q272,96 278,88 Z" fill="#2a1212" opacity="0.5"/>
+<!-- brow ridge -->
+<path d="M286,66 Q300,57 316,63 Q302,64 290,71 Z" fill="#2a1212"/>
+<!-- near horn, swept back off the crown -->
+<path d="M266,68 Q246,48 224,32 Q252,40 280,56 Z" fill="#2a1212"/>
+<path d="M262,62 Q246,48 232,38 Q250,44 270,56 Z" fill="#4a2020" opacity="0.45"/>
+<!-- small cheek spine behind the jaw -->
+<path d="M266,90 L250,94 L264,98 Z" fill="#2a1212"/>
 
-<!-- nostrils, flared, glowing with what is coming -->
-<path d="M308,96 Q313,94 315,98 Q312,101 308,100 Z" fill="#ff4400" opacity="0.6">
+<!-- nostril, flared, glowing with what is coming -->
+<path d="M346,79 Q352,77 354,81 Q351,84 346,83 Z" fill="#ff4400" opacity="0.6">
   <animate attributeName="opacity" values="0.4;0.75;0.4" dur="2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M311,103 Q316,101 318,105 Q315,108 311,107 Z" fill="#ff4400" opacity="0.55">
-  <animate attributeName="opacity" values="0.35;0.7;0.35" dur="2s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
 
-<!-- Eyes: almond, slit, glowing -->
-<circle cx="250" cy="85" r="13" fill="#ff2200" opacity="0.18" filter="url(#lairFireGlow6)"/>
-<circle cx="277" cy="84" r="13" fill="#ff2200" opacity="0.18" filter="url(#lairFireGlow6)"/>
-<path d="M243,85 Q249,77 258,83 Q251,91 243,85 Z" fill="#ff2200" opacity="0.96">
-  <animate attributeName="opacity" values="0.82;1;0.82" dur="2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M270,84 Q276,76 285,82 Q278,90 270,84 Z" fill="#ff2200" opacity="0.96">
+<!-- Eye: almond, slit, glowing -->
+<circle cx="300" cy="72" r="13" fill="#ff2200" opacity="0.2" filter="url(#lairFireGlow6)"/>
+<path d="M291,73 Q298,65 308,70 Q300,78 291,73 Z" fill="#ff2200" opacity="0.96">
   <animate attributeName="opacity" values="0.82;1;0.82" dur="2.3s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M249,79 Q251,85 249,90 Q247,85 249,79 Z" fill="#ffaa00" opacity="0.78"/>
-<path d="M276,78 Q278,84 276,89 Q274,84 276,78 Z" fill="#ffaa00" opacity="0.78"/>
+<path d="M299,67 Q301,72 299,77 Q297,72 299,67 Z" fill="#ffaa00" opacity="0.8"/>
 
 <!-- ====================================================================
      THE FIRE. Flame is not a blade. It leaves the jaw narrow and hot, and
@@ -673,20 +913,23 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      brightest smallest and nearest the mouth.
      ==================================================================== -->
 <!-- outer plume: broad, cool, ragged, and very transparent -->
-<path d="M320,116 Q356,110 388,96 Q414,84 440,66 Q430,84 442,78 Q428,96 440,94 Q420,110 432,110 Q408,120 418,124 Q392,130 400,138 Q372,136 344,130 Q326,126 320,116 Z" fill="#ff4400" opacity="0.16">
-  <animate attributeName="opacity" values="0.1;0.24;0.1" dur="1.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<!-- Leaves the gape as a narrow jet and flares into a billowing, rounded
+     front (puffs, not the scalloped points a wing has), hot white at the
+     teeth fading to transparent red. A soft blurred halo sits under it. -->
+<path d="M338,105 Q360,94 392,84 Q416,72 438,66 Q458,64 462,80 Q476,92 462,104 Q468,120 446,120 Q432,132 410,124 Q388,126 368,118 Q350,113 338,105 Z" fill="#ff5511" opacity="0.35" filter="url(#lairFireGlow6)">
+  <animate attributeName="opacity" values="0.25;0.45;0.25" dur="1.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<!-- middle plume: the body of the flame -->
-<path d="M319,115 Q350,110 378,98 Q400,88 422,72 Q414,88 424,84 Q410,100 420,98 Q400,112 410,113 Q388,121 396,127 Q370,126 346,120 Q326,116 319,115 Z" fill="#ff6622" opacity="0.3">
-  <animate attributeName="opacity" values="0.18;0.44;0.18" dur="1.4s" begin="0.15s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<!-- outer flame -->
+<path d="M338,105 Q356,98 390,87 Q412,76 430,72 Q448,68 452,82 Q464,92 452,102 Q456,116 438,114 Q424,124 406,118 Q386,120 368,115 Q350,111 338,105 Z" fill="url(#lairBreath6)" opacity="0.8">
+  <animate attributeName="opacity" values="0.68;0.9;0.68" dur="1.3s" begin="0.15s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<!-- hot core: short, and it stops well before the plume does -->
-<path d="M318,114 Q338,111 356,104 Q372,97 386,86 Q381,97 388,94 Q378,106 386,105 Q370,114 376,116 Q356,118 338,116 Q324,114 318,114 Z" fill="#ffaa44" opacity="0.36">
-  <animate attributeName="opacity" values="0.22;0.5;0.22" dur="1.1s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<!-- inner flame -->
+<path d="M336,105 Q352,99 380,93 Q398,86 410,88 Q420,96 410,104 Q396,112 376,112 Q350,110 336,105 Z" fill="#ffbb44" opacity="0.75">
+  <animate attributeName="opacity" values="0.6;0.85;0.6" dur="1.1s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- the white-hot jet right at the teeth, where it is still a jet -->
-<path d="M317,114 Q328,112 338,107 Q348,102 356,94 Q353,103 349,108 Q340,114 330,117 Q322,117 317,114 Z" fill="#ffdd88" opacity="0.42">
-  <animate attributeName="opacity" values="0.28;0.58;0.28" dur="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M334,105 Q346,101 368,99 Q378,97 382,101 Q378,106 366,107 Q346,108 334,105 Z" fill="#fff0b8" opacity="0.85">
+  <animate attributeName="opacity" values="0.7;0.95;0.7" dur="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- sparks torn off the flame front and thrown on -->
 <circle cx="396" cy="90" r="1.6" fill="#ffcc66" opacity="0.6">
@@ -735,7 +978,7 @@ STORY_SCENES['lair_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M458,140 Q468,131 478,140 Q480,158 468,168 Q456,158 458,140 Z" fill="#ff6622" opacity="0.05"/>
 
 <!-- Lava glow banking up under the floor -->
-<path d="M40,258 Q160,242 250,246 Q346,250 460,258 Q346,260 250,260 Q158,260 40,258 Z" fill="#ff2200" opacity="0.08">
+<path d="M0,260 L0,254 Q120,246 250,249 Q380,252 500,254 L500,260 Z" fill="#ff2200" opacity="0.08" filter="url(#lairFireGlow6)">
   <animate attributeName="opacity" values="0.05;0.12;0.05" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 </svg>`;
@@ -749,89 +992,68 @@ STORY_SCENES['lair_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <radialGradient id="lairScrGlow3" cx="50%" cy="50%" r="40%">
     <stop offset="0%" stop-color="#ff4422" stop-opacity="0.12"/><stop offset="100%" stop-color="#ff4422" stop-opacity="0"/>
   </radialGradient>
-  <linearGradient id="lairVellum3" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#b4a074"/><stop offset="10%" stop-color="#e8d8b0"/><stop offset="50%" stop-color="#f0e4c4"/><stop offset="90%" stop-color="#e8d8b0"/><stop offset="100%" stop-color="#b4a074"/>
-  </linearGradient>
-  <linearGradient id="lairRoller3" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#3a2810"/><stop offset="35%" stop-color="#8a6430"/><stop offset="70%" stop-color="#6a4a20"/><stop offset="100%" stop-color="#2e1e08"/>
-  </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#lairScroll3)"/>
 <rect x="0" y="0" width="500" height="260" fill="url(#lairScrGlow3)"/>
 
 <!-- ====================================================================
-     THE SCROLL. A rounded rect is a sheet of paper, not a scroll. Vellum
-     held open between two rollers SAGS between them, so its top edge dips
-     and its bottom edge bows out. It CURLS back into each roller, which
-     shows as a lit inner face. And it has been in a dragon's fire, so the
-     free edges are eaten away in a ragged bite rather than cut straight.
-     Drawn back to front: sag shadow, sheet, curls, burn, rollers, text.
-     The FINAL clue: the fire has taken the most of this one, and the
-     vellum is scorched almost through in places.
+     THE SEARED WALL. The FINAL clue is not on a scroll: he sears it straight into the rock
+     wall with a thin line of fire. So the card is a slab of the cavern
+     wall, the lettering glows ember-hot, and the air above it shimmers.
      ==================================================================== -->
-<!-- the shadow the hanging sheet throws on the rock behind it -->
-<path d="M84,46 Q250,38 416,46 Q424,132 416,226 Q250,236 84,226 Q76,132 84,46 Z" fill="#0e0404" opacity="0.55"/>
-<!-- the sheet: top edge dips, bottom edge bows, edges bitten by fire -->
-<path d="M86,44 Q140,54 190,50 Q250,45 312,50 Q364,54 414,44 Q420,72 417,96 Q422,118 416,140 Q421,170 415,196 Q418,212 414,222 Q360,212 306,217 Q250,222 192,217 Q138,212 86,222 Q82,208 85,196 Q79,170 84,140 Q78,118 83,96 Q80,72 86,44 Z" fill="url(#lairVellum3)" opacity="0.94"/>
-<!-- the CURL back into each roller: a lit inner face and a shadowed fold -->
-<path d="M86,44 Q78,46 76,60 Q74,132 76,206 Q78,220 86,222 Q82,208 85,196 Q79,170 84,140 Q78,118 83,96 Q80,72 86,44 Z" fill="#cbb890" opacity="0.9"/>
-<path d="M86,44 Q80,50 79,62 Q78,132 80,204 Q81,216 86,222 Q84,206 84,140 Q84,80 86,44 Z" fill="#9c8a62" opacity="0.55"/>
-<path d="M414,44 Q422,46 424,60 Q426,132 424,206 Q422,220 414,222 Q418,212 415,196 Q421,170 416,140 Q422,118 417,96 Q420,72 414,44 Z" fill="#cbb890" opacity="0.9"/>
-<path d="M414,44 Q420,50 421,62 Q422,132 420,204 Q419,216 414,222 Q416,206 416,140 Q416,80 414,44 Z" fill="#9c8a62" opacity="0.55"/>
-<!-- a fold running down the sheet where it has been rolled and rolled -->
-<path d="M148,49 Q145,132 148,218" fill="none" stroke="#c4b088" stroke-width="1.6" opacity="0.45"/>
-<path d="M352,49 Q355,132 352,218" fill="none" stroke="#c4b088" stroke-width="1.4" opacity="0.4"/>
-<!-- ====================================================================
-     BURN. Fire eats INWARD from an edge: a brown scorch halo, then a
-     charred black rim, then nothing. Heaviest damage of the three: the
-     bites reach well into the sheet and the char is nearly through.
-     ==================================================================== -->
-<path d="M86,44 Q120,56 108,74 Q124,92 110,116 Q90,106 83,76 Q79,54 86,44 Z" fill="#6a4020" opacity="0.5"/>
-<path d="M86,44 Q110,54 100,70 Q112,86 102,104 Q88,94 85,70 Z" fill="#3a2408" opacity="0.6"/>
-<path d="M414,44 Q380,56 392,74 Q376,92 390,116 Q410,106 417,76 Q421,54 414,44 Z" fill="#6a4020" opacity="0.5"/>
-<path d="M414,44 Q390,54 400,70 Q388,86 398,104 Q412,94 415,70 Z" fill="#3a2408" opacity="0.6"/>
-<path d="M86,222 Q114,210 102,192 Q116,176 104,158 Q86,172 82,196 Z" fill="#6a4020" opacity="0.45"/>
-<path d="M414,222 Q386,210 398,192 Q384,176 396,158 Q414,172 418,196 Z" fill="#6a4020" opacity="0.45"/>
-<!-- scorch blooms where embers landed on the face of the sheet -->
-<path d="M110,58 Q126,50 140,60 Q146,74 134,84 Q116,88 108,76 Q104,64 110,58 Z" fill="#6a4a20" opacity="0.14"/>
-<path d="M116,64 Q126,60 134,68 Q132,76 122,78 Q114,72 116,64 Z" fill="#4a3010" opacity="0.12"/>
-<path d="M370,182 Q384,176 394,186 Q398,198 386,204 Q372,206 366,196 Q364,186 370,182 Z" fill="#6a4a20" opacity="0.12"/>
-<path d="M336,50 Q352,44 364,54 Q368,68 356,76 Q338,78 332,66 Q330,54 336,50 Z" fill="#6a4a20" opacity="0.16"/>
-<path d="M342,56 Q352,52 358,60 Q356,68 346,70 Q340,64 342,56 Z" fill="#4a3010" opacity="0.13"/>
-<path d="M124,186 Q140,180 152,190 Q156,202 144,210 Q128,212 122,200 Q120,190 124,186 Z" fill="#6a4a20" opacity="0.15"/>
-<path d="M242,206 Q256,202 264,210 Q262,220 250,222 Q240,218 242,206 Z" fill="#6a4a20" opacity="0.1"/>
+<defs>
+  <linearGradient id="lairRock7" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#3a221c"/><stop offset="50%" stop-color="#2a1612"/><stop offset="100%" stop-color="#1a0c0a"/>
+  </linearGradient>
+  <filter id="lairEmber7" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="lairShimmer7" x="-10%" y="-40%" width="120%" height="180%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02 0.12" numOctaves="1" seed="7" result="n">
+      <animate attributeName="baseFrequency" values="0.02 0.12;0.024 0.16;0.02 0.12" keyTimes="0;0.5;1" dur="3.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+    <feGaussianBlur stdDeviation="1.6"/>
+  </filter>
+</defs>
+<!-- the slab: a faceted face of the wall, catching the glow of the burn -->
+<path d="M84,50 Q250,40 416,50 Q426,136 418,230 Q250,240 82,230 Q74,136 84,50 Z" fill="#0a0303" opacity="0.6"/>
+<path d="M92,48 L170,40 L248,46 L330,38 L410,50 L422,110 L414,170 L420,222 L330,230 L250,224 L160,232 L84,222 L90,160 L78,104 Z" fill="url(#lairRock7)"/>
+<!-- lit upper-left facet, shadowed lower bevel: light comes from the upper left -->
+<path d="M92,48 L170,40 L248,46 L330,38 L326,50 L248,58 L170,52 L102,60 L90,104 L78,104 Z" fill="#4a2a22" opacity="0.4"/>
+<path d="M420,222 L330,230 L250,224 L160,232 L84,222 L96,212 L160,220 L250,212 L330,218 L408,210 L414,170 L422,110 Z" fill="#0e0504" opacity="0.5"/>
+<!-- cracks in the rock -->
+<path d="M110,64 L126,90 L120,112 M392,58 L380,86 L388,104 M404,182 L384,198 L390,216 M100,190 L118,204" fill="none" stroke="#120606" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
+<path d="M111,66 L127,91 M393,60 L381,87" fill="none" stroke="#5a3428" stroke-width="0.6" opacity="0.35"/>
+<!-- soot blown back across the face where the fire traced the words -->
+<ellipse cx="250" cy="138" rx="138" ry="36" fill="#0a0302" opacity="0.4" filter="url(#lairEmber7)"/>
+<!-- the rest of the heat still in the stone, under the lettering -->
+<ellipse cx="250" cy="140" rx="112" ry="24" fill="#ff5a1a" opacity="0.1" filter="url(#lairEmber7)">
+  <animate attributeName="opacity" values="0.07;0.13;0.07" keyTimes="0;0.5;1" dur="3.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</ellipse>
 
-<!-- burned clean through: the dark of the cave shows in the hole, with a
-     char ring and a scorch halo round it -->
-<path d="M368,60 Q388,50 404,64 Q410,82 396,94 Q374,98 366,84 Q362,68 368,60 Z" fill="#6a4020" opacity="0.3"/>
-<path d="M374,64 Q390,57 402,68 Q406,82 394,90 Q377,92 372,80 Q370,70 374,64 Z" fill="#3a2408" opacity="0.55"/>
-<path d="M380,68 Q391,64 398,72 Q400,82 391,86 Q381,86 378,78 Q377,71 380,68 Z" fill="#0e0404" opacity="0.85"/>
-<path d="M124,182 Q140,175 152,186 Q156,200 144,208 Q128,210 122,198 Q120,187 124,182 Z" fill="#6a4020" opacity="0.26"/>
-<path d="M130,187 Q142,182 149,190 Q150,200 141,204 Q130,203 128,195 Z" fill="#3a2408" opacity="0.45"/>
-<path d="M134,191 Q142,188 146,193 Q146,199 140,201 Q134,200 133,196 Z" fill="#0e0404" opacity="0.75"/>
-
-<!-- ====================================================================
-     ROLLERS. A turned wooden roller is a cylinder: lit down one side,
-     dark on the other, with a knob finial at each end.
-     ==================================================================== -->
-<path d="M70,42 Q70,38 76,38 Q82,38 82,42 L82,224 Q82,228 76,228 Q70,228 70,224 Z" fill="url(#lairRoller3)"/>
-<path d="M73,40 Q75,39 77,40 L77,226 Q75,227 73,226 Z" fill="#a5793c" opacity="0.5"/>
-<path d="M66,36 Q66,30 76,30 Q86,30 86,36 Q86,42 76,42 Q66,42 66,36 Z" fill="#6a4a20"/>
-<path d="M70,34 Q74,32 80,33 Q76,36 70,37 Z" fill="#a5793c" opacity="0.5"/>
-<path d="M66,230 Q66,224 76,224 Q86,224 86,230 Q86,236 76,236 Q66,236 66,230 Z" fill="#6a4a20"/>
-<path d="M70,228 Q74,226 80,227 Q76,230 70,231 Z" fill="#a5793c" opacity="0.45"/>
-<path d="M418,42 Q418,38 424,38 Q430,38 430,42 L430,224 Q430,228 424,228 Q418,228 418,224 Z" fill="url(#lairRoller3)"/>
-<path d="M421,40 Q423,39 425,40 L425,226 Q423,227 421,226 Z" fill="#a5793c" opacity="0.5"/>
-<path d="M414,36 Q414,30 424,30 Q434,30 434,36 Q434,42 424,42 Q414,42 414,36 Z" fill="#6a4a20"/>
-<path d="M418,34 Q422,32 428,33 Q424,36 418,37 Z" fill="#a5793c" opacity="0.5"/>
-<path d="M414,230 Q414,224 424,224 Q434,224 434,230 Q434,236 424,236 Q424,236 414,230 Z" fill="#6a4a20"/>
-
-<!-- Header, rule, and the clue. Text unchanged. -->
-<text x="250" y="85" text-anchor="middle" fill="#2a1a10" font-family="serif" font-size="10" opacity="0.6">THE DRAGON'S FINAL CLUE</text>
-<path d="M140,92 Q196,89 250,91 Q304,93 360,90" fill="none" stroke="#2a1a10" stroke-width="0.7" opacity="0.3"/>
-<text x="250" y="130" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">"Riches make one</text>
-<text x="250" y="155" text-anchor="middle" fill="#8a2010" font-family="serif" font-size="14" font-weight="bold">strangely austerer (8)"</text>
-<text x="250" y="195" text-anchor="middle" fill="#4a3020" font-family="sans-serif" font-size="8" opacity="0.5">Solve the final clue</text>
+<!-- Header, rule, and the clue. Text unchanged; seared in ember. A blurred
+     copy under each clue line is the glow, wobbled by the heat shimmer;
+     the crisp line on top stays perfectly legible. -->
+<text x="250" y="85" text-anchor="middle" fill="#d8743a" font-family="Georgia,serif" font-size="10" opacity="0.75">THE DRAGON'S FINAL CLUE</text>
+<path d="M140,92 Q196,89 250,91 Q304,93 360,90" fill="none" stroke="#ff7a2a" stroke-width="0.9" opacity="0.5"/>
+<g filter="url(#lairShimmer7)" opacity="0.7">
+  <text x="250" y="130" text-anchor="middle" fill="#ff5a1a" font-family="Georgia,serif" font-size="14" font-weight="bold" stroke="#ff5a1a" stroke-width="2.4">"Riches make one</text>
+  <text x="250" y="155" text-anchor="middle" fill="#ff5a1a" font-family="Georgia,serif" font-size="14" font-weight="bold" stroke="#ff5a1a" stroke-width="2.4">strangely austerer (8)"</text>
+  <animate attributeName="opacity" values="0.55;0.8;0.55" keyTimes="0;0.5;1" dur="2.9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</g>
+<text x="250" y="130" text-anchor="middle" fill="#ffb060" font-family="Georgia,serif" font-size="14" font-weight="bold">"Riches make one</text>
+<text x="250" y="155" text-anchor="middle" fill="#ffb060" font-family="Georgia,serif" font-size="14" font-weight="bold">strangely austerer (8)"</text>
+<text x="250" y="195" text-anchor="middle" fill="#c8743a" font-family="Georgia,serif" font-size="8" opacity="0.65">Solve the final clue</text>
+<!-- heat rising off the burn: faint wavering bands that drift up and fade -->
+<g opacity="0.5">
+  <path d="M170,112 Q190,106 210,112 Q230,118 250,112 Q270,106 290,112 Q310,118 330,112" fill="none" stroke="#ff9a50" stroke-width="1.2" opacity="0" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="translate" additive="sum" values="0,0;0,-26" dur="4.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.35;0" keyTimes="0;0.35;1" dur="4.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </path>
+  <path d="M190,138 Q206,133 222,138 Q238,143 254,138 Q270,133 286,138 Q302,143 314,138" fill="none" stroke="#ff9a50" stroke-width="1" opacity="0" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="translate" additive="sum" values="0,0;0,-30" dur="5.1s" begin="1.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.3;0" keyTimes="0;0.35;1" dur="5.1s" begin="1.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </path>
+</g>
 
 <!-- ====================================================================
      DRAGON EYES watching from the dark either side. Almond and slit, the
@@ -853,6 +1075,14 @@ STORY_SCENES['lair_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M466,128 Q471,123 478,127 Q472,133 466,128 Z" fill="#ff2200" opacity="0.32">
   <animate attributeName="opacity" values="0.2;0.44;0.2" dur="3.5s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
+
+<!-- the hoard at the foot of the scroll: shared lairHoard() gold -->
+` + lairHoard('lairH7', {
+  seed: 23,
+  spill: [[60, 440, 252, 259, 14]],
+  heaps: [[30, 262, 44, 23], [472, 262, 40, 22], [122, 266, 50, 12], [386, 266, 52, 12]],
+  goblets: [[60, 258, 0.8, -6], [442, 258, 0.75, 8]]
+}) + `
 
 <!-- claw scratches gouged in the floor beneath the scroll -->
 <path d="M180,238 Q190,244 200,252" fill="none" stroke="#3a1a10" stroke-width="1.6" opacity="0.35" stroke-linecap="round"/>
@@ -877,23 +1107,25 @@ STORY_SCENES['lair_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 </circle>
 </svg>`;
 
-// Scene 8: Dragon shows respect — reuse dragon chamber scene
-STORY_SCENES['lair_8'] = STORY_SCENES['lair_1'];
+// Scene 8: Dragon shows respect. The same chamber and the same dragon, but
+// he lowers his head and lets out a long slow breath, and the cavern glows
+// brighter around him.
+STORY_SCENES['lair_8'] = lairChamber('8', { wings: 'folded', neck: 28, head: 22, jaw: 'closed', eye: 'red', lid: true, breath: true }, true);
 
 // Scene 9: Complete — dragon bows, exit opens, warm golden glow
 STORY_SCENES['lair_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lairVictory" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#1a0808"/><stop offset="50%" stop-color="#2a1410"/><stop offset="100%" stop-color="#1a0c08"/>
+    <stop offset="0%" stop-color="#1a0808"/><stop offset="40%" stop-color="#2a1010"/><stop offset="100%" stop-color="#0a0404"/>
   </linearGradient>
   <radialGradient id="lairWarmGlow" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.12"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+    <stop offset="0%" stop-color="#e0702a" stop-opacity="0.1"/><stop offset="100%" stop-color="#ff2200" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="lairExitLight" cx="85%" cy="50%" r="25%">
     <stop offset="0%" stop-color="#ffddaa" stop-opacity="0.3"/><stop offset="100%" stop-color="#ffddaa" stop-opacity="0"/>
   </radialGradient>
-  <linearGradient id="lairHide9" x1="0" y1="0" x2="1" y2="0.4">
-    <stop offset="0%" stop-color="#1e0a0a"/><stop offset="45%" stop-color="#341414"/><stop offset="100%" stop-color="#140606"/>
+  <linearGradient id="lairScale9" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#e88a48"/><stop offset="45%" stop-color="#b8482a"/><stop offset="100%" stop-color="#6a2416"/>
   </linearGradient>
   <linearGradient id="lairExitMouth" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#2a1410"/><stop offset="55%" stop-color="#8a6a3a"/><stop offset="100%" stop-color="#ffddaa"/>
@@ -902,7 +1134,7 @@ STORY_SCENES['lair_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
     <feGaussianBlur stdDeviation="2.6"/>
   </filter>
   <radialGradient id="lairAura9" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#ffaa44" stop-opacity="0.13"/><stop offset="60%" stop-color="#c06a28" stop-opacity="0.05"/><stop offset="100%" stop-color="#c06a28" stop-opacity="0"/>
+    <stop offset="0%" stop-color="#ff2200" stop-opacity="0.1"/><stop offset="100%" stop-color="#ff2200" stop-opacity="0"/>
   </radialGradient>
   <linearGradient id="lairTorch9" x1="0" y1="1" x2="0" y2="0">
     <stop offset="0%" stop-color="#ff7a18"/><stop offset="55%" stop-color="#ffc24a"/><stop offset="100%" stop-color="#ffe9a8"/>
@@ -949,42 +1181,18 @@ STORY_SCENES['lair_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M398,240 Q436,224 476,222 Q500,222 500,232 Q464,244 424,250 Q400,250 398,240 Z" fill="#ffddaa" opacity="0.09"/>
 
 <!-- ====================================================================
-     THE FLOOR AND THE HOARD. A hoard is a heap: it mounds, and the scrolls
-     lie at every angle at every depth, so they overlap and some are half
-     buried. Seven identical uprights in a row is a bar chart.
+     THE FLOOR AND THE HOARD. A hoard is a heap: it mounds, coins tumble
+     down its flanks, and the gems, goblets and the chest sit IN it rather
+     than on top. Shared lairHoard() floor, same gold as the chamber.
      ==================================================================== -->
-<path d="M0,222 Q60,214 132,218 Q214,224 280,216 Q356,209 428,217 Q468,221 500,216 L500,260 L0,260 Z" fill="#241408"/>
-<path d="M62,224 Q126,204 208,200 Q296,197 366,208 Q420,217 442,230 Q382,244 288,247 Q186,248 108,240 Q66,234 62,224 Z" fill="#33230f"/>
-<path d="M74,226 Q134,210 208,206 Q286,204 350,213" fill="none" stroke="#4e3820" stroke-width="1.4" opacity="0.5"/>
-
-<!-- scrolls: rolled tubes at varying angles, sizes and depths -->
-<path d="M62,230 Q58,218 68,213 L82,211 Q89,215 88,225 Q86,235 76,238 Q64,237 62,230 Z" fill="#d4c090" opacity="0.9"/>
-<path d="M68,213 Q76,217 76,226 Q75,234 68,238 Q62,237 62,230 Q58,218 68,213 Z" fill="#8e7a52"/>
-<path d="M69,221 Q72,225 69,229" fill="none" stroke="#7e6c44" stroke-width="0.9" opacity="0.7"/>
-<path d="M96,236 Q91,225 101,219 L114,218 Q121,222 119,232 Q116,241 106,243 Q97,242 96,236 Z" fill="#c8b880" opacity="0.85"/>
-<path d="M101,219 Q109,223 108,232 Q107,239 101,243 Q97,242 96,236 Q91,225 101,219 Z" fill="#83704a"/>
-<path d="M336,238 Q332,228 341,223 L353,223 Q359,227 357,235 Q354,243 346,244 Q338,243 336,238 Z" fill="#e0d0a0" opacity="0.8"/>
-<path d="M341,223 Q348,227 347,234 Q346,241 341,244 Q338,243 336,238 Q332,228 341,223 Z" fill="#94845c"/>
-<!-- one lying flat and half unrolled, spilling toward the viewer -->
-<path d="M206,232 Q234,224 266,226 Q292,228 300,234 Q268,242 232,241 Q210,239 206,232 Z" fill="#d4c090" opacity="0.72"/>
-<path d="M216,231 Q244,226 272,228" fill="none" stroke="#8e7c50" stroke-width="0.9" opacity="0.55"/>
-<path d="M222,235 Q248,231 276,233" fill="none" stroke="#8e7c50" stroke-width="0.8" opacity="0.45"/>
-<path d="M296,230 Q302,226 306,230 Q302,238 294,238 Q292,234 296,230 Z" fill="#a89468" opacity="0.8"/>
-<!-- a taller one standing on end, leaning against the heap -->
-<path d="M244,216 Q240,200 248,194 L258,193 Q265,198 263,212 Q260,224 252,226 Q245,224 244,216 Z" fill="#d4c090" opacity="0.85"/>
-<path d="M248,194 Q255,199 254,211 Q253,222 248,226 Q245,224 244,216 Q240,200 248,194 Z" fill="#8e7a52"/>
-<path d="M249,205 Q252,210 249,215" fill="none" stroke="#7e6c44" stroke-width="0.9" opacity="0.65"/>
-<path d="M318,222 Q314,210 324,205 L337,204 Q344,208 342,218 Q339,228 329,230 Q320,229 318,222 Z" fill="#c8b880" opacity="0.85"/>
-<path d="M324,205 Q332,209 331,218 Q330,226 324,230 Q320,229 318,222 Q314,210 324,205 Z" fill="#83704a"/>
-<path d="M356,226 Q353,216 361,212 L372,212 Q377,216 375,223 Q372,230 365,232 Q357,231 356,226 Z" fill="#d4c090" opacity="0.75"/>
-<path d="M361,212 Q368,216 367,222 Q366,229 361,232 Q357,231 356,226 Q353,216 361,212 Z" fill="#8e7a52" opacity="0.95"/>
-<!-- half-buried edges, so the heap looks deep rather than laid out -->
-<path d="M132,234 Q158,230 184,233 Q160,238 132,234 Z" fill="#c8b880" opacity="0.4"/>
-<path d="M382,232 Q406,229 428,232 Q406,237 382,232 Z" fill="#c8b880" opacity="0.35"/>
-<!-- a few loose gold coins glinting in the heap -->
-<path d="M164,238 Q164,236 168,236 Q172,236 172,238 Q172,240 168,240 Q164,240 164,238 Z" fill="#ffd700" opacity="0.55"/>
-<path d="M300,240 Q300,238 304,238 Q307,238 307,240 Q307,242 304,242 Q300,242 300,240 Z" fill="#ffd700" opacity="0.45"/>
-<path d="M234,244 Q234,242 237,242 Q240,242 240,244 Q240,246 237,246 Q234,246 234,244 Z" fill="#ffcc00" opacity="0.4"/>
+<path d="M0,222 Q60,214 132,218 Q214,224 280,216 Q356,209 428,217 Q468,221 500,216 L500,260 L0,260 Z" fill="#1a0a08"/>
+` + lairHoard('lairH9', {
+  seed: 29,
+  spill: [[30, 480, 228, 256, 44]],
+  heaps: [[252, 247, 190, 42], [58, 238, 34, 12], [156, 246, 34, 10], [384, 240, 40, 13]],
+  chest: { x: 100, y: 242, scale: 0.55 },
+  goblets: [[352, 244, 0.9, 6], [196, 250, 0.8, -6]]
+}) + `
 
 <!-- ====================================================================
      TORCHES. A matched pair, as in the chamber scenes. The flame is a
@@ -1011,131 +1219,25 @@ STORY_SCENES['lair_9'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 </g>
 
 <!-- ====================================================================
-     LIAM AT REST. The bow is a POSE, not a different animal: the same
-     wedge head and snout, but the neck arcs DOWN so the head comes to the
-     floor, the wings are furled against the flank, and the eyes are amber
-     rather than red. He is still recognisably the dragon of the chamber.
-     ==================================================================== -->
-<!-- ====================================================================
-     LIAM, BOWED. This is the CHAMBER DRAGON, not a second animal: every
-     path below is lair_1’s, unchanged. The bow is a transform, not a
-     redraw. Body, wings, tail, haunch and foreleg do not move in a bow,
-     so they are drawn exactly where the chamber draws them; the neck and
-     head rotate as one group about (226,158), the point where the neck
-     leaves the chest.
-
-     The angle is measured, not guessed. At 70 degrees the head swung past
-     vertical and lay on its side, horns pointing sideways; at 38 the snout
-     comes down to y=185 while the horns stay above the skull, so the head
-     reads as LOWERED rather than tipped over. The animal then settles onto
-     the hoard, partly buried in it, which is the other half of the bow.
-
-     What changes from the chamber is the ending: the eyes go from red to
-     amber, they pulse slower and lower, and a lid comes half down.
+     LIAM, AT REST. The shared lairLiam() dragon, the same animal as the
+     chamber and the rearing scene: wings furled, head lowered toward you,
+     red eyes, calm under half-lowered lids. One forefoot reaches out holding
+     the Dragon Scale he has plucked from his flank, offered to you.
      ==================================================================== -->
 <circle cx="250" cy="182" r="104" fill="url(#lairAura9)"/>
-<g transform="translate(0,12)">
-<!-- far wing, folded, behind the body -->
-<path d="M284,156 Q318,138 352,144 Q374,149 378,162 Q366,158 356,164 Q348,156 338,164 Q330,156 320,166 Q310,158 300,168 Q290,163 284,164 Z" fill="#120808" opacity="0.62"/>
-<path d="M286,157 Q320,148 350,146" fill="none" stroke="#2a1010" stroke-width="1" opacity="0.35"/>
-<path d="M290,159 Q306,158 300,168" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.3"/>
-<path d="M298,157 Q318,157 320,166" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.3"/>
-<path d="M310,153 Q334,155 338,164" fill="none" stroke="#2a1010" stroke-width="0.9" opacity="0.28"/>
-<!-- tail sweeping out to the right and lying along the floor -->
-<path d="M296,196 Q344,188 388,198 Q424,208 452,228 Q428,234 402,224 Q372,212 342,208 Q314,205 294,210 Z" fill="#1a0808"/>
-<path d="M300,199 Q344,192 384,201 Q416,210 442,226" fill="none" stroke="#3e1818" stroke-width="1.2" opacity="0.4"/>
-
-<!-- spade at the tail tip -->
-<path d="M452,228 Q466,220 478,226 Q472,236 458,236 Q450,234 452,228 Z" fill="#2a1212" opacity="0.85"/>
-<path d="M456,227 Q466,223 474,226 Q466,229 456,227 Z" fill="#4a2020" opacity="0.4"/>
-<!-- haunch: the big rear muscle, which is what gives a dragon its weight -->
-<path d="M268,182 Q296,174 312,192 Q320,208 306,220 Q284,228 268,216 Q258,198 268,182 Z" fill="#1a0808"/>
-<!-- body: deep chest, drawn as one mass with the shoulder -->
-<path d="M196,186 Q198,162 224,154 Q256,146 284,158 Q306,170 304,194 Q300,216 272,224 Q234,230 208,216 Q192,204 196,186 Z" fill="url(#lairHide9)"/>
-<!-- belly plates, the lighter scutes on the underside -->
-<path d="M212,214 Q240,224 274,218 Q272,224 250,227 Q224,226 212,214 Z" fill="#4a1c18" opacity="0.45"/>
-<path d="M216,206 Q244,214 272,209" fill="none" stroke="#4a1c18" stroke-width="1.2" opacity="0.3"/>
-<!-- foreleg planted on the floor, so he is standing not floating -->
-<path d="M216,208 Q210,224 210,238 Q216,242 224,240 Q224,224 228,210 Z" fill="#1a0808"/>
-<path d="M206,238 Q216,234 228,238 Q228,244 218,245 Q208,244 206,238 Z" fill="#2a1212"/>
-<path d="M208,243 Q210,247 208,249" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<path d="M216,244 Q217,248 216,250" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<path d="M224,243 Q226,247 225,249" fill="none" stroke="#4a2020" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
-<!-- near wing, folded over the shoulder, with a visible finger frame -->
-<path d="M220,158 Q184,136 148,143 Q124,149 118,164 Q132,159 144,167 Q154,157 166,168 Q176,157 188,170 Q200,162 212,170 Z" fill="#120808" opacity="0.8"/>
-<path d="M220,158 Q182,146 148,143" fill="none" stroke="#3a1616" stroke-width="1.3" opacity="0.55"/>
-<path d="M212,161 Q182,157 188,170" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.45"/>
-<path d="M204,157 Q170,155 166,168" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.42"/>
-<path d="M188,151 Q152,152 144,167" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.4"/>
-<path d="M166,146 Q134,150 118,164" fill="none" stroke="#3a1616" stroke-width="1.1" opacity="0.38"/>
-<!-- the wing claw at the fold, which is what says WING and not cape -->
-<path d="M120,160 Q110,152 100,152 Q108,160 118,166 Z" fill="#2a1212" opacity="0.85"/>
-
-<g transform="rotate(38,226,158)">
-<!-- neck rising out of the chest toward the head -->
-<path d="M226,158 Q222,136 232,120 Q244,108 260,110 Q272,116 272,132 Q270,150 258,160 Q240,166 226,158 Z" fill="url(#lairHide9)"/>
-<!-- spines running the ridge of the neck -->
-<path d="M232,120 Q228,112 230,104 Q236,110 238,118 Z" fill="#2a1212"/>
-<path d="M242,112 Q239,104 242,96 Q247,103 248,111 Z" fill="#2a1212"/>
-<path d="M254,110 Q252,102 256,95 Q260,102 260,110 Z" fill="#2a1212" opacity="0.9"/>
-
-<!-- ====================================================================
-     THE HEAD. A wedge: broad at the skull, narrowing along the snout to
-     the nostrils, with a jaw line under it and a brow over the eye. This
-     is the difference between a dragon and a ball.
-     ==================================================================== -->
-<path d="M236,110 Q234,96 246,90 Q264,84 280,90 Q294,96 300,108 Q306,118 300,126 L272,134 Q252,136 240,128 Q234,120 236,110 Z" fill="url(#lairHide9)"/>
-<!-- snout, tapering forward from the skull -->
-<path d="M282,110 Q300,108 312,116 Q318,122 314,130 Q302,136 286,132 Q278,124 282,110 Z" fill="#1e0a0a"/>
-<!-- jaw line: a lit edge under the snout is what separates it from the neck -->
-<path d="M284,132 Q300,136 314,130 Q304,140 286,138 Z" fill="#3e1818" opacity="0.75"/>
-<path d="M244,128 Q266,138 288,138" fill="none" stroke="#3e1818" stroke-width="1.2" opacity="0.5"/>
-<!-- brow ridges, jutting over each eye -->
-<path d="M240,102 Q252,96 264,100 Q254,102 244,106 Z" fill="#2a1212"/>
-<path d="M268,98 Q280,94 290,100 Q280,101 270,104 Z" fill="#2a1212" opacity="0.9"/>
-<!-- horns, sweeping back off the skull -->
-<path d="M244,94 Q234,74 224,58 Q238,66 248,84 Q250,90 248,94 Z" fill="#2a1212"/>
-<path d="M240,88 Q234,76 228,66 Q236,72 242,84 Z" fill="#4a2020" opacity="0.45"/>
-<path d="M272,90 Q278,70 286,54 Q284,72 280,88 Q277,93 274,93 Z" fill="#2a1212"/>
-<path d="M274,86 Q278,74 282,64 Q280,76 277,86 Z" fill="#4a2020" opacity="0.4"/>
-<!-- a smaller pair of jaw horns -->
-<path d="M246,124 Q240,132 236,140 Q244,134 250,128 Z" fill="#2a1212" opacity="0.8"/>
-
-<!-- nostrils, set at the tip of the snout where they belong -->
-<path d="M304,120 Q308,118 310,121 Q308,124 304,123 Z" fill="#ffaa44" opacity="0.35"/>
-<path d="M306,127 Q310,125 312,128 Q310,131 306,130 Z" fill="#ffaa44" opacity="0.3"/>
-<!-- smoke curling out of them -->
-<circle cx="310" cy="118" r="3" fill="#c8a878" opacity="0.16">
-  <animate attributeName="cy" values="118;102;86" dur="6.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <animate attributeName="opacity" values="0.2;0.1;0" dur="6.4s" repeatCount="indefinite"/>
-</circle>
-<circle cx="314" cy="126" r="3" fill="#c8a878" opacity="0.16">
-  <animate attributeName="cy" values="126;108;90" dur="7.2s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <animate attributeName="opacity" values="0.2;0.1;0" dur="7.2s" begin="0.5s" repeatCount="indefinite"/>
-</circle>
-
-<!-- ====================================================================
-     THE EYES. The best thing in this location. A reptile eye is an ALMOND
-     with a vertical slit, set under the brow, and the glow spills onto the
-     scale around it.
-     ==================================================================== -->
-<circle cx="252" cy="108" r="13" fill="#ffaa44" opacity="0.14" filter="url(#lairFireGlow9)"/>
-<circle cx="279" cy="107" r="13" fill="#ffaa44" opacity="0.14" filter="url(#lairFireGlow9)"/>
-<path d="M245,108 Q251,101 259,106 Q253,113 245,108 Z" fill="#ffaa44" opacity="0.62">
-  <animate attributeName="opacity" values="0.42;0.72;0.42" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M272,107 Q278,100 286,105 Q280,112 272,107 Z" fill="#ffaa44" opacity="0.62">
-  <animate attributeName="opacity" values="0.42;0.72;0.42" dur="5.4s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M251,103 Q253,108 251,112 Q249,108 251,103 Z" fill="#ffdd88" opacity="0.7"/>
-<path d="M278,102 Q280,107 278,111 Q276,107 278,102 Z" fill="#ffdd88" opacity="0.7"/>
-
-<!-- the upper lid coming down over each eye, which is what reads as calm.
-     Drawn in the head's own frame so it rotates with the bow. -->
-<path d="M244,105 Q251,99 260,104 Q251,103 244,109 Z" fill="#1e0c0a" opacity="0.8"/>
-<path d="M271,104 Q278,98 287,103 Q278,102 271,108 Z" fill="#1e0c0a" opacity="0.8"/>
-</g>
-</g>
+` + lairLiam('lairL9', {
+  x: -14, y: 6, wings: 'folded', neck: 20, head: 16, jaw: 'closed', eye: 'red', lid: true,
+  leg: 'offer', heldAt: [345, 187],
+  // THE DRAGON SCALE: a red-bronze teardrop, still warm, glowing in his claw
+  held: '<circle r="14" fill="#ffaa44" opacity="0.32" filter="url(#lairFireGlow9)">' +
+    '<animate attributeName="opacity" values="0.22;0.42;0.22" keyTimes="0;0.5;1" dur="3.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>' +
+    '<g transform="rotate(-14)">' +
+    '<path d="M0,-10 Q8,-10 8.5,-1 Q8.5,6 0,12 Q-8.5,6 -8.5,-1 Q-8,-10 0,-10 Z" fill="url(#lairScale9)" stroke="#4a1a10" stroke-width="0.9"/>' +
+    '<path d="M0,-8 L0,9" fill="none" stroke="#ffb070" stroke-width="0.8" opacity="0.4"/>' +
+    '<path d="M-5,-6 Q-2,-8.5 2,-7.5 Q-2,-4.5 -4.5,0 Z" fill="#ffd8a0" opacity="0.55"/>' +
+    '<path d="M3,-3 L4,-5 L5,-3 L4,-1 Z" fill="#fff0c8" opacity="0">' +
+    '<animate attributeName="opacity" values="0;0.9;0" keyTimes="0;0.5;1" dur="2.7s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>'
+}) + `
 
 <!-- Golden motes drifting up through the warm air -->
 <circle cx="150" cy="100" r="2" fill="#ffd700" opacity="0.4">

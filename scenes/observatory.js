@@ -1,18 +1,26 @@
 // Observatory story scenes, "The Star Watcher's Puzzle"
-// Keys: observatory_0 through observatory_5
+// Keys: observatory_0 through observatory_9
 // DRAFT, for review only
 
-// Scene 0: Mountain trail, swirling mist, silver dome above clouds, starfield
+// The Mystic Peak is ONE asset: advPeak() in scenes/adventure.js, which the
+// browser (and the renderer and lint) load before this file, so the mountain,
+// trail and dome the player just climbed in adventure_3-5 are the same ones
+// they arrive at here. check-scenes evaluates each file alone, without
+// adventure.js; there the kit mountain (same purple biome, observatory on the
+// summit) stands in so the file still evaluates.
+function obsPeak() {
+  if (typeof advPeak === 'function') return advPeak('obs0Pk', -26, 4, 1.1, { foot: '#2a1a4a' });
+  return bcArt.prop('mountain', { x: 250, y: 257, w: 414, h: 150, observatory: true, trail: true, biome: 'adventure', depth: 'mid' });
+}
+
+// Scene 0: Mountain trail, swirling mist, the Mystic Peak dome above the clouds, starfield
 STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="obsSkyBg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#050a18"/><stop offset="50%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a2040"/>
+    <stop offset="0%" stop-color="#050a18"/><stop offset="45%" stop-color="#120f2c"/><stop offset="100%" stop-color="#2a1a4a"/>
   </linearGradient>
   <radialGradient id="obsStarGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffd700" stop-opacity="0.6"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="domeShine" cx="40%" cy="30%" r="60%">
-    <stop offset="0%" stop-color="#a0b0c8" stop-opacity="0.6"/><stop offset="100%" stop-color="#6a7a9a" stop-opacity="0"/>
   </radialGradient>
   <filter id="obsGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <filter id="mistBlur"><feGaussianBlur stdDeviation="6"/></filter>
@@ -31,118 +39,156 @@ STORY_SCENES['observatory_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <circle cx="380" cy="45" r="0.7" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3.3s" repeatCount="indefinite" begin="1.8s"/></circle>
 <circle cx="440" cy="58" r="0.9" fill="#fff" opacity="0.4"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite" begin="0.4s"/></circle>
 <circle cx="30" cy="70" r="0.6" fill="#fff" opacity="0.35"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite" begin="2.2s"/></circle>
+<!-- FAR: the lesser ranges below the cloud line, veiled toward the night
+     haze so they sit a plane behind the peak. -->
+<path d="M0,260 L0,176 L60,150 L130,166 L180,142 L250,128 L300,146 L360,130 L420,154 L500,136 L500,260 Z" fill="#1a1432"/>
+<path d="M60,150 L130,166 L96,260 L0,260 L0,176 Z" fill="#221a3e" opacity="0.5"/>
+<path d="M360,130 L420,154 L400,260 L330,260 Z" fill="#221a3e" opacity="0.42"/>
 <!-- ====================================================================
-     THE RIDGES. Two flat polygons in near-identical blues read as cut paper.
-     A ridge reads as a ridge when its LIT face and its SHADOWED face meet at
-     the crest, and a single-fill polygon can never show that.
+     MID: THE MYSTIC PEAK, the shared asset (advPeak, scenes/adventure.js):
+     the lilac dome, the purple switchback and the lit door, exactly as the
+     player saw them from the tower and the trail.
      ==================================================================== -->
-<path d="M0,260 L0,160 L80,110 L160,140 L200,100 L260,80 L320,105 L380,90 L440,120 L500,95 L500,260 Z" fill="#0c1428"/>
-<path d="M80,110 L160,140 L120,260 L0,260 L0,160 Z" fill="#121c34" opacity="0.55"/>
-<path d="M200,100 L260,80 L320,105 L300,260 L214,260 Z" fill="#121c34" opacity="0.45"/>
-<path d="M380,90 L440,120 L500,95 L500,260 L420,260 Z" fill="#121c34" opacity="0.4"/>
-<!-- snow catching starlight on the two highest crests -->
-<path d="M200,100 L260,80 L286,93 Q248,88 214,106 Z" fill="#8a9ab0" opacity="0.2"/>
-<path d="M368,96 L380,90 L404,102 Q384,98 372,104 Z" fill="#8a9ab0" opacity="0.14"/>
-<path d="M0,260 L0,180 L60,145 L130,165 L180,135 L250,115 L300,140 L360,120 L420,150 L500,130 L500,260 Z" fill="#101830"/>
-<path d="M60,145 L130,165 L96,260 L0,260 L0,180 Z" fill="#16203c" opacity="0.5"/>
-<path d="M180,135 L250,115 L300,140 L280,260 L196,260 Z" fill="#16203c" opacity="0.42"/>
-
-<!-- Cairns on trail -->
-<ellipse cx="130" cy="210" rx="5" ry="3" fill="#4a5068"/>
-<ellipse cx="130" cy="207" rx="4" ry="2.5" fill="#5a6078"/>
-<ellipse cx="130" cy="205" rx="3" ry="2" fill="#6a7088"/>
-<ellipse cx="320" cy="195" rx="4" ry="2.5" fill="#4a5068"/>
-<ellipse cx="320" cy="193" rx="3" ry="2" fill="#5a6078"/>
-<ellipse cx="320" cy="191" rx="2" ry="1.5" fill="#6a7088"/>
-<!-- ====================================================================
-     THE TRAIL. It ran to (350,145) while the observatory stands at x=250, so
-     the path led PAST the building and stopped in open hillside. It also ran
-     as one shallow diagonal, which is a ramp: a hill path SWITCHES BACK, and
-     an S-curve is what a person could actually walk up.
-
-     It now ends at the door in the drum wall.
-     ==================================================================== -->
-<path d="M18,258 Q90,244 148,224 Q196,208 176,186 Q158,168 214,152 Q238,146 246,124"
-      fill="none" stroke="#2a3048" stroke-width="9" stroke-linecap="round" opacity="0.55"/>
-<path d="M18,258 Q90,244 148,224 Q196,208 176,186 Q158,168 214,152 Q238,146 246,124"
-      fill="none" stroke="#3a4058" stroke-width="5.5" stroke-linecap="round" opacity="0.45"/>
-<path d="M18,256 Q90,242 148,222 Q194,207 175,186 Q157,167 213,151 Q237,145 245,124"
-      fill="none" stroke="#4a5068" stroke-width="1.6" stroke-linecap="round" opacity="0.3"/>
-<!-- stones edging the switchback, so the turn reads as made rather than drawn -->
-<g fill="#4a5068" opacity="0.5">
-  <path d="M186,190 q4,-3 8,0 q-4,3 -8,0 Z"/>
-  <path d="M170,178 q4,-3 8,0 q-4,3 -8,0 Z"/>
-  <path d="M196,166 q4,-3 8,0 q-4,3 -8,0 Z"/>
-  <path d="M120,232 q5,-3 10,0 q-5,3 -10,0 Z"/>
-  <path d="M232,140 q4,-3 8,0 q-4,3 -8,0 Z"/>
+` + obsPeak() + `
+<!-- weather-worn cairns beside two of the trail's turns -->
+<!-- each is a stack of flat stones, widest at the ground and stepping in as
+     it climbs, slightly off plumb, lit from the upper left -->
+<g transform="translate(150 203)">
+<ellipse cx="1" cy="0" rx="8" ry="1.8" fill="#140f28" opacity="0.55"/>
+<ellipse cx="0" cy="-2.6" rx="6.6" ry="2.8" fill="#3a2c5c"/>
+<ellipse cx="0.8" cy="-6.9" rx="5" ry="2.4" fill="#4a3a72"/>
+<ellipse cx="-0.2" cy="-10.6" rx="3.8" ry="2" fill="#5c4a88"/>
+<ellipse cx="0.5" cy="-13.7" rx="2.6" ry="1.6" fill="#7a66a6"/>
+<path d="M-5.6,-3.6 Q-3,-5.2 1,-5.2 M-3.4,-8 Q-1.4,-9.1 1.6,-9.1 M-3,-11.4 Q-1.2,-12.4 0.8,-12.4 M-1.4,-14.4 Q0,-15.2 1.4,-15.1" fill="none" stroke="#a492d0" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/>
+</g>
+<g transform="translate(326 229) scale(0.85)">
+<ellipse cx="1" cy="0" rx="8" ry="1.8" fill="#140f28" opacity="0.55"/>
+<ellipse cx="0" cy="-2.6" rx="6.4" ry="2.8" fill="#3a2c5c"/>
+<ellipse cx="-0.7" cy="-6.8" rx="4.8" ry="2.3" fill="#4a3a72"/>
+<ellipse cx="0.3" cy="-10.4" rx="3.4" ry="1.9" fill="#6a5698"/>
+<path d="M-5.4,-3.6 Q-3,-5.2 1,-5.2 M-4.2,-7.9 Q-2.2,-9 0.8,-9 M-2.4,-11.2 Q-0.8,-12.2 1,-12.2" fill="none" stroke="#a492d0" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/>
 </g>
 <!-- Cloud / mist layer -->
-<ellipse cx="250" cy="160" rx="280" ry="25" fill="#8090b0" opacity="0.08" filter="url(#mistBlur)"/>
-<ellipse cx="180" cy="155" rx="140" ry="18" fill="#a0b0d0" opacity="0.06" filter="url(#mistBlur)"><animate attributeName="cx" values="180;200;180" dur="12s" repeatCount="indefinite"/></ellipse>
-<ellipse cx="350" cy="165" rx="120" ry="15" fill="#8090b0" opacity="0.07" filter="url(#mistBlur)"><animate attributeName="cx" values="350;330;350" dur="10s" repeatCount="indefinite"/></ellipse>
-<!-- ====================================================================
-     THE OBSERVATORY. It was a triangle with a slit in it. A dome reads as a
-     dome because it is a HEMISPHERE with a shutter slot running over its
-     crown, sitting on a drum wall with a base course. The slot is what makes
-     it an observatory rather than a chapel.
-     ==================================================================== -->
-<!-- A cut-stone landing supports the drum and joins the mountain trail. -->
-<path d="M221 116 L274 116 L287 127 L272 138 L224 138 L210 130Z" fill="#3a4058"/>
-<path d="M210 130 L224 138 H272 L287 127 L283 140 L266 149 L223 146Z" fill="#2a3048"/>
-<path d="M220 123 L272 121 L280 127 L268 133 L226 132Z" fill="#4a5068"/>
-<path d="M225 112 H275 V124 H225Z" fill="#3a4560"/>
-<path d="M227 119 H240 M261 119 H273" stroke="#6a7a9a" stroke-width="1" opacity=".5"/>
-<!-- the drum the dome sits on -->
-<path d="M228,96 L272,96 L274,112 L226,112 Z" fill="#3a4560"/>
-<path d="M228,96 L272,96 L272,99 L228,99 Z" fill="#6a7a9a" opacity="0.5"/>
-<path d="M224,112 L276,112 L277,117 L223,117 Z" fill="#2a3348"/>
-<!-- the hemisphere -->
-<path d="M226,96 Q226,64 250,64 Q274,64 274,96 Z" fill="#5a6a86"/>
-<path d="M226,96 Q226,64 250,64 Q262,64 268,74 Q244,70 234,96 Z" fill="#8a9ab0" opacity="0.45"/>
-<path d="M250,64 Q274,64 274,96 L266,96 Q268,72 250,66 Z" fill="#3a4560" opacity="0.6"/>
-<circle cx="250" cy="90" r="26" fill="url(#domeShine)" opacity="0.5"/>
-<!-- THE SHUTTER SLOT, open, with the sky showing through it -->
-<path d="M244,96 Q244,66 250,64 Q256,66 256,96 Z" fill="#0a1020"/>
-<path d="M245.5,94 Q245.5,68 250,66 Q254.5,68 254.5,94 Z" fill="#1a2440" opacity="0.8"/>
-<!-- the telescope barrel just showing in the slot, angled at the sky -->
-<path d="M247,92 L253,92 L256,72 L250,70 Z" fill="#8a9ab0" opacity="0.85"/>
-<path d="M248.5,90 L252,90 L254,74 L250.5,72.5 Z" fill="#c8a878" opacity="0.5"/>
-<circle cx="253" cy="71" r="2.4" fill="#c8a878" opacity="0.7"/>
-<!-- the ribs that carry the shutter, which is what makes the dome mechanical -->
-<path d="M236,96 Q236,70 249,65" fill="none" stroke="#3a4560" stroke-width="1.2" opacity="0.7"/>
-<path d="M264,96 Q264,70 251,65" fill="none" stroke="#3a4560" stroke-width="1.2" opacity="0.7"/>
-<!-- THE DOOR the trail arrives at -->
-<path d="M244,112 L256,112 Q258,112 258,116 L258,124 L242,124 L242,116 Q242,112 244,112 Z" fill="#1a2440"/>
-<path d="M245,114 L255,114 Q256,114 256,117 L256,124 L244,124 L244,117 Q244,114 245,114 Z" fill="#ffd700" opacity="0.35"/>
-<path d="M242,124 Q250,127 258,124 L258,126 Q250,129 242,126 Z" fill="#2a3348"/>
-<!-- a lit window in the drum: someone is up there -->
-<path d="M234,101 L242,101 L242,109 L234,109 Z" fill="#ffd700" opacity="0.5">
-  <animate attributeName="opacity" values="0.38;0.58;0.38" dur="6.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M258,101 L266,101 L266,109 L258,109 Z" fill="#ffd700" opacity="0.32"/>
-<!-- ====================================================================
-     THE LIGHT. Previously only the left window threw a wedge and the right
-     window and the door threw nothing, so the building was lit inconsistently.
-     Every opening casts, and each wedge is scaled to the opening it comes
-     from: the door is widest and strongest, the two windows narrower and
-     dimmer, all three spreading at the same angle.
-     ==================================================================== -->
-<path d="M234 109 H242 L244 131 H228Z" fill="#ffd700" opacity=".035"/>
-<path d="M258 109 H266 L272 131 H256Z" fill="#ffd700" opacity=".025"/>
-<!-- Short treads lead directly from the threshold to the trail. -->
-<path d="M242 126 H258 V129 H242Z M238 130 H261 V133 H238Z M234 134 H263 V137 H234Z M230 138 H261 V141 H230Z" fill="#6a7088"/>
-<path d="M242 129 H258 M238 133 H261 M234 137 H263 M230 141 H261" stroke="#2a3348" stroke-width="1"/>
-<path d="M244 126 H256 L260 140 H234Z" fill="#ffeaa7" opacity=".09"/>
-<!-- the pool of light on the ground at the threshold -->
-<ellipse cx="249" cy="128" rx="9" ry="2" fill="#ffd700" opacity="0.08"/>
+<!-- BG: the cloud line. Banks of mist drift across the lower slopes, so the
+     summit and its dome stand clear above them. Each bank closes its own loop. -->
+<ellipse cx="250" cy="236" rx="300" ry="26" fill="#8a7aaa" opacity="0.16" filter="url(#mistBlur)"/>
+<ellipse cx="170" cy="214" rx="150" ry="16" fill="#a898c8" opacity="0.12" filter="url(#mistBlur)"><animate attributeName="cx" values="170;196;170" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
+<ellipse cx="360" cy="224" rx="130" ry="15" fill="#8a7aaa" opacity="0.13" filter="url(#mistBlur)"><animate attributeName="cx" values="360;334;360" dur="10s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
+<ellipse cx="250" cy="252" rx="280" ry="14" fill="#b4a6d0" opacity="0.1" filter="url(#mistBlur)"><animate attributeName="cx" values="250;270;250" dur="15.5s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
 </svg>`;
 
-// Scene 1: Star Watcher introduction, reusing the scene 0 exterior (character described in narrative)
-STORY_SCENES['observatory_1'] = STORY_SCENES['observatory_0'];
+// ====================================================================
+// THE INTERIOR is ONE picture (obsInterior) with each story beat laid over it,
+// so the dome, telescope and floor never drift between steps 1-3 and 5-9:
+//   lit      how many of the three constellations burn (0 dim white .. 3)
+//   closed   the dome opaque (step 1, before she dissolves it into glass)
+//   watcher  'work' (at the eyepiece with her chart), 'chalk' (the same pose
+//            with the chart swapped for a chalk stick), 'discover', 'seated'
+//   sky      overlay drawn on the glass (the nova, the comet, the shut slot)
+//   floor    overlay drawn on the deck (her chalk marks)
+//   instr    overlay drawn over the telescope (the brass eyepiece, step 5)
+//   sfx      id suffix, so every variant's gradient ids stay unique
+// ====================================================================
+function obsC(o, i, svg) {
+  if ((o.lit || 0) > i) return svg;
+  // unlit: the same stars, dim white, no gold and no glow behind them
+  return '<g opacity="0.6">' + svg.replace(/<circle[^>]*url\(#constGlow\)[\s\S]*?<\/circle>/, '')
+    .split('#ffd700').join('#b8c4d8').split('#ffeaa7').join('#dfe6f4') + '</g>';
+}
+// Step 4 draws its own sky, with the constellations at blaze strength. Only
+// two are lit by then (the third waits for step 9), and only ONE blazes:
+// obs4Calm takes a constellation back to the ordinary lit strength of
+// steps 3 and 5, obs4Unlit takes it to the same dim white obsC uses.
+function obs4Calm(svg) {
+  return svg.split('opacity="0.45"').join('opacity="0.3"').split('0.26;0.62;0.26').join('0.16;0.42;0.16');
+}
+function obs4Unlit(svg) {
+  return '<g opacity="0.6">' + obs4Calm(svg).replace(/<circle[^>]*url\(#constGlow4\)[\s\S]*?<\/circle>/, '')
+    .split('#ffd700').join('#b8c4d8').split('#ffeaa7').join('#dfe6f4') + '</g>';
+}
+function obsSuffix(svg, sfx) {
+  if (!sfx) return svg;
+  var ids = [], m, re = /id="([^"]+)"/g;
+  while ((m = re.exec(svg))) ids.push(m[1]);
+  ids.forEach(function (id) {
+    svg = svg.split('id="' + id + '"').join('id="' + id + sfx + '"')
+             .split('url(#' + id + ')').join('url(#' + id + sfx + ')')
+             .split('href="#' + id + '"').join('href="#' + id + sfx + '"');
+  });
+  return svg;
+}
+// Her approved 'work' pose holds a folded sky chart in a gripping hand. For the
+// chalk beats the chart is swapped for a stick of chalk, drawn in the same
+// place in the order, so the same fingers close over it.
+var OBS_CHART = '<path d="M126 174L159 183L150 207L119 195Z" fill="#CECCB1"/><path d="M130 184L147 192M127 190L141 196" fill="none" stroke="#849590" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+var OBS_CHALK = '<path d="M147.5 165L152 166.2L145 199L140.6 197.8Z" fill="#e4e8ef"/><path d="M147.5 165L152 166.2L151.3 169.2L146.8 168Z" fill="#f4f6fa"/><path d="M150 166L145 197.4" stroke="#b9c1cf" stroke-width="1" fill="none"/>';
+// SEATED, cross-legged, eyes closed. The mission cast has no seated pose, so
+// this is her approved 'ready' pose (Stillness: eyes closed, hands folded)
+// cut at the hips and set down on a lap of the same robe, knees out, the two
+// shoes tucked at the front. Everything above the lap is the approved model.
+function obsSeated(x, F, H, cid) {
+  var s = H / 280, lap = 15, cut = 216, fl = +(F - lap + (294 - cut) * s).toFixed(2);
+  var p = function (dx, dy) { return +(x + dx).toFixed(1) + ',' + +(F + dy).toFixed(1); };
+  return '<ellipse cx="' + x + '" cy="' + F + '" rx="40" ry="4.2" fill="#0a0806" opacity="0.32"/>' +
+    '<clipPath id="' + cid + '"><rect x="' + (x - 70) + '" y="0" width="140" height="' + (F - lap + 3) + '"/></clipPath>' +
+    '<g clip-path="url(#' + cid + ')">' + bcMissionPlace('star-watcher', 'ready', x, fl, H, false, { shadow: false }) + '</g>' +
+    // the lap: robe over two crossed knees, lit from the upper left
+    '<path d="M' + p(-36, -2) + ' Q' + p(-41, -12) + ' ' + p(-24, -15.5) + ' Q' + p(-10, -18) + ' ' + p(0, -14) + ' Q' + p(10, -18) + ' ' + p(24, -15.5) + ' Q' + p(41, -12) + ' ' + p(36, -2) + ' Q' + p(0, 3) + ' ' + p(-36, -2) + ' Z" fill="#536E8F"/>' +
+    '<path d="M' + p(-36, -2) + ' Q' + p(0, 3) + ' ' + p(36, -2) + ' Q' + p(38, -7) + ' ' + p(33, -10) + ' Q' + p(26, -4) + ' ' + p(0, -3) + ' Q' + p(-24, -4) + ' ' + p(-34, -6) + ' Z" fill="#405774"/>' +
+    '<path d="M' + p(-35, -7) + ' Q' + p(-36, -13) + ' ' + p(-24, -14.5) + '" fill="none" stroke="#7185A0" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<path d="M' + p(-18, -14) + ' Q' + p(-4, -9) + ' ' + p(4, -3) + ' M' + p(18, -14.5) + ' Q' + p(8, -10) + ' ' + p(3, -6) + '" fill="none" stroke="#405774" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<path d="M' + p(-15, -1.5) + ' q6,-4.5 14,-1.5 q-5,3 -14,1.5 Z" fill="#AC946D"/>' +
+    '<path d="M' + p(3, -1) + ' q7,-4.5 15,-1.2 q-5,3 -15,1.2 Z" fill="#AC946D"/>';
+}
+// Her approved 'work' pose draws the near sleeve BEFORE the robe, so the robe
+// buries the forearm and the near hand sits on the cloth with nothing behind
+// it. Lift that one approved sleeve stroke out and lay it back down after the
+// robe (with a robe-shade edge so it parts from the same-blue cloth), so the
+// approved hand ends a visible forearm. Geometry is the cast's, untouched.
+// The edge skips the first 12 units of the stroke: there it lies INSIDE the
+// robe beside the collar, and its round start cap drew a stray S-shaped hook.
+function obsWorkArm(fig) {
+  var m = fig.match(/<path d="M82 156Q49 173 90 186"[^>]*\/>/);
+  if (!m) return fig;
+  var arm = m[0], edge = arm.replace('stroke="#526D8D" stroke-width="19"', 'stroke="#405774" stroke-width="22" stroke-dasharray="200 17" stroke-dashoffset="200"');
+  var rest = fig.replace(arm, '');
+  var i = rest.indexOf('<path d="M79 204L73 271M124 213L130 271"');
+  if (i < 0) return fig;
+  var j = rest.indexOf('/>', i) + 2;
+  return rest.slice(0, j) + edge + arm + rest.slice(j);
+}
+var OBS_LENS_X = 150;
+// the same folded chart (OBS_CHART at the cast's scale), set down flat on the
+// notebook stand's sloped top
+var OBS_CHART_DOWN = '<g transform="translate(362 191.5) rotate(-17) scale(0.42) translate(-139 -190)">' + OBS_CHART + '</g>';
+function obsWatcher(o) {
+  var w = o.watcher || 'work';
+  if (w === 'seated') return obsSeated(314, 226, 145, 'obsSitClip');
+  // Step 5: she has stepped round to the eyepiece end of the tube (the only end
+  // a hand can adjust), eyes open and on the eyepiece. Her approved 'work' pose
+  // with the chart set down: the far sleeve is swapped for a reach baked from
+  // BCRig.arm(shoulder 118,156 -> wrist 193.3,152, elbow dropped well below so the sleeve passes UNDER the inscribed barrel) at the
+  // approved sleeve width, and the approved gripping hand moves to that wrist,
+  // turned -124 degrees so its fingers close up ACROSS the brass focus collar behind
+  // the eyepiece. The inscribed barrel itself stays clear of the hand. The
+  // chart she carried in steps 2-4 now lies on her notebook stand.
+  if (w === 'lens') {
+    var lf = obsWorkArm(bcMissionPlace('star-watcher', 'work', OBS_LENS_X, 224, 145)).split(OBS_CHART).join('')
+      .replace('<path d="M118 156Q151 171 146 184"', '<path d="M118 156Q155.7 191.5 193.3 152"')
+      .replace('transform="translate(146 184) scale(1 1)"', 'transform="translate(193.3 152) rotate(-124) scale(1 1)"');
+    return lf + OBS_CHART_DOWN +
+      '<path d="M' + (OBS_LENS_X - 12) + ',152 Q' + (OBS_LENS_X - 20) + ',180 ' + (OBS_LENS_X - 18) + ',224 L' + (OBS_LENS_X - 12) + ',224 Q' + (OBS_LENS_X - 14) + ',180 ' + (OBS_LENS_X - 8) + ',152 Z" fill="#8a9ab0" opacity="0.07"/>';
+  }
+  var fig = obsWorkArm(bcMissionPlace('star-watcher', w === 'chalk' ? 'work' : w, 322, 224, 145));
+  if (w === 'chalk') fig = fig.split(OBS_CHART).join(OBS_CHALK);
+  // the light off the sky, catching the side of her that faces the slot
+  return fig + '<path d="M310,152 Q302,180 304,224 L310,224 Q308,180 314,152 Z" fill="#8a9ab0" opacity="0.07"/>';
+}
 
-// Scene 2: Interior, transparent dome and dense starfield
-// Also used for Scene 3 (puzzle: constellations S, K, Y)
-STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+// Scene 2: Interior, transparent dome and dense starfield, constellations unlit
+function obsInterior(o) {
+  o = o || {};
+  var svg = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="obsInteriorBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#050a18"/><stop offset="40%" stop-color="#080e20"/><stop offset="100%" stop-color="#0c1830"/>
@@ -194,18 +240,19 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
      joins them. What changed is that each star is now a star, with a cross
      of light on it, rather than a flat gold button.
      ==================== -->
-<g filter="url(#constFilter)">
+${obsC(o, 0, `<g filter="url(#constFilter)">
 <g opacity="0.9"><path d="M122,55 Q128.9,53.9 130,47 Q131.1,53.9 138,55 Q131.1,56.1 130,63 Q128.9,56.1 122,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M130,53.1 Q131.2,53.8 131.9,55 Q131.2,56.2 130,56.9 Q128.8,56.2 128.1,55 Q128.8,53.8 130,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M110,52 Q116.9,50.9 118,44 Q119.1,50.9 126,52 Q119.1,53.1 118,60 Q116.9,53.1 110,52 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M118,50.1 Q119.2,50.8 119.9,52 Q119.2,53.2 118,53.9 Q116.8,53.2 116.1,52 Q116.8,50.8 118,50.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M100,57 Q106.9,55.9 108,49 Q109.1,55.9 116,57 Q109.1,58.1 108,65 Q106.9,58.1 100,57 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M108,55.1 Q109.2,55.8 109.9,57 Q109.2,58.2 108,58.9 Q106.8,58.2 106.1,57 Q106.8,55.8 108,55.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,70 Q110.9,68.9 112,62 Q113.1,68.9 120,70 Q113.1,71.1 112,78 Q110.9,71.1 104,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,68.1 Q113.2,68.8 113.9,70 Q113.2,71.2 112,71.9 Q110.8,71.2 110.1,70 Q110.8,68.8 112,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M114,78 Q120.9,76.9 122,70 Q123.1,76.9 130,78 Q123.1,79.1 122,86 Q120.9,79.1 114,78 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M122,76.1 Q123.2,76.8 123.9,78 Q123.2,79.2 122,79.9 Q120.8,79.2 120.1,78 Q120.8,76.8 122,76.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M124,85 Q130.9,83.9 132,77 Q133.1,83.9 140,85 Q133.1,86.1 132,93 Q130.9,86.1 124,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M132,83.1 Q133.2,83.8 133.9,85 Q133.2,86.2 132,86.9 Q130.8,86.2 130.1,85 Q130.8,83.8 132,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M117,95 Q123.9,93.9 125,87 Q126.1,93.9 133,95 Q126.1,96.1 125,103 Q123.9,96.1 117,95 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M125,93.1 Q126.2,93.8 126.9,95 Q126.2,96.2 125,96.9 Q123.8,96.2 123.1,95 Q123.8,93.8 125,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,98 Q110.9,96.9 112,90 Q113.1,96.9 120,98 Q113.1,99.1 112,106 Q110.9,99.1 104,98 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,96.1 Q113.2,96.8 113.9,98 Q113.2,99.2 112,99.9 Q110.8,99.2 110.1,98 Q110.8,96.8 112,96.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="120" cy="75" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
-<g filter="url(#constFilter)">
+</g>`)}
+${obsC(o, 1, `<g filter="url(#constFilter)">
 <g opacity="0.9"><path d="M232,55 Q238.9,53.9 240,47 Q241.1,53.9 248,55 Q241.1,56.1 240,63 Q238.9,56.1 232,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,53.1 Q241.2,53.8 241.9,55 Q241.2,56.2 240,56.9 Q238.8,56.2 238.1,55 Q238.8,53.8 240,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,70 Q238.9,68.9 240,62 Q241.1,68.9 248,70 Q241.1,71.1 240,78 Q238.9,71.1 232,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,68.1 Q241.2,68.8 241.9,70 Q241.2,71.2 240,71.9 Q238.8,71.2 238.1,70 Q238.8,68.8 240,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,85 Q238.9,83.9 240,77 Q241.1,83.9 248,85 Q241.1,86.1 240,93 Q238.9,86.1 232,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,83.1 Q241.2,83.8 241.9,85 Q241.2,86.2 240,86.9 Q238.8,86.2 238.1,85 Q238.8,83.8 240,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,100 Q238.9,98.9 240,92 Q241.1,98.9 248,100 Q241.1,101.1 240,108 Q238.9,101.1 232,100 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,98.1 Q241.2,98.8 241.9,100 Q241.2,101.2 240,101.9 Q238.8,101.2 238.1,100 Q238.8,98.8 240,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,60 Q253.9,58.9 255,52 Q256.1,58.9 263,60 Q256.1,61.1 255,68 Q253.9,61.1 247,60 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,58.1 Q256.2,58.8 256.9,60 Q256.2,61.2 255,61.9 Q253.8,61.2 253.1,60 Q253.8,58.8 255,58.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,95 Q253.9,93.9 255,87 Q256.1,93.9 263,95 Q256.1,96.1 255,103 Q253.9,96.1 247,95 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,93.1 Q256.2,93.8 256.9,95 Q256.2,96.2 255,96.9 Q253.8,96.2 253.1,95 Q253.8,93.8 255,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="245" cy="78" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="5.1s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
-<g filter="url(#constFilter)">
+</g>`)}
+${obsC(o, 2, `<g filter="url(#constFilter)">
 <g opacity="0.9"><path d="M362,55 Q368.9,53.9 370,47 Q371.1,53.9 378,55 Q371.1,56.1 370,63 Q368.9,56.1 362,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M370,53.1 Q371.2,53.8 371.9,55 Q371.2,56.2 370,56.9 Q368.8,56.2 368.1,55 Q368.8,53.8 370,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M382,55 Q388.9,53.9 390,47 Q391.1,53.9 398,55 Q391.1,56.1 390,63 Q388.9,56.1 382,55 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M390,53.1 Q391.2,53.8 391.9,55 Q391.2,56.2 390,56.9 Q388.8,56.2 388.1,55 Q388.8,53.8 390,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,70 Q378.9,68.9 380,62 Q381.1,68.9 388,70 Q381.1,71.1 380,78 Q378.9,71.1 372,70 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,68.1 Q381.2,68.8 381.9,70 Q381.2,71.2 380,71.9 Q378.8,71.2 378.1,70 Q378.8,68.8 380,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,85 Q378.9,83.9 380,77 Q381.1,83.9 388,85 Q381.1,86.1 380,93 Q378.9,86.1 372,85 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,83.1 Q381.2,83.8 381.9,85 Q381.2,86.2 380,86.9 Q378.8,86.2 378.1,85 Q378.8,83.8 380,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,100 Q378.9,98.9 380,92 Q381.1,98.9 388,100 Q381.1,101.1 380,108 Q378.9,101.1 372,100 Z" fill="#ffd700" opacity="0.3"><animate attributeName="opacity" values="0.16;0.42;0.16" dur="2.9s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,98.1 Q381.2,98.8 381.9,100 Q381.2,101.2 380,101.9 Q378.8,101.2 378.1,100 Q378.8,98.8 380,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="380" cy="78" r="24" fill="url(#constGlow)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.7s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
+</g>`)}
+${o.closed ? OBS_CLOSED_DOME : ''}
 <!-- ====================
      THE DOME, seen from inside. Two nested outline arcs is a rainbow. A dome
      reads as a dome because its RIBS converge on the crown and its latitude
@@ -234,6 +281,7 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <path d="M328,168 Q388,150 454,144" fill="none" stroke="#5a6a86" stroke-width="1" opacity="0.1"/>
 <!-- the band of open sky between them, very slightly clearer than the rest -->
 <path d="M216,18 Q170,56 170,236 L330,236 Q330,56 284,18 Z" fill="#2a3a6a" opacity="0.055"/>
+${o.sky || ''}
 <circle cx="250" cy="236" r="230" fill="url(#domeEdge)"/>
 <!-- ====================
      THE FLOOR. A flat band across the frame is a horizon, not a floor. An
@@ -252,6 +300,7 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
 <path d="M460,260 Q360,236 292,220" fill="none" stroke="#050a18" stroke-width="1" opacity="0.4"/>
 <!-- the kerb where the dome wall lands on the deck -->
 <path d="M0,226 Q250,210 500,226 L500,231 Q250,215 0,231 Z" fill="#050a18" opacity="0.45"/>
+${o.floor || ''}
 <!-- ====================
      THE TELESCOPE. It was a stick, a puck and a line: a lamp post. A
      telescope reads as an instrument because it is MOUNTED. A pier bolted to
@@ -353,12 +402,10 @@ STORY_SCENES['observatory_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
      THE STAR WATCHER, from the shared cast rather than hand built: the draft
      drew its own head, its own cloak and its own eyes, which is exactly the
      opt out of consistency the cast exists to prevent. Canon, in a brimmed
-     hat, standing at the eyepiece.
+     hat, standing at the eyepiece. obsWatcher picks the beat's pose.
      ==================== -->
-${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
-<!-- the light off the sky, catching the side of him that faces the slot -->
-<path d="M310,152 Q302,180 304,224 L310,224 Q308,180 314,152 Z" fill="#8a9ab0" opacity="0.07"/>
-<!-- his notebook, on a stand beside him, because a watcher is RECORDING -->
+${o.instr || ''}
+<!-- her notebook, on a stand beside her, because a watcher is RECORDING -->
 <path d="M352,224 Q362,220 372,224 Q373,228 362,230 Q351,228 352,224 Z" fill="#050a18" opacity="0.45"/>
 <path d="M360,196 L364,196 L363,224 L361,224 Z" fill="#2a3348"/>
 <path d="M354,224 L370,224 L371,226 L353,226 Z" fill="#2a3348"/>
@@ -366,6 +413,7 @@ ${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
 <path d="M352,191 Q362,188 372,191 L372,193 Q362,190 352,193 Z" fill="#c8a878" opacity="0.4"/>
 <path d="M355,192.4 L369,192.4" stroke="#0e1730" stroke-width="0.5" opacity="0.4"/>
 <path d="M355,194.2 L365,194.2" stroke="#0e1730" stroke-width="0.5" opacity="0.3"/>
+${obsWatcher(o)}
 <!-- ====================
      Dust in the beam from the slot, drifting up, each fading out at the top
      of its run so the loop has no seam.
@@ -374,9 +422,83 @@ ${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
 <circle cx="272" cy="208" r="0.8" fill="#c8d4e8" opacity="0.13"><animate attributeName="cy" values="208;180;154" dur="17.5s" repeatCount="indefinite" begin="4s"/><animate attributeName="opacity" values="0;0.17;0" dur="17.5s" repeatCount="indefinite" begin="4s"/></circle>
 <circle cx="250" cy="212" r="0.6" fill="#c8d4e8" opacity="0.14"><animate attributeName="cy" values="212;186;160" dur="13.5s" repeatCount="indefinite" begin="7.5s"/><animate attributeName="opacity" values="0;0.18;0" dur="13.5s" repeatCount="indefinite" begin="7.5s"/></circle>
 </svg>`;
+  return obsSuffix(svg, o.sfx);
+}
 
-// Scene 3 (puzzle): Same interior with constellations, reusing scene 2
-STORY_SCENES['observatory_3'] = STORY_SCENES['observatory_2'];
+// Step 1: she sits cross-legged on the floor, eyes closed, under a CLOSED dome.
+// The shutter leaves are shut and the glass is not glass yet: an opaque shell,
+// ribbed, with the slot a closed seam over the crown.
+var OBS_CLOSED_DOME = '<path d="M0,0 H500 V236 H0 Z" fill="#0c1222"/>' +
+  '<path d="M0,236 Q0,40 250,20 Q500,40 500,236 Z" fill="#111a2e"/>' +
+  '<path d="M40,236 Q46,70 250,22 M120,236 Q124,64 250,22 M380,236 Q376,64 250,22 M460,236 Q454,70 250,22" fill="none" stroke="#1c2740" stroke-width="2"/>' +
+  '<path d="M14,170 Q250,120 486,170 M44,106 Q250,64 456,106 M110,58 Q250,30 390,58" fill="none" stroke="#1a243c" stroke-width="1.6"/>' +
+  // the two shutter leaves, shut, meeting in a seam over the crown
+  '<path d="M170,236 Q170,56 216,18 L250,18 L250,236 Z" fill="#141e34"/>' +
+  '<path d="M330,236 Q330,56 284,18 L250,18 L250,236 Z" fill="#101829"/>' +
+  '<path d="M250,18 V236" stroke="#060a14" stroke-width="1.6"/>' +
+  '<path d="M174,236 Q174,58 218,20" fill="none" stroke="#2a3654" stroke-width="1.2"/>' +
+  '<path d="M246,30 V236" stroke="#24304c" stroke-width="0.8" opacity="0.7"/>' +
+  // a faint sheen where the shell catches the room, upper left
+  '<path d="M60,180 Q70,80 200,36 Q110,90 86,190 Z" fill="#8a9ab0" opacity="0.04"/>';
+
+// Step 6 (after NOVA): one bright flare that blooms and fades, low on the
+// glass, clear of the constellations; she has picked up her chalk.
+var OBS_NOVA = '<defs><radialGradient id="obsNovaGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff6d8" stop-opacity="0.9"/><stop offset="35%" stop-color="#ffe9a8" stop-opacity="0.45"/><stop offset="100%" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>' +
+  // Even at rest it is the brightest, warmest point on the glass, and the
+  // loop starts just past the peak (begin -0.7s) with a long plateau, so the
+  // still frame and the thumbnail both show a light that has just flared.
+  '<g transform="translate(426 122)"><circle r="9" fill="url(#obsNovaGlow)" opacity="0.55"/><g opacity="0.92">' +
+  '<animate attributeName="opacity" values="0.52;1;0.82;0.52" keyTimes="0;0.07;0.35;1" dur="6.5s" begin="-0.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.4 1;0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+  '<circle r="22" fill="url(#obsNovaGlow)"><animate attributeName="r" values="11;26;20;11" keyTimes="0;0.07;0.35;1" dur="6.5s" begin="-0.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.4 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>' +
+  '<path d="M-16,0 Q-2,-1.2 0,-16 Q2,-1.2 16,0 Q2,1.2 0,16 Q-2,1.2 -16,0 Z" fill="#ffe9a8"/>' +
+  '<path d="M-8,0 Q-1,-0.8 0,-8 Q1,-0.8 8,0 Q1,0.8 0,8 Q-1,0.8 -8,0 Z" fill="#fff6d8"/>' +
+  '</g><circle r="2.6" fill="#fff6d8"/></g>';
+
+// Step 7 (COMET puzzle): her chalk marks on the dark floor. Abstract strokes
+// only: the clue itself is in the story text, never in the art.
+var OBS_CHALK_FLOOR = '<ellipse cx="172" cy="245" rx="58" ry="8" fill="#c8d4e8" opacity="0.05"/>' +
+  '<g fill="none" stroke="#dfe4ec" stroke-linecap="round" stroke-linejoin="round" opacity="0.6">' +
+  '<path d="M118,248 q14,-5 30,-2 q12,2 22,-1" stroke-width="1.5"/>' +
+  '<path d="M176,244 q12,-3 24,-1" stroke-width="1.3"/>' +
+  '<path d="M132,242 q8,-1.5 16,-0.5" stroke-width="1.1" opacity="0.7"/>' +
+  '<path d="M184,250 q14,-4 30,-2" stroke-width="1.4"/>' +
+  '<path d="M150,252.5 q12,-2 24,-0.5" stroke-width="1.1" opacity="0.7"/>' +
+  '<path d="M126,254 q34,-4 70,-1" stroke-width="0.9" opacity="0.45"/>' +
+  '</g>' +
+  '<g fill="#e4e8ef" opacity="0.35"><circle cx="214" cy="251" r="0.7"/><circle cx="166" cy="251" r="0.6"/><circle cx="141" cy="243" r="0.5"/></g>';
+
+// Step 8 (after COMET): a comet streaks across the dome glass; the chalk is
+// set down by her marks and she looks up to follow it.
+var OBS_COMET = '<defs><linearGradient id="obsCometTail" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#f4f8ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#9fb6e8" stop-opacity="0"/></linearGradient></defs>' +
+  '<path d="M40,132 Q220,-6 468,70" fill="none" stroke="#9fb6e8" stroke-width="0.8" opacity="0.06"/>' +
+  '<g opacity="0">' +
+  '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.1;0.55;0.72;1" dur="7s" begin="-2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+  '<g><animateMotion path="M40,132 Q220,-6 468,70" rotate="auto" dur="7s" begin="-2.4s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.72;1" calcMode="spline" keySplines="0.3 0 0.7 1;0 0 1 1"/>' +
+  '<path d="M0,-2.4 L-74,-0.4 L-74,0.4 L0,2.4 Z" fill="url(#obsCometTail)"/>' +
+  '<circle r="6" fill="#dfe8ff" opacity="0.25"/><circle r="2.4" fill="#f4f8ff"/>' +
+  '</g></g>';
+// Step 5 (NOVA puzzle): she adjusts the lens and an inscription appears etched
+// into the brass eyepiece. The barrel turns brass and catches the light; the
+// engraving is abstract hatching only, the clue lives in the story text.
+var OBS_EYEPIECE = '<g transform="rotate(-34 244 110)">' +
+  '<circle cx="175" cy="110" r="9" fill="#ffd27a" opacity="0.1"><animate attributeName="opacity" values="0.06;0.16;0.06" dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>' +
+  '<path d="M172,106 Q169,106 169,108.5 L169,111.5 Q169,114 172,114 L182,114 L182,106 Z" fill="#a8823f"/>' +
+  '<path d="M172,106 Q169.6,106 169.4,108 L182,108 L182,106 Z" fill="#e2c27e"/>' +
+  '<path d="M170,112.4 L182,112.4 L182,114 L172,114 Q170.4,114 170,112.4 Z" fill="#6e5226"/>' +
+  // the focus collar behind it, brass too and knurled: the ring her hand turns
+  '<path d="M182,103.6 L188,103.6 L188,116.4 L182,116.4 Z" fill="#9a7638"/>' +
+  '<path d="M182,103.6 L188,103.6 L188,105.8 L182,105.8 Z" fill="#d8b46e"/>' +
+  '<path d="M183.5,106 v10 M185,106 v10 M186.5,106 v10" stroke="#6e5226" stroke-width="0.5" opacity="0.7"/>' +
+  '<path d="M173,109.2 v2.2 M174.6,109 v2.6 M176.2,109.3 v2 M177.8,109 v2.6 M179.4,109.2 v2.2" stroke="#5a4020" stroke-width="0.5" stroke-linecap="round" opacity="0.85"/>' +
+  '<g transform="translate(172.6 107)"><path d="M-3.4,0 Q-0.4,-0.3 0,-3.4 Q0.4,-0.3 3.4,0 Q0.4,0.3 0,3.4 Q-0.4,0.3 -3.4,0 Z" fill="#fff2c4" opacity="0.8"><animate attributeName="opacity" values="0.35;0.95;0.35" dur="2.7s" repeatCount="indefinite" begin="0.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>' +
+  '</g>';
+var OBS_CHALK_DOWN ='<path d="M224,251.5 l8,-1.6 l0.5,1.9 l-8,1.6 Z" fill="#e4e8ef"/><path d="M224,253.4 l8,-1.6" stroke="#b9c1cf" stroke-width="0.6"/>';
+
+STORY_SCENES['observatory_1'] = obsInterior({ closed: true, watcher: 'seated', sfx: '-o1' });
+STORY_SCENES['observatory_2'] = obsInterior({ lit: 0 });
+
+// Scene 3 (puzzle, STAR): two constellations ignite
+STORY_SCENES['observatory_3'] = obsInterior({ lit: 2, sfx: '-o3' });
 
 // Scene 4: Observatory flooded with projected starlight, golden projections
 STORY_SCENES['observatory_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -448,18 +570,19 @@ STORY_SCENES['observatory_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
      joins them. What changed is that each star is now a star, with a cross
      of light on it, rather than a flat gold button.
      ==================== -->
-<g filter="url(#constFilter4)">
+${obs4Calm(`<g filter="url(#constFilter4)">
 <g opacity="0.9"><path d="M122,55 Q128.9,53.9 130,47 Q131.1,53.9 138,55 Q131.1,56.1 130,63 Q128.9,56.1 122,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M130,53.1 Q131.2,53.8 131.9,55 Q131.2,56.2 130,56.9 Q128.8,56.2 128.1,55 Q128.8,53.8 130,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.00s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M110,52 Q116.9,50.9 118,44 Q119.1,50.9 126,52 Q119.1,53.1 118,60 Q116.9,53.1 110,52 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M118,50.1 Q119.2,50.8 119.9,52 Q119.2,53.2 118,53.9 Q116.8,53.2 116.1,52 Q116.8,50.8 118,50.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.15s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M100,57 Q106.9,55.9 108,49 Q109.1,55.9 116,57 Q109.1,58.1 108,65 Q106.9,58.1 100,57 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M108,55.1 Q109.2,55.8 109.9,57 Q109.2,58.2 108,58.9 Q106.8,58.2 106.1,57 Q106.8,55.8 108,55.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.30s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,70 Q110.9,68.9 112,62 Q113.1,68.9 120,70 Q113.1,71.1 112,78 Q110.9,71.1 104,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,68.1 Q113.2,68.8 113.9,70 Q113.2,71.2 112,71.9 Q110.8,71.2 110.1,70 Q110.8,68.8 112,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.45s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M114,78 Q120.9,76.9 122,70 Q123.1,76.9 130,78 Q123.1,79.1 122,86 Q120.9,79.1 114,78 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M122,76.1 Q123.2,76.8 123.9,78 Q123.2,79.2 122,79.9 Q120.8,79.2 120.1,78 Q120.8,76.8 122,76.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.60s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M124,85 Q130.9,83.9 132,77 Q133.1,83.9 140,85 Q133.1,86.1 132,93 Q130.9,86.1 124,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M132,83.1 Q133.2,83.8 133.9,85 Q133.2,86.2 132,86.9 Q130.8,86.2 130.1,85 Q130.8,83.8 132,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.75s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M117,95 Q123.9,93.9 125,87 Q126.1,93.9 133,95 Q126.1,96.1 125,103 Q123.9,96.1 117,95 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M125,93.1 Q126.2,93.8 126.9,95 Q126.2,96.2 125,96.9 Q123.8,96.2 123.1,95 Q123.8,93.8 125,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.90s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M104,98 Q110.9,96.9 112,90 Q113.1,96.9 120,98 Q113.1,99.1 112,106 Q110.9,99.1 104,98 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M112,96.1 Q113.2,96.8 113.9,98 Q113.2,99.2 112,99.9 Q110.8,99.2 110.1,98 Q110.8,96.8 112,96.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="1.05s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="120" cy="75" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
+</g>`)}
+<!-- the one that BLAZES: the middle figure, right over the telescope -->
 <g filter="url(#constFilter4)">
 <g opacity="0.9"><path d="M232,55 Q238.9,53.9 240,47 Q241.1,53.9 248,55 Q241.1,56.1 240,63 Q238.9,56.1 232,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,53.1 Q241.2,53.8 241.9,55 Q241.2,56.2 240,56.9 Q238.8,56.2 238.1,55 Q238.8,53.8 240,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.10s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,70 Q238.9,68.9 240,62 Q241.1,68.9 248,70 Q241.1,71.1 240,78 Q238.9,71.1 232,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,68.1 Q241.2,68.8 241.9,70 Q241.2,71.2 240,71.9 Q238.8,71.2 238.1,70 Q238.8,68.8 240,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.25s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,85 Q238.9,83.9 240,77 Q241.1,83.9 248,85 Q241.1,86.1 240,93 Q238.9,86.1 232,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,83.1 Q241.2,83.8 241.9,85 Q241.2,86.2 240,86.9 Q238.8,86.2 238.1,85 Q238.8,83.8 240,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.40s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M232,100 Q238.9,98.9 240,92 Q241.1,98.9 248,100 Q241.1,101.1 240,108 Q238.9,101.1 232,100 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M240,98.1 Q241.2,98.8 241.9,100 Q241.2,101.2 240,101.9 Q238.8,101.2 238.1,100 Q238.8,98.8 240,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,60 Q253.9,58.9 255,52 Q256.1,58.9 263,60 Q256.1,61.1 255,68 Q253.9,61.1 247,60 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,58.1 Q256.2,58.8 256.9,60 Q256.2,61.2 255,61.9 Q253.8,61.2 253.1,60 Q253.8,58.8 255,58.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.70s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M247,95 Q253.9,93.9 255,87 Q256.1,93.9 263,95 Q256.1,96.1 255,103 Q253.9,96.1 247,95 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M255,93.1 Q256.2,93.8 256.9,95 Q256.2,96.2 255,96.9 Q253.8,96.2 253.1,95 Q253.8,93.8 255,93.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.85s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="245" cy="78" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="5.1s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
-<g filter="url(#constFilter4)">
+${obs4Unlit(`<g filter="url(#constFilter4)">
 <g opacity="0.9"><path d="M362,55 Q368.9,53.9 370,47 Q371.1,53.9 378,55 Q371.1,56.1 370,63 Q368.9,56.1 362,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M370,53.1 Q371.2,53.8 371.9,55 Q371.2,56.2 370,56.9 Q368.8,56.2 368.1,55 Q368.8,53.8 370,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.20s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M382,55 Q388.9,53.9 390,47 Q391.1,53.9 398,55 Q391.1,56.1 390,63 Q388.9,56.1 382,55 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M390,53.1 Q391.2,53.8 391.9,55 Q391.2,56.2 390,56.9 Q388.8,56.2 388.1,55 Q388.8,53.8 390,53.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.35s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,70 Q378.9,68.9 380,62 Q381.1,68.9 388,70 Q381.1,71.1 380,78 Q378.9,71.1 372,70 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,68.1 Q381.2,68.8 381.9,70 Q381.2,71.2 380,71.9 Q378.8,71.2 378.1,70 Q378.8,68.8 380,68.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.50s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,85 Q378.9,83.9 380,77 Q381.1,83.9 388,85 Q381.1,86.1 380,93 Q378.9,86.1 372,85 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,83.1 Q381.2,83.8 381.9,85 Q381.2,86.2 380,86.9 Q378.8,86.2 378.1,85 Q378.8,83.8 380,83.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.65s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g><g opacity="0.9"><path d="M372,100 Q378.9,98.9 380,92 Q381.1,98.9 388,100 Q381.1,101.1 380,108 Q378.9,101.1 372,100 Z" fill="#ffd700" opacity="0.45"><animate attributeName="opacity" values="0.26;0.62;0.26" dur="2.9s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path><path d="M380,98.1 Q381.2,98.8 381.9,100 Q381.2,101.2 380,101.9 Q378.8,101.2 378.1,100 Q378.8,98.8 380,98.1 Z" fill="#ffeaa7"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.5s" repeatCount="indefinite" begin="0.80s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path></g>
 <circle cx="380" cy="78" r="24" fill="url(#constGlow4)"><animate attributeName="opacity" values="0.4;0.72;0.4" dur="4.7s" repeatCount="indefinite" begin="2s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
+</g>`)}
 <!-- ====================
      THE DOME, seen from inside. Two nested outline arcs is a rainbow. A dome
      reads as a dome because its RIBS converge on the crown and its latitude
@@ -654,7 +777,7 @@ STORY_SCENES['observatory_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
      opt out of consistency the cast exists to prevent. Canon, in a brimmed
      hat, standing at the eyepiece.
      ==================== -->
-${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
+${obsWorkArm(bcMissionPlace('star-watcher','work',322,224,145))}
 <!-- the projection landing on him, warm on the side facing the beam -->
 <path d="M310,150 Q302,182 304,224 L312,224 Q309,182 316,150 Z" fill="#ffd070" opacity="0.09"/>
 <!-- his notebook, on a stand beside him, because a watcher is RECORDING -->
@@ -674,17 +797,18 @@ ${bcPlace('canon', 14, 322, 224, { hat: 'brim', expr: 'open' })}
 <circle cx="250" cy="212" r="0.6" fill="#ffeaa7" opacity="0.2"><animate attributeName="cy" values="212;186;160" dur="13.5s" repeatCount="indefinite" begin="7.5s"/><animate attributeName="opacity" values="0;0.18;0" dur="13.5s" repeatCount="indefinite" begin="7.5s"/></circle>
 </svg>`;
 
-// Scene 5 (NOVA puzzle, "Stellar explosion from river reflected (4)"): Same interior with constellations
-STORY_SCENES['observatory_5'] = STORY_SCENES['observatory_2'];
+// Scene 5 (NOVA puzzle): the interior, two constellations lit
+STORY_SCENES['observatory_5'] = obsInterior({ lit: 2, instr: OBS_EYEPIECE, watcher: 'lens', sfx: '-o5' });
 
-// Scene 6 (narrative after NOVA): Interior
-STORY_SCENES['observatory_6'] = STORY_SCENES['observatory_2'];
+// Scene 6 (after NOVA): a flare blooms and fades; she picks up the chalk
+STORY_SCENES['observatory_6'] = obsInterior({ lit: 2, sky: OBS_NOVA, watcher: 'chalk', sfx: '-o6' });
 
-// Scene 7 (COMET puzzle, "Company encountered celestial visitor (5)"): Interior
-STORY_SCENES['observatory_7'] = STORY_SCENES['observatory_2'];
+// Scene 7 (COMET puzzle): her chalk marks on the floor, chalk still in hand
+STORY_SCENES['observatory_7'] = obsInterior({ lit: 2, floor: OBS_CHALK_FLOOR, watcher: 'chalk', sfx: '-o7' });
 
-// Scene 8 (narrative after COMET): Observatory flooded with starlight
-STORY_SCENES['observatory_8'] = STORY_SCENES['observatory_4'];
+// Scene 8 (after COMET): a comet crosses the dome glass; the chalk is set down
+STORY_SCENES['observatory_8'] = obsInterior({ lit: 2, sky: OBS_COMET, floor: OBS_CHALK_FLOOR + OBS_CHALK_DOWN, watcher: 'discover', sfx: '-o8' });
 
-// Scene 9 (complete): Same flooded starlight
-STORY_SCENES['observatory_9'] = STORY_SCENES['observatory_4'];
+// Scene 9 (complete): all three constellations burn; she settles back onto the
+// floor, eyes closed, listening to the sky
+STORY_SCENES['observatory_9'] = obsInterior({ lit: 3, watcher: 'seated', sfx: '-o9' });

@@ -890,6 +890,7 @@ function model(r, m, opts) {
 //   opts.sash    false to drop the sash
 //   opts.flip    true to face the other way
 function bcCharacter(name, r, opts) {
+  if (name === "fredward" && typeof bcApprovedFred === "function") return bcApprovedFred(r, opts);
   opts = opts || {};
   var c = MODELS[name];
   if (!c) return '';

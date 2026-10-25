@@ -104,28 +104,40 @@ const BCWSettings = (() => {
           </div>
           <div class="settings-row">
             <label>Technique Tutorials</label>
-            <input type="checkbox" id="setting-tutorials" ${settings.tutorialsEnabled ? 'checked' : ''} />
+            <div class="settings-toggle-wrap">
+              <input type="checkbox" id="setting-tutorials" class="settings-toggle" ${settings.tutorialsEnabled ? 'checked' : ''}>
+              <label for="setting-tutorials" class="settings-toggle-label"></label>
+            </div>
           </div>
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Show cryptic clue technique tutorials at each location</label>
           </div>
           <div class="settings-row">
             <label>Lessons Before Stories</label>
-            <input type="checkbox" id="setting-auto-lessons" ${settings.autoLessonsEnabled ? 'checked' : ''} />
+            <div class="settings-toggle-wrap">
+              <input type="checkbox" id="setting-auto-lessons" class="settings-toggle" ${settings.autoLessonsEnabled ? 'checked' : ''}>
+              <label for="setting-auto-lessons" class="settings-toggle-label"></label>
+            </div>
           </div>
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Open the lesson the first time you reach a location</label>
           </div>
           <div class="settings-row">
             <label>Clue Anatomy</label>
-            <input type="checkbox" id="setting-anatomy" ${settings.anatomyEnabled ? 'checked' : ''} />
+            <div class="settings-toggle-wrap">
+              <input type="checkbox" id="setting-anatomy" class="settings-toggle" ${settings.anatomyEnabled ? 'checked' : ''}>
+              <label for="setting-anatomy" class="settings-toggle-label"></label>
+            </div>
           </div>
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Tap a word in a clue to see the job it does</label>
           </div>
           <div class="settings-row">
             <label>Vertical Layout</label>
-            <input type="checkbox" id="setting-vertical" ${(() => { try { return localStorage.getItem('bcw_orientation') === 'portrait' ? 'checked' : ''; } catch { return ''; } })()} />
+            <div class="settings-toggle-wrap">
+              <input type="checkbox" id="setting-vertical" class="settings-toggle" ${(() => { try { return localStorage.getItem('bcw_orientation') === 'portrait' ? 'checked' : ''; } catch { return ''; } })()}>
+              <label for="setting-vertical" class="settings-toggle-label"></label>
+            </div>
           </div>
           <div class="settings-row" style="opacity:0.6;font-size:0.85rem;">
             <label>Tall and narrow, sized for a phone screen</label>
@@ -204,6 +216,34 @@ const BCWSettings = (() => {
         </div>
       </div>
     `;
+
+    // Toggles: enhancements.css hides .settings-toggle with display:none, which
+    // drops it from Tab order and the a11y tree. Override here so every toggle
+    // is one invisible-but-focusable checkbox laid over its pill, with a
+    // visible focus ring on the pill.
+    if (!document.getElementById('bcw-settings-toggle-a11y')) {
+      const st = document.createElement('style');
+      st.id = 'bcw-settings-toggle-a11y';
+      st.textContent = `
+        .settings-toggle-wrap { position: relative; }
+        .settings-panel .settings-toggle {
+          display: block; position: absolute; inset: 0;
+          width: 100%; height: 100%; margin: 0;
+          opacity: 0; cursor: pointer; z-index: 1;
+        }
+        .settings-toggle:focus-visible + .settings-toggle-label {
+          outline: 2px solid var(--accent-amber, #F2C14E);
+          outline-offset: 2px;
+        }`;
+      document.head.appendChild(st);
+    }
+    // Name each toggle after its row label for screen readers.
+    panel.querySelectorAll('input.settings-toggle').forEach((input) => {
+      const rowLabel = input.closest('.settings-row')?.querySelector(':scope > label');
+      if (rowLabel && !input.hasAttribute('aria-label')) {
+        input.setAttribute('aria-label', rowLabel.textContent.trim());
+      }
+    });
 
     document.body.appendChild(overlay);
     document.body.appendChild(panel);

@@ -698,8 +698,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: linear-gradient(135deg, rgba(62, 45, 25, 0.92), rgba(42, 30, 18, 0.92));
-      border: 1px solid rgba(242, 193, 78, 0.35);
+      background: var(--bg-slate-hud);
+      border: 1px solid var(--border-hud);
       color: #F2C14E;
       padding: 7px 14px;
       border-radius: 20px;
@@ -713,7 +713,7 @@
     }
 
     .legend-toggle:hover {
-      background: linear-gradient(135deg, rgba(80, 58, 30, 0.95), rgba(55, 40, 22, 0.95));
+      background: #1C2238;
       border-color: rgba(242, 193, 78, 0.6);
       box-shadow: 0 2px 16px rgba(242, 193, 78, 0.15);
     }
@@ -729,8 +729,8 @@
 
     .legend-body {
       margin-top: 6px;
-      background: linear-gradient(180deg, rgba(62, 45, 25, 0.95) 0%, rgba(48, 34, 18, 0.97) 100%);
-      border: 1px solid rgba(242, 193, 78, 0.25);
+      background: var(--bg-slate-hud);
+      border: 1px solid var(--border-hud);
       border-radius: 12px;
       overflow: hidden;
       max-height: 0;
@@ -746,12 +746,12 @@
 
     .legend-header {
       padding: 10px 14px 6px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
       color: rgba(242, 193, 78, 0.7);
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      border-bottom: 1px solid rgba(242, 193, 78, 0.12);
+      border-bottom: 1px solid var(--border-hud);
     }
 
     .legend-list {
@@ -798,7 +798,7 @@
     .legend-item-name {
       font-size: 0.78rem;
       font-weight: 700;
-      color: #e8d5a3;
+      color: #E2E8F0;
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -1051,7 +1051,7 @@
     }
 
     .detail-action-btn--terminal:hover {
-      background: #4ADE80;
+      background: #7FE3B2;
       color: #05130C;
       box-shadow: 0 6px 28px rgba(100, 217, 160, 0.4);
     }
@@ -1825,7 +1825,7 @@
     .fish-money span { vertical-align: middle; }
     .fish-layout { display: grid; grid-template-columns: 250px 1fr 260px; gap: 16px; width: 100%; max-width: 1200px; }
     .fish-shop { background: rgba(0,0,0,0.35); border-radius: 12px; padding: 10px; max-height: 70vh; overflow-y: auto; }
-    .fish-shop h3, .fish-sidebar h3 { font-family: 'Space Grotesk', sans-serif; font-variant: small-caps; color: #F2C14E; font-size: 0.95rem; margin: 0 0 8px; }
+    .fish-shop h3, .fish-sidebar h3 { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; color: #F2C14E; font-size: 0.8rem; margin: 0 0 8px; }
     .fish-centre { display: flex; flex-direction: column; align-items: center; }
     .fish-sidebar { background: rgba(0,0,0,0.35); border-radius: 12px; padding: 10px; max-height: 70vh; overflow-y: auto; }
     .fish-shop-item { border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px; margin-bottom: 6px; cursor: pointer; transition: box-shadow 0.2s, opacity 0.2s; font-size: 0.82rem; }
@@ -1880,8 +1880,8 @@
     .fish-log { margin-top: 8px; }
     .fish-log h3 { font-family: 'Space Grotesk', sans-serif; color: #F2C14E; margin-bottom: 8px; font-size: 1rem; }
     .fish-entry { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 3px; font-size: 0.85rem; }
-    .fish-entry .rarity-common { color: #94A3B8; } .fish-entry .rarity-uncommon { color: #4a9ae8; }
-    .fish-entry .rarity-rare { color: #a070e0; } .fish-entry .rarity-epic { color: #FB923C; }
+    .fish-entry .rarity-common { color: #94A3B8; } .fish-entry .rarity-uncommon { color: #6FC3E0; }
+    .fish-entry .rarity-rare { color: #A78BFA; } .fish-entry .rarity-epic { color: #FB923C; }
     .fish-entry .rarity-legendary { color: #F2C14E; }
     .fish-close { position: absolute; top: 12px; right: 16px; background: none; border: 1px solid #2A3553; border-radius: 8px; color: #94A3B8; padding: 5px 12px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; z-index: 10001; font-size: 0.85rem; }
     @keyframes bobberBite { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
@@ -2627,9 +2627,11 @@
     }
 
     .house-palette h3 {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       color: #F2C14E;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       margin-bottom: 4px;
       text-align: center;
     }
@@ -4006,17 +4008,38 @@
       }
     }
     .palette-section-label {
-      font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; color: rgba(242, 193, 78,0.5);
+      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: rgba(242, 193, 78,0.5);
       text-transform: uppercase; letter-spacing: 1px; padding: 8px 4px 4px; margin-top: 4px;
     }
 
     #fridge-overlay {
       display: none; position: fixed; inset: 0; z-index: 10000;
-      background: rgba(5,10,24,0.95); flex-direction: column; align-items: center;
-      padding: 30px 20px; overflow-y: auto; font-family: 'Inter', sans-serif; color: #E2E8F0;
+      background: rgba(5,10,24,0.85); align-items: flex-start; justify-content: center;
+      padding: 40px 16px; overflow-y: auto; font-family: 'Inter', sans-serif; color: #E2E8F0;
     }
     #fridge-overlay.active { display: flex; }
-    #fridge-overlay h2 { font-family: 'Space Grotesk', sans-serif; color: #64D9A0; font-size: 1.5rem; margin-bottom: 16px; }
+    .fridge-panel {
+      position: relative; width: 540px; max-width: 100%;
+      background: #161B2E; border: 1px solid #2A3553; border-radius: 8px;
+      padding: 24px 20px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    #fridge-overlay h2 { font-family: 'Space Grotesk', sans-serif; color: #F2C14E; font-size: 1.5rem; margin: 0 0 4px; text-align: center; }
+    .fridge-close {
+      position: absolute; top: 12px; right: 12px; background: none;
+      border: 1px solid #2A3553; border-radius: 8px; color: #94A3B8;
+      padding: 5px 12px; font-family: 'Inter', sans-serif; font-weight: 600;
+      cursor: pointer; font-size: 0.85rem;
+    }
+    .fridge-close:hover { color: #E2E8F0; border-color: #F2C14E; }
+    .fridge-sub { font-size: 0.85rem; color: #94A3B8; margin-bottom: 16px; text-align: center; }
+    .fridge-empty { text-align: center; color: #94A3B8; padding: 20px; }
+    .fridge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+    .fridge-card { background: rgba(22,27,46,0.9); border: 1px solid #2A3553; border-radius: 8px; padding: 10px; text-align: center; }
+    .fridge-card-icon { font-size: 2rem; margin-bottom: 4px; }
+    .fridge-card-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem; }
+    .fridge-card-desc { font-size: 0.7rem; color: #94A3B8; margin: 4px 0; }
+    .fridge-card-rarity { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; }
+    .fridge-total { text-align: center; color: #64748B; font-size: 0.8rem; margin-top: 12px; }
   </style>
 </head>
 
@@ -5602,7 +5625,10 @@
   <!-- Story scene visual data -->
   <script>var STORY_SCENES = {};</script>
   <!-- the shared cast: must load before any scene that draws a character -->
+  <script src="scenes/approved-cast.js"></script>
   <script src="scenes/characters.js"></script>
+  <!-- the art kit (bcArt): shared props, palette, light/outline/depth rules -->
+  <script src="scenes/art-kit.js"></script>
   <script src="scenes/forest.js"></script>
   <script src="scenes/adventure.js"></script>
   <script src="scenes/beach.js"></script>
@@ -5751,8 +5777,7 @@
           // grate is not advertised to anybody who has not found it, and once
           // they have, they never have to retype a code to visit a person.
           { label: 'Down the Grate', onclick: () => { closePanel(); enterListeningPost(); },
-            when: () => hasListeningPost() },
-          { label: 'Bulletin Board', onclick: () => showGameModal('Community features coming soon!', 'Bulletin Board', '\u{1F4CB}') }
+            when: () => hasListeningPost() }
         ]
       },
       observatory: {
@@ -5775,7 +5800,7 @@
                   'A charade: two pieces joined front to back. The definition is "a world."',
                   '"Scheme" gives you a four-letter word. The alien is a very famous two-letter one.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: 'PLANET: PLAN (scheme) + ET (the alien). A new light steadies in the telescope.',
                 postscript: 'The Star Watcher gazes at a pale crater far overhead. "My old colleague Mark went to the MOON to write his clues in peace," she murmurs. "Tell the terminal, if you dare."'
               });
@@ -5838,7 +5863,7 @@
                   'A deletion clue, like the ones this cove taught you. "Beheaded" removes the first letter.',
                   'Take the head off PIRATE. What mood is left?'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: 'IRATE: PIRATE losing his head, which would make anyone furious. The drawer clicks open to reveal a pearl.'
               });
             } else {
@@ -5856,7 +5881,7 @@
                   'Another deletion: "cut short" removes the last letter.',
                   'Shorten PLANK by one. What are you left plotting?'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: 'PLAN: PLANK cut short. The algae pulses approvingly along the wall.'
               });
             } else {
@@ -5870,7 +5895,7 @@
         subtitle: 'The Dragon\'s Den of Cryptic Clues',
         icon: '&#x1F409;',
         iconBg: 'linear-gradient(135deg, #cc2200, #4a0a0a)',
-        desc: 'Deep beneath the cliffs, an underground passage opens into a vast dragon\'s lair. The walls glow red with heat, and ancient cryptic clues of fiendish difficulty are carved into every surface. The dragon down here hoards no gold. He keeps clues, and he has opinions about who gets to solve them.',
+        desc: 'Deep beneath the cliffs, an underground passage opens into a vast dragon\'s lair. The walls glow red with heat, and ancient cryptic clues of fiendish difficulty are carved into every surface. The dragon down here sleeps on a heap of gold. He keeps clues too, and he has opinions about who gets to solve them.',
         actions: [
           { label: 'Face the Dragon\'s Clue', onclick: () => {
             if (isStoryComplete('lair')) {
@@ -5883,7 +5908,7 @@
                   'A hidden word clue: the answer is tucked across the words of the clue themselves.',
                   'Read straight across "each estimate". Five letters.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"CHEST, hiding across ea-CH EST-imate," the dragon rumbles. "Told you it wasn\'t fierce."'
               });
             } else {
@@ -5901,7 +5926,7 @@
                   'A double definition: both halves of the clue define the same word.',
                   'Think about what \'drag on\' means as two words. Then think about who\'s reading over your shoulder.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"DRAGON. The beast itself, and DRAG ON, to be tedious. I\'m told I manage both," he says, pleased.'
               });
             } else {
@@ -5919,7 +5944,7 @@
                   '"Wildly" is the anagram indicator.',
                   'The letters of FUN RACE, rearranged into something hot.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: 'FURNACE: the letters of FUN RACE, wildly rearranged. The carving glows briefly as you say it.'
               });
             } else {
@@ -5942,7 +5967,7 @@
                 { clue: '"Faced about for coffee without the kick (5)"', answer: 'DECAF', parse: '\u2018About\u2019 turns the letters of FACED into DECAF: coffee without the kick.' }
               ];
               const napkin = napkins[new Date().getDate() % napkins.length];
-              showGameModal('The barista slides you a napkin with today\'s clue in looping script:<br><br><em>' + napkin.clue + '</em><br><br>"No peeking until you\'ve had a proper think," she says, topping up your cup.<br><br><details><summary style="cursor:pointer;color:#F2C14E;">Flip the napkin over&hellip;</summary><br><strong>' + napkin.answer + '</strong> \u2014 ' + napkin.parse + '</details>', 'Napkin Clue', '\u2615');
+              showGameModal('The barista slides you a napkin with today\'s clue in looping script:<br><br><em>' + napkin.clue + '</em><br><br>"No peeking until you\'ve had a proper think," she says, topping up your cup.<br><br><details><summary style="cursor:pointer;color:#F2C14E;">Flip the napkin over&hellip;</summary><br><strong>' + napkin.answer + '</strong>: ' + napkin.parse + '</details>', 'Napkin Clue', '\u2615');
             } else {
               showGameModal('The barista smiles and taps the steaming cup she\'s just poured. "First puzzle\'s on the house. It\'s written right there on your cup. Take a seat and give it a look." Her story is waiting to begin.', 'Napkin Clue', '\u2615');
             }
@@ -5979,7 +6004,7 @@
                   'A double definition: both ends of the clue point to the same word.',
                   'What a lighthouse throws, and what a proud face does.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"BEAM. The light and the smile. Up here I see plenty of the first and not enough of the second," Mark says, beaming.'
               });
             } else {
@@ -5997,7 +6022,7 @@
                   'Two mechanisms: a deletion, then an anagram. The definition is "moonstruck."',
                   '"Anchor\'s head" is a single letter. Drop it from NAUTICAL, then let "turns" do its work.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"LUNATIC. NAUTICAL loses the head of its anchor, and the rest turns. From luna: the moon. Every good word finds its way home eventually."'
               });
             } else {
@@ -6036,7 +6061,7 @@
                   'A charade: two small words joined front to back. The definition is "your quarters aboard."',
                   'Another word for a taxi, then the little word already sitting in the clue.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"CABIN! CAB plus IN," Simon laughs. "Best quarters on the ship, and you\'re welcome in it."'
               });
             } else {
@@ -6055,7 +6080,7 @@
                   'The definition is "cargo list".',
                   'The letters in "fine mast" are rearranged.'
                 ],
-                successLine: 'Correct!',
+                successLine: 'Solved',
                 explanation: '"MANIFEST! FINE MAST, rebuilt," Simon says, delighted. He pencils your name in the margin.'
               });
             } else {
@@ -6145,6 +6170,7 @@
       updateLocationStates();
       if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackStoryComplete(id);
       if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkStoryComplete(state.completedStories);
+      if (typeof runQuestStoryHook === 'function') runQuestStoryHook(id);
       // Trigger chain unlocks. After the very first story (docks), the reveal
       // finishes by teaching map movement (tutorial phase 2).
       const chain = UNLOCK_CHAIN[id];
@@ -6258,6 +6284,394 @@
     //  STORY DATA
     // ═══════════════════════════════════
     const STORIES = {
+      // ═══ CANON'S QUESTLINE ═══
+      // Source: ..\workshop\drafts\canon-script-2026-09-05.md (revision 3). Every
+      // step is that script verbatim, with three exceptions that are logged in
+      // ..\COPY_REVIEW_G3_world.md: step 9 of the intro carries the approved LIAM
+      // clue instead of a card with two letters on it, the errand-5 briefing has
+      // one closing line the engine needs, and the button labels are new.
+      //
+      // enterListeningPost() was calling startStory('hidden') against a story that
+      // did not exist, which the guard in startStory turned into a silent no-op:
+      // the quest flag was consumed and nothing opened. Same fault the wreck had.
+      //
+      // The intro. Entered by typing HIDDEN at the town terminal.
+      hidden: {
+        title: "Why does a man keep notes on his own brother?",
+        steps: [
+          {
+            type: "narrative",
+            speaker: null,
+            text: "You type the word and the fountain stops.<br><br>Not the water. The water keeps going. The sound stops, the way a room stops when someone says your name in it. Under the basin a grate you have walked over without once looking down swings on a hinge nobody oiled recently, and there are stairs.<br><br>They are not a secret passage. They are stairs. Someone built them, and someone uses them, and there is a boot scuff on the fourth one.",
+          },
+          {
+            type: "narrative",
+            speaker: null,
+            text: "The room below the square is smaller than the square and busier. One big screen, grey green, showing water. Around it a bank of little ones, nine of them, each holding a piece of the island: the pier, the cafe door, a stretch of shore, the path up to the peak. None of them move much. That is the point of them.<br><br>A man sits with his back to you. Beside his hand there is a pocket calculator with the sun worn off its solar strip, and a stack of index cards written on both sides.<br><br>He does not turn around.",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"You typed it correctly the first time. Most people try it three ways.\" He marks something on a card and sets the pencil down flat, parallel to the edge of the table. \"My name is Canon. I would stand up, but if I stand up you will feel obliged to leave, and I would rather you sat.\"<br><br>There is a second chair. It has been there a while.",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"That is my brother.\" He tips two fingers at the big screen. Water, and in the water a shape that used to be a hull. \"Fredward. He lives at the wreck southwest of the docks. He has a lamp down there and a ledger and a system for the fish, and if you go and see him he will give you tea, which is a trick I have never worked out the mechanics of, underwater.\"<br><br>A pause you could park a boat in.<br><br>\"He is happy. I want you to understand that I am not being cruel about it. He is genuinely, unarguably happy, and that is what is wrong.\"",
+          },
+          {
+            type: "choice",
+            speaker: "Canon",
+            text: "\"Ask him where home is. Go on, sometime, ask him plainly, and watch his face while he answers.\" He turns a card over without looking at it. \"He will tell you about the wreck. He will tell you about it warmly. He will be telling you the truth.\"",
+            choices: [
+              { label: "Isn't that fine? He likes it there.", next: 5 },
+              { label: "So make him remember.", next: 5 },
+              { label: "You're watching him on a screen.", next: 5, reaction: "He does not flinch. \"Yes. Nine screens, and eight of them are the island and one of them is my brother, and I have thought about the ratio.\" He adjusts nothing." },
+              { label: "Just go down and get him.", correct: false, reaction: "\"I have. Four times.\" He says it the way you would read a shopping list. \"He makes tea. We talk about the fish. He walks me back to the rope and waves. It is the nicest afternoon you can have on this island and I come back up here and I cannot tell you one thing that changed.\"" },
+            ],
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"Remembering is not the problem.\" He finally turns, and he is younger than the back of his head suggested and more tired than the front of it admits. \"He can remember plenty if you hand it to him. Say a name, he says it back. What he cannot do is want anything that is not down there. You cannot argue a person into wanting. You have to put the thing in their hands.\"<br><br>\"So. Things.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"We crossed together. Twelve years ago, same boat, same rope, same everything, and a crossing sheds. Things come off a person on the way in the way sand comes off a boot, and this island keeps what it is given. Five pieces of that crossing are lying around out there being scenery. I know where four of them are. The fifth I know less well than I would like.\"<br><br>He lets that sit exactly as long as it takes you to open your mouth, and then: \"I would go myself. I am watched more than you are, and I am worse at climbing than I was.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "He opens a drawer. Inside is the drawer of a man who makes things out of what washes up: bent wire, a coil of fishing line, half a brass curtain rod, a jar of screws sorted by nothing.<br><br>\"You are not walking out there empty handed. I do not send people out empty handed.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "He puts it in your palm: a tuning fork, two prongs bent from the other half of the curtain rod and filed until they agree. \"Strike it, set the stem against a wall or a piling or a plank. Solid answers flat. Hollow answers back. It has found me two crawlspaces and a stove I did not know I owned.\"<br><br>\"It is a curtain rod. I am aware it is a curtain rod. It works.\"",
+          },
+          {
+            type: "puzzle",
+            speaker: "Canon",
+            text: "\"One more thing, since you are going to be walking about.\" He writes a line on a fresh card and slides it across, and the pencil goes back parallel to the table edge. \"There is a dragon under the cliffs by the cove who hoards clues. The town terminal will open his door if you give it his name. I am not going to say his name in this room. I am going to give you this, and you are going to type what it says into the terminal upstairs. I am not doing you a favour, I am saving you six weeks.\"<br><br>\"Infamous clue setter mail returned (4)\"",
+            answer: ["LIAM"],
+            placeholder: "Four letters...",
+            hint: "Returned is the instruction. Something in the line goes backwards, and only one word is short enough to turn round in four letters.",
+            wrongReactions: ["\"No.\" He does not look up. \"Which word is doing the work? One of them tells you to turn something round.\"", "\"Returned. Something comes back the other way. Take the word just before it and read it backwards.\"", "\"M-A-I-L, returned. L-I-A-M. He has had the name a long time. Now take it up to the terminal.\""],
+            next: 10,
+          },
+          {
+            type: "complete",
+            speaker: null,
+            text: "You climb back up into the square and the fountain sound comes back the moment your head clears the grate, exactly where it left off, mid splash, like a held note released.",
+            unlocks: [],
+            btnText: "Take the first errand",
+          },
+        ]
+      },
+
+      // Canon sets the errand, at the post, before the player goes.
+      hidden_m1: {
+        title: "Errand 1, Scramble Shores",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "\"Scramble Shores. South coast, the part where the sand will not hold a spelling.\" He does not look up from the little screen showing exactly that stretch of coast. \"Something of ours went into the water off the boat and came ashore there, and the shore has had a long time to think about it. Take the spoon. If the sand sounds full, it is full.\"<br><br>\"It will be rope. Bring me the rope.\"",
+            unlocks: [],
+            btnText: "Errand 1: Scramble Shores",
+          },
+        ]
+      },
+
+      // Canon takes the artifact in. Runs on the next visit to the post.
+      hidden_m1_back: {
+        title: "The Listening Post",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "He takes it in both hands and runs his thumb along the splice.<br><br>\"That is his. That splice is a fourteen year old who was told to do it twice and did it twice.\" He sets it on the table. \"We were tied off the same cleat, him and me, in case one of us went over. Neither of us went over.\"<br><br>\"One down. Sit a minute if you like. There is a chair.\"",
+            unlocks: [],
+            btnText: "Sit a minute",
+          },
+        ]
+      },
+
+      // Briefing 2.
+      hidden_m2: {
+        title: "Errand 2, Enigma Forest",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "\"Enigma Forest. There is a lamp lens up a tree, and before you ask, no, nobody put it there.\" He hands over the tin card. \"Green glass, cut from the same lens years back. Hold it up and look through it and the forest stops doing one of the things it does. I made two of these. This is the second one, so be careful with it, and if you drop it, tell me, because I would rather know.\"<br><br>\"The tree has grown around the lens. Do not fight the tree. Ask it nicely and then take the lens.\"",
+            unlocks: [],
+            btnText: "Errand 2: Enigma Forest",
+          },
+        ]
+      },
+
+      // Debrief 2.
+      hidden_m2_back: {
+        title: "The Listening Post",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "He holds the lens up to the big screen and the water on it goes green, the exact green of every night watch either of them ever stood.<br><br>\"Our lamp threw green to port. Every boat's does. It is not sentimental, it is regulation.\" He lowers it. \"He used to take the port watch because he liked the colour, and I let him because I did not, and I have been thinking lately that letting somebody have the thing they like is not the same as knowing why they like it.\"<br><br>\"Two.\"",
+            unlocks: [],
+            btnText: "Back to the room",
+          },
+        ]
+      },
+
+      // Briefing 3.
+      hidden_m3: {
+        title: "Errand 3, the Lexicon Library",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "\"The library.\" He does not like the word and does not hide it. \"It is beautiful in there, and the ladders run on rails, and the lanterns come and find you, and I want you to notice that the shelves are arranged so that everything you reach for is visible from the desk. That is not an accusation. It is just the shape of the room.\"<br><br>He passes over the leather loop. \"Loop it over a hinge before you open anything. It does not silence the hinge, it changes the note the hinge makes into a note the room has already heard. Forbidden Shelf. A folded page, filed where a page should not be. Bring it up and do not read it in there.\"",
+            unlocks: [],
+            btnText: "Errand 3: Lexicon Library",
+          },
+        ]
+      },
+
+      // Debrief 3. The slip comes first.
+      hidden_m3_back: {
+        title: "The Listening Post",
+        steps: [
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "You hand it over and he unfolds it in eighths, carefully, the way you open something that has been folded longer than it has been flat.<br><br>\"Column four is the sighting count and column five is the.\" He stops. His hand goes to the index cards, and he goes through four of them, and he finds it, and his eyes move along the line. \"Column five is the disposition code. Yes.\"<br><br>He puts the cards back. He does not say anything about it and neither, it turns out, do you.",
+          },
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "\"This is a survey sheet. Ours. Blank return leg, you will notice, which everyone notices and nobody asks about twice.\" He folds it back into eighths along the same creases.<br><br>\"You will see that handwriting again somewhere else on this island. Tell me where, when you do.\"<br><br>\"Three.\"",
+            unlocks: [],
+            btnText: "Back to the room",
+          },
+        ]
+      },
+
+      // Briefing 4.
+      hidden_m4: {
+        title: "Errand 4, Mystic Peak",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "\"Highest point on the island, and the one place on it that looks outward on purpose.\" He weighs the magnets in his palm before handing them over. \"There is a compass rose set into the observatory floor. Hang this, wait, watch which way it settles, then walk.\"<br><br>\"You will have to ask before you lift the tile. Ask properly. I would like at least one of us to be well behaved about this.\"<br><br>\"North on that card is not north. Do not correct it.\"",
+            unlocks: [],
+            btnText: "Errand 4: Mystic Peak",
+          },
+        ]
+      },
+
+      // Runs at the observatory, after the errand, before the artifact is
+      // granted. The tile does not come up without this scene. Nothing she
+      // says may confirm what she is or what the island does.
+      hidden_m4_ask: {
+        title: "The asking",
+        steps: [
+          {
+            type: "choice",
+            speaker: "Star Watcher",
+            text: "She has not looked away from the eyepiece since you came in, and she does not now. \"You have been standing on my floor for some time without walking anywhere on it.\"<br><br>A long silence, which she is comfortable in and you are not.<br><br>\"It is the small round one by the north pier of the dome. It has been the wrong material since before I got here and I have never once wanted to know why. Ask me for it.\"",
+            choices: [
+              { label: "May I have the tile?", next: 1 },
+              { label: "Who put it there?", next: 1, reaction: "\"Nobody put it there.\" She adjusts the focus by a fraction. \"Things arrive. You have been here long enough to have noticed that, and not long enough to have stopped finding it worth asking about, and I would keep hold of that gap if I were you.\"" },
+              { label: "What is it for?", next: 1, reaction: "\"It points eleven degrees away from where it should. It has done that every night I have checked, and I have checked more often than I would defend in company.\"" },
+              { label: "Lever the tile up while she is working", correct: false, reaction: "\"No.\" She still does not turn around. \"You had a whole question ready and you have decided to spend it on the floor instead of on me. Put it back and say the words. I want to hear which words you pick.\"" },
+            ],
+          },
+          {
+            type: "complete",
+            speaker: "Star Watcher",
+            text: "\"Then have it.\" She says it the way you hand over a cup. \"You asked for the small round one by the north pier and you did not ask why I would let you, which is the part I would have asked about, and I notice that about you.\"<br><br>The tile comes up in one piece. Under it there is sand, which there should not be, at the top of a mountain.",
+            unlocks: [],
+            btnText: "Lift the tile",
+          },
+        ]
+      },
+
+      // Debrief 4.
+      hidden_m4_back: {
+        title: "The Listening Post",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "He sets the card on the table and turns it slowly until it disagrees with the room.<br><br>\"Off by eleven degrees, and it was off by eleven degrees the whole crossing, and we knew, and we steered around the error because a known error is not a problem, it is just arithmetic.\"<br><br>He stops turning it.<br><br>\"Four. The last one is different and I am not going to pretend otherwise.\"",
+            unlocks: [],
+            btnText: "Back to the room",
+          },
+        ]
+      },
+
+      // Briefing 5.
+      hidden_m5: {
+        title: "Errand 5, Liam's Lair",
+        steps: [
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"There is a dragon under the cliffs with a hoard of clues, and in the hoard there is a tin, and in the tin there are four pages in the handwriting you have now seen once.\"<br><br>He opens the drawer. He looks in it. He closes it.<br><br>\"I have nothing for you. I want to be straightforward about that rather than improvise you something that would only make you confident. The fork finds hollows and there is nothing hollow down there. The lens takes a colour out and he is not made of colours. The magnets are magnets and he will laugh at them, and honestly he will be right to.\"",
+          },
+          {
+            type: "choice",
+            speaker: "Canon",
+            text: "\"This one is harder and I cannot make it easier. He will ask you for clues, and they will be his hardest, and he has been at this a very long time. What I can tell you is that he is not cruel and he does not cheat and if you fail he will sigh at you, and his sighs are mostly fire, and then he will let you try again.\"",
+            choices: [
+              { label: "Then I'll go and try.", next: 2 },
+              { label: "Why would that letter be in a dragon's hoard?", next: 2, reaction: "\"Because a dragon on this island collects what people meant to say and did not.\" He looks at the big screen. \"I do not enjoy how much sense that makes.\"" },
+              { label: "Come with me.", correct: false, reaction: "\"No.\" Flat, immediate, and then a repair, which costs him something: \"I am watched. You are new enough that nothing has decided what you are yet, and I would like to keep that true a while longer. It is not that I would not.\"" },
+            ],
+          },
+          {
+            type: "complete",
+            speaker: null,
+            text: "He has given you nothing, and he has told you so. The lair is under the cliffs by the cove.",
+            unlocks: [],
+            btnText: "Errand 5: Liam's Lair",
+          },
+        ]
+      },
+
+      // Debrief 5.
+      hidden_m5_back: {
+        title: "The Listening Post",
+        steps: [
+          {
+            type: "complete",
+            speaker: "Canon",
+            text: "He takes the tin. He does not open it.<br><br>\"I know what this is.\" He puts it down. He does not square it with the edge of the table. \"He wrote it the night before and he did not give it to me, and I knew he had written it, and I did not ask, because we had a rule about not being embarrassing at each other and we were both extremely good at that rule.\"<br><br>The nine little screens go on showing the island being fine.<br><br>\"That is five. Thank you. I am aware that I have said very little of that out loud until now.\"",
+            unlocks: [],
+            btnText: "Back to the room",
+          },
+        ]
+      },
+
+      // The ending. Runs after the fifth debrief. Completion hands over the pet
+      // catcher (bcw_pet_catcher), and the post switches to the post-quest lines.
+      hidden_end: {
+        title: "What a Crossing Sheds",
+        steps: [
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "He lays them out on the table in the order they came: rope, lens, page, compass card, tin.<br><br>\"Five things off one crossing. That is what a crossing sheds and that is what this island keeps, and I have spent longer than I will tell you thinking about which of those two sentences is the accusation.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"Here is the whole of my plan, and I would like you to hear how thin it is.\" He does not sit down for this. \"You cannot argue him out. You cannot remind him in. You can only put things in his hands that only he can explain, one after another, until explaining them costs him something, and then he will want, and wanting is the whole of it. That is it. That is the plan. Four years and that is what I have got.\"<br><br>\"Four years since I worked out what was wrong with him. He had eight on me before that, and I came down here every week of them and thought he was in a mood.\"",
+          },
+          {
+            type: "choice",
+            speaker: "Canon",
+            text: "\"So. You are going down there, because you are the one he makes tea for, and I am the one he walks back to the rope.\"",
+            choices: [
+              { label: "You should be the one to give them to him.", next: 3, reaction: "\"Yes.\" He does not move. \"And he will be kind to me, and it will be an afternoon, and I have had four of those.\"" },
+              { label: "What if he doesn't want it?", next: 3, reaction: "A long look at the big screen. \"Then I will have been wrong at length and in detail. I have considered that. I keep it on a card.\"" },
+              { label: "What do I say?", next: 3, reaction: "\"Nothing. Put them down. He is better at this than either of us.\"" },
+            ],
+          },
+          {
+            type: "narrative",
+            speaker: null,
+            text: "Down is colder than it looks from a screen. The lamps along the rail are lit, because the lamps are always lit, and Fredward Fishington is at his ledger with his sleeves rolled, ruling a fresh column with a straight edge.<br><br>\"There you are.\" Delighted. Entirely delighted. \"Sit down, I have got a thing to show you, there is a fish out here who has learned to open the tin.\"<br><br>You put five things on his table.",
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "He goes quiet in stages.<br><br>The rope first: he turns it over and finds the splice and something crosses his face that has no name yet. The lens he holds up and looks through, at you, at the lamps, at the water. The page he reads two lines of and sets down face up, which is not what you set down face up. The compass card he does not touch at all.<br><br>The tin he opens.<br><br>He reads four pages at the pace of a man reading his own handwriting for the first time in a long while, and near the end of the third page he puts one hand flat on the table, the way you do on a boat.",
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "\"There is a man who comes to the fountain,\" he says.<br><br>He says it the way he said it before, easily, out of the same drawer he keeps the weather in. Then he stops. He looks at the pages. He looks at the rope with the double splice in it. He is holding a thing in each hand that has never been in the same hand before.<br><br>\"Thin fellow. Stands at the water.\" Slower. \"He sat here. He sat at this table and I made him tea.\"<br><br>The lamps do their work. The crab does not move.<br><br>\"That is Canon,\" Fredward says, to nobody, in the voice of a man reading a label. \"Four times, and I gave him tea, and I walked him back to the rope.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "He does not say anything for a while.<br><br>\"I knew a thin man stood at water,\" he says. \"I have known that for years. I have known it the way you know where the tide is. It never once had his name on it.\" He touches the letter. \"It has his name on it now. I would like to be very clear that I have not been sad about this until about a minute ago.\"",
+          },
+          {
+            type: "choice",
+            speaker: "Fredward Fishington",
+            text: "He squares the pages. He is, you notice, exactly as tidy about it as his brother, and neither of them will ever be told.<br><br>\"Now. May I say the unpopular thing, since somebody sent you down here with five arguments and no space for a reply.\"",
+            choices: [
+              { label: "Say it.", next: 8 },
+              { label: "He's not trying to hurt you.", next: 8, reaction: "\"I know. That is why it works.\"" },
+              { label: "He just wants you back.", next: 8, reaction: "\"Back,\" Fredward says, gently, like a word he is checking the fit of. \"Yes. That is the one that does the damage.\"" },
+            ],
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "\"I am not confused. That is the story, and it is a good story, and it lets a man who loves me have a task instead of a grief, and I have never once wanted to take it off him.\" He touches the ledger. Hundreds of pages of it, ruled by hand.<br><br>\"But I am not confused. I know what I have got here. I have got work that is mine, in a place that does not ask me to be remarkable at anything, and nobody has looked at me since I got here. Do you know how much of my life had someone looking at it? Not watching me. Scoring me. There is a difference and I did not know there was one until it stopped.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "\"He thinks the island took something from me.\" He puts the four pages down on top of the compass card, squarely, so neither of them can blow anywhere.<br><br>\"Perhaps it is the only cupboard in the world where the things they take off us go on being kept. And I am living in it, and the light is quite nice.\"",
+          },
+          {
+            type: "choice",
+            speaker: "Fredward Fishington",
+            text: "He stands. He goes to the rail of what used to be a deck and stands there, and the four pages stay on the table, and he does not take them with him and he does not put them away.<br><br>\"I would like some time with this.\"",
+            choices: [
+              { label: "Take it.", next: 11 },
+              { label: "What do I tell him?", next: 11, reaction: "\"Tell him I read it.\" A beat. \"Tell him it was well written. He will hate that and he will keep it.\"" },
+              { label: "Are you coming up?", next: 11, reaction: "\"I do not know,\" Fredward says, and it is the first thing he has said down here that he has not known." },
+            ],
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "\"Before you go.\" He crosses to a crate, and comes back with a thing he has clearly been making for a while: a hoop of steamed cane, a net of fine line, a sliding collar, and a grip worn smooth by one hand. \"You have had the lure. The lure catches the croc and it will never catch anything else, and I have been rather ashamed of it since I gave it to you.\"<br><br>\"This is the honest version. Every creature on this island answers to a device, and this holds whichever one you have understood. If you have understood it. It will not do the understanding for you, I could not build that.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Fredward Fishington",
+            text: "He walks you to the rope, because he always walks you to the rope.<br><br>\"He gave you a fork, did he.\" Fondly, and then he hears himself say it, and does not follow it anywhere. \"Tell him the fork worked.\"<br><br>He waves. He is still waving when the water takes the shape of him.",
+          },
+          {
+            type: "narrative",
+            speaker: null,
+            text: "The room under the fountain is the same. Big screen, nine small ones, the cards in a stack, the pencil where he left it.<br><br>Canon has the big screen on the wreck, and the lamps are lit down there, the way they always are. He does not ask you what happened. He is watching a man at a table a long way below him do nothing at all, which is what the man does most days.",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"He read it.\" Not a question. He has been watching. \"He put his hand on the table.\"<br><br>\"Thank you. I am not going to ask you what he said, because he said it to you and that makes it yours, and I have taken enough off people this year.\" A pause. \"Also I would rather find out from him.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "\"You will want to know what happens now.\" He gathers the index cards, and then holds them without doing anything to them. \"So would I. There is no boat that goes back. Every one of them is rated for the way in and the page for the way out is blank, and I have read that page more times than a blank page deserves.\"<br><br>\"I have an idea about the blank page. It is not a good idea. It is the only one, and I am not telling it to you today, because you have been generous and I am not going to spend it.\"",
+          },
+          {
+            type: "narrative",
+            speaker: "Canon",
+            text: "He looks at the second chair.<br><br>\"Come back, if you like. Not for an errand. I have run out of errands and I find I would still rather the chair was used.\"",
+          },
+          {
+            type: "complete",
+            speaker: null,
+            text: "You climb up into the square and the fountain sound comes back mid splash.<br><br>On the big screen behind you, a long way down and a mile out, a man sits at a table with four pages in front of him. The lamps are lit. They are always lit. He has not moved for an hour and he has not gone back to the ledger either.",
+            unlocks: [],
+            btnText: "Leave the fountain",
+          },
+        ]
+      },
+
       // ═══════════════════════════════════
       //  THE WRECK
       // ═══════════════════════════════════
@@ -8090,7 +8504,7 @@
         loreEntries.push({ title: 'The Town Terminal', text: 'The Town Square terminal hums with ancient code. Type the right word at the prompt and somewhere out on the island, a door unbolts.' });
       }
       if (state.completedStories.includes('library')) {
-        loreEntries.push({ title: 'The Dragon of the Cliffs', text: 'A crumbling bestiary on the Forbidden Shelf names a dragon who hoards clues instead of gold: Liam Runnalls, last seen beneath the cliffs by the cove. A margin note adds: "His initials, offered to the town terminal, open the way."' });
+        loreEntries.push({ title: 'The Dragon of the Cliffs', text: 'A crumbling bestiary on the Forbidden Shelf names a dragon who hoards gold and clues alike: Liam Runnalls, last seen beneath the cliffs by the cove. A margin note adds: "His initials, offered to the town terminal, open the way."' });
       }
 
       if (loreEntries.length === 0) {
@@ -8606,6 +9020,20 @@
               reactionEl.className = 'story-wrong-reaction';
               reactionEl.textContent = choice.reaction;
               choicesEl.appendChild(reactionEl);
+            } else if (choice.reaction) {
+              // A right answer with a line attached. Show the line where the
+              // choices were, then hand over to the ordinary Continue.
+              if (typeof choice.onclick === 'function') choice.onclick();
+              choicesEl.querySelectorAll('.story-choice-btn').forEach((b) => { b.disabled = true; b.style.display = 'none'; });
+              const reactionEl = document.createElement('div');
+              reactionEl.className = 'story-wrong-reaction';
+              reactionEl.textContent = choice.reaction;
+              choicesEl.appendChild(reactionEl);
+              continueBtn.classList.add('visible');
+              continueBtn.onclick = () => {
+                if (typeof BCWAudio !== 'undefined') BCWAudio.playStoryAdvance();
+                gotoStep(choice.next);
+              };
             } else {
               if (typeof choice.onclick === 'function') choice.onclick();
               gotoStep(choice.next);
@@ -10085,7 +10513,7 @@
       activeChallenge = {
         answers: (Array.isArray(opts.answer) ? opts.answer : [opts.answer]).map(a => a.toUpperCase()),
         explanation: opts.explanation || '',
-        successLine: opts.successLine || 'Solved!',
+        successLine: opts.successLine || 'Solved',
         // Carried so a solve can pay the right material. A challenge with no
         // device still pays; it just pays the default.
         device: opts.device || null,
@@ -10348,15 +10776,15 @@
     // ═══════════════════════════════════
     const LEGEND_SKILLS = [
       { id: 'docks',       icon: '\u26F5',     name: 'Decoder Docks',    skill: 'Reversals' },
-      { id: 'forest',      icon: '\uD83C\uDF32', name: 'Enigma Forest',    skill: 'Anagrams' },
+      { id: 'forest',      icon: '\uD83C\uDF32', name: 'Enigma Forest',    skill: 'Hidden Words' },
       { id: 'cafe',        icon: '\u2615',     name: 'Cryptic Cafe',     skill: 'Initial Letters' },
-      { id: 'town',        icon: '\u26F2',     name: 'Town Square',      skill: 'Mixed Techniques' },
-      { id: 'adventure',   icon: '\uD83C\uDFF0', name: 'Adventure Tower',  skill: 'Hidden Words & Containers' },
+      { id: 'town',        icon: '\u26F2',     name: 'Town Square',      skill: 'Anagrams' },
+      { id: 'adventure',   icon: '\uD83C\uDFF0', name: 'Adventure Tower',  skill: 'Containers' },
       { id: 'library',     icon: '\uD83D\uDCDA', name: 'Lexicon Library',  skill: 'Double Definitions' },
-      { id: 'workshop',    icon: '\u2699\uFE0F', name: 'Puzzle Workshop',  skill: 'Anagrams (Advanced)' },
-      { id: 'beach',       icon: '\uD83C\uDFD6\uFE0F', name: 'Scramble Shores', skill: 'Scrambles' },
-      { id: 'cove',        icon: '\uD83D\uDDDD\uFE0F', name: 'Cluey Cove',      skill: 'Deletion Clues' },
-      { id: 'observatory', icon: '\uD83D\uDD2D', name: 'Mystic Peak',      skill: 'Double Def / Hidden / Charade' },
+      { id: 'workshop',    icon: '\u2699\uFE0F', name: 'Puzzle Workshop',  skill: 'Combination Clues' },
+      { id: 'beach',       icon: '\uD83C\uDFD6\uFE0F', name: 'Scramble Shores', skill: 'Anagrams' },
+      { id: 'cove',        icon: '\uD83D\uDDDD\uFE0F', name: 'Cluey Cove',      skill: 'Deletions' },
+      { id: 'observatory', icon: '\uD83D\uDD2D', name: 'Mystic Peak',      skill: 'Homophones' },
     ];
 
     function toggleLegendScroll() {
@@ -10512,7 +10940,7 @@
 
       // Check if already unlocked
       const unlocked = getUnlockedCodes();
-      if (unlocked.includes(normalized)) {
+      if (unlocked.includes(normalized) || (normalized === 'LIAM' && unlocked.includes('LR'))) {
         addTerminalLine('Code "' + normalized + '" already redeemed.', 'info');
         return;
       }
@@ -10530,8 +10958,10 @@
         addTerminalLine('A warm light flickers on the south shore...', 'success');
         addTerminalLine('A cottage stands there now. It\'s yours.', 'info');
         setTimeout(() => { spawnHouse(); closeTerminal(); }, 1200);
-      } else if (normalized === 'LR' || normalized === 'LIAM RUNNALLS') {
-        saveUnlockedCode(normalized);
+      } else if (normalized === 'LR' || normalized === 'LIAM RUNNALLS' || normalized === 'LIAM') {
+        // LIAM is what Canon's clue resolves to. Stored as LR so every check
+        // that already looks for the lair code keeps working.
+        saveUnlockedCode(normalized === 'LIAM' ? 'LR' : normalized);
         addTerminalLine('CODE ACCEPTED: "' + normalized + '"', 'success');
         addTerminalLine('The ground trembles beneath Cluey Cove...', 'success');
         addTerminalLine('An underground passage has opened. Smoke rises from the cliffs.', 'info');
@@ -12752,8 +13182,8 @@
 
       if (!names.length) {
         body +=
-          '<p class="pet-panel__empty">No cheese in the pantry. The cheese board at the ' +
-          'Cryptic Cafe restocks as you solve.</p>';
+          '<p class="pet-panel__empty">No cheese in the fridge. The Cheese Crater on ' +
+          'the Moon has more.</p>';
       } else {
         body += '<div class="pet-panel__feed"><span class="pet-panel__feed-label">Offer a cheese</span><div class="pet-panel__cheeses">';
         names.forEach((name) => {
@@ -13128,11 +13558,60 @@
     function enterListeningPost() {
       if (typeof BCWQuest === 'undefined') return;
       const first = BCWQuest.start();
-      if (first) {
+      // A save that burned the started flag while the story did not exist
+      // (every save that typed HIDDEN before 2026-10-17) gets the
+      // introduction cold rather than never. Same repair as the wreck.
+      if (first || (!isStoryComplete('hidden') && BCWQuest.progress().done === 0)) {
         startStory('hidden');
         return;
       }
+      // Something came back and he has not been handed it yet.
+      const owed = BCWQuest.awaitingDebrief();
+      if (owed) {
+        startStory('hidden_m' + owed.n + '_back');
+        return;
+      }
+      const p = BCWQuest.progress();
+      if (p.total && p.done >= p.total && !BCWQuest.hasEnded()) {
+        startStory('hidden_end');
+        return;
+      }
       openPostPanel();
+    }
+
+    // What a questline story completing means for the quest. One place,
+    // keyed by story id, so the story table stays data.
+    function runQuestStoryHook(id) {
+      if (typeof BCWQuest === 'undefined') return;
+      const later = (fn) => setTimeout(fn, 350);
+      if (id === 'hidden') {
+        if (!BCWQuest.isBriefed('rope')) later(() => startStory('hidden_m1'));
+        return;
+      }
+      const brief = /^hidden_m([1-5])$/.exec(id);
+      if (brief) {
+        const m = BCWQuest.MISSIONS[Number(brief[1]) - 1];
+        BCWQuest.markBriefed(m.id);
+        later(() => openLocation(m.location));
+        return;
+      }
+      const back = /^hidden_m([1-5])_back$/.exec(id);
+      if (back) {
+        const m = BCWQuest.MISSIONS[Number(back[1]) - 1];
+        BCWQuest.markDebriefed(m.id);
+        // Back to the room: the next errand, the ending, or the chair.
+        later(() => enterListeningPost());
+        return;
+      }
+      if (id === 'hidden_m4_ask') {
+        const m = BCWQuest.byId('compass');
+        if (recoverArtifact('compass')) later(() => showArtifactFound(m));
+        return;
+      }
+      if (id === 'hidden_end') {
+        grantPetCatcher();
+        BCWQuest.markEnded();
+      }
     }
 
     // Between errands. The room, what Canon has to say today, the gadgets on
@@ -13142,8 +13621,9 @@
       const mission = BCWQuest.current();
       const done = BCWQuest.progress();
 
+      const pool = BCWQuest.hasEnded() ? POST_LINES_AFTER : POST_LINES;
       let body = '<div class="post">' + listeningPostArt() +
-        '<p class="post__line">' + escapeHtml(BCWQuest.nextLine(POST_LINES)) + '</p>';
+        '<p class="post__line">' + escapeHtml(BCWQuest.nextLine(pool)) + '</p>';
 
       // What is on the table. Five slots, filled in the order they came back,
       // because the artifacts are a sequence of revelations about two people
@@ -13182,7 +13662,12 @@
         'The Listening Post', '');
 
       const go = document.getElementById('post-go');
-      if (go) go.onclick = () => { closeGameModal(); openLocation(mission.location); };
+      if (go) go.onclick = () => {
+        closeGameModal();
+        // He sets the errand out loud once. After that the button is a door.
+        if (!BCWQuest.isBriefed(mission.id)) startStory('hidden_m' + mission.n);
+        else openLocation(mission.location);
+      };
     }
 
     // The panel table `locations` is the one place every location's display
@@ -13313,20 +13798,30 @@
 
       const take = document.getElementById('errand-take');
       if (take) take.onclick = () => {
-        const got = recoverArtifact(m.id);
         closeGameModal();
-        if (!got) return;
-        if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
-        showGameModal(
-          '<div class="post">' +
-          '<p class="post__line"><strong>' + escapeHtml(m.artifact) + '</strong></p>' +
-          '<p class="post__brief">' + escapeHtml(m.artifactNote) + '</p>' +
-          '<p class="post__line">It is a page in your notebook now. ' +
-          'There is room under it to write.</p>' +
-          '</div>',
-          'You found it', ''
-        );
+        // The compass card does not come up without asking the Star Watcher.
+        // The asking grants it when it completes (see runQuestStoryHook).
+        if (m.id === 'compass' && !BCWQuest.isRecovered('compass')) {
+          startStory('hidden_m4_ask');
+          return;
+        }
+        if (!recoverArtifact(m.id)) return;
+        showArtifactFound(m);
       };
+    }
+
+    function showArtifactFound(m) {
+      if (!m) return;
+      if (typeof BCWAudio !== 'undefined' && BCWAudio.playSuccess) BCWAudio.playSuccess();
+      showGameModal(
+        '<div class="post">' +
+        '<p class="post__line"><strong>' + escapeHtml(m.artifact) + '</strong></p>' +
+        '<p class="post__brief">' + escapeHtml(m.artifactNote) + '</p>' +
+        '<p class="post__line">It is a page in your notebook now. ' +
+        'There is room under it to write.</p>' +
+        '</div>',
+        'You found it', ''
+      );
     }
 
     // The randomised detail, one per save. Deliberately about WHERE and HOW
@@ -13355,15 +13850,48 @@
     // room is a vending machine.
     //
     // COPY IS PLACEHOLDER until G3 sign-off.
+    // hidden_return, from the script: one line per visit, in order, no
+    // repeats until the pool is exhausted. BCWQuest.nextLine does the order.
     const POST_LINES = [
-      'Nine screens and I still could not tell you what the weather is doing. ' +
-        'Come in, the chair is not for anything else.',
-      'The tide down there turns at ten past. It has turned at ten past every day ' +
+      '"Nine screens and I still could not tell you what the weather is doing. ' +
+        'Come in, the chair is not for anything else."',
+      'He is writing on a card when you come down, and he keeps writing until the ' +
+        'sentence is finished, which takes longer than it should. "Sorry. If I stop ' +
+        'I lose it, and I have nowhere else to put it."',
+      '"The tide down there turns at ten past. It has turned at ten past every day ' +
         'I have watched it, and one morning it will not, and I will be the only ' +
-        'person on this island who notices.',
-      'You have been to the cafe. It is on screen four and also you smell of it.',
-      'Sit if you are sitting. I do not get many people down here and I have ' +
-        'stopped being able to tell whether that is the room or me.',
+        'person on this island who notices."',
+      '"You have been to the cafe." He says it without turning. "It is on screen ' +
+        'four and also you smell of it."',
+      '"I have twenty one cards of what to say to him." He is quiet for a moment. ' +
+        '"I wrote the first one because I could not sleep. I write them now because ' +
+        'it is eleven o\'clock. I have not decided yet whether that is discipline."',
+      '"Sit if you are sitting. I do not get many people down here and I have ' +
+        'stopped being able to tell whether that is the room or me."',
+      'He is at the small screens rather than the big one, which is not where you ' +
+        'have ever found him. He watches the pier for a while. "There is a boat ' +
+        'comes in on Thursdays and I write down what is on it." A pause. "I could ' +
+        'not tell you what I do with the list."',
+      '"Ask me why I want him up here." He waits, and you have not asked, and he ' +
+        'answers anyway. "Because he is my brother. Yes. That is the answer and it ' +
+        'is a good answer and I have started checking it against the cards, which ' +
+        'is not a thing a person should have to do with that particular sentence."',
+    ];
+
+    // After the ending. Replaces the pool above once it has run.
+    const POST_LINES_AFTER = [
+      '"Nothing yet. You may ask. People go quiet around me now and it is worse."',
+      '"The lamps are on. The lamps are always on. I have stopped reading anything ' +
+        'into the lamps."',
+      'He is not writing. The cards are in a stack and he has not touched them. He ' +
+        'is watching water. "Sit down. You do not have to say anything, that is the ' +
+        'point of a chair."',
+      '"I have started a new card. It has one line on it. It says ask him what he ' +
+        'wants, and I have not managed it yet."',
+      '"I went down on Tuesday." He says it flatly. "We talked about the fish. It ' +
+        'was a good afternoon." A silence. "I had four things I meant to say and I ' +
+        'got through none of them, and I want to tell you it was cowardice, because ' +
+        'cowardice would mean I still had them."',
     ];
 
     // ─── The room ───
@@ -14117,7 +14645,7 @@
       const sublabel = el.querySelector('.reward-lock-label');
       if (sublabel) {
         if (!sublabel.dataset.lockText) sublabel.dataset.lockText = sublabel.textContent;
-        sublabel.textContent = unlocked ? 'Unlocked!' : sublabel.dataset.lockText;
+        sublabel.textContent = unlocked ? 'Unlocked' : sublabel.dataset.lockText;
       }
     }
 
@@ -14797,6 +15325,23 @@
       createFireflies();
       createSparkles();
       createStarTwinkles();
+      // The questline's briefings, debriefs and the asking are stories of their
+      // own, so they look up art by their own keys. The art already exists in
+      // scenes/hidden.js under the mission keys; point the new keys at it.
+      // Aliases are the same string, which is how check-scenes expects reuse.
+      if (typeof STORY_SCENES !== 'undefined') {
+        for (let n = 1; n <= 5; n++) {
+          if (STORY_SCENES['hidden_1'] && !STORY_SCENES['hidden_m' + n + '_0']) {
+            STORY_SCENES['hidden_m' + n + '_0'] = STORY_SCENES['hidden_1'];
+          }
+          if (STORY_SCENES['hidden_m' + n] && !STORY_SCENES['hidden_m' + n + '_back_0']) {
+            STORY_SCENES['hidden_m' + n + '_back_0'] = STORY_SCENES['hidden_m' + n];
+          }
+        }
+        if (STORY_SCENES['observatory_0'] && !STORY_SCENES['hidden_m4_ask_0']) {
+          STORY_SCENES['hidden_m4_ask_0'] = STORY_SCENES['observatory_0'];
+        }
+      }
       checkAirshipOnLoad();
       checkHouseOnLoad();
       checkLairOnLoad();
@@ -14882,8 +15427,8 @@
       window.BCSync?.schedulePush('world');
 
       // Show result
-      const rarityColors = { common: '#94A3B8', uncommon: '#4a9ae8', rare: '#a070e0', epic: '#FB923C', legendary: '#F2C14E' };
-      showGameModal('<strong>' + cheese.name + '</strong> <span style="color:' + (rarityColors[cheese.rarity] || '#fff') + '">(' + cheese.rarity.toUpperCase() + ')</span><br><br><em>"' + cheese.desc + '"</em><br><br>Stored in your fridge at home.', 'Cheese Collected!', '\u{1F9C0}');
+      const rarityColors = { common: '#94A3B8', uncommon: '#6FC3E0', rare: '#A78BFA', epic: '#FB923C', legendary: '#F2C14E' };
+      showGameModal('<strong>' + cheese.name + '</strong> <span style="color:' + (rarityColors[cheese.rarity] || '#fff') + '">(' + cheese.rarity.toUpperCase() + ')</span><br><br><em>"' + cheese.desc + '"</em><br><br>Stored in your fridge at home.', 'Cheese Collected', '\u{1F9C0}');
     }
 
     function openFridge() {
@@ -14894,7 +15439,7 @@
 
       const container = document.getElementById('fridge-contents');
       if (cheeses.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:20px;">The fridge is empty. Visit the Cheese Crater on the Moon to collect cryptic cheeses.</div>';
+        container.innerHTML = '<div class="fridge-empty">The fridge is empty. Visit the Cheese Crater on the Moon to collect cryptic cheeses.</div>';
         return;
       }
 
@@ -14905,18 +15450,18 @@
         grouped[c.name].count++;
       });
 
-      let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+      let html = '<div class="fridge-grid">';
       for (const [name, data] of Object.entries(grouped).sort((a, b) => b[1].count - a[1].count)) {
-        const rarityColors = { common: '#94A3B8', uncommon: '#4a9ae8', rare: '#a070e0', epic: '#FB923C', legendary: '#F2C14E' };
-        html += '<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">';
-        html += '<div style="font-size:2rem;margin-bottom:4px;">\u{1F9C0}</div>';
-        html += '<div style="font-family:Inter,sans-serif;font-weight:600;font-size:0.8rem;color:' + data.color + ';">' + name + '</div>';
-        html += '<div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin:4px 0;">' + data.desc + '</div>';
-        html += '<div style="font-size:0.75rem;color:' + (rarityColors[data.rarity] || '#aaa') + ';">' + data.rarity.toUpperCase() + ' x' + data.count + '</div>';
+        const rarityColors = { common: '#94A3B8', uncommon: '#6FC3E0', rare: '#A78BFA', epic: '#FB923C', legendary: '#F2C14E' };
+        html += '<div class="fridge-card">';
+        html += '<div class="fridge-card-icon">\u{1F9C0}</div>';
+        html += '<div class="fridge-card-name" style="color:' + data.color + ';">' + name + '</div>';
+        html += '<div class="fridge-card-desc">' + data.desc + '</div>';
+        html += '<div class="fridge-card-rarity" style="color:' + (rarityColors[data.rarity] || '#aaa') + ';">' + data.rarity.toUpperCase() + ' x' + data.count + '</div>';
         html += '</div>';
       }
       html += '</div>';
-      html += '<div style="text-align:center;color:rgba(255,255,255,0.3);font-size:0.8rem;margin-top:12px;">Total: ' + cheeses.length + ' cheeses collected</div>';
+      html += '<div class="fridge-total">Total: ' + cheeses.length + ' cheeses collected</div>';
       container.innerHTML = html;
     }
 
@@ -16206,7 +16751,7 @@
         result.style.color = SWAG_FISH.color;
         result.innerHTML = SWAG_FISH.emoji + ' <strong>' + SWAG_FISH.name + '</strong> (' +
           last.weight + ' kg) <span class="rarity-legendary" style="font-size:0.8em;">[LEGENDARY]</span> ' +
-          '<span style="color:#ffd700;font-size:0.8em;">Worth ' +
+          '<span style="color:#F2C14E;font-size:0.8em;">Worth' +
           getFishPrice(bucket[bucket.length - 1]) + ' coins</span>';
       }
       showSwagPrompt();
@@ -16470,7 +17015,7 @@
       const result = document.getElementById('fish-result');
       result.style.color = fish.color;
       const price = getFishPrice(fish);
-      result.innerHTML = fish.emoji + ' <strong>' + fish.name + '</strong> (' + fish.weight + ' kg) <span class="rarity-' + fish.rarity + '" style="font-size:0.8em;">[' + fish.rarity.toUpperCase() + ']</span> <span style="color:#ffd700;font-size:0.8em;">Worth ' + price + ' coins</span>';
+      result.innerHTML = fish.emoji + ' <strong>' + fish.name + '</strong> (' + fish.weight + ' kg) <span class="rarity-' + fish.rarity + '" style="font-size:0.8em;">[' + fish.rarity.toUpperCase() + ']</span> <span style="color:#F2C14E;font-size:0.8em;">Worth' + price + ' coins</span>';
 
       if (bucket.length >= getBucketMax()) {
         document.getElementById('fish-controls').innerHTML = '<button class="fish-btn" disabled style="opacity:0.5;">Bucket full! Sell fish first.</button>';
@@ -16863,10 +17408,12 @@
 </div>
 
 <div id="fridge-overlay">
-  <button style="position:absolute;top:12px;right:16px;background:none;border:1px solid #2A3553;border-radius:8px;color:#94A3B8;padding:5px 12px;font-family:Inter,sans-serif;font-weight:600;cursor:pointer;z-index:10001;font-size:0.85rem;" onclick="closeFridge()">Close</button>
+  <div class="fridge-panel">
+  <button class="fridge-close" onclick="closeFridge()">Close</button>
   <h2>Your Fridge</h2>
-  <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:16px;">Cryptic Cheese Collection</div>
-  <div id="fridge-contents" style="width:500px;max-width:95vw;"></div>
+  <div class="fridge-sub">Cryptic Cheese Collection</div>
+  <div id="fridge-contents"></div>
+  </div>
 </div>
 
 <!-- Enhancement Modules -->
