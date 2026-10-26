@@ -2069,10 +2069,9 @@ STORY_SCENES['hidden_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   chair: { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#46536b' } }) + `
 </svg>`;
 
-// Scene 7: He opens a drawer. The drawer of a man who makes things out of what
-// washes up. Read at a glance: a COIL of line, three SPOONS, a JAR of screws,
-// bent WIRE. Four shapes, well separated, on a lit drawer floor. Detail is
-// subordinate to silhouette here — anything smaller than this is texture.
+// Scene 7: He opens a drawer. Live (main) drawer and contents (seed tin, scoop
+// spoon, bread on a saucer, folded cloth, string) with the branch's human
+// hand (hidCastArm hand:'lip') gripping the drawer lip.
 STORY_SCENES['hidden_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="hidRoom7" x1="0" y1="0" x2="0" y2="1">
@@ -2104,72 +2103,84 @@ STORY_SCENES['hidden_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <rect x="40" y="226" width="420" height="4" rx="2" fill="#7686a3" opacity="0.6"/>
 <rect x="214" y="238" width="72" height="8" rx="4" fill="#22303f"/>
 
-<!-- THE DRAWER OF A MAN WHO MAKES THINGS OUT OF WHAT WASHES UP. Exactly what
-     the text lists: bent wire, a coil of fishing line, three spoons, a jar of
-     screws sorted by nothing. Four silhouettes, one per quadrant of the lit
-     floor, with clear floor between them. Detail is subordinate to shape. -->
+<!-- THE DRAWER OF A MAN WHO COAXES SOMETHING SMALL OUT FROM UNDER A FLOOR.
+     Restored from the live scene (review 2026-10-26: "keep the colorscheme
+     from the previous one and the items"). It is BAIT, for a small, harmless
+     animal under the boards: seed, a heel of bread, a saucer, a soft cloth to
+     line a box with, and ONE spoon used as a scoop. Warm-toned, soft-edged. -->
 
-<!-- 1. THE COIL OF FISHING LINE. Pale monofilament wound in loose turns, the
-     free end trailing off across the floor. -->
-<g transform="translate(140,112)">
-  <ellipse cx="0" cy="22" rx="58" ry="12" fill="#1e2820" opacity="0.5"/>
-  <g fill="none" stroke="#c9d6de" stroke-linecap="round">
-    <ellipse cx="0" cy="4" rx="48" ry="20" stroke-width="2.4" opacity="0.85"/>
-    <ellipse cx="-2" cy="3" rx="42" ry="17" stroke-width="2" opacity="0.7"/>
-    <ellipse cx="1" cy="5" rx="36" ry="14.5" stroke-width="2.2" opacity="0.8"/>
-    <ellipse cx="0" cy="4" rx="30" ry="12" stroke-width="1.8" opacity="0.65"/>
-    <ellipse cx="0" cy="4" rx="24" ry="9.5" stroke-width="1.6" opacity="0.55"/>
+<!-- 1. THE TIN OF SEED, open, tipped slightly, spilling. -->
+<g transform="translate(140,132)">
+  <ellipse cx="4" cy="46" rx="62" ry="12" fill="#1e2820" opacity="0.55"/>
+  <path d="M-52,-26 L52,-26 L44,42 Q0,50 -44,42 Z" fill="#7a6a44"/>
+  <path d="M-52,-26 L-30,-26 L-26,42 Q-36,44 -44,42 Z" fill="#93815a" opacity="0.7"/>
+  <ellipse cx="0" cy="-26" rx="52" ry="14" fill="#5c4f30"/>
+  <ellipse cx="0" cy="-26" rx="52" ry="14" fill="none" stroke="#a08a5c" stroke-width="2.4"/>
+  <path d="M-46,-26 Q-24,-40 0,-38 Q26,-40 46,-26 Q24,-18 0,-17 Q-24,-18 -46,-26 Z" fill="#c9a961"/>
+  <g fill="#e0c07a" opacity="0.85">
+    <ellipse cx="-28" cy="-30" rx="3" ry="2" transform="rotate(24,-28,-30)"/>
+    <ellipse cx="-14" cy="-33" rx="3.2" ry="2.1" transform="rotate(-16,-14,-33)"/>
+    <ellipse cx="2" cy="-34" rx="3" ry="2" transform="rotate(48,2,-34)"/>
+    <ellipse cx="17" cy="-32" rx="3.2" ry="2.1" transform="rotate(-38,17,-32)"/>
+    <ellipse cx="31" cy="-29" rx="3" ry="2" transform="rotate(12,31,-29)"/>
+    <ellipse cx="-20" cy="-25" rx="2.8" ry="1.9" transform="rotate(-62,-20,-25)"/>
+    <ellipse cx="10" cy="-25" rx="2.8" ry="1.9" transform="rotate(30,10,-25)"/>
   </g>
-  <path d="M46,10 Q66,22 84,18 Q98,15 104,26" fill="none" stroke="#c9d6de" stroke-width="1.6" opacity="0.7" stroke-linecap="round"/>
-  <path d="M-30,-6 Q0,-14 34,-8" fill="none" stroke="#eef3f6" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
-</g>
-
-<!-- 2. THREE SPOONS, loose, not matched: three different angles, bowls up. -->
-<g transform="translate(352,108)">
-  <ellipse cx="0" cy="24" rx="64" ry="11" fill="#1e2820" opacity="0.45"/>
-  <g transform="translate(-34,4) rotate(-24)">
-    <ellipse cx="0" cy="0" rx="10" ry="14" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1.2"/>
-    <rect x="-2.2" y="12" width="4.4" height="40" rx="2.2" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1"/>
-  </g>
-  <g transform="translate(2,-6) rotate(8)">
-    <ellipse cx="0" cy="0" rx="10" ry="14" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1.2"/>
-    <rect x="-2.2" y="12" width="4.4" height="40" rx="2.2" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1"/>
-  </g>
-  <g transform="translate(40,2) rotate(36)">
-    <ellipse cx="0" cy="0" rx="9" ry="12.5" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1.2"/>
-    <rect x="-2" y="11" width="4" height="36" rx="2" fill="url(#hidSpoon7)" stroke="#3a4350" stroke-width="1"/>
+  <g fill="#c9a961" opacity="0.75">
+    <ellipse cx="62" cy="30" rx="3" ry="2" transform="rotate(18,62,30)"/>
+    <ellipse cx="74" cy="38" rx="3.2" ry="2.1" transform="rotate(-28,74,38)"/>
+    <ellipse cx="58" cy="44" rx="2.8" ry="1.9" transform="rotate(52,58,44)"/>
+    <ellipse cx="86" cy="30" rx="2.9" ry="1.9" transform="rotate(-8,86,30)"/>
+    <ellipse cx="70" cy="52" rx="3" ry="2" transform="rotate(38,70,52)"/>
+    <ellipse cx="-64" cy="40" rx="3" ry="2" transform="rotate(-44,-64,40)"/>
+    <ellipse cx="-76" cy="34" rx="2.8" ry="1.9" transform="rotate(20,-76,34)"/>
   </g>
 </g>
 
-<!-- 3. THE GLASS JAR OF SCREWS, sorted by nothing: long and short, flat and
-     round heads, all in together. Glass reads as an outline and a sheen. -->
-<g transform="translate(150,186)">
-  <ellipse cx="0" cy="28" rx="40" ry="8" fill="#1e2820" opacity="0.55"/>
-  <!-- the screws inside, behind the glass sheen -->
-  <g fill="#8e97a2" stroke="#3a4350" stroke-width="0.8">
-    <rect x="-22" y="6" width="3" height="18" transform="rotate(-18,-20,15)"/><rect x="-25" y="4" width="9" height="3" rx="1.4" transform="rotate(-18,-20,15)"/>
-    <rect x="-8" y="10" width="3" height="14" transform="rotate(22,-6,17)"/><rect x="-11" y="8" width="9" height="3" rx="1.4" transform="rotate(22,-6,17)"/>
-    <rect x="6" y="4" width="3" height="20" transform="rotate(-6,8,14)"/><circle cx="7.5" cy="4" r="4" transform="rotate(-6,8,14)"/>
-    <rect x="18" y="12" width="3" height="12" transform="rotate(34,20,18)"/><rect x="15" y="10" width="9" height="3" rx="1.4" transform="rotate(34,20,18)"/>
-    <rect x="-16" y="16" width="3" height="10" transform="rotate(70,-14,21)"/><circle cx="-14.5" cy="16" r="3.4" transform="rotate(70,-14,21)"/>
-    <rect x="0" y="16" width="3" height="9" transform="rotate(-48,2,20)"/><rect x="-3" y="14" width="9" height="3" rx="1.4" transform="rotate(-48,2,20)"/>
-  </g>
-  <!-- glass body -->
-  <path d="M-30,-18 L30,-18 L32,24 Q0,32 -32,24 Z" fill="#9fc3cf" opacity="0.16"/>
-  <path d="M-30,-18 L30,-18 L32,24 Q0,32 -32,24 Z" fill="none" stroke="#b9d3dc" stroke-width="1.8" opacity="0.75"/>
-  <path d="M-24,-12 L-25,18" stroke="#e6f0f4" stroke-width="2.4" opacity="0.4" stroke-linecap="round"/>
-  <!-- the lid, screwed on -->
-  <rect x="-32" y="-28" width="64" height="11" rx="2" fill="#5a6676" stroke="#2c343f" stroke-width="1.2"/>
-  <rect x="-32" y="-28" width="64" height="3" rx="1.5" fill="#8794a6" opacity="0.6"/>
+<!-- 2. THE SPOON, ONE of them, lying by the seed as a SCOOP. -->
+<g transform="translate(228,104) rotate(28)">
+  <ellipse cx="0" cy="0" rx="20" ry="13" fill="#4a4436"/>
+  <ellipse cx="0" cy="-1" rx="19" ry="12" fill="#a09274"/>
+  <ellipse cx="1" cy="1" rx="13" ry="7.5" fill="#6f6650" opacity="0.55"/>
+  <path d="M-16,-6 Q-19,0 -15,6" fill="none" stroke="#d8cba8" stroke-width="1.8" opacity="0.6" stroke-linecap="round"/>
+  <rect x="17" y="-2.6" width="58" height="5.2" rx="2.6" fill="#8e8266"/>
+  <rect x="17" y="-2.6" width="58" height="1.6" rx="0.8" fill="#c4b691" opacity="0.6"/>
 </g>
 
-<!-- 4. A TWIST OF BENT WIRE. One length, kinked at hard angles, with one turn
-     wrapped round itself: the only sharp thing in the drawer. -->
-<g transform="translate(350,186)">
-  <ellipse cx="0" cy="22" rx="60" ry="9" fill="#1e2820" opacity="0.45"/>
-  <path d="M-56,12 L-30,-8 L-12,14 Q-4,22 4,10 Q10,0 2,-4 Q-6,-6 -4,4 L18,-14 L34,8 L56,-6" fill="none" stroke="#2c343f" stroke-width="4.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M-56,12 L-30,-8 L-12,14 Q-4,22 4,10 Q10,0 2,-4 Q-6,-6 -4,4 L18,-14 L34,8 L56,-6" fill="none" stroke="#b08a5e" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M-50,8 L-30,-6" stroke="#e0c49a" stroke-width="1" opacity="0.6" stroke-linecap="round"/>
+<!-- 3. THE HEEL OF BREAD, on a saucer. -->
+<g transform="translate(316,178)">
+  <ellipse cx="0" cy="16" rx="44" ry="10" fill="#1e2820" opacity="0.5"/>
+  <ellipse cx="0" cy="10" rx="42" ry="13" fill="#8d97a4"/>
+  <ellipse cx="0" cy="8" rx="35" ry="10" fill="#b0b9c5"/>
+  <ellipse cx="0" cy="8" rx="24" ry="6.5" fill="#98a2af" opacity="0.6"/>
+  <path d="M-24,4 Q-20,-18 -2,-22 Q18,-24 24,-8 Q26,2 20,7 Q-2,12 -24,4 Z" fill="#8a6634"/>
+  <path d="M-19,2 Q-15,-14 -1,-17 Q14,-19 19,-7 Q20,0 16,4 Q-2,8 -19,2 Z" fill="#d8bb85"/>
+  <g fill="#c2a271" opacity="0.7">
+    <ellipse cx="-8" cy="-6" rx="3" ry="2.2"/><ellipse cx="4" cy="-9" rx="2.6" ry="1.9"/>
+    <ellipse cx="9" cy="-2" rx="2.4" ry="1.8"/><ellipse cx="-2" cy="0" rx="2.8" ry="2"/>
+  </g>
+  <g fill="#c2a271" opacity="0.8">
+    <ellipse cx="27" cy="9" rx="2.4" ry="1.7"/><ellipse cx="-29" cy="11" rx="2.2" ry="1.6"/>
+    <ellipse cx="33" cy="4" rx="1.8" ry="1.3"/>
+  </g>
+</g>
+
+<!-- 4. THE FOLDED CLOTH, to line a box with: the only thing with a fold. -->
+<g transform="translate(400,86)">
+  <ellipse cx="0" cy="34" rx="46" ry="10" fill="#1e2820" opacity="0.45"/>
+  <path d="M-44,28 Q-46,4 -38,-6 Q-4,-16 38,-8 Q46,2 44,28 Q0,38 -44,28 Z" fill="#5c6b7a"/>
+  <path d="M-38,14 Q0,4 38,12" fill="none" stroke="#78889a" stroke-width="3" opacity="0.7"/>
+  <path d="M-40,22 Q0,12 40,20" fill="none" stroke="#48545f" stroke-width="2.4" opacity="0.6"/>
+  <path d="M-36,-2 Q-2,-11 34,-4" fill="none" stroke="#78889a" stroke-width="2.6" opacity="0.55"/>
+</g>
+
+<!-- 5. A LENGTH OF SOFT STRING, coiled loose: two easy turns and an end. -->
+<g transform="translate(126,214)">
+  <g fill="none" stroke="#a89878" stroke-width="2.6" opacity="0.7" stroke-linecap="round">
+    <path d="M-34,0 Q-18,-11 2,-8 Q22,-5 30,4"/>
+    <path d="M-28,7 Q-12,-3 8,-1 Q26,1 34,9"/>
+  </g>
+  <path d="M34,9 Q56,16 76,10" fill="none" stroke="#a89878" stroke-width="2.2" opacity="0.55" stroke-linecap="round"/>
 </g>
 
 <!-- the room light moving very slightly over the drawer floor, so the shot
