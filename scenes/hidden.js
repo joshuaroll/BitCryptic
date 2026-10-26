@@ -113,16 +113,14 @@ function hidScreenWreck(x, y, s, lampId, o) {
 // pencil ranged 46 to 130 units long across scenes whose own comments insisted
 // it had not moved.
 //
-// CANON'S FACE (decision 2026-10-25, "(b) Cast model with a face from
-// hidden_5 on"). In hidden_1..4 his back is to the player and stays that way:
-// hidCanonBack, the back of his head and the headset, no face. From hidden_5
-// ("He finally turns") on he IS the mission cast model, an otter (Fredward's
-// round ears, cream muzzle and whiskers on darker fur #8F6A4E, slate coat,
-// listening-post headset): bcMissionPlace('canon', pose, x, floor, h, flip).
-// Never draw his face by hand and never bring the legacy bcCharacter('canon')
-// rig back for a front view. The model has no seated pose, so where he sat he
-// now stands beside his chair (hidSeated opts.stand). His close-up arms
-// (hidCastArm) take the model's fur and coat values from hidden_7 on.
+// CANON IS HUMAN, THROUGHOUT (Joshua, 2026-10-26: "The character can't change
+// from previous hidden, I want this character to still be human and their
+// hands too"). In hidden_1..4 his back is to the player: hidCanonBack, the
+// back of his head and the headset, no face. From hidden_5 ("He finally
+// turns") on he faces us, seated in his chair, as the shared human rig
+// (hidSeated front view -> hidCanon -> bcCharacter('canon')), exactly as the
+// live site drew him. His close-up arms (hidCastArm) end in a man's hand:
+// skin, four fingers. Never the mission cast otter, never a paw.
 
 function hidn(v) { return Math.round(v * 100) / 100; }
 
@@ -649,10 +647,7 @@ var HID_SIT_HIP = 5.04, HID_SIT_SOLE = 7.81;
 //   opts.body   hidCanonBack options for the back view
 //   opts.arm    markup that belongs between him and the chair's near parts
 //               (a reaching arm in the back view goes under the chair back)
-//   opts.stand  FRONT VIEW FROM hidden_5 ON: { pose, x, h, flip }. The mission
-//               cast Canon (bcMissionPlace('canon')) has no seated pose, so
-//               the chair stays exactly where it stood with him in it, empty,
-//               and he stands beside it on the same floor, in front of it.
+//   (Front view, hidden_5 on: Canon faces us, human, seated in the chair.)
 function hidSeated(r, x, floorY, opts) {
   opts = opts || {};
   var c = Object.assign({ w: r * 4.2, d: r * 1.3, backH: r * 3.2, rot: 0 }, opts.chair || {});
@@ -664,10 +659,6 @@ function hidSeated(r, x, floorY, opts) {
   var headY = floorY - drop;
   var seatY = headY + HID_SIT_HIP * r + dd * 0.5;   // the seat's near edge
   var ch = hidChairParts(x, seatY, c.rot, floorY, Object.assign({}, c, { view: back ? 'back' : 'front' }));
-  if (opts.stand && !back) {
-    var st = opts.stand;
-    return ch.under + ch.over + bcMissionPlace('canon', st.pose || 'ready', st.x, floorY, st.h, !!st.flip);
-  }
   var body = back ? hidCanonBack(r, x, headY, Object.assign({ stance: 'seated' }, opts.body || {}))
                   : hidCanon(r, x, headY);
   return ch.under + body + (opts.arm || '') + ch.over;
@@ -725,8 +716,8 @@ function hidCastArm(r, sx, sy, ex, ey, wx, wy, opts) {
   o += '<circle cx="' + hidn(ex) + '" cy="' + hidn(ey) + '" r="' + hidn(limb * 0.44) + '" fill="' + fill + '"/>';
   // the hand, hanging off the end of the forearm: local +y runs down the forearm
   var a = Math.atan2(wy - ey, wx - ex) * 180 / Math.PI - 90, t = opts.thumb === -1 ? -1 : 1;
-  // opts.paw: the mission cast Canon's otter paw values (fur #8F6A4E, shade
-  // #5E4634), for the close-ups from hidden_7 on, where he has his face.
+  // opts.paw: otter fur values (fur #8F6A4E, shade #5E4634), three fingers.
+  // NOT for Canon, who is human with a man's hand everywhere; unused here.
   var SH = opts.paw ? '#5E4634' : '#a3876f';   // skin turned away from the light
   var SK = opts.paw ? '#8F6A4E' : HID_SKIN;
   var parts = [], lines = '';
@@ -772,11 +763,17 @@ function hidCastArm(r, sx, sy, ex, ey, wx, wy, opts) {
       capS(-0.16 * t, 0.16, -0.03 * t, pa - 0.005, 0.088);      // thumb
       capS(0.06 * t, 0.25, 0.03 * t, pa, 0.09);                 // index
     } else {
-    ell(0, 0.18, 0.17, 0.17);
-    ell(0, pa - 0.1, 0.06, 0.08, SH);                         // the web, in shade
-    cap(0.15 * t, 0.24, 0.09 * t, pa + 0.02, 0.1, SH);        // middle, behind
-    cap(0.1 * t, 0.26, 0.035 * t, pa, 0.105);                // index pad
-    cap(-0.14 * t, 0.14, -0.04 * t, pa - 0.01, 0.1);         // thumb pad
+      // a man's pinch, four fingers: palm, then pinky, ring and middle curled
+      // into the palm (shade, each its own outlined knuckle so they read as
+      // fingers, not a mitten), then the thumb and index as SEPARATE outlined
+      // digits whose tips meet at the line, (0, pa). Review 2026-10-26: the
+      // merged-silhouette pinch read as a nub.
+      ell(0, 0.17, 0.17, 0.16);
+      capS(0.17 * t, 0.2, 0.17 * t, 0.33, 0.07, SH);            // pinky, curled
+      capS(0.13 * t, 0.22, 0.125 * t, 0.37, 0.075, SH);         // ring, curled
+      capS(0.08 * t, 0.24, 0.075 * t, 0.4, 0.078, SH);          // middle, curled
+      capS(-0.16 * t, 0.15, -0.03 * t, pa - 0.005, 0.082);      // thumb
+      capS(0.03 * t, 0.25, 0.015 * t, pa, 0.08);                // index
     }
   } else if (kind === 'flat') {
     [-0.11, -0.037, 0.037, 0.11].forEach(function (fx2, i) {
@@ -995,6 +992,54 @@ function hidChairParts(x, y, rot, floorY, opts) {
 function hidChair(x, y, rot, floorY, opts) {
   var c = hidChairParts(x, y, rot, floorY, opts);
   return c.under + c.over;
+}
+
+// THE LIVE-SITE CHAIR (World main's hidChair, verbatim). Kept ONLY for
+// hidden_end_1/2, which Joshua signed off as they look live ("keep old",
+// review 2026-10-26). Everything else uses hidChair above.
+function hidChairLive(x, y, rot, floorY, opts) {
+  opts = opts || {};
+  var w = opts.w || 44;             // seat width
+  var d = opts.d || 16;             // how deep the seat reads, foreshortened
+  var backH = opts.backH || w * 0.82;
+  var hw = w / 2;
+  var o = '';
+  var legW = Math.max(3.5, w * 0.09);
+  var legFill = opts.legFill || HID_CHAIR_D;
+  // the two back legs, drawn first so the seat overlaps them
+  var backOff = d * 0.55;
+  var bl = [-hw + legW * 0.6, hw - legW * 1.6];
+  for (var i = 0; i < 2; i++) {
+    o += '<rect x="' + hidn(x + bl[i] * 0.82) + '" y="' + hidn(y - backOff) +
+      '" width="' + hidn(legW * 0.86) + '" height="' + hidn(floorY - d * 0.4 - (y - backOff)) +
+      '" fill="' + legFill + '" opacity="0.78"/>';
+  }
+  // the seat and the back, as one body, rotated about the seat centre
+  var body = '';
+  body += '<path d="M' + hidn(-hw) + ',0 L' + hidn(hw) + ',0 L' + hidn(hw - d * 0.34) + ',' + hidn(-d * 0.55) +
+    ' L' + hidn(-hw + d * 0.34) + ',' + hidn(-d * 0.55) + ' Z" fill="' + (opts.seat || HID_CHAIR) + '"/>';
+  body += '<rect x="' + hidn(-hw) + '" y="0" width="' + hidn(w) + '" height="' + hidn(d * 0.36) +
+    '" rx="1.5" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.75"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.3) + '" y="' + hidn(-d * 0.55 - backH) +
+    '" width="' + hidn(w - d * 0.6) + '" height="' + hidn(backH) + '" rx="3" fill="' + (opts.seat || HID_CHAIR) + '"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.3) + '" y="' + hidn(-d * 0.55 - backH) +
+    '" width="' + hidn(w - d * 0.6) + '" height="3" rx="1.5" fill="' + (opts.seatEdge || HID_CHAIR_L) + '"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.7) + '" y="' + hidn(-d * 0.55 - backH * 0.72) +
+    '" width="' + hidn(w - d * 1.4) + '" height="2" rx="1" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.55"/>';
+  body += '<rect x="' + hidn(-hw + d * 0.7) + '" y="' + hidn(-d * 0.55 - backH * 0.42) +
+    '" width="' + hidn(w - d * 1.4) + '" height="2" rx="1" fill="' + (opts.seatEdge || HID_CHAIR_L) + '" opacity="0.45"/>';
+  o += '<g transform="translate(' + hidn(x) + ',' + hidn(y) + ') rotate(' + rot + ')">' + body + '</g>';
+  // the two front legs, vertical to the floor
+  var fl = [-hw + legW * 0.4, hw - legW * 1.4];
+  for (var j = 0; j < 2; j++) {
+    o += '<rect x="' + hidn(x + fl[j]) + '" y="' + hidn(y + d * 0.2) +
+      '" width="' + hidn(legW) + '" height="' + hidn(floorY - (y + d * 0.2)) +
+      '" fill="' + legFill + '"/>';
+  }
+  // contact shadow
+  o += '<ellipse cx="' + hidn(x) + '" cy="' + hidn(floorY) + '" rx="' + hidn(w * 0.66) +
+    '" ry="' + hidn(w * 0.13) + '" fill="#05080f" opacity="0.34"/>';
+  return o;
 }
 
 // ---------------------------------------------------------------------------
@@ -1603,8 +1648,8 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
   </g>
 </g>
 <!-- THE PENCIL, just set down. Parallel to the table edge, and it is exactly parallel. -->
-<!-- 12 units nearer Canon than it was, so his paw, at a natural arm's
-     length, still has its pads on the pencil's near end -->
+<!-- 12 units nearer Canon than it was, so his hand, at a natural arm's
+     length, still has its fingertips on the pencil's near end -->
 <rect x="164" y="152" width="76" height="3.6" rx="1.8" fill="#F2C14E" opacity="0.9"/>
 <rect x="236" y="152" width="6" height="3.6" rx="1.2" fill="#525f79"/>
 <polygon points="164,152 158,153.8 164,155.6" fill="#6d7b96"/>
@@ -1617,13 +1662,13 @@ STORY_SCENES['hidden_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
      His chair, seen from behind, between us and him, so he reads as seated
      ("I would stand up, but..."): hidSeated, the head pinned at 64,150. His
      right arm is the cast arm (hidCastArm, the hidden_6 construction), from
-     the model's own shoulder (hx + 0.765r, hy + 2.23r), ending in his otter
-     paw (paw: true, the hidden_7/8 paw) with its pads closed on the near end
+     the model's own shoulder (hx + 0.765r, hy + 2.23r), ending in his
+     hand (the hidden_7/8 hand) with its fingertips closed on the near end
      of the pencil he just set down. It goes under the chair back. -->
 ` + hidSeated(24, 64, 0, { view: 'back', headY: 150,
   chair: { w: 104, d: 30, backH: 56, seat: '#333e52', seatEdge: '#46536b' },
   body: { dropArm: 'right' },
-  arm: hidCastArm(24, 87, 189, 120, 190, 160, 160.1, { thumb: -1, cap: true, hand: 'pinch', paw: true }) }) + `
+  arm: hidCastArm(24, 87, 189, 120, 190, 160, 160.1, { thumb: -1, cap: true, hand: 'pinch' }) }) + `
 <!-- CANON'S ARM STANDARD (hidden_2/3/4/7/8), 2026-10-25: hidCastArm, the
      cast model's own arm and mitt (hidden_6 is the reference). It replaced
      the BCRig five-finger hands, which were a different character's hands on
@@ -1850,9 +1895,8 @@ STORY_SCENES['hidden_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 
 // Scene 5: He finally turns. He is younger than the back of his head suggested
 // and more tired than the front of it admits. This is the first frame with his
-// face (decision 2026-10-25): the mission cast Canon, out of his chair now,
-// explaining toward the second chair ("You have to put the thing in their
-// hands").
+// face: the same human man, swivelled in his chair toward the second chair
+// ("You have to put the thing in their hands").
 STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="hidRoom5" x1="0" y1="0" x2="0" y2="1">
@@ -1915,12 +1959,10 @@ STORY_SCENES['hidden_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 </g>
 <!-- HIS CHAIR, seen from the side because he has swivelled in it. Same
      helper, turned: a seat, a back, and four legs on the floor. -->
-<!-- CANON, TURNED: the mission cast model, face and all, from here on. It
-     has no seated pose, so his chair stays where hidSeated stood it and he
-     stands beside it, 'explain', turned (flip) toward the second chair. -->
+<!-- CANON, TURNED: the same human man as hidden_1..4, now facing us, seated
+     in his chair (hidSeated front view, the shared bcCharacter rig). -->
 ` + hidSeated(15, 260, 253, { view: 'front',
-  chair: { w: 60, d: 20, backH: 54, rot: 4, seat: '#333e52', seatEdge: '#46536b' },
-  stand: { pose: 'explain', x: 312, h: 164, flip: true } }) + `
+  chair: { w: 60, d: 20, backH: 54, rot: 4, seat: '#333e52', seatEdge: '#46536b' } }) + `
 <!-- second chair, and he is turned toward it. Its near feet (257) are in
      front of the table's right leg (253), which it is drawn over. -->
 ` + hidChair(392, 232, -7, 257, { w: 48, d: 16, backH: 48 }) + `
@@ -2021,12 +2063,10 @@ STORY_SCENES['hidden_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
 <ellipse cx="250" cy="248" rx="170" ry="14" fill="#5fa0b8" opacity="0.08"/>
 <!-- second chair. Drawn after the floor wash so no part of it is veiled. -->
 ` + hidChair(332, 208, -5, 252, { w: 48, d: 16, backH: 46 }) + `
-<!-- CANON BESIDE HIS CHAIR (hidSeated opts.stand): the mission cast model
-     has no seated pose, so the chair stays put and he stands at it, 'think',
-     the headset cup to his ear: "I am watched more than you are." -->
+<!-- CANON IN HIS CHAIR, facing us: the same human man as hidden_1..5
+     (hidSeated front view). "I am watched more than you are." -->
 ` + hidSeated(HID_HEAD, 200, 252, { view: 'front',
-  chair: { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#46536b' },
-  stand: { pose: 'think', x: 252, h: 164 } }) + `
+  chair: { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#46536b' } }) + `
 </svg>`;
 
 // Scene 7: He opens a drawer. The drawer of a man who makes things out of what
@@ -2145,9 +2185,8 @@ STORY_SCENES['hidden_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
      BCRig.arm(20, shoulder 150,-26 -> wrist 160,35, sleeve #544e59 0.36r over #171519 halo 0.48r), cuff at the wrist
      BCRig.hand(20, size 0.76, edgeW 11.2 (Canon's arm standard, see hidden_2), wrist 160,35, pose { thumb1 34, thumb2 22, index 8/16/34, middle 8/18/36, ring 10/20/38, pinky 12/22/40 } (a grab with the knuckles opened so the fingertips hook over the lip), rot 180, skin #c9a88f, edge #171519)
      Regenerate from the rig rather than editing the numbers below.
-     paw: true (decision 2026-10-25, Canon is the mission cast otter from
-     hidden_5 on): the cast model's fur and three fingers, not a man's hand. -->
-<path d="M146,63.6 L176,63.6" stroke="#0b0f17" stroke-width="1.6" opacity="0.55" stroke-linecap="round"/>` + hidCastArm(44, 150, -90, 156, -26, 161, 45, { thumb: -1, hand: 'lip', lip: 0.42, paw: true }) + `
+     A man's hand (Canon stays human throughout): skin, four fingers. -->
+<path d="M146,63.6 L176,63.6" stroke="#0b0f17" stroke-width="1.6" opacity="0.55" stroke-linecap="round"/>` + hidCastArm(44, 150, -90, 156, -26, 161, 45, { thumb: -1, hand: 'lip', lip: 0.42 }) + `
 </svg>`;
 
 // Scene 8: THE SOUNDING FORK (decision 2026-10-25, "Fork everywhere": the
@@ -2242,11 +2281,9 @@ STORY_SCENES['hidden_8'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:
      above: Canon's arm standard, hidCastArm hand:'pinch' (index and middle
      pads closed on the thumb pad, the line leaving between them at 250,71;
      the elbow is off frame so no sleeve lump shows at the top edge). It replaced a BCRig
-     five-finger hand and a hand-drawn sleeve. paw: the mission cast otter's
-     fur (decision 2026-10-25), as in hidden_7; thumb and index are separate
-     outlined digits meeting at the line, and the sleeve is the cast coat
-     slate #4D4854 (was #3a353f, darker than the model's coat). -->
-` + hidCastArm(40, 262, -90, 252, -30, 250, 52, { thumb: 1, fill: '#4D4854', hand: 'pinch', paw: true }) + `
+     five-finger hand and a hand-drawn sleeve. A man's hand, as in hidden_7
+     (Canon stays human throughout), in his own sleeve value. -->
+` + hidCastArm(40, 262, -90, 252, -30, 250, 52, { thumb: 1, hand: 'pinch' }) + `
 </svg>`;
 
 // Scene 9: Two letters on a fresh card, slid across. The pencil goes back
@@ -2957,9 +2994,10 @@ STORY_SCENES['hidden_m5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http
 // inside the one warm thing Canon can only watch. Then the last frame puts it
 // back on a screen, cold room around it, and nothing moves.
 //
-// Fredward is not Canon. Both faces are drawn, each by its own cast model:
-// Fredward by bcApprovedPlace('fredward'), Canon (from hidden_5 on) by
-// bcMissionPlace('canon'). Neither face is ever drawn by hand.
+// Fredward is not Canon. Both faces are drawn, each by its own model:
+// Fredward by bcApprovedPlace('fredward'), Canon (human, from hidden_5 on) by
+// the shared rig bcCharacter('canon') (hidSeated / hidCanon). Neither face is
+// ever drawn by hand.
 // ---------------------------------------------------------------------------
 
 // THE FOUR PAGES (Canon's letter, out of the tin). One sheet design for every
@@ -3123,8 +3161,9 @@ STORY_SCENES['hidden_end_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 </svg>`;
 
 // E2: "Here is the whole of my plan, and I would like you to hear how thin it
-// is." He does not sit down for this. Canon standing, facing us, the big
-// screen behind him. Four years, and that is what he has got.
+// is." He does not sit down for this. Canon standing, the big screen behind
+// him. Four years, and that is what he has got. RESTORED to the live-site
+// frame (World main) per Joshua's review 2026-10-26: "keep old".
 STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="hidRoomE1" x1="0" y1="0" x2="0" y2="1">
@@ -3151,9 +3190,7 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
   <circle cx="120" cy="150" r="1.4" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="150;30" dur="27.12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.2;0.2;0" dur="27.12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
   <circle cx="330" cy="170" r="1.6" fill="#7fc4d8" opacity="0"><animate attributeName="cy" values="170;34" dur="25.48s" repeatCount="indefinite" begin="7s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.16;0.16;0" dur="25.48s" repeatCount="indefinite" begin="7s" calcMode="spline" keyTimes="0;0.18;0.82;1" keySplines="0 0 0.58 1;0.42 0 0.58 1;0.42 0 1 1"/></circle>
   <path d="M108,190 Q128,150 186,142 L322,146 Q374,156 372,190 Z" fill="#061019"/>
-  <!-- the mast, stepped aft to x 278-296 so it stands in the gap between
-       Canon's head and the lamp instead of directly behind his head -->
-  <path d="M286,144 L278,88 L296,86 L304,144Z" fill="#061019"/>
+  <path d="M234,142 L224,86 L242,84 L252,142Z" fill="#061019"/>
   <circle cx="330" cy="158" r="44" fill="url(#hidLampE1)" opacity="0.45">
     <animate attributeName="opacity" values="0.3;0.56;0.3" dur="10.16s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
@@ -3167,14 +3204,12 @@ STORY_SCENES['hidden_end_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="h
 <rect x="0" y="194" width="500" height="66" fill="#101c2c"/>
 <path d="M72,194 L428,194 L500,260 L0,260 Z" fill="#16323a" opacity="0.4"/>
 <path d="M140,194 L360,194 L420,260 L80,260 Z" fill="#5fa0b8" opacity="0.07"/>
-<!-- CANON STANDING. He does not sit down for this. Full height in front of
-     the bright screen: the mission cast model (face from hidden_5 on),
-     'explain', laying out the plan. The helper emits his contact shadow. -->
-` + bcMissionPlace('canon', 'explain', 219, 246, 168) + `
-<!-- the empty second chair, pushed back, still there -->
+<!-- CANON STANDING. He does not sit down for this. Full height, near-black
+     against the bright screen. This is his biggest silhouette. -->
+<g transform="translate(219 90)">` + bcCharacter('canon',20,{"expr":"tired","stance":"standing"}) + `</g>
 <!-- the empty second chair, pushed back, still there. Legs used to end at
      278.7 and 266.8 against a floor of 260: both of them through the deck. -->
-` + hidEndChair(410, 218, -6, 258, 1) + `
+` + hidChairLive(410, 218, -6, 258, { w: 52, d: 18, backH: 50 }) + `
 </svg>`;
 
 // E3: the choice. "You are going down there, because you are the one he makes
@@ -3968,13 +4003,10 @@ STORY_SCENES['hidden_end_13'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="
      chair as hidden_1..8 (hidChair), at the same size: hidEndChair's 0.75
      scale made it a child's chair beside his. -->
 ` + hidChair(352, 216, -8, 254, { w: 48, d: 16, backH: 46 }) + `
-<!-- CANON AT HIS CHAIR, watching. He does not ask you what happened.
-     The chair is the hidden_6 chair, where hidSeated stood it; the mission
-     cast model has no seated pose, so he stands beside it ('ready', tired
-     eyelids), at the hidden_6 size. -->
+<!-- CANON IN HIS CHAIR, watching. He does not ask you what happened.
+     The hidden_6 chair and the same human man, seated, at the hidden_6 size. -->
 ` + hidSeated(HID_HEAD, 238, 254, { view: 'front',
-  chair: { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#5b6a86' },
-  stand: { pose: 'ready', x: 196, h: 164 } }) + `
+  chair: { w: 62, d: 18, backH: 52, seat: '#333e52', seatEdge: '#5b6a86' } }) + `
 </svg>`;
 
 // E15 / E16 / E17: "He read it. He put his hand on the table." He gathers the

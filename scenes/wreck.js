@@ -1045,6 +1045,29 @@ function wDesk(x, floor, h, opts) {
   return o;
 }
 
+// RE-POSE ONE ARM of a bcApprovedHold() figure so its hand lands ON the held
+// object instead of floating over its face (round 3: "Fix hands on the book").
+// Pose coordinates. The shoulder stays; the elbow and hand move, and the arm
+// path, its cuff (in F.behind) and the hand group (in F.front) move together,
+// so the hand always ends the arm. The hand turns with the forearm.
+//   hand0  where the pose had that hand, e.g. [196, 412] (cradle, left)
+function wArmTo(F, hand0, elbow, hand) {
+  var m = new RegExp('M([\\d.]+) ([\\d.]+)Q([\\d.]+) ([\\d.]+) ([\\d.]+) ([\\d.]+)L' + hand0[0] + ' ' + hand0[1] + '"').exec(F.behind);
+  if (!m) return F;
+  var e0 = [+m[5], +m[6]];
+  var c = [+m[3] + (elbow[0] - e0[0]) / 2, +m[4] + (elbow[1] - e0[1]) / 2];
+  F.behind = F.behind.split(m[0]).join('M' + m[1] + ' ' + m[2] + 'Q' + wn(c[0]) + ' ' + wn(c[1]) + ' ' + wn(elbow[0]) + ' ' + wn(elbow[1]) + 'L' + wn(hand[0]) + ' ' + wn(hand[1]) + '"');
+  var a0 = Math.atan2(hand0[1] - e0[1], hand0[0] - e0[0]), a1 = Math.atan2(hand[1] - elbow[1], hand[0] - elbow[0]);
+  F.behind = F.behind.replace(/<path d="M([\d.]+) ([\d.]+)L([\d.]+) ([\d.]+)"( stroke="[^"]+" stroke-width="5")\/>/g, function (all, x1, y1, x2, y2, rest) {
+    if (Math.abs((+x1 + +x2) / 2 - hand0[0]) > 1 || Math.abs((+y1 + +y2) / 2 - hand0[1]) > 1) return all;
+    var half = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 2, px = -Math.sin(a1) * half, py = Math.cos(a1) * half;
+    return '<path d="M' + wn(hand[0] - px) + ' ' + wn(hand[1] - py) + 'L' + wn(hand[0] + px) + ' ' + wn(hand[1] + py) + '"' + rest + '/>';
+  });
+  F.front = F.front.replace('translate(' + hand0[0] + ' ' + hand0[1] + ') rotate(0)',
+    'translate(' + wn(hand[0]) + ' ' + wn(hand[1]) + ') rotate(' + wn((a1 - a0) * 180 / Math.PI) + ')');
+  return F;
+}
+
 // THE CABIN. Decision desk 2026-10-25 ("Where the book table stands": Cabin):
 // the book table lives in ONE room, and every table scene draws that room from
 // here: wreck_3 to 5, 7, 9, 10, wreck_return_2 and wreck_return_4. Built from
@@ -2223,6 +2246,10 @@ STORY_SCENES['wreck_return_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
 // The camera is closer than wreck_3, so he is drawn at 196 rather than 166.
 STORY_SCENES['wreck_return_1'] = (function () {
   var F = bcApprovedHold('fredward', 'cradle', 248, 222, 196, false, { helmet: { hose: 'right' }, shadow: false });
+  // round 3: the cradle hands sat in the middle of the open spread. Elbows out,
+  // hands on the two lower corners of the book, closing over its edge.
+  wArmTo(F, [196, 412], [130, 398], [148, 434]);
+  wArmTo(F, [254, 412], [318, 398], [301, 434]);
   return `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="wrRetWater1" x1="0" y1="0" x2="0" y2="1">
@@ -2526,6 +2553,9 @@ STORY_SCENES['wreck_return_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
   // close-camera scale (196) as wreck_return_1/2. 'cradle' is the held-object
   // pose: book between F.behind and F.front so his hands close over it.
   var F = bcApprovedHold('fredward', 'cradle', 250, 287, 196, false, { helmet: { hose: 'right' }, shadow: false });
+  // round 3: hands on the book's two lower corners, not in mid-page
+  wArmTo(F, [196, 412], [108, 390], [123, 424]);
+  wArmTo(F, [254, 412], [332, 390], [317, 424]);
   return F.behind
     + book('R3', 96.8, { x: 250, y: 208 })
     + F.front
@@ -2551,7 +2581,10 @@ STORY_SCENES['wreck_return_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
 // his near hand coming in over the table toward the catcher. Body drawn before
 // wTable, so the table top crosses his thighs and its leg stands in front;
 // hands drawn after the book, so the reaching hand comes over its page.
-var WR4_WEBBY = bcApprovedHold('webby', 'reach', 390, 240, 162, true, { helmet: { hose: 'left' } });
+// Round 3: his fingertips stopped 13px short of the page. He stands closer
+// (390 -> 368) and the reaching forearm extends and dips, so the hand lies on
+// the right-hand page, drawn after the book.
+var WR4_WEBBY = wArmTo(bcApprovedHold('webby', 'reach', 368, 240, 162, true, { helmet: { hose: 'left' } }), [355, 402], [322, 387], [376, 428]);
 STORY_SCENES['wreck_return_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="wrRetWater4" x1="0" y1="0" x2="0" y2="1">
@@ -2580,7 +2613,7 @@ STORY_SCENES['wreck_return_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
      (166), one open hand out over the book. The table goes down BEFORE him;
      bcApprovedPlace emits his contact shadow. -->
 ` + '<ellipse cx="252" cy="256" rx="168" ry="9" fill="#07141a" opacity="0.3"/>'
-  + WR4_WEBBY.behind + wDiveHose(390, 240, 162, true, 'left')
+  + WR4_WEBBY.behind + wDiveHose(368, 240, 162, true, 'left')
   + wTable(288, 30, { x: 252, y: 212 })
   + bcApprovedPlace('fredward', 'explain', 104, 252, 166, false, { helmet: { hose: 'left' } }) + `
 <!-- Air hose carried on past the model's end (29,28) and out of frame, same
@@ -2633,22 +2666,26 @@ STORY_SCENES['wreck_return_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
 <circle cx="470" cy="70" r="0.9" fill="#cfeee0" opacity="0.18"><animate attributeName="cy" values="70;52;70" dur="12.74s" repeatCount="indefinite" begin="4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="opacity" values="0.06;0.22;0.06" dur="8.89s" repeatCount="indefinite" begin="4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </svg>`;
 
-// Return scene 5: Fredward at the table with one hand holding the page down,
-// seen from the rope, going away. The rope is in the near foreground, he is
-// small and busy at the far end of the lit deck, and the whole frame is
-// already receding.
+// Return scene 5: Fredward with one hand holding the page down against the
+// current, seen from the rope, going away. The rope is in the near foreground,
+// he is small and busy on the lit deck, and the whole frame is already
+// receding. Round 3: the book table lives in the cabin (wCabin, decision desk
+// 2026-10-25), and this camera is outside on the rope, so no table out here:
+// he stands on the open deck as in wreck_return_1, the book held open in his
+// arms, one hand on its corner and the other flat on the page.
 // YOUR GLOVED HAND ON THE ROPE, for wreck_return_5. Generated by the character
 // rig, not drawn: shoulder (-6,286) off the bottom-left edge,
-//   wrist = BCRig.reach(34, shoulder, -50, 0.9)          -> (60.88, 206.3)
+//   wrist = BCRig.reach(34, shoulder, -48, 0.93)         -> (65.94, 206.11)
 //   BCRig.arm(34, -6, 286, wrist, 34 * 0.25, { fill: '#132c30' })
-//   BCRig.hand(34, wrist, { pose: 'grab', rot: 55, skin: '#1a4a55', edge: '#0a1a1e', edgeW: 10 })
-// Regenerate from the rig rather than editing the numbers. The scene draws the
-// arm and whole hand BEFORE the rope and the four fingers again AFTER it (the
-// same hand with its palm and thenar pad removed), so the fingers close over
-// the rope instead of the palm lying across it.
-var WR5_ARM = '<path d="M-6,286 Q36.23,253.53 60.88,206.3" fill="none" stroke="#132c30" stroke-width="13.6" stroke-linecap="round"/>';
-var WR5_HAND = '<g transform="translate(60.88,206.3) rotate(55) scale(0.25,0.25) translate(-158,-330)"><g fill="#1a4a55" stroke="#0a1a1e" stroke-width="10" stroke-linejoin="round"><g transform="translate(212,232) rotate(52)"><path d="M -12 0 C -12 -23.65 -10.8 -33.54 -10.8 -32.2 A 10.8 10.8 0 0 1 10.8 -32.2 C 10.8 -33.54 12 -23.65 12 0 A 12 12 0 0 1 -12 0 Z"/><g transform="translate(0,-43) rotate(58)"><path d="M -10.8 0 C -10.8 -15.4 -9.6 -21.84 -9.6 -18.4 A 9.6 9.6 0 0 1 9.6 -18.4 C 9.6 -21.84 10.8 -15.4 10.8 0 A 10.8 10.8 0 0 1 -10.8 0 Z"/><g transform="translate(0,-28) rotate(20)"><path d="M -9.6 0 C -9.6 -12.65 -8.88 -17.94 -8.88 -14.12 A 8.88 8.88 0 0 1 8.88 -14.12 C 8.88 -17.94 9.6 -12.65 9.6 0 A 9.6 9.6 0 0 1 -9.6 0 Z"/></g></g></g><g transform="translate(184,212) rotate(50)"><path d="M -14 0 C -14 -30.8 -12.6 -43.68 -12.6 -43.4 A 12.6 12.6 0 0 1 12.6 -43.4 C 12.6 -43.68 14 -30.8 14 0 A 14 14 0 0 1 -14 0 Z"/><g transform="translate(0,-56) rotate(56)"><path d="M -12.6 0 C -12.6 -20.35 -11.2 -28.86 -11.2 -25.8 A 11.2 11.2 0 0 1 11.2 -25.8 C 11.2 -28.86 12.6 -20.35 12.6 0 A 12.6 12.6 0 0 1 -12.6 0 Z"/><g transform="translate(0,-37) rotate(18)"><path d="M -11.2 0 C -11.2 -14.85 -10.36 -21.06 -10.36 -16.64 A 10.36 10.36 0 0 1 10.36 -16.64 C 10.36 -21.06 11.2 -14.85 11.2 0 A 11.2 11.2 0 0 1 -11.2 0 Z"/></g></g></g><path d="M 104 290 C 96 266 98 240 108 222 C 114 210 124 204 136 202 C 145 200 152 201 158 203 C 170 199 186 202 197 211 C 208 220 215 236 218 253 C 222 273 222 294 218 311 C 213 328 202 340 187 346 C 171 353 149 353 134 346 C 120 340 110 328 106 313 C 103 303 104 296 104 290 Z"/><ellipse cx="122" cy="290" rx="31" ry="44" transform="rotate(-16 122 290)"/><g transform="translate(152,204) rotate(48)"><path d="M -15 0 C -15 -34.1 -13.5 -48.36 -13.5 -48.5 A 13.5 13.5 0 0 1 13.5 -48.5 C 13.5 -48.36 15 -34.1 15 0 A 15 15 0 0 1 -15 0 Z"/><g transform="translate(0,-62) rotate(54)"><path d="M -13.5 0 C -13.5 -22 -12 -31.2 -12 -28 A 12 12 0 0 1 12 -28 C 12 -31.2 13.5 -22 13.5 0 A 13.5 13.5 0 0 1 -13.5 0 Z"/><g transform="translate(0,-40) rotate(16)"><path d="M -12 0 C -12 -15.95 -11.1 -22.62 -11.1 -17.9 A 11.1 11.1 0 0 1 11.1 -17.9 C 11.1 -22.62 12 -15.95 12 0 A 12 12 0 0 1 -12 0 Z"/></g></g></g><g transform="translate(120,214) rotate(44)"><path d="M -14.5 0 C -14.5 -30.8 -13.05 -43.68 -13.05 -42.95 A 13.05 13.05 0 0 1 13.05 -42.95 C 13.05 -43.68 14.5 -30.8 14.5 0 A 14.5 14.5 0 0 1 -14.5 0 Z"/><g transform="translate(0,-56) rotate(50)"><path d="M -13.05 0 C -13.05 -19.8 -11.6 -28.08 -11.6 -24.4 A 11.6 11.6 0 0 1 11.6 -24.4 C 11.6 -28.08 13.05 -19.8 13.05 0 A 13.05 13.05 0 0 1 -13.05 0 Z"/><g transform="translate(0,-36) rotate(14)"><path d="M -11.6 0 C -11.6 -15.4 -10.73 -21.84 -10.73 -17.27 A 10.73 10.73 0 0 1 10.73 -17.27 C 10.73 -21.84 11.6 -15.4 11.6 0 A 11.6 11.6 0 0 1 -11.6 0 Z"/></g></g></g><g transform="translate(104,298) rotate(-46) rotate(30)"><path d="M -17 0 C -17 -27.5 -14.96 -39 -14.96 -35.04 A 14.96 14.96 0 0 1 14.96 -35.04 C 14.96 -39 17 -27.5 17 0 A 17 17 0 0 1 -17 0 Z"/><g transform="translate(0,-50) rotate(18)"><path d="M -14.96 0 C -14.96 -22 -13.6 -31.2 -13.6 -26.4 A 13.6 13.6 0 0 1 13.6 -26.4 C 13.6 -31.2 14.96 -22 14.96 0 A 14.96 14.96 0 0 1 -14.96 0 Z"/></g></g></g><g fill="#1a4a55"><g transform="translate(212,232) rotate(52)"><path d="M -12 0 C -12 -23.65 -10.8 -33.54 -10.8 -32.2 A 10.8 10.8 0 0 1 10.8 -32.2 C 10.8 -33.54 12 -23.65 12 0 A 12 12 0 0 1 -12 0 Z"/><g transform="translate(0,-43) rotate(58)"><path d="M -10.8 0 C -10.8 -15.4 -9.6 -21.84 -9.6 -18.4 A 9.6 9.6 0 0 1 9.6 -18.4 C 9.6 -21.84 10.8 -15.4 10.8 0 A 10.8 10.8 0 0 1 -10.8 0 Z"/><g transform="translate(0,-28) rotate(20)"><path d="M -9.6 0 C -9.6 -12.65 -8.88 -17.94 -8.88 -14.12 A 8.88 8.88 0 0 1 8.88 -14.12 C 8.88 -17.94 9.6 -12.65 9.6 0 A 9.6 9.6 0 0 1 -9.6 0 Z"/></g></g></g><g transform="translate(184,212) rotate(50)"><path d="M -14 0 C -14 -30.8 -12.6 -43.68 -12.6 -43.4 A 12.6 12.6 0 0 1 12.6 -43.4 C 12.6 -43.68 14 -30.8 14 0 A 14 14 0 0 1 -14 0 Z"/><g transform="translate(0,-56) rotate(56)"><path d="M -12.6 0 C -12.6 -20.35 -11.2 -28.86 -11.2 -25.8 A 11.2 11.2 0 0 1 11.2 -25.8 C 11.2 -28.86 12.6 -20.35 12.6 0 A 12.6 12.6 0 0 1 -12.6 0 Z"/><g transform="translate(0,-37) rotate(18)"><path d="M -11.2 0 C -11.2 -14.85 -10.36 -21.06 -10.36 -16.64 A 10.36 10.36 0 0 1 10.36 -16.64 C 10.36 -21.06 11.2 -14.85 11.2 0 A 11.2 11.2 0 0 1 -11.2 0 Z"/></g></g></g><path d="M 104 290 C 96 266 98 240 108 222 C 114 210 124 204 136 202 C 145 200 152 201 158 203 C 170 199 186 202 197 211 C 208 220 215 236 218 253 C 222 273 222 294 218 311 C 213 328 202 340 187 346 C 171 353 149 353 134 346 C 120 340 110 328 106 313 C 103 303 104 296 104 290 Z"/><ellipse cx="122" cy="290" rx="31" ry="44" transform="rotate(-16 122 290)"/><g transform="translate(152,204) rotate(48)"><path d="M -15 0 C -15 -34.1 -13.5 -48.36 -13.5 -48.5 A 13.5 13.5 0 0 1 13.5 -48.5 C 13.5 -48.36 15 -34.1 15 0 A 15 15 0 0 1 -15 0 Z"/><g transform="translate(0,-62) rotate(54)"><path d="M -13.5 0 C -13.5 -22 -12 -31.2 -12 -28 A 12 12 0 0 1 12 -28 C 12 -31.2 13.5 -22 13.5 0 A 13.5 13.5 0 0 1 -13.5 0 Z"/><g transform="translate(0,-40) rotate(16)"><path d="M -12 0 C -12 -15.95 -11.1 -22.62 -11.1 -17.9 A 11.1 11.1 0 0 1 11.1 -17.9 C 11.1 -22.62 12 -15.95 12 0 A 12 12 0 0 1 -12 0 Z"/></g></g></g><g transform="translate(120,214) rotate(44)"><path d="M -14.5 0 C -14.5 -30.8 -13.05 -43.68 -13.05 -42.95 A 13.05 13.05 0 0 1 13.05 -42.95 C 13.05 -43.68 14.5 -30.8 14.5 0 A 14.5 14.5 0 0 1 -14.5 0 Z"/><g transform="translate(0,-56) rotate(50)"><path d="M -13.05 0 C -13.05 -19.8 -11.6 -28.08 -11.6 -24.4 A 11.6 11.6 0 0 1 11.6 -24.4 C 11.6 -28.08 13.05 -19.8 13.05 0 A 13.05 13.05 0 0 1 -13.05 0 Z"/><g transform="translate(0,-36) rotate(14)"><path d="M -11.6 0 C -11.6 -15.4 -10.73 -21.84 -10.73 -17.27 A 10.73 10.73 0 0 1 10.73 -17.27 C 10.73 -21.84 11.6 -15.4 11.6 0 A 11.6 11.6 0 0 1 -11.6 0 Z"/></g></g></g><g transform="translate(104,298) rotate(-46) rotate(30)"><path d="M -17 0 C -17 -27.5 -14.96 -39 -14.96 -35.04 A 14.96 14.96 0 0 1 14.96 -35.04 C 14.96 -39 17 -27.5 17 0 A 17 17 0 0 1 -17 0 Z"/><g transform="translate(0,-50) rotate(18)"><path d="M -14.96 0 C -14.96 -22 -13.6 -31.2 -13.6 -26.4 A 13.6 13.6 0 0 1 13.6 -26.4 C 13.6 -31.2 14.96 -22 14.96 0 A 14.96 14.96 0 0 1 -14.96 0 Z"/></g></g></g></g>';
-var WR5_FINGERS = WR5_HAND.replace(/<path d="M 104 290[^"]*"\/>/g, '').replace(/<ellipse cx="122"[^>]*\/>/g, '');
+//   BCRig.hand(34, wrist, { pose: 'fist', rot: 90, flip: true, skin: '#1a4a55', edge: '#0a1a1e', edgeW: 10 })
+// Regenerate from the rig rather than editing the numbers. Round 3 ("the hand
+// doesn't work"): it was a half-open 'grab' with the rope drawn through its
+// palm and the fingertips hanging past it, on a rope swaying out from under
+// it. Now a closed fist, knuckle line along the rope, drawn OVER the rope so
+// the rope goes in at the top of the fist and out at the bottom; rope and
+// hand share one bob, because a rope you hang from moves with you.
+var WR5_ARM = '<path d="M-6,286 Q38.5,253.73 65.94,206.11" fill="none" stroke="#132c30" stroke-width="13.6" stroke-linecap="round"/>';
+var WR5_FIST = '<g transform="translate(65.94,206.11) rotate(90) scale(-0.25,0.25) translate(-158,-330)"><g fill="#1a4a55" stroke="#0a1a1e" stroke-width="10" stroke-linejoin="round"><g transform="translate(212,232) rotate(74)"><path d="M -12 0 C -12 -23.65 -10.8 -33.54 -10.8 -32.2 A 10.8 10.8 0 0 1 10.8 -32.2 C 10.8 -33.54 12 -23.65 12 0 A 12 12 0 0 1 -12 0 Z"/><g transform="translate(0,-43) rotate(88)"><path d="M -10.8 0 C -10.8 -15.4 -9.6 -21.84 -9.6 -18.4 A 9.6 9.6 0 0 1 9.6 -18.4 C 9.6 -21.84 10.8 -15.4 10.8 0 A 10.8 10.8 0 0 1 -10.8 0 Z"/><g transform="translate(0,-28) rotate(46)"><path d="M -9.6 0 C -9.6 -12.65 -8.88 -17.94 -8.88 -14.12 A 8.88 8.88 0 0 1 8.88 -14.12 C 8.88 -17.94 9.6 -12.65 9.6 0 A 9.6 9.6 0 0 1 -9.6 0 Z"/></g></g></g><g transform="translate(184,212) rotate(70)"><path d="M -14 0 C -14 -30.8 -12.6 -43.68 -12.6 -43.4 A 12.6 12.6 0 0 1 12.6 -43.4 C 12.6 -43.68 14 -30.8 14 0 A 14 14 0 0 1 -14 0 Z"/><g transform="translate(0,-56) rotate(86)"><path d="M -12.6 0 C -12.6 -20.35 -11.2 -28.86 -11.2 -25.8 A 11.2 11.2 0 0 1 11.2 -25.8 C 11.2 -28.86 12.6 -20.35 12.6 0 A 12.6 12.6 0 0 1 -12.6 0 Z"/><g transform="translate(0,-37) rotate(42)"><path d="M -11.2 0 C -11.2 -14.85 -10.36 -21.06 -10.36 -16.64 A 10.36 10.36 0 0 1 10.36 -16.64 C 10.36 -21.06 11.2 -14.85 11.2 0 A 11.2 11.2 0 0 1 -11.2 0 Z"/></g></g></g><path d="M 104 290 C 96 266 98 240 108 222 C 114 210 124 204 136 202 C 145 200 152 201 158 203 C 170 199 186 202 197 211 C 208 220 215 236 218 253 C 222 273 222 294 218 311 C 213 328 202 340 187 346 C 171 353 149 353 134 346 C 120 340 110 328 106 313 C 103 303 104 296 104 290 Z"/><ellipse cx="122" cy="290" rx="31" ry="44" transform="rotate(-16 122 290)"/><g transform="translate(152,204) rotate(66)"><path d="M -15 0 C -15 -34.1 -13.5 -48.36 -13.5 -48.5 A 13.5 13.5 0 0 1 13.5 -48.5 C 13.5 -48.36 15 -34.1 15 0 A 15 15 0 0 1 -15 0 Z"/><g transform="translate(0,-62) rotate(84)"><path d="M -13.5 0 C -13.5 -22 -12 -31.2 -12 -28 A 12 12 0 0 1 12 -28 C 12 -31.2 13.5 -22 13.5 0 A 13.5 13.5 0 0 1 -13.5 0 Z"/><g transform="translate(0,-40) rotate(38)"><path d="M -12 0 C -12 -15.95 -11.1 -22.62 -11.1 -17.9 A 11.1 11.1 0 0 1 11.1 -17.9 C 11.1 -22.62 12 -15.95 12 0 A 12 12 0 0 1 -12 0 Z"/></g></g></g><g transform="translate(120,214) rotate(62)"><path d="M -14.5 0 C -14.5 -30.8 -13.05 -43.68 -13.05 -42.95 A 13.05 13.05 0 0 1 13.05 -42.95 C 13.05 -43.68 14.5 -30.8 14.5 0 A 14.5 14.5 0 0 1 -14.5 0 Z"/><g transform="translate(0,-56) rotate(78)"><path d="M -13.05 0 C -13.05 -19.8 -11.6 -28.08 -11.6 -24.4 A 11.6 11.6 0 0 1 11.6 -24.4 C 11.6 -28.08 13.05 -19.8 13.05 0 A 13.05 13.05 0 0 1 -13.05 0 Z"/><g transform="translate(0,-36) rotate(34)"><path d="M -11.6 0 C -11.6 -15.4 -10.73 -21.84 -10.73 -17.27 A 10.73 10.73 0 0 1 10.73 -17.27 C 10.73 -21.84 11.6 -15.4 11.6 0 A 11.6 11.6 0 0 1 -11.6 0 Z"/></g></g></g><g transform="translate(104,298) rotate(-46) rotate(34)"><path d="M -17 0 C -17 -27.5 -14.96 -39 -14.96 -35.04 A 14.96 14.96 0 0 1 14.96 -35.04 C 14.96 -39 17 -27.5 17 0 A 17 17 0 0 1 -17 0 Z"/><g transform="translate(0,-50) rotate(40)"><path d="M -14.96 0 C -14.96 -22 -13.6 -31.2 -13.6 -26.4 A 13.6 13.6 0 0 1 13.6 -26.4 C 13.6 -31.2 14.96 -22 14.96 0 A 14.96 14.96 0 0 1 -14.96 0 Z"/></g></g></g><g fill="#1a4a55"><g transform="translate(212,232) rotate(74)"><path d="M -12 0 C -12 -23.65 -10.8 -33.54 -10.8 -32.2 A 10.8 10.8 0 0 1 10.8 -32.2 C 10.8 -33.54 12 -23.65 12 0 A 12 12 0 0 1 -12 0 Z"/><g transform="translate(0,-43) rotate(88)"><path d="M -10.8 0 C -10.8 -15.4 -9.6 -21.84 -9.6 -18.4 A 9.6 9.6 0 0 1 9.6 -18.4 C 9.6 -21.84 10.8 -15.4 10.8 0 A 10.8 10.8 0 0 1 -10.8 0 Z"/><g transform="translate(0,-28) rotate(46)"><path d="M -9.6 0 C -9.6 -12.65 -8.88 -17.94 -8.88 -14.12 A 8.88 8.88 0 0 1 8.88 -14.12 C 8.88 -17.94 9.6 -12.65 9.6 0 A 9.6 9.6 0 0 1 -9.6 0 Z"/></g></g></g><g transform="translate(184,212) rotate(70)"><path d="M -14 0 C -14 -30.8 -12.6 -43.68 -12.6 -43.4 A 12.6 12.6 0 0 1 12.6 -43.4 C 12.6 -43.68 14 -30.8 14 0 A 14 14 0 0 1 -14 0 Z"/><g transform="translate(0,-56) rotate(86)"><path d="M -12.6 0 C -12.6 -20.35 -11.2 -28.86 -11.2 -25.8 A 11.2 11.2 0 0 1 11.2 -25.8 C 11.2 -28.86 12.6 -20.35 12.6 0 A 12.6 12.6 0 0 1 -12.6 0 Z"/><g transform="translate(0,-37) rotate(42)"><path d="M -11.2 0 C -11.2 -14.85 -10.36 -21.06 -10.36 -16.64 A 10.36 10.36 0 0 1 10.36 -16.64 C 10.36 -21.06 11.2 -14.85 11.2 0 A 11.2 11.2 0 0 1 -11.2 0 Z"/></g></g></g><path d="M 104 290 C 96 266 98 240 108 222 C 114 210 124 204 136 202 C 145 200 152 201 158 203 C 170 199 186 202 197 211 C 208 220 215 236 218 253 C 222 273 222 294 218 311 C 213 328 202 340 187 346 C 171 353 149 353 134 346 C 120 340 110 328 106 313 C 103 303 104 296 104 290 Z"/><ellipse cx="122" cy="290" rx="31" ry="44" transform="rotate(-16 122 290)"/><g transform="translate(152,204) rotate(66)"><path d="M -15 0 C -15 -34.1 -13.5 -48.36 -13.5 -48.5 A 13.5 13.5 0 0 1 13.5 -48.5 C 13.5 -48.36 15 -34.1 15 0 A 15 15 0 0 1 -15 0 Z"/><g transform="translate(0,-62) rotate(84)"><path d="M -13.5 0 C -13.5 -22 -12 -31.2 -12 -28 A 12 12 0 0 1 12 -28 C 12 -31.2 13.5 -22 13.5 0 A 13.5 13.5 0 0 1 -13.5 0 Z"/><g transform="translate(0,-40) rotate(38)"><path d="M -12 0 C -12 -15.95 -11.1 -22.62 -11.1 -17.9 A 11.1 11.1 0 0 1 11.1 -17.9 C 11.1 -22.62 12 -15.95 12 0 A 12 12 0 0 1 -12 0 Z"/></g></g></g><g transform="translate(120,214) rotate(62)"><path d="M -14.5 0 C -14.5 -30.8 -13.05 -43.68 -13.05 -42.95 A 13.05 13.05 0 0 1 13.05 -42.95 C 13.05 -43.68 14.5 -30.8 14.5 0 A 14.5 14.5 0 0 1 -14.5 0 Z"/><g transform="translate(0,-56) rotate(78)"><path d="M -13.05 0 C -13.05 -19.8 -11.6 -28.08 -11.6 -24.4 A 11.6 11.6 0 0 1 11.6 -24.4 C 11.6 -28.08 13.05 -19.8 13.05 0 A 13.05 13.05 0 0 1 -13.05 0 Z"/><g transform="translate(0,-36) rotate(34)"><path d="M -11.6 0 C -11.6 -15.4 -10.73 -21.84 -10.73 -17.27 A 10.73 10.73 0 0 1 10.73 -17.27 C 10.73 -21.84 11.6 -15.4 11.6 0 A 11.6 11.6 0 0 1 -11.6 0 Z"/></g></g></g><g transform="translate(104,298) rotate(-46) rotate(34)"><path d="M -17 0 C -17 -27.5 -14.96 -39 -14.96 -35.04 A 14.96 14.96 0 0 1 14.96 -35.04 C 14.96 -39 17 -27.5 17 0 A 17 17 0 0 1 -17 0 Z"/><g transform="translate(0,-50) rotate(40)"><path d="M -14.96 0 C -14.96 -22 -13.6 -31.2 -13.6 -26.4 A 13.6 13.6 0 0 1 13.6 -26.4 C 13.6 -31.2 14.96 -22 14.96 0 A 14.96 14.96 0 0 1 -14.96 0 Z"/></g></g></g></g>';
 var WR5_BOB = '<animateTransform attributeName="transform" type="translate" values="0,4;0,-8;0,4" additive="sum" dur="8.64s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>';
 STORY_SCENES['wreck_return_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -2679,30 +2716,55 @@ STORY_SCENES['wreck_return_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
 <polygon points="150,0 196,0 214,150 178,150" fill="url(#wrRetShaft5)" opacity="0.6"><animate attributeName="opacity" values="0.34;0.7;0.34" dur="6.72s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
 <polygon points="320,0 362,0 336,160 302,160" fill="url(#wrRetShaft5)" opacity="0.5"><animate attributeName="opacity" values="0.28;0.62;0.28" dur="10.7s" repeatCount="indefinite" begin="2.5s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
 <polygon points="40,0 72,0 96,140 66,140" fill="url(#wrRetShaft5)" opacity="0.42"><animate attributeName="opacity" values="0.24;0.55;0.24" dur="10.71s" repeatCount="indefinite" begin="1s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
-<!-- The wreck, below and behind, seen from above and off to one side -->
-<path d="M0,236 Q90,226 190,230 Q300,234 400,226 Q460,222 500,230 L500,260 L0,260 Z" fill="#07141a"/>
-<path d="M96,232 Q104,208 140,202 L354,190 Q394,190 402,204 L404,230 Q250,240 140,238 Q106,236 96,232 Z" fill="url(#wrRetHull5)"/>
-<path d="M96,232 Q104,208 140,202 L354,190 Q394,190 402,204 L400,210 Q250,200 138,214 Q106,222 96,232 Z" fill="#25494a" opacity="0.5"/>
-<path d="M108,222 Q250,198 400,204" fill="none" stroke="#0a1a1e" stroke-width="1" opacity="0.5"/>
-<path d="M172,200 L168,236" stroke="#0a1a1e" stroke-width="1.6" opacity="0.35"/>
-<path d="M312,192 L314,236" stroke="#0a1a1e" stroke-width="1.6" opacity="0.3"/>
+<!-- The wreck, below and to the right, seen from the rope: her side, the deck
+     edge and rail above it, and a stove-in section of the side broken open
+     from the rail down, with the lit cabin inside. -->
+<path d="M0,240 Q90,230 190,234 Q300,238 400,232 Q460,228 500,234 L500,260 L0,260 Z" fill="#07141a"/>
+<path d="M184,140 L500,112 L500,124 L168,150 Z" fill="#25494a" opacity="0.8"/>
+<path d="M138,236 Q130,180 168,150 L500,124 L500,252 Q300,254 160,246 Q142,244 138,236 Z" fill="url(#wrRetHull5)"/>
+<path d="M150,190 Q300,176 500,170 M146,216 Q300,206 500,204" fill="none" stroke="#0a1a1e" stroke-width="1" opacity="0.5"/>
+<path d="M200,152 L196,246 M424,132 L426,252" stroke="#0a1a1e" stroke-width="1.6" opacity="0.35"/>
 <!-- sand banked along her -->
-<path d="M60,240 Q96,226 132,220 Q104,216 74,224 Q46,232 34,240 Z" fill="url(#wrRetSand5)" opacity="0.7"/>
-<path d="M396,228 Q432,216 468,214 Q492,213 500,222 L500,236 Q446,232 396,236 Z" fill="url(#wrRetSand5)" opacity="0.7"/>
+<path d="M60,244 Q96,230 140,226 Q104,220 74,228 Q46,236 34,244 Z" fill="url(#wrRetSand5)" opacity="0.7"/>
 <!-- her toppled mast -->
-<path d="M226,196 L200,150" stroke="#173537" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
-<path d="M202,156 Q188,176 198,190" fill="none" stroke="#2a3a2c" stroke-width="1.4" opacity="0.45"><animate attributeName="d" values="M202,156 Q188,176 198,190;M202,156 Q192,176 194,190;M202,156 Q188,176 198,190" dur="9.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<!-- rail and the amber lamps, still lit, small now -->
-<path d="M138,200 L354,188" fill="none" stroke="#2c5450" stroke-width="1.4" opacity="0.7"/>
-<circle cx="164" cy="202" r="20" fill="url(#wrRetLampG5)" opacity="0.55"><animate attributeName="opacity" values="0.38;0.66;0.46;0.6;0.38" dur="4.26s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-<circle cx="230" cy="198" r="21" fill="url(#wrRetLampG5)" opacity="0.55"><animate attributeName="opacity" values="0.4;0.68;0.46;0.62;0.4" dur="2.46s" repeatCount="indefinite" begin="0.9s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-<circle cx="296" cy="194" r="20" fill="url(#wrRetLampG5)" opacity="0.52"><animate attributeName="opacity" values="0.36;0.64;0.44;0.58;0.36" dur="3.6s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-<circle cx="352" cy="190" r="18" fill="url(#wrRetLampG5)" opacity="0.5"><animate attributeName="opacity" values="0.34;0.6;0.42;0.55;0.34" dur="3.39s" repeatCount="indefinite" begin="2.6s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<path d="M206,140 L176,92" stroke="#173537" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+<path d="M180,98 Q166,118 176,132" fill="none" stroke="#2a3a2c" stroke-width="1.4" opacity="0.45"><animate attributeName="d" values="M180,98 Q166,118 176,132;M180,98 Q170,118 172,132;M180,98 Q166,118 176,132" dur="9.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<!-- the cabin's lamplight spilling out over her side -->
+<ellipse cx="310" cy="190" rx="110" ry="70" fill="url(#wrRetLampG5)" opacity="0.55"><animate attributeName="opacity" values="0.42;0.62;0.42" dur="5.13s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
+<!-- THE CABIN, through the hole: the same room as every book-table scene
+     (wCabin + wBookTable), drawn in its own 500x260 frame at half size and
+     clipped to the hole. FREDWARD stands behind the book table, body before
+     the table, hands after the book: the left flat on the page holding it
+     against the current, the right up, waving you off. -->
+<defs><clipPath id="wrRetCut5"><polygon points="236,146 248,136 262,140 280,130 300,134 322,127 344,131 364,124 382,128 385,160 387,190 384,220 386,240 352,242 330,239 300,243 270,240 244,242 239,222 234,190 238,168"/></clipPath></defs>
+<g clip-path="url(#wrRetCut5)"><g transform="translate(175,118) scale(0.5)">
+` + (function () {
+  var x = 268, fl = 230, h = 166;
+  var F = bcApprovedHold('fredward', 'cradle', x, fl, h, false, { helmet: { hose: 'right' } });
+  wArmTo(F, [196, 412], [128, 410], [172, 470]);
+  wArmTo(F, [254, 412], [322, 384], [338, 330]);
+  // the left arm lies OVER the book to reach the page, so it moves to the
+  // front layer with its hand; left behind, the hand floats on the paper
+  var armL = /<path d="M161 342[^"]*"[^>]*\/>/g, armP = (F.behind.match(armL) || []).join('');
+  F.behind = F.behind.replace(armL, '');
+  F.front = F.front.replace(/(<g data-approved-hands[^>]*>)/, '$1' + armP);
+  var bob = '<animateTransform attributeName="transform" type="translate" values="0,0;0,' + wn(h * 0.012) + ';0,0" dur="8.33s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>';
+  return wCabin('R5', { deckY: 236, lampX: 196, lit: [54, 62], portX: 150, portY: 90, sketchX: 400, crate: false, rope: false })
+    + '<g>' + bob + F.behind + '</g>'
+    + wBookTable(250, 236)
+    + '<g>' + bob + F.front + '</g>';
+})() + `
+</g></g>
+<!-- the broken edge of the hole: splintered plank ends, dark rim -->
+<polygon points="236,146 248,136 262,140 280,130 300,134 322,127 344,131 364,124 382,128 385,160 387,190 384,220 386,240 352,242 330,239 300,243 270,240 244,242 239,222 234,190 238,168" fill="none" stroke="#0a1a1e" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M234,190 L242,188 M238,168 L245,170 M386,190 L378,191 M384,220 L377,218 M262,140 L264,147 M322,127 L321,134" stroke="#1d3b3a" stroke-width="2.4" stroke-linecap="round"/>
+<!-- rail and the amber lamps along it, still lit -->
+<path d="M184,140 L500,112" fill="none" stroke="#2c5450" stroke-width="1.4" opacity="0.7"/>
+<circle cx="204" cy="138" r="20" fill="url(#wrRetLampG5)" opacity="0.55"><animate attributeName="opacity" values="0.38;0.66;0.46;0.6;0.38" dur="4.26s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<circle cx="420" cy="119" r="20" fill="url(#wrRetLampG5)" opacity="0.52"><animate attributeName="opacity" values="0.36;0.64;0.44;0.58;0.36" dur="3.6s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <g fill="#F2C14E">
-  <rect x="161.4" y="199" width="5.2" height="6.2" rx="1.4"><animate attributeName="opacity" values="0.76;1;0.84;0.96;0.76" dur="2.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
-  <rect x="227.4" y="195" width="5.2" height="6.2" rx="1.4"><animate attributeName="opacity" values="0.8;1;0.86;0.97;0.8" dur="3.56s" repeatCount="indefinite" begin="0.9s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
-  <rect x="293.4" y="191" width="5.2" height="6.2" rx="1.4"><animate attributeName="opacity" values="0.74;1;0.82;0.95;0.74" dur="3.02s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
-  <rect x="349.6" y="187" width="4.8" height="5.6" rx="1.3"><animate attributeName="opacity" values="0.72;1;0.8;0.93;0.72" dur="3.21s" repeatCount="indefinite" begin="2.6s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <rect x="201.4" y="133" width="5.2" height="6.2" rx="1.4"><animate attributeName="opacity" values="0.76;1;0.84;0.96;0.76" dur="2.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+  <rect x="417.4" y="114" width="5.2" height="6.2" rx="1.4"><animate attributeName="opacity" values="0.74;1;0.82;0.95;0.74" dur="3.02s" repeatCount="indefinite" begin="1.8s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
 </g>
 <!-- FREDWARD, small, at the table, one hand flat on the page against the
      current, already back at work and humming something with no tune in it.
@@ -2715,29 +2777,25 @@ STORY_SCENES['wreck_return_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns=
      off. 'cradle' through bcApprovedHold: body and helmet go down BEFORE the
      table and book, his hands AFTER them, so his hands rest on the open
      pages (the story's "one hand flat on the page").
-     2026-10-25: his boots were at tabletop height, so he read as standing
-     ON the table, and the book stood upright. Now through wDesk: he stands
-     on the deck BEHIND the table, its top and apron cross his waist, the
-     book lies open and flat, and his hands rest on its pages. -->
-` + wDesk(268, 229, 83) + `
-<!-- his bubbles, still going, small at this distance -->
-<circle cx="270" cy="138" r="1.2" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="138;-10" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.34;0" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-<circle cx="266" cy="134" r="0.9" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="134;-10" dur="10.92s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.3;0" dur="10.92s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+     Round 3: the table was standing out on the open hull, but the book table
+     lives INSIDE, in the cabin. He is now drawn in the cabin through the hole
+     in her side, above. -->
+<!-- his bubbles, coming up out of the hole -->
+<circle cx="310" cy="138" r="1.2" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="138;-10" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.34;0" dur="7.91s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<circle cx="306" cy="134" r="0.9" fill="#bfe6d8" opacity="0"><animate attributeName="cy" values="134;-10" dur="10.92s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.3;0" dur="10.92s" repeatCount="indefinite" begin="3s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <!-- The crab, on the mat, seeing you off by not looking up -->
-` + wMat(378, 224, MAT_W) + `
-` + wCrab(378, 222, CRAB_R, false) + `
-<!-- your arm and gloved hand, behind the rope: the palm is on the far side -->
-<g>` + WR5_BOB + WR5_ARM + WR5_HAND + `</g>
-<!-- THE ROPE, near foreground, running up out of frame. You are on it. -->
-<path d="M92,260 Q78,196 96,132 Q112,76 88,0" fill="none" stroke="#2a3a2c" stroke-width="5" stroke-linecap="round"><animate attributeName="d" values="M92,260 Q78,196 96,132 Q112,76 88,0;M92,260 Q86,196 88,132 Q104,76 96,0;M92,260 Q78,196 96,132 Q112,76 88,0" dur="9.63s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<path d="M92,260 Q78,196 96,132 Q112,76 88,0" fill="none" stroke="#5c6b4a" stroke-width="1.6" opacity="0.45"><animate attributeName="d" values="M92,260 Q78,196 96,132 Q112,76 88,0;M92,260 Q86,196 88,132 Q104,76 96,0;M92,260 Q78,196 96,132 Q112,76 88,0" dur="10.71s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+` + wMat(452, 122, MAT_W) + `
+` + wCrab(452, 120, CRAB_R, false) + `
+<!-- your arm, THE ROPE, and your gloved fist closed on it, all on one bob.
+     The rope runs past both frame edges so the bob never shows its ends. -->
+<g>` + WR5_BOB + WR5_ARM + `
+<path d="M93,276 Q78,196 96,132 Q112,76 88,-16" fill="none" stroke="#2a3a2c" stroke-width="5" stroke-linecap="round"/>
+<path d="M93,276 Q78,196 96,132 Q112,76 88,-16" fill="none" stroke="#5c6b4a" stroke-width="1.6" opacity="0.45"/>
 <!-- the twist of the rope's lay, close enough to see -->
 <g stroke="#1e2a20" stroke-width="1" opacity="0.6">
   <path d="M89,232 L95,228 M91,206 L97,202 M93,180 L98,176 M95,154 L100,150 M97,128 L103,124 M100,102 L106,98 M101,76 L107,72 M99,50 L105,46 M95,24 L101,20"/>
 </g>
-<!-- your gloved fingers, closest thing to camera, closing over the rope:
-     drawn AFTER it, same bob as the hand behind -->
-<g>` + WR5_BOB + WR5_FINGERS + `</g>
+` + WR5_FIST + `</g>
 <!-- Bubbles going up past you the way you are going -->
 <circle cx="112" cy="180" r="2.4" fill="#dff6ea" opacity="0"><animate attributeName="cy" values="180;-12" dur="6.38s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="r" values="1.8;3.6" dur="6.38s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.5;0" dur="6.38s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 <circle cx="104" cy="196" r="1.7" fill="#dff6ea" opacity="0"><animate attributeName="cy" values="196;-12" dur="7.01s" repeatCount="indefinite" begin="1.6s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="r" values="1.3;2.8" dur="7.01s" repeatCount="indefinite" begin="1.6s" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;0.44;0" dur="7.01s" repeatCount="indefinite" begin="1.6s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>

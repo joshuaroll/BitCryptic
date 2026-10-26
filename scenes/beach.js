@@ -187,8 +187,9 @@ STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 // ====================================================================
 // Scenes 1-3: kneeling at the shell cluster. A close-up, not the wide shot:
 // the shells, their scratch marks, and the crab who runs the place.
-// The scratches are deliberately UNREADABLE scuffs. Never letters, never
-// the answer.
+// The story says each shell has a letter scratched in it, so the cluster
+// shells carry the fodder's letters (HORSE). Before the solve (beach_1/2)
+// they never spell the answer in any order; beach_3 is post-solve.
 // ====================================================================
 function bcBn(v) { return Math.round(v * 10) / 10; }
 
@@ -252,7 +253,9 @@ var BC_SCUFFS = [
   [['l', -0.36, -0.56, -0.26, -0.46], ['l', -0.04, -0.4, 0.06, -0.3], ['l', 0.2, -0.64, 0.3, -0.54], ['d', -0.22, -0.26]],
   [['q', -0.42, -0.5, -0.12, -0.62, 0.08, -0.48], ['l', 0.14, -0.28, 0.32, -0.38], ['d', -0.3, -0.26]]
 ];
-function bcShell(x, y, s, rot, tint, scuff) {
+// `letter` (optional) replaces the scuffs with one letter scratched into the
+// face: Georgia (carved/scratched surface), a dark groove with a pale lip.
+function bcShell(x, y, s, rot, tint, scuff, letter) {
   var o = '<ellipse cx="' + x + '" cy="' + bcBn(y + 2) + '" rx="' + bcBn(s * 1.05) + '" ry="' + bcBn(s * 0.25) + '" fill="#b09660" opacity="0.38"/>';
   o += '<g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')">';
   o += '<path d="M0,0 L' + bcBn(-s * 0.95) + ',' + bcBn(-s * 0.55) + ' Q' + bcBn(-s * 1.05) + ',' + bcBn(-s * 1.25) + ' ' + bcBn(-s * 0.45) + ',' + bcBn(-s * 1.4) +
@@ -261,6 +264,12 @@ function bcShell(x, y, s, rot, tint, scuff) {
   o += '<path d="M0,0 L' + bcBn(-s * 0.7) + ',' + bcBn(-s * 1.15) + ' M0,0 L' + bcBn(-s * 0.25) + ',' + bcBn(-s * 1.42) + ' M0,0 L' + bcBn(s * 0.25) + ',' + bcBn(-s * 1.42) + ' M0,0 L' + bcBn(s * 0.7) + ',' + bcBn(-s * 1.15) +
     '" stroke="#c4917a" stroke-width="0.9" opacity="0.6" fill="none"/>';
   o += '<path d="M' + bcBn(-s * 0.3) + ',' + bcBn(s * 0.12) + ' L' + bcBn(s * 0.3) + ',' + bcBn(s * 0.12) + ' L' + bcBn(s * 0.18) + ',' + bcBn(-s * 0.12) + ' L' + bcBn(-s * 0.18) + ',' + bcBn(-s * 0.12) + ' Z" fill="#d8a890"/>';
+  if (letter) {
+    var t = 'x="0" y="' + bcBn(-s * 0.36) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="' + bcBn(s * 1.02) + '"';
+    o += '<text ' + t + ' fill="#fff0dc" opacity="0.55" transform="translate(0.7,0.7)">' + letter + '</text>';
+    o += '<text ' + t + ' fill="#6e4434">' + letter + '</text>';
+    return o + '</g>';
+  }
   var d = '', pits = '';
   function px(v) { return bcBn(v * s); }
   function py(v) { return bcBn(v * s * 1.6); }
@@ -308,8 +317,13 @@ function bcBeachCloseup(v) {
     // (the whole cluster sits 40 right of where it was, to give the kneeling
     // player the left of the frame; same seven shells, same tints, same scuffs)
     o += '<path d="M160,190 Q250,150 314,170" fill="none" stroke="#c9a86e" stroke-width="1.2" stroke-dasharray="2 5" opacity="0.4"/>';
-    var shells = [[172, 190, 15, -14, '#f0c8b0'], [208, 168, 16, -6, '#f5d6c0'], [248, 158, 17, 3, '#f0c8b0'], [290, 160, 16, 8, '#ecc2aa'], [340, 222, 14, 10, '#f5d6c0'], [230, 214, 14, -4, '#ecc2aa'], [278, 210, 15, 6, '#f0d0b8']];
-    shells.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i); });
+    // Five shells carry the letters of the clue's fodder, HORSE, in no order
+    // ("read in order, they spell nonsense"); the other two are bare. S sits
+    // last on every reading (left-right, top-down), so no ordered subset can
+    // spell the answer. Each lettered shell is the one that slides into the
+    // beach_3 line (see the drag marks there), so the letters carry over.
+    var shells = [[172, 190, 15, -14, '#f0c8b0', 'H'], [208, 168, 16, -6, '#f5d6c0'], [248, 158, 17, 3, '#f0c8b0', 'E'], [290, 160, 16, 8, '#ecc2aa'], [340, 222, 14, 10, '#f5d6c0', 'S'], [230, 214, 14, -4, '#ecc2aa', 'O'], [278, 210, 15, 6, '#f0d0b8', 'R']];
+    shells.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i, sh[5]); });
     // the crab, beside the cluster, tapping the nearest shell
     o += bcBeachCrab(390, 200, 22, true);
     // its feet have printed the sand on the way in
@@ -335,7 +349,11 @@ function bcBeachCloseup(v) {
       o += '<ellipse cx="' + sh[0] + '" cy="' + (sh[1] - 12) + '" rx="30" ry="25" fill="url(#bcuGlow' + v + ')" opacity="0.5">' +
         '<animate attributeName="opacity" values="0.45;1;0.45" dur="' + bcBn(3 + i * 0.17) + 's" begin="' + bcBn(i * 0.32) + 's" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>';
     });
-    line.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i + 2); });
+    // beach_3 runs after the solve, beside the line "the shells ... rearrange
+    // themselves to spell SHORE", so here (only here) the line reads SHORE:
+    // the same five lettered shells from beach_1, reordered.
+    var lineLetters = ['S', 'H', 'O', 'R', 'E'];
+    line.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i + 2, lineLetters[i]); });
     // the crab mid-shuffle: placement outside, motion inside
     o += '<g><animateTransform attributeName="transform" type="translate" values="0,0;-8,-2;-16,0;-8,-2;0,0" keyTimes="0;0.25;0.5;0.75;1" dur="1.9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>' +
       bcBeachCrab(410, 214, 22, false) + '</g>';

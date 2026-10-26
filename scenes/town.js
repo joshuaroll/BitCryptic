@@ -91,6 +91,56 @@ function townLamp(idp, x, y, depth) {
 }
 
 // ====================================================================
+// THE SQUARE'S CODE TERMINAL, one object in one place: it stands on the
+// paving just right of the fountain, exactly where town_1 put it, in every
+// shot that shows the fountain. Pass the townFountain's own (x, y, scale) and
+// the terminal is placed from them, so it cannot drift from the fountain.
+// town_1's numbers, fountain (250,194) x1.25 -> terminal (337,197) x1.45, give
+// the offsets below in fountain units.
+// ====================================================================
+function townTerminal(fx, fy, fs) {
+  var r = function (v) { return Math.round(v * 100) / 100; };
+  var x = r(fx + 69.6 * fs), y = r(fy + 2.4 * fs), k = r(1.16 * fs);
+  var e = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"';
+  return '<g data-prop="town-terminal" transform="translate(' + x + ' ' + y + ') scale(' + k + ') translate(-335 -197)">'
+    + '<ellipse cx="335" cy="197" rx="11" ry="2.6" fill="#453e36" opacity="0.3"/>'
+    + '<path d="M332,182 h6 v15 h-6 Z" fill="#3a4048"/>'
+    + '<path d="M329,195 h12 v2.4 h-12 Z" fill="#3a4048"/>'
+    + '<path d="M325,164 h20 v19 h-20 Z" fill="#2b3138"/>'
+    + '<path d="M325,164 h20 v2 h-20 Z" fill="#454d58"/>'
+    + '<path d="M327.5,167 h15 v12 h-15 Z" fill="#1f4a2c"/>'
+    + '<path d="M327.5,167 h15 v12 h-15 Z" fill="#3fbf6a" opacity="0.22">'
+    + '<animate attributeName="opacity" values="0.16;0.3;0.16" dur="3.9s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M329.5,169.5 h9 v1 h-9 Z M329.5,172 h6 v1 h-6 Z" fill="#7dffa0" opacity="0.7"/>'
+    + '<rect x="336.5" y="174.2" width="2" height="2.6" fill="#7dffa0">'
+    + '<animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" calcMode="discrete" dur="1.1s" repeatCount="indefinite"/></rect>'
+    + '<path d="M327,181 h16 v1 h-16 Z" fill="#454d58"/>'
+    + '</g>';
+}
+
+// ====================================================================
+// THE FOUNTAIN'S SERVICE GRATE, shut. The story's "grate you have walked
+// over without once looking down": a steel plate with a bar grille, flush in
+// the cobbles at the basin's front left, the same plate hidden_0 opens and
+// hidden_10 shows closed. Ported verbatim from hidden_10's own drawing (town.js
+// must not call into hidden.js), in hidden_10's coordinates, where the fountain
+// is the townFountain at (250,194) x1.25; so passing any shot's fountain
+// (x, y, scale) puts the grate in the same place relative to it, scaled with
+// it. Daylight: the same drawing at reduced strength, so it sinks into the
+// paving and goes unnoticed. No glow.
+// ====================================================================
+function townGrate(fx, fy, fs) {
+  var r = function (v) { return Math.round(v * 1000) / 1000; };
+  return '<g data-prop="town-grate" opacity="0.5" transform="translate(' + r(fx) + ' ' + r(fy) + ') scale(' + r(fs / 1.25) + ') translate(-250 -194)">'
+    + '<path d="M70 213H172L181 246H61Z" fill="#34414c"/>'
+    + '<path d="M75 217H167L174 241H68Z" fill="#283643"/>'
+    + '<path d="M87 218L83 240 M102 218L100 240 M119 218V240 M135 218L137 240 M151 218L155 240" stroke="#182630" stroke-width="2"/>'
+    + '<path d="M71 214H171 M64 244H178" stroke="#566571" stroke-width="1.4"/>'
+    + '<path d="M113 224H128V227H113Z" fill="#182630"/>'
+    + '</g>';
+}
+
+// ====================================================================
 // THE SQUARE'S SKYLINE, read straight out of town_0 (far row + the scaled
 // building plane), so any other shot of the square uses the identical
 // buildings at the identical scale. Call only after town_0 is defined.
@@ -223,6 +273,8 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M150,260 Q210,220 250,196 Q290,220 350,260 Z" fill="#8a765d" opacity="0.16"/>
 <path d="M0,258 Q120,236 250,198 Q380,236 500,258 L500,260 L0,260 Z" fill="#5c4d3b" opacity="0.12"/>
 
+<!-- the service grate, shut, flush in the cobbles at the basin's foot -->
+` + townGrate(250,194,1.25) + `
 <!-- the fountain: the shared townFountain, town_3's design at mid-shot -->
 ` + townFountain('town0',250,194,1.25) + `
 <!-- Street lamps, the shared townLamp -->
@@ -257,6 +309,9 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M4 2Q-2 -9 7 -7L11 0Q7 -17 15 -12L16 0Q23 -14 25 -5L21 3Z" fill="#577360"/>
 <path d="M8 0L6 -5 M15 1L15 -7 M20 2L23 -4" stroke="#839678" stroke-width="1"/>
 </g>
+<!-- THE TERMINAL, humming on the paving just right of the fountain: the
+     shared townTerminal, placed from the fountain's own position -->
+` + townTerminal(250, 194, 1.25) + `
 <!-- Approved cast background appearance; story and clues are unchanged. -->
 ` + bcApprovedPlace('laurel','idle-folio',427,238,128,false) + `
 </svg>`;
@@ -301,26 +356,8 @@ STORY_SCENES['town_1'] = STORY_SCENES['town_0']
   <ellipse cx="379" cy="30" rx="8" ry="6" opacity="0.32"/>
   <ellipse cx="373" cy="18" rx="10" ry="7" opacity="0.2"/>
 </g>
-<!-- Building plane:`)
-  .replace('<!-- Approved cast background', `<!-- THE TERMINAL, humming on the paving just right of the fountain: a dark
-     case on a post, a green screen, a blinking cursor -->
-<g transform="translate(337 197) scale(1.45) translate(-335 -197)">
-<ellipse cx="335" cy="197" rx="11" ry="2.6" fill="#453e36" opacity="0.3"/>
-<path d="M332,182 h6 v15 h-6 Z" fill="#3a4048"/>
-<path d="M329,195 h12 v2.4 h-12 Z" fill="#3a4048"/>
-<path d="M325,164 h20 v19 h-20 Z" fill="#2b3138"/>
-<path d="M325,164 h20 v2 h-20 Z" fill="#454d58"/>
-<path d="M327.5,167 h15 v12 h-15 Z" fill="#1f4a2c"/>
-<path d="M327.5,167 h15 v12 h-15 Z" fill="#3fbf6a" opacity="0.22">
-  <animate attributeName="opacity" values="0.16;0.3;0.16" dur="3.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M329.5,169.5 h9 v1 h-9 Z M329.5,172 h6 v1 h-6 Z" fill="#7dffa0" opacity="0.7"/>
-<rect x="336.5" y="174.2" width="2" height="2.6" fill="#7dffa0">
-  <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" calcMode="discrete" dur="1.1s" repeatCount="indefinite"/>
-</rect>
-<path d="M327,181 h16 v1 h-16 Z" fill="#454d58"/>
-</g>
-<!-- Approved cast background`);
+<!-- Building plane:`);
+// The terminal comes from town_0 (townTerminal), already beside the fountain.
 
 // Scene 2: Town Crier — woman in plumed hat rings brass bell
 STORY_SCENES['town_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -361,7 +398,10 @@ STORY_SCENES['town_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <g transform="translate(0 -4)">${townSkyline()}</g>
 <!-- the fountain, behind the crier and off her head's axis: the shared
      townFountain, fully solid, set back on the left of the square -->
+${townGrate(164,188,1.2)}
 ${townFountain('town2',164,188,1.2)}
+<!-- the terminal, where it always stands: just right of the fountain -->
+${townTerminal(164,188,1.2)}
 
 <!-- ====================================================================
      THE TOWN CRIER: Wren, from the shared cast (scenes/characters.js).
@@ -375,7 +415,7 @@ ${townFountain('town2',164,188,1.2)}
      records and does not comment, and Aufu keeps things rather than announcing
      them.
      ==================================================================== -->
-${bcMissionPlace('wren','work',250,238,94)}
+${bcMissionPlace('wren','work',306,238,94)}
 <!-- Street lamps (flanking), the shared townLamp -->
 ${townLamp('town2lampL', 83, 185)}${townLamp('town2lampR', 398.5, 185)}
 </svg>`;
@@ -386,7 +426,6 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <linearGradient id="townCloseupBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#4a6a8a"/><stop offset="50%" stop-color="#6a8aaa"/><stop offset="100%" stop-color="#8a9db3"/>
   </linearGradient>
-  <filter id="town3SoftGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <radialGradient id="waterShimmer" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#aaddff" stop-opacity="0.2"/><stop offset="100%" stop-color="#aaddff" stop-opacity="0"/>
   </radialGradient>
@@ -469,83 +508,90 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      a COPING you can see the thickness of, and it is BUILT of blocks, so
      the joints between them run out toward the viewer around the curve.
      ==================================================================== -->
+<!-- ONE RING OF STONE. The rim used to be two separate lenses, a far wall
+     and a near coping, whose ends did not meet, so the band holding the
+     clues floated free of the basin, and the clues sat half in the water and
+     half across the stone. It is now one ring: an outer ellipse and an inner
+     one, the coping is the stone between them, and the wall face drops from
+     the outer edge. The near coping is the widest part of the ring (the eye is
+     above it), wide enough to carry the clues cut into it. -->
 <!-- the shadow the basin drops on the paving -->
-<path d="M32,214 Q250,192 468,214 Q250,254 32,214 Z" fill="#5c4d3b" opacity="0.3"/>
-<!-- THE FAR WALL first, because the water sits in front of it. Its inner face
-     is what the player looks across the pool AT. -->
-<path d="M36,202 Q250,174 464,202 Q250,222 36,202 Z" fill="#8a8a9a"/>
-<path d="M44,201 Q250,178 456,201 Q250,214 44,201 Z" fill="#a4a4b6" opacity="0.6"/>
-<!-- THE POOL. Deep enough to read as a hole holding water: a dark bottom, a
-     lit far edge where the sky lands on it, and the near lip in shadow. -->
-<path d="M50,203 Q250,180 450,203 Q250,240 50,203 Z" fill="#3f5f7f"/>
-<path d="M50,203 Q250,180 450,203 Q250,224 50,203 Z" fill="#5a7c9c" opacity="0.85"/>
-<path d="M62,202 Q250,183 438,202 Q250,208 62,202 Z" fill="#8fbcd8" opacity="0.5"/>
+<path d="M30,226 Q250,206 470,226 Q250,266 30,226 Z" fill="#5c4d3b" opacity="0.3"/>
+<!-- the wall face, hanging from the front of the ring -->
+<path d="M28,207 L28,221 A222,32 0 0 0 472,221 L472,207 A222,32 0 0 1 28,207 Z" fill="#6f6f80"/>
+<path d="M28,215 L28,221 A222,32 0 0 0 472,221 L472,215 A222,32 0 0 1 28,215 Z" fill="#4a4a5a" opacity="0.36"/>
+<clipPath id="town3WallClip"><path d="M28,207 L28,221 A222,32 0 0 0 472,221 L472,207 A222,32 0 0 1 28,207 Z"/></clipPath>
+<g clip-path="url(#town3WallClip)">
+<g stroke="#5a5a6a" stroke-width="1.1" opacity="0.5" fill="none">
+  <path d="M58,222 L56,238 M110,231 L108,247 M188,237 L187,253 M312,237 L313,253 M390,231 L392,247 M442,222 L444,238"/>
+</g>
+<g stroke="#c0c0d0" stroke-width="0.7" opacity="0.3" fill="none">
+  <path d="M60,222 L58,238 M112,231 L110,247 M190,237 L189,253 M314,237 L315,253 M392,231 L394,247"/>
+</g>
+</g>
+<!-- the coping: the whole ring of stone, outer ellipse less the pool -->
+<path d="M28,207 A222,32 0 1 0 472,207 A222,32 0 1 0 28,207 Z M46,200 A204,18 0 1 0 454,200 A204,18 0 1 0 46,200 Z" fill="#9a9aaa" fill-rule="evenodd"/>
+<!-- light on the near coping, shade on the far one where the eye sees its inside edge -->
+<path d="M36,210 A214,26 0 0 0 464,210 L456,205 A206,20 0 0 1 44,205 Z" fill="#aaaabc" opacity="0.45"/>
+<path d="M28,207 A222,32 0 0 1 472,207 L454,200 A204,18 0 0 0 46,200 Z" fill="#7c7c8c" opacity="0.4"/>
+<!-- the joints between the coping slabs run across the ring, from the pool
+     edge out to the wall, and fall BETWEEN the clues: one slab, one clue -->
+<g stroke="#6a6a7a" stroke-width="0.9" opacity="0.55" fill="none">
+  <path d="M187,217.1 L185,237.6 M313,217.1 L315,237.6 M66,207.5 L52,219.5 M434,207.5 L448,219.5"/>
+</g>
+<!-- moss along the wet line where the wall meets the paving -->
+<path d="M96,248 q30,6 62,6 q-32,4 -62,-6 Z" fill="#5a6a4a" opacity="0.28"/>
+<path d="M334,253 q28,-1 56,-7 q-25,9 -56,7 Z" fill="#5a6a4a" opacity="0.24"/>
+
+<!-- THE POOL, held inside the ring's inner edge: the far inner wall the
+     player looks across, then the water, deep enough to read as a hole -->
+<clipPath id="town3PoolClip"><path d="M46,200 A204,18 0 1 0 454,200 A204,18 0 1 0 46,200 Z"/></clipPath>
+<g clip-path="url(#town3PoolClip)">
+<path d="M40,180 h420 v40 h-420 Z" fill="#8a8a9a"/>
+<path d="M40,180 h420 v6 h-420 Z" fill="#6f6f80" opacity="0.5"/>
+<path d="M44,206 A206,17 0 1 1 456,206 A206,17 0 1 1 44,206 Z" fill="#3f5f7f"/>
+<path d="M44,206 A206,17 0 1 1 456,206 L456,208 Q250,214 44,208 Z" fill="#5a7c9c" opacity="0.85"/>
+<path d="M62,196 Q250,184 438,196 Q250,196 62,196 Z" fill="#8fbcd8" opacity="0.5"/>
 <!-- the pillar and the sky in the water, broken into bands by the ripple -->
-<path d="M234,200 Q250,197 266,200 L263,232 Q250,238 237,232 Z" fill="#9a9aaa" opacity="0.22"/>
+<path d="M234,196 Q250,193 266,196 L263,216 Q250,220 237,216 Z" fill="#9a9aaa" opacity="0.22"/>
 <path d="M112,203 Q164,198 216,204 Q164,209 112,203 Z" fill="#aaddff" opacity="0.16">
   <animate attributeName="opacity" values="0.08;0.24;0.08" dur="5.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M286,204 Q334,199 384,205 Q334,210 286,204 Z" fill="#aaddff" opacity="0.14">
   <animate attributeName="opacity" values="0.07;0.21;0.07" dur="6.8s" begin="1.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M84,211 Q142,206 200,213 Q142,218 84,211 Z" fill="#8ac0e8" opacity="0.11"/>
-<path d="M304,214 Q356,209 408,216 Q356,221 304,214 Z" fill="#8ac0e8" opacity="0.1"/>
-<path d="M60,204 Q250,184 440,204 Q250,228 60,204 Z" fill="url(#waterShimmer)">
+<path d="M84,209 Q142,204 200,211 Q142,216 84,209 Z" fill="#8ac0e8" opacity="0.11"/>
+<path d="M304,211 Q356,206 408,213 Q356,218 304,211 Z" fill="#8ac0e8" opacity="0.1"/>
+<path d="M60,204 Q250,186 440,204 Q250,226 60,204 Z" fill="url(#waterShimmer)">
   <animate attributeName="opacity" values="0.4;0.85;0.4" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-
-<!-- ====================================================================
-     THE CLUES, LYING IN THE POOL. Drawn after the water and before the
-     near wall, so the coping crosses in front of the lowest line: that
-     overlap is what puts them under the surface rather than on the rim.
-     The shimmer band below rides over the top of them for the same reason.
-     ==================================================================== -->
-<circle cx="126" cy="206" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
-<circle cx="250" cy="209" r="26" fill="url(#goldTextGlow)" opacity="0.5"/>
-<circle cx="374" cy="206" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
-<g opacity="0.92" filter="url(#town3SoftGlow)">
-  <animate attributeName="opacity" values="0.5;0.82;0.5" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <text x="126" y="203" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">Wrote, mangled,</text>
-  <text x="126" y="211" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">a tall building (5)</text>
-  <text x="250" y="206" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">Moved by rail right</text>
-  <text x="250" y="213" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">to the book house (7)</text>
-  <text x="374" y="203" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">Hop works, scrambled,</text>
-  <text x="374" y="211" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="7" letter-spacing="0">a place to build (8)</text>
-</g>
-<!-- the surface moving over the lettering -->
-<path d="M70,190 Q250,180 430,190 Q250,212 70,190 Z" fill="#8fbcd8" opacity="0.13">
+<path d="M70,196 Q250,186 430,196 Q250,214 70,196 Z" fill="#8fbcd8" opacity="0.13">
   <animate attributeName="opacity" values="0.07;0.2;0.07" dur="5.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
+<!-- the inner edge of the near coping drops its shadow on the water -->
+<path d="M46,200 A204,18 0 0 0 454,200 L454,196 A204,18 0 0 1 46,196 Z" fill="#2f4a66" opacity="0.3"/>
+</g>
+
 <!-- ====================================================================
-     THE NEAR WALL, drawn AFTER the water, because the player is standing
-     outside the basin looking over its rim: the near coping crosses in
-     front of the pool and is what gives the whole thing depth.
+     THE CLUES, CUT INTO THE NEAR COPING. Each runs along the curve of the
+     ring on its own slab, both lines inside the stone band, gilded so they
+     catch the light. Text is frozen: not one character changes. Carved
+     stone takes Georgia (design/STYLE.md "In-art type").
      ==================================================================== -->
-<path d="M32,207 Q250,234 468,207 L466,222 Q250,252 34,222 Z" fill="#6f6f80"/>
-<!-- the coping: the flat top of the wall, and the thing you can see the
-     thickness of, which is what a rim is -->
-<path d="M32,207 Q250,234 468,207 Q250,226 32,207 Z" fill="#9a9aaa"/>
-<path d="M38,207.6 Q250,228 462,207.6 Q250,220 38,207.6 Z" fill="#aaaabc" opacity="0.55"/>
-<!-- the blocks the wall is laid in. On a circular wall the joints run out
-     from the centre, following the curve, never level across the front. -->
-<!-- the joints are clipped to the wall face itself, so they stop at its
-     bottom edge instead of running on down the paving like stakes -->
-<clipPath id="town3WallClip"><path d="M32,207 Q250,234 468,207 L466,222 Q250,252 34,222 Z"/></clipPath>
-<g clip-path="url(#town3WallClip)">
-<g stroke="#5a5a6a" stroke-width="1.1" opacity="0.5" fill="none">
-  <path d="M58,212 L56,229 M110,219 L108,238 M166,224 L165,245 M224,228 L223,249
-           M278,228 L279,249 M336,224 L337,245 M390,219 L392,238 M438,212 L440,229"/>
+<path id="town3RimL1" d="M38.44,202.94 A211.56,23.88 0 0 0 461.56,202.94" fill="none"/>
+<path id="town3RimL2" d="M31.6,205.6 A218.4,29.2 0 0 0 468.4,205.6" fill="none"/>
+<circle cx="126" cy="226" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
+<circle cx="250" cy="230" r="26" fill="url(#goldTextGlow)" opacity="0.5"/>
+<circle cx="374" cy="226" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
+<g fill="#ffd700" stroke="#3a3a4c" stroke-width="1.1" paint-order="stroke" stroke-linejoin="round" font-family="Georgia,serif" font-size="7.2" font-weight="bold" letter-spacing="0" text-anchor="middle">
+  <animate attributeName="opacity" values="0.86;1;0.86" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  <text><textPath href="#town3RimL1" startOffset="21.24%">Wrote, mangled,</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="22.3%">a tall building (5)</textPath></text>
+  <text><textPath href="#town3RimL1" startOffset="50%">Moved by rail right</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="50%">to the book house (7)</textPath></text>
+  <text><textPath href="#town3RimL1" startOffset="78.77%">Hop works, scrambled,</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="77.7%">a place to build (8)</textPath></text>
 </g>
-<g stroke="#c0c0d0" stroke-width="0.7" opacity="0.3" fill="none">
-  <path d="M60,212 L58,229 M112,219 L110,238 M168,224 L167,245 M226,228 L225,249
-           M280,228 L281,249 M338,224 L339,245 M392,219 L394,238"/>
-</g>
-</g>
-<!-- the face of the near wall falls into its own shadow under the coping -->
-<path d="M32,215 Q250,243 468,215 L466,222 Q250,252 34,222 Z" fill="#4a4a5a" opacity="0.36"/>
-<!-- and a run of moss along the wet line where the wall meets the paving -->
-<path d="M96,240 q30,6 62,6 q-32,4 -62,-6 Z" fill="#5a6a4a" opacity="0.28"/>
-<path d="M334,245 q28,-1 56,-7 q-25,9 -56,7 Z" fill="#5a6a4a" opacity="0.24"/>
 
 <!-- ====================================================================
      THE PILLAR. A rect with two rect bands. A fountain pillar tapers, sits
@@ -618,15 +664,13 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 </path>
 
 <!-- ====================================================================
-     THE SUBMERGED CLUES. Text is frozen: not one character changes. The
-     glow halos go down BEFORE the letters so the letters sit on top of
-     their own light rather than under it.
+     GLINTS on the gilded lettering in the coping.
      ==================================================================== -->
 <!-- sparkle where the gold catches the light on the coping -->
-<path d="M172,214 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
+<path d="M160,226 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
   <animate attributeName="opacity" values="0.16;0.66;0.16" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M328,215 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
+<path d="M282,234 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
   <animate attributeName="opacity" values="0.16;0.66;0.16" dur="3.9s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M250,192 q1.6,-2.4 3.2,0 q-1.6,2.4 -3.2,0 Z" fill="#ffd700" opacity="0.3">
@@ -755,6 +799,8 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <!-- wear polished into the stone where feet cross the square -->
 <path d="M150,260 Q210,220 250,196 Q290,220 350,260 Z" fill="#8a765d" opacity="0.16"/>
 <path d="M0,258 Q120,236 250,198 Q380,236 500,258 L500,260 L0,260 Z" fill="#5c4d3b" opacity="0.12"/>
+<!-- the fountain's service grate, shut, under the gold that washes over it -->
+${townGrate(250,190,1)}
 <!-- the gold from the fountain washing up the near paving -->
 <path d="M0,196 L500,196 L500,260 L0,260 Z" fill="url(#town4GoldWash)"/>
 
@@ -835,6 +881,8 @@ ${bcArt.layer('fg', `<g transform="translate(70 185) scale(0.85)">
      drawn to, so the jet still leaves the bowl where it did.
      ==================================================================== -->
 ${townFountain('town4',250,190,1,{gold:true})}
+<!-- the terminal, where it always stands: just right of the fountain -->
+${townTerminal(250,190,1)}
 
 <!-- ====================================================================
      THE GOLDEN SURGE. Straight lines do not read as water. A jet rises,

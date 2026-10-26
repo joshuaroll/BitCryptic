@@ -611,39 +611,25 @@ ${[[196,206,182,9.2,0.2,0.6],[304,205,188,8.1,1.7,0.6]].map(([x,y,h,d,bg,a]) =>
 ${bcArt.prop('fern', { x: 352, y: 250, size: 30, biome: 'forest', depth: 'fg' })}
 ${bcArt.prop('mushroom-glow', { x: 318, y: 246, count: 3, size: 1.1, biome: 'forest', depth: 'fg', idp: 'docks6-mush' })}
 
-<!-- THE DOCK'S LANDWARD END, in the foreground: the keeper is still at the
-     docks, seeing the player off. The harbour water sits LEFT of a bank that
-     stops well short of the path (water at y 260 ends at x 176, the path's
-     edge is at x 196), so the two never overlap. The dock rests on that bank
-     and runs out of frame over the water: a top deck seen from slightly
-     above (back edge 238, front edge 252, boards running along its length),
-     a fascia, then pilings standing down into the water below it. -->
-<path d="M-2,214 Q58,209 118,214 Q154,218 168,232 Q178,246 176,260 L-2,260 Z" fill="#0a1628"/>
-<path d="M-2,214 Q58,209 118,214 Q154,218 168,232 Q178,246 176,260" fill="none" stroke="#2a3a2a" stroke-width="1.6" opacity="0.8"/>
-<path d="M10,222 h24 M70,220 h18 M120,224 h18" stroke="#1a3a5a" stroke-width="1.2" stroke-linecap="round" opacity="0.6">
-  <animate attributeName="opacity" values="0.3;0.7;0.3" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<!-- mooring pile at the landward corner, behind the deck: it rises above the boards -->
-<path d="M156,224 L163,224 L163,240 L156,240 Z" fill="#5a4008"/>
-<path d="M156,224 L159,224 L159,240 L156,240 Z" fill="#8b6914" opacity="0.45"/>
-<ellipse cx="159.5" cy="224" rx="3.5" ry="1.2" fill="#8b6914"/>
-<!-- pilings under the front edge, standing in the water, each with a ripple at the waterline -->
-<g fill="#4a3406">
-  <path d="M14,252 h7 v8 h-7 Z M66,252 h7 v8 h-7 Z M118,252 h7 v8 h-7 Z M160,252 h7 v8 h-7 Z"/>
-</g>
-<g fill="none" stroke="#1a3a5a" stroke-width="1" stroke-linecap="round" opacity="0.7">
-  <path d="M10,258 q7.5,2 15,0 M62,258 q7.5,2 15,0 M114,258 q7.5,2 15,0"/>
-</g>
-<!-- the deck top: boards run the dock's length, so their seams run with it -->
-<path d="M-2,238 L166,238 L172,252 L-2,252 Z" fill="#6b4e0a"/>
-<path d="M-2,238 L166,238 L166.8,240 L-2,240 Z" fill="#a07d28" opacity="0.65"/>
-<g stroke="#3a2a08" stroke-width="1" opacity="0.55" fill="none">
-  <path d="M-2,241.6 H167.5 M-2,245.2 H169 M-2,248.7 H170.5"/>
-  <path d="M38,238 v3.6 M112,238 v3.6 M70,241.6 v3.6 M142,241.6 v3.6 M24,245.2 v3.5 M96,245.2 v3.5 M56,248.7 v3.3 M130,248.7 v3.3"/>
-</g>
-<!-- the fascia (front face of the deck) and the land end, resting on the bank -->
-<path d="M-2,252 L172,252 L172,255 L-2,255 Z" fill="#4a3406"/>
-<path d="M166,238 L172,252 L172,255 L175,255 L169,238 Z" fill="#3a2a08"/>
+<!-- THE TRAIL IN FROM THE DOCKS. The left foreground used to be a dock deck
+     over harbour water, which left the shore and the forest edge in one shot
+     with nothing joining them. It is forest floor now: a worn, unlit footpath
+     comes in from the left frame edge (the way back to the docks), passes
+     under the keeper's feet and joins the glowing path where it widens.
+     Same dirt as the path, a step darker because the glow does not reach it. -->
+<path d="M-2,233 C42,230 96,234 140,236 C176,237.6 206,236 225.5,232.5 L226,236 C222,242 216,247 210,250.5 C176,252 136,256 92,257 C56,258 22,257 -2,256 Z" fill="#3a3320"/>
+<path d="M-2,233 C42,230 96,234 140,236 C176,237.6 206,236 225.5,232.5" fill="none" stroke="#4d4429" stroke-width="1" opacity="0.7"/>
+<path d="M210,250.5 C176,252 136,256 92,257 C56,258 22,257 -2,256" fill="none" stroke="#141b0e" stroke-width="1.4" opacity="0.6"/>
+<!-- the glow bleeding a little way down the trail from the main path -->
+<path d="M150,236.5 C180,238 206,236 225.5,232.5 L226,236 C222,242 216,247 210,250.5 C190,251.4 168,253 150,254 Z" fill="url(#pathGlow)" opacity="0.3"/>
+<!-- stones and wheel-worn ruts in the dirt -->
+<path d="M30,244 L37,242 L42,245 L35,247Z M128,247 L134,245.5 L138,248 L132,249.5Z M176,243 L181,241.8 L184,244 L179,245Z" fill="#544a2e" opacity=".55"/>
+<path d="M4,240 C50,238 110,242 168,243 M2,251 C48,251 104,251 150,249" fill="none" stroke="#2c2718" stroke-width="0.9" opacity="0.55"/>
+<!-- the trail's verge: hummocks and a root along the near edge, a tuft at the far edge -->
+<path d="M-2,256 Q20,250 44,255 Q70,250 96,256.5 L96,260 L-2,260 Z" fill="#09150b"/>
+<path d="M118,232.5 Q128,226 138,233 M146,234 Q152,228 158,234.5" fill="none" stroke="#1a2a14" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+<path d="M14,232 q3,-7 5,0 q2,-6 4,0.5 q3,-5 4,0" fill="none" stroke="#1d3018" stroke-width="1.2" stroke-linecap="round" opacity="0.85"/>
+${bcArt.prop('fern', { x: 30, y: 261, size: 22, biome: 'forest', depth: 'fg' })}
 <!-- ====================================================================
      THE DOCK KEEPER, gesturing toward the path. He was a circle, an
      ellipse, two rects and a line; he is the same person the player just
