@@ -49,13 +49,19 @@ if (hasModel) {
   // scene that draws its own helmet has opted out of consistency.
   const store = {};
   try {
-    const kit = new Function(readFileSync(join(root, 'scenes', 'characters.js'), 'utf8') + '\nreturn {bcCharacter, bcPlace};')();
-    new Function('STORY_SCENES', 'bcCharacter', 'bcPlace', src)(store, kit.bcCharacter, kit.bcPlace);
+    // approved-cast.js loads first in index.html; the dive scenes place the
+    // approved Fredward through bcApprovedPlace / bcApprovedHold.
+    const kit = new Function(readFileSync(join(root, 'scenes', 'approved-cast.js'), 'utf8') + '\n' + readFileSync(join(root, 'scenes', 'characters.js'), 'utf8') + '\n' + readFileSync(join(root, 'scenes', 'art-kit.js'), 'utf8') + '\nreturn {bcCharacter, bcPlace, bcApprovedPlace, bcApprovedHold, bcArt};')();
+    new Function('STORY_SCENES', 'bcCharacter', 'bcPlace', 'bcApprovedPlace', 'bcApprovedHold', 'bcArt', src)(store, kit.bcCharacter, kit.bcPlace, kit.bcApprovedPlace, kit.bcApprovedHold, kit.bcArt);
   } catch (e) {
     problems.push(`scenes/wreck.js does not evaluate: ${e.message}`);
   }
 
-  const calls = (src.match(/\bfred\s*\(/g) || []).length - 1; // minus the definition
+  // The approved model (bcApprovedPlace / bcApprovedHold, approved-cast.js) is
+  // the same rule kept better: the dive scenes moved off the legacy suit onto
+  // it, so both routes count as "going through the model".
+  const calls = (src.match(/\bfred\s*\(/g) || []).length - 1 // minus the definition
+    + (src.match(/\bbcApproved(?:Place|Hold)\s*\(/g) || []).length;
   check(calls >= 8, `the model is only called ${calls} times; most scenes still hand-build him`);
 
   // ── A hand with no arm, and a helmet with no legs ────────────────────────
@@ -93,7 +99,8 @@ if (hasModel) {
     // every scene happened to carry a comment containing that word, and
     // warned about a complete figure the moment a comment was rewritten.
     const hasGlove = /glove/i.test(svg);
-    const hasModel = /data-(?:fred|player)-h="/.test(svg);
+    // the approved model stamps data-approved-character on its root group
+    const hasModel = /data-(?:fred|player)-h="|data-approved-character/.test(svg);
     // a helmet is a large circle at the top of a figure; the model draws one
     // at r = h, and a scene-specific figure must draw one too
     const hasHelmetCircle = /<circle cx="0" cy="\d+" r="(\d+(?:\.\d+)?)"/.test(svg) &&

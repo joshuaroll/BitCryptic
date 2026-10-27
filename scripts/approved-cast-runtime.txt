@@ -1,0 +1,65 @@
+var bcApprovedSequence = 0;
+function bcApprovedArt(name,pose) {
+  var c=BC_APPROVED_CAST[name] || BC_MISSION_CAST[name]; if(!c) throw Error('Unknown character: '+name);
+  var art=c.poses[pose] || c.poses[Object.keys(c.poses)[0]], prefix='approved-'+name+'-'+(++bcApprovedSequence)+'-';
+  return art.replace(/\bid="([^"]+)"/g,function(_,id){return 'id="'+prefix+id+'"';}).replace(/url\(#([^)]+)\)/g,function(_,id){return 'url(#'+prefix+id+')';}).replace(/href="#([^"]+)"/g,function(_,id){return 'href="#'+prefix+id+'"';});
+}
+// Every standing figure gets a contact shadow from the helper itself, so no scene can forget it.
+// Pass opts.shadow=false only where the scene already grounds the figure some other way.
+function bcApprovedShadow(x,floor,height){
+  var rx=+(height*0.22).toFixed(2),ry=+(Math.max(1.5,rx*0.11)).toFixed(2);
+  return '<ellipse data-contact-shadow="1" cx="'+x+'" cy="'+floor+'" rx="'+rx+'" ry="'+ry+'" fill="#0a0806" opacity="0.32"/>';
+}
+function bcApprovedOpen(name,pose,x,floor,height,flip,noShadow){
+  var c=BC_APPROVED_CAST[name] || BC_MISSION_CAST[name],scale=height/c.height;
+  return '<g data-approved-character="'+name+'" data-approved-pose="'+pose+'"'+(noShadow?' data-shadow="off"':'')+' transform="translate('+x+' '+floor+') scale('+(flip?-scale:scale)+' '+scale+') translate('+(-c.anchor.x)+' '+(-c.anchor.y)+')">';
+}
+function bcApprovedPlace(name,pose,x,floor,height,flip,opts) {
+  opts=opts||{};
+  return (opts.shadow===false?'':bcApprovedShadow(x,floor,height))+bcApprovedOpen(name,pose,x,floor,height,flip,opts.shadow===false)+bcApprovedArt(name,pose)+(opts.helmet?bcDiveHelmet(opts.helmet):'')+'</g>';
+}
+// Cut one <g id="...">...</g> out of a pose string, counting nested groups.
+function bcCutGroup(s,idSuffix){
+  var m=s.match(new RegExp('<g id="[^"]*'+idSuffix+'"')); if(!m) return {rest:s,group:''};
+  var i=m.index,depth=0,re=/<g\b|<\/g>/g,t; re.lastIndex=i;
+  while((t=re.exec(s))){depth+=t[0]==='</g>'?-1:1; if(!depth){var end=t.index+4;return {rest:s.slice(0,i)+s.slice(end),group:s.slice(i,end)};}}
+  return {rest:s,group:''};
+}
+// A held object goes down BEFORE the hand: draw behind, then the object, then front.
+// Works for any pose whose hands live in left-hand / right-hand groups (Fredward 'cradle' and 'hold').
+function bcApprovedHold(name,pose,x,floor,height,flip,opts){
+  opts=opts||{};
+  var art=bcApprovedArt(name,pose),L=bcCutGroup(art,'left-hand'),R=bcCutGroup(L.rest,'right-hand');
+  var open=bcApprovedOpen(name,pose,x,floor,height,flip,opts.shadow===false);
+  return {
+    behind:(opts.shadow===false?'':bcApprovedShadow(x,floor,height))+open+R.rest+(opts.helmet?bcDiveHelmet(opts.helmet):'')+'</g>',
+    // the hands inherit their ink from the arms group they were lifted out of
+    front:open.replace('data-approved-character','data-approved-hands')+'<g'+((art.match(/<g id="[^"]*arms"([^>]*)>/)||['',''])[1])+'>'+L.group+R.group+'</g></g>'
+  };
+}
+// Fredward's dive helmet: a brass-framed glass bowl seated on the diving collar his model already
+// wears, so underwater he is the same otter, same clothes, as in the dry scenes. Pose coordinates.
+// opts: {hose:'right'|'left'|false}
+function bcDiveHelmet(opts){
+  opts=opts===true?{}:(opts||{});
+  var hose=opts.hose===false?'':'<path d="M'+(opts.hose==='left'?'150 196 Q90 170 70 90 Q60 40 20 10':'302 196 Q362 170 382 90 Q392 40 432 10')+'" fill="none" stroke="#2c2a22" stroke-width="16" stroke-linecap="round"/>'
+    +'<path d="M'+(opts.hose==='left'?'150 196 Q90 170 70 90 Q60 40 20 10':'302 196 Q362 170 382 90 Q392 40 432 10')+'" fill="none" stroke="#4d4a3c" stroke-width="9" stroke-linecap="round" stroke-dasharray="6 7"/>';
+  return '<g data-dive-helmet="1">'+hose
+    +'<circle cx="226" cy="221" r="81" fill="#9ccfcb" fill-opacity="0.13" stroke="#8b6914" stroke-width="12"/>'
+    +'<circle cx="226" cy="221" r="81" fill="none" stroke="#d6a640" stroke-width="5"/>'
+    +'<path d="M168 178 Q186 152 220 146" fill="none" stroke="#e8f4ef" stroke-width="7" stroke-linecap="round" opacity="0.35"/>'
+    +'<path d="M276 268 Q292 252 298 232" fill="none" stroke="#e8f4ef" stroke-width="4" stroke-linecap="round" opacity="0.2"/>'
+    +'<rect x="212" y="128" width="28" height="16" rx="4" fill="#8b6914"/><rect x="218" y="120" width="16" height="10" rx="3" fill="#c9962e"/>'
+    +'<circle cx="145" cy="221" r="8" fill="#c9962e"/><circle cx="307" cy="221" r="8" fill="#c9962e"/>'
+    +'<circle cx="168" cy="164" r="4" fill="#5c4409"/><circle cx="284" cy="164" r="4" fill="#5c4409"/><circle cx="168" cy="278" r="4" fill="#5c4409"/><circle cx="284" cy="278" r="4" fill="#5c4409"/>'
+    +'</g>';
+}
+function bcApprovedFred(r,opts) {
+  opts=opts||{};var pose=opts.expr==='tired'?'think':opts.expr==='happy'?'welcome':'explain';
+  if(opts.headOnly){var id='approved-head-'+(++bcApprovedSequence),scale=r/72;
+    return '<g data-approved-character="fredward" transform="scale('+scale+') translate(-225 -230)"><defs><clipPath id="'+id+'"><rect x="145" y="162" width="155" height="136"/></clipPath></defs><g clip-path="url(#'+id+')">'+bcApprovedArt('fredward',pose)+'</g></g>';
+  }
+  return bcApprovedPlace('fredward',pose,0,r*7.812,r*7.812/380*445,opts.flip,{shadow:opts.shadow,helmet:opts.helmet});
+}
+function bcMissionPlace(name,pose,x,floor,height,flip,opts){return bcApprovedPlace(name,pose,x,floor,height,flip,opts).replace('data-approved-character','data-mission-character');}
+if(typeof module!=='undefined' && module.exports)module.exports={bcApprovedPlace:bcApprovedPlace,bcApprovedFred:bcApprovedFred,bcMissionPlace:bcMissionPlace,bcApprovedHold:bcApprovedHold,bcDiveHelmet:bcDiveHelmet,bcApprovedShadow:bcApprovedShadow,bcApprovedOpen:bcApprovedOpen,BC_MISSION_CAST:BC_MISSION_CAST};

@@ -1,57 +1,76 @@
 // Beach story scenes — "Letters in the Sand" (Scramble Shores)
 // Keys: beach_0 through beach_7 (8-step story; steps 0-3 share the shore art)
 
+// ====================================================================
+// THE BEACH PALETTE. Scramble Shores is MIDDAY (decision 2026-10): a high
+// sun, short shadows straight down, no orange sunset cast. Every hue is a
+// midday colour with its saturation cut by 25% so the shore sits with the
+// muted island palette. Defined ONCE here; beach_0..beach_5 read from it.
+// Mirrored as palette.beach in design/tokens.json.
+// ====================================================================
+var BC_BEACH = {
+  sky: '#5c9bc6', skyHorizon: '#c5dee9', sun: '#faf3dd',
+  sea: '#4b90b3', seaDeep: '#2e6687', seaShallow: '#7ab8cb', swell: '#a4cfde', foam: '#eff5f7',
+  sand: '#e3d5b1', sandDry: '#ebe1c3', sandWet: '#c7b287', sandShadow: '#baa37b', sandSheen: '#f1ead5',
+  drift: '#b2996d', grit: '#bea579',
+  rock: '#776f67', rockLit: '#a49a8f', rockShade: '#554d46', headland: '#a0b1ba',
+  foliage: '#437f3b', foliageDeep: '#31612d',
+  // the warm accent (umbrella red, towel pink), cut by the same 25%
+  accent: '#d56363', accentDeep: '#b34b4b', accentSoft: '#d66c90', accentSoftLit: '#e68aaa',
+  accentSoftDeep: '#b95a7b', canvas: '#f2efe3'
+};
+
 // Scene 0: Sandy beach with scattered shell letters, waves, umbrella
 STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="beachSky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#ff8c00"/><stop offset="40%" stop-color="#ffa840"/><stop offset="70%" stop-color="#7ac5e8"/><stop offset="100%" stop-color="#2980b9"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.sky + `"/><stop offset="50%" stop-color="` + BC_BEACH.skyHorizon + `"/>
   </linearGradient>
   <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#2980b9"/><stop offset="100%" stop-color="#1a6090"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.seaDeep + `"/><stop offset="100%" stop-color="` + BC_BEACH.sea + `"/>
   </linearGradient>
   <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#e8d5a3"/><stop offset="100%" stop-color="#d4b87a"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.sand + `"/><stop offset="100%" stop-color="` + BC_BEACH.sandWet + `"/>
   </linearGradient>
-  <radialGradient id="sunGlow" cx="80%" cy="15%" r="20%">
-    <stop offset="0%" stop-color="#fff4c0" stop-opacity="0.8"/><stop offset="100%" stop-color="#ff8c00" stop-opacity="0"/>
+  <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="` + BC_BEACH.sun + `" stop-opacity="0.7"/><stop offset="100%" stop-color="` + BC_BEACH.sun + `" stop-opacity="0"/>
   </radialGradient>
   <filter id="waveBlur"><feGaussianBlur stdDeviation="1.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
 </defs>
 <rect width="500" height="260" fill="url(#beachSky)"/>
-<!-- Sun -->
-<circle cx="400" cy="40" r="25" fill="#fff4c0" opacity="0.9"/>
-<circle cx="400" cy="40" r="45" fill="url(#sunGlow)"/>
+<!-- Sun: high overhead at midday, mostly above the frame -->
+<circle cx="300" cy="-4" r="56" fill="url(#sunGlow)"/>
+<circle cx="300" cy="-4" r="22" fill="` + BC_BEACH.sun + `" opacity="0.95"/>
 <!-- Ocean -->
 <rect x="0" y="130" width="500" height="50" fill="url(#oceanGrad)" opacity="0.85"/>
 <!-- Waves -->
-<path d="M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z" fill="#7ac5e8" opacity="0.5">
-  <animate attributeName="d" values="M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z;M0,148 Q30,142 60,148 Q90,155 120,148 Q150,142 180,148 Q210,155 240,148 Q270,142 300,148 Q330,155 360,148 Q390,142 420,148 Q450,155 480,148 L500,148 L500,160 L0,160 Z;M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z" dur="4s" repeatCount="indefinite"/>
+<path d="M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z" fill="` + BC_BEACH.seaShallow + `" opacity="0.5">
+  <animate attributeName="d" values="M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z;M0,148 Q30,142 60,148 Q90,155 120,148 Q150,142 180,148 Q210,155 240,148 Q270,142 300,148 Q330,155 360,148 Q390,142 420,148 Q450,155 480,148 L500,148 L500,160 L0,160 Z;M0,145 Q30,138 60,145 Q90,152 120,145 Q150,138 180,145 Q210,152 240,145 Q270,138 300,145 Q330,152 360,145 Q390,138 420,145 Q450,152 480,145 L500,145 L500,160 L0,160 Z" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- Shore foam -->
-<path d="M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z" fill="#eef6fa" opacity="0.3">
-  <animate attributeName="d" values="M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z;M0,162 Q40,157 80,162 Q120,167 160,162 Q200,157 240,162 Q280,167 320,162 Q360,157 400,162 Q440,167 500,162 L500,168 L0,168 Z;M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z" dur="3.5s" repeatCount="indefinite"/>
+<path d="M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z" fill="` + BC_BEACH.foam + `" opacity="0.3">
+  <animate attributeName="d" values="M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z;M0,162 Q40,157 80,162 Q120,167 160,162 Q200,157 240,162 Q280,167 320,162 Q360,157 400,162 Q440,167 500,162 L500,168 L0,168 Z;M0,158 Q40,153 80,158 Q120,163 160,158 Q200,153 240,158 Q280,163 320,158 Q360,153 400,158 Q440,163 500,158 L500,165 L0,165 Z" dur="3.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- ====================================================================
      THE SAND. It was one flat fill. A beach has a WET STRIP at the waterline
      that is darker and reflective, a drift line of weed and shell where the
      last high tide stopped, and dry sand above that with grit in it.
      ==================================================================== -->
-<path d="M0,168 L500,168 L500,260 L0,260 Z" fill="#e8d5a3"/>
+<path d="M0,168 L500,168 L500,260 L0,260 Z" fill="` + BC_BEACH.sand + `"/>
 <!-- wet sand: darker, and it takes a sheen from the sky -->
-<path d="M0,168 Q120,174 250,170 Q380,166 500,172 L500,190 Q380,186 250,190 Q120,194 0,188 Z" fill="#d4b87a" opacity="0.85"/>
-<path d="M0,170 Q120,176 250,172 Q380,168 500,174 L500,178 Q380,172 250,176 Q120,180 0,174 Z" fill="#ffd9a0" opacity="0.35"/>
+<path d="M0,168 Q120,174 250,170 Q380,166 500,172 L500,190 Q380,186 250,190 Q120,194 0,188 Z" fill="` + BC_BEACH.sandWet + `" opacity="0.85"/>
+<path d="M0,170 Q120,176 250,172 Q380,168 500,174 L500,178 Q380,172 250,176 Q120,180 0,174 Z" fill="` + BC_BEACH.sandSheen + `" opacity="0.45"/>
 <!-- the drift line where the last tide stopped -->
-<path d="M0,190 Q90,196 180,191 Q270,186 360,192 Q430,196 500,190" fill="none" stroke="#c9a86e" stroke-width="2.2" opacity="0.5"/>
+<path d="M0,190 Q90,196 180,191 Q270,186 360,192 Q430,196 500,190" fill="none" stroke="` + BC_BEACH.drift + `" stroke-width="2.2" opacity="0.5"/>
 <g fill="#b09660" opacity="0.45">
   <path d="M42,189 q5,-3 10,0 q-5,3 -10,0 Z"/><path d="M128,192 q6,-3 12,0 q-6,3 -12,0 Z"/>
   <path d="M226,188 q5,-3 10,0 q-5,3 -10,0 Z"/><path d="M318,192 q6,-3 12,0 q-6,3 -12,0 Z"/>
   <path d="M418,190 q5,-3 10,0 q-5,3 -10,0 Z"/>
 </g>
 <!-- dry sand above the drift, lighter and slightly warmer -->
-<path d="M0,196 Q120,202 250,197 Q380,192 500,198 L500,260 L0,260 Z" fill="#f0dfb0" opacity="0.55"/>
+<path d="M0,196 Q120,202 250,197 Q380,192 500,198 L500,260 L0,260 Z" fill="` + BC_BEACH.sandDry + `" opacity="0.55"/>
 <!-- grit: sparse, varied, never a regular field -->
-<g fill="#c9a86e" opacity="0.4">
+<g fill="` + BC_BEACH.grit + `" opacity="0.4">
   <circle cx="62" cy="222" r="1.4"/><circle cx="146" cy="236" r="1"/><circle cx="238" cy="228" r="1.6"/>
   <circle cx="322" cy="244" r="1.2"/><circle cx="404" cy="230" r="1.5"/><circle cx="466" cy="248" r="1.1"/>
   <circle cx="98" cy="250" r="1.3"/><circle cx="284" cy="256" r="1"/><circle cx="368" cy="216" r="1.2"/>
@@ -80,12 +99,12 @@ STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <path d="M28,178 q4,-3 8,-1 M31,162 q4,-3 8,-1 M34,146 q4,-3 8,-1 M38,130 q4,-3 8,-1 M43,116 q4,-3 8,-1"
       stroke="#5a4020" stroke-width="1.3" opacity="0.55" fill="none"/>
 <!-- Long fronds arch out from one crown, with broad drooping leaflets. -->
-<g fill="#2a6a24">
+<g fill="` + BC_BEACH.foliageDeep + `">
  <path d="M57 98 Q35 57 9 66 Q28 63 38 78 L30 76 L43 88 L35 86 L50 97Z"/>
  <path d="M57 97 Q58 49 85 42 Q70 53 67 68 L74 61 L67 79 L73 72 L64 93Z"/>
  <path d="M57 96 Q79 60 113 73 Q88 68 76 82 L87 78 L73 92 L82 88 L65 102Z"/>
 </g>
-<g fill="#3a8a30">
+<g fill="` + BC_BEACH.foliage + `">
  <path d="M58 98 Q26 67 0 94 Q16 84 28 89 L17 92 L34 93 L24 98 L42 97 L34 103 L52 103Z"/>
  <path d="M56 98 Q24 91 15 128 Q20 114 31 109 L26 119 L37 109 L35 118 L45 107 L44 114 L61 101Z"/>
  <path d="M55 98 Q42 58 21 48 Q31 61 34 75 L28 70 L39 87 L32 82 L48 99Z"/>
@@ -98,38 +117,40 @@ STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <circle cx="53" cy="100" r="3.6" fill="#8b6914"/>
 <circle cx="60" cy="103" r="3" fill="#7a5a10"/>
 <circle cx="52.5" cy="99" r="1.2" fill="#c4a870" opacity="0.5"/>
-<!-- and the shadow it throws along the sand -->
-<path d="M30,198 Q66,206 100,200 Q66,212 30,204 Z" fill="#c9a86e" opacity="0.34"/>
+<!-- and the shadow it throws: the sun is overhead, so it pools short at the
+     foot of the trunk, with the crown's shade dropped straight below it -->
+<ellipse cx="30" cy="198" rx="16" ry="3" fill="` + BC_BEACH.sandShadow + `" opacity="0.5"/>
+<ellipse cx="60" cy="204" rx="40" ry="5" fill="` + BC_BEACH.sandShadow + `" opacity="0.3"/>
 
 <!-- ====================================================================
      THE TOWEL, laid out under the umbrella. A towel is a rectangle in
      perspective with a fold at one corner and stripes running across it.
      ==================================================================== -->
-<path d="M118,214 L206,208 Q214,208 213,214 L206,238 Q205,244 198,244 L112,240 Q104,240 106,234 Z" fill="#e85a8a"/>
-<path d="M118,214 L206,208 Q214,208 213,214 L211,220 L116,226 Z" fill="#f57ba5" opacity="0.55"/>
-<g stroke="#f8f0e0" stroke-width="3" opacity="0.75">
+<path d="M118,214 L206,208 Q214,208 213,214 L206,238 Q205,244 198,244 L112,240 Q104,240 106,234 Z" fill="` + BC_BEACH.accentSoft + `"/>
+<path d="M118,214 L206,208 Q214,208 213,214 L211,220 L116,226 Z" fill="` + BC_BEACH.accentSoftLit + `" opacity="0.55"/>
+<g stroke="` + BC_BEACH.canvas + `" stroke-width="3" opacity="0.75">
   <path d="M114,226 L211,219"/>
   <path d="M116,234 L209,227"/>
 </g>
-<path d="M198,244 Q206,238 213,232 Q212,240 206,244 Z" fill="#c94a76"/>
-<path d="M106,238 Q112,232 118,236 Q112,242 106,240 Z" fill="#c94a76" opacity="0.8"/>
+<path d="M198,244 Q206,238 213,232 Q212,240 206,244 Z" fill="` + BC_BEACH.accentSoftDeep + `"/>
+<path d="M106,238 Q112,232 118,236 Q112,242 106,240 Z" fill="` + BC_BEACH.accentSoftDeep + `" opacity="0.8"/>
 
 <!-- One canopy apex, continuous fabric panels and ribs meeting at the hub. -->
-<path d="M96 232 Q140 225 191 233 Q166 244 117 241Z" fill="#c9a86e" opacity=".24"/>
+<ellipse cx="139" cy="234" rx="58" ry="7" fill="` + BC_BEACH.sandShadow + `" opacity=".34"/>
 <path d="M137 236 H141 V83 H137Z" fill="#8b6914"/>
 <path d="M138 236 V87" stroke="#c4a870" stroke-width="1" opacity=".65"/>
-<path d="M76 122 Q139 137 202 122 Q139 112 76 122Z" fill="#c43a3a"/>
+<path d="M76 122 Q139 137 202 122 Q139 112 76 122Z" fill="` + BC_BEACH.accentDeep + `"/>
 <path d="M82 122 L139 134 L196 122 M104 123 L139 134 L175 123" fill="none" stroke="#8b6914" stroke-width="1" opacity=".65"/>
-<path d="M139 82 Q103 86 76 122 Q89 127 101 121 Q108 98 139 82Z" fill="#e85050"/>
-<path d="M139 82 Q108 98 101 121 Q120 128 139 123 Q128 99 139 82Z" fill="#f5f0e0"/>
-<path d="M139 82 Q128 99 139 123 Q159 128 177 121 Q170 98 139 82Z" fill="#e85050"/>
-<path d="M139 82 Q170 98 177 121 Q190 127 202 122 Q175 86 139 82Z" fill="#f5f0e0"/>
-<path d="M139 82 Q108 98 101 121 M139 82 Q128 99 139 123 M139 82 Q170 98 177 121" fill="none" stroke="#c43a3a" stroke-width=".65" opacity=".3"/>
+<path d="M139 82 Q103 86 76 122 Q89 127 101 121 Q108 98 139 82Z" fill="` + BC_BEACH.accent + `"/>
+<path d="M139 82 Q108 98 101 121 Q120 128 139 123 Q128 99 139 82Z" fill="` + BC_BEACH.canvas + `"/>
+<path d="M139 82 Q128 99 139 123 Q159 128 177 121 Q170 98 139 82Z" fill="` + BC_BEACH.accent + `"/>
+<path d="M139 82 Q170 98 177 121 Q190 127 202 122 Q175 86 139 82Z" fill="` + BC_BEACH.canvas + `"/>
+<path d="M139 82 Q108 98 101 121 M139 82 Q128 99 139 123 M139 82 Q170 98 177 121" fill="none" stroke="` + BC_BEACH.accentDeep + `" stroke-width=".65" opacity=".3"/>
 <circle cx="139" cy="82" r="2.5" fill="#8b6914"/>
 <path d="M139 80 V75" stroke="#8b6914" stroke-width="1.8"/>
 
 <!-- Shell letters scattered on sand -->
-<g font-family="'Fredoka One',cursive" font-size="11" fill="#c4917a">
+<g font-family="'JetBrains Mono',monospace" font-size="11" fill="#c4917a">
   <text x="88" y="224" transform="rotate(-12,88,224)">W</text>
   <text x="152" y="258" transform="rotate(7,152,258)">H</text>
   <text x="232" y="214" transform="rotate(-16,232,214)">S</text>
@@ -149,7 +170,7 @@ STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <path d="M478 199 L471 182 M478 199 L480 177 M478 199 L489 184 M494 201 L490 187 M494 201 L499 183" fill="none" stroke="#8b9160" stroke-width="1.1" opacity=".65"/>
 <!-- Bottle bobbing in shallows -->
 <g>
-  <animateTransform attributeName="transform" type="translate" values="0,0;3,-2;0,0;-3,2;0,0" dur="5s" repeatCount="indefinite"/>
+  <animateTransform attributeName="transform" type="translate" values="0,0;3,-2;0,0;-3,2;0,0" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   <rect x="58" y="150" width="16" height="7" rx="3" fill="#8bc8a0" opacity="0.6" transform="rotate(-10,66,153)"/>
   <rect x="66" y="147" width="3" height="5" rx="1" fill="#a0d8b0" opacity="0.5" transform="rotate(-10,67,149)"/>
 </g>
@@ -159,36 +180,229 @@ STORY_SCENES['beach_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <circle cx="350" cy="225" r="0.8" fill="#c4a870" opacity="0.25"/>
 <circle cx="430" cy="245" r="0.8" fill="#c4a870" opacity="0.3"/>
 <circle cx="80" cy="235" r="0.8" fill="#c4a870" opacity="0.25"/>
+<!-- Approved cast background appearance; story and clues are unchanged. -->
+` + bcApprovedPlace('webby','ready',425,217,90,false) + `
 </svg>`;
 
-// Scenes 1-3 (shell cluster narrative, SHORE puzzle, shells rearrange): reuse shore art
-STORY_SCENES['beach_1'] = STORY_SCENES['beach_0'];
-STORY_SCENES['beach_2'] = STORY_SCENES['beach_0'];
-STORY_SCENES['beach_3'] = STORY_SCENES['beach_0'];
+// ====================================================================
+// Scenes 1-3: kneeling at the shell cluster. A close-up, not the wide shot:
+// the shells, their scratch marks, and the crab who runs the place.
+// The story says each shell has a letter scratched in it, so the cluster
+// shells carry the fodder's letters (HORSE). Before the solve (beach_1/2)
+// they never spell the answer in any order; beach_3 is post-solve.
+// ====================================================================
+function bcBn(v) { return Math.round(v * 10) / 10; }
+
+// The wreck crab (wCrab in wreck.js), same body/claw construction, copied
+// because beach.js loads before wreck.js. `tap` makes the left claw tap down
+// onto a shell and rest, the way a teacher taps a desk.
+function bcBeachCrab(x, y, r, tap) {
+  var jx = bcBn(-r * 0.85), jy = bcBn(-r * 0.15);
+  var o = '<g transform="translate(' + x + ',' + y + ')">';
+  o += '<ellipse cx="0" cy="' + bcBn(r * 0.95) + '" rx="' + bcBn(r * 1.7) + '" ry="' + bcBn(r * 0.3) + '" fill="#a88a52" opacity="0.4"/>';
+  // four walking legs a side, each bent at the knee and fanning out
+  var legs = [[0.5, 0.4, 0.82, 0.62, 0.92, 0.96], [0.7, 0.3, 1.08, 0.46, 1.26, 0.9], [0.86, 0.16, 1.3, 0.28, 1.56, 0.78], [0.95, 0.0, 1.42, 0.06, 1.76, 0.6]];
+  var ld = '';
+  legs.forEach(function (g) {
+    [-1, 1].forEach(function (sd) {
+      ld += 'M' + bcBn(sd * r * g[0]) + ',' + bcBn(r * g[1]) + ' L' + bcBn(sd * r * g[2]) + ',' + bcBn(r * g[3]) + ' L' + bcBn(sd * r * g[4]) + ',' + bcBn(r * g[5]) + ' ';
+    });
+  });
+  o += '<path d="' + ld.trim() + '" fill="none" stroke="#8f3b2e" stroke-width="' + bcBn(r * 0.13) + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  o += '<ellipse cx="0" cy="0" rx="' + r + '" ry="' + bcBn(r * 0.67) + '" fill="#8f3b2e"/>';
+  o += '<ellipse cx="0" cy="' + bcBn(-r * 0.2) + '" rx="' + bcBn(r * 0.85) + '" ry="' + bcBn(r * 0.42) + '" fill="#b04a38" opacity="0.85"/>';
+  o += '<ellipse cx="' + bcBn(-r * 0.25) + '" cy="' + bcBn(-r * 0.36) + '" rx="' + bcBn(r * 0.35) + '" ry="' + bcBn(r * 0.12) + '" fill="#d87a60" opacity="0.5"/>';
+  o += '<circle cx="' + bcBn(-r * 0.35) + '" cy="' + bcBn(-r * 0.48) + '" r="' + bcBn(r * 0.15) + '" fill="#0a1a1e"/>' +
+    '<circle cx="' + bcBn(r * 0.35) + '" cy="' + bcBn(-r * 0.48) + '" r="' + bcBn(r * 0.15) + '" fill="#0a1a1e"/>';
+  o += '<circle cx="' + bcBn(-r * 0.31) + '" cy="' + bcBn(-r * 0.52) + '" r="' + bcBn(r * 0.05) + '" fill="#f4ece0"/>' +
+    '<circle cx="' + bcBn(r * 0.39) + '" cy="' + bcBn(-r * 0.52) + '" r="' + bcBn(r * 0.05) + '" fill="#f4ece0"/>';
+  var claw = 'M' + jx + ',' + jy + ' L' + bcBn(-r * 1.58) + ',' + bcBn(-r * 0.58) + ' L' + bcBn(-r * 1.88) + ',' + bcBn(-r * 0.15);
+  // a chunky filled pincer: a fat palm with two fingers and a V notch between
+  function pincer(sd) {
+    var p = [[1.76, -0.36], [2.3, -0.5], [2.46, -0.16], [2.16, -0.22], [2.02, -0.12], [2.18, -0.02], [2.4, 0.04], [2.22, 0.24], [1.76, 0.06]];
+    function q(i) { return bcBn(sd * r * p[i][0]) + ',' + bcBn(r * p[i][1]); }
+    return '<path d="M' + q(0) + ' Q' + q(1) + ' ' + q(2) + ' Q' + q(3) + ' ' + q(4) + ' Q' + q(5) + ' ' + q(6) + ' Q' + q(7) + ' ' + q(8) + ' Z" fill="#8f3b2e"/>' +
+      '<ellipse cx="' + bcBn(sd * r * 1.98) + '" cy="' + bcBn(-r * 0.26) + '" rx="' + bcBn(r * 0.16) + '" ry="' + bcBn(r * 0.07) + '" fill="#b04a38" opacity="0.8"/>';
+  }
+  o += '<g>';
+  if (tap) {
+    o += '<animateTransform attributeName="transform" type="rotate" values="0 ' + jx + ' ' + jy + ';-16 ' + jx + ' ' + jy + ';0 ' + jx + ' ' + jy + ';-16 ' + jx + ' ' + jy + ';0 ' + jx + ' ' + jy + ';0 ' + jx + ' ' + jy +
+      '" keyTimes="0;0.08;0.16;0.24;0.32;1" dur="2.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>';
+  }
+  o += '<path d="' + claw + '" fill="none" stroke="#8f3b2e" stroke-width="' + bcBn(r * 0.23) + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  o += pincer(-1);
+  o += '</g>';
+  o += '<path d="M' + bcBn(r * 0.85) + ',' + bcBn(-r * 0.15) + ' L' + bcBn(r * 1.58) + ',' + bcBn(-r * 0.58) + ' L' + bcBn(r * 1.88) + ',' + bcBn(-r * 0.15) +
+    '" fill="none" stroke="#8f3b2e" stroke-width="' + bcBn(r * 0.23) + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  o += pincer(1);
+  return o + '</g>';
+}
+
+// One scallop shell, hinge at (x,y), size s, with scratch marks. Each scratch
+// set is worn nicks that never touch or cross: one long diagonal plus dots,
+// short curved nicks, or broken hatching. No two strokes meet, no pair is
+// joined by a bar, so none can resolve into a letterform.
+// ['l',x1,y1,x2,y2] straight nick, ['q',x1,y1,cx,cy,x2,y2] curved nick,
+// ['d',x,y] a pit.
+var BC_SCUFFS = [
+  [['l', -0.4, -0.66, 0.36, -0.26], ['d', 0.22, -0.62], ['d', -0.18, -0.24]],
+  [['q', -0.42, -0.34, -0.3, -0.47, -0.14, -0.42], ['q', 0.08, -0.66, 0.2, -0.56, 0.36, -0.62], ['d', 0.06, -0.28]],
+  [['l', -0.4, -0.62, -0.27, -0.53], ['l', -0.14, -0.45, -0.01, -0.36], ['l', 0.12, -0.28, 0.25, -0.19]],
+  [['q', -0.36, -0.3, -0.06, -0.72, 0.36, -0.46], ['d', -0.22, -0.62], ['d', 0.16, -0.24]],
+  [['l', -0.34, -0.24, 0.3, -0.66], ['q', 0.12, -0.2, 0.24, -0.2, 0.34, -0.3], ['d', -0.28, -0.6]],
+  [['l', -0.36, -0.56, -0.26, -0.46], ['l', -0.04, -0.4, 0.06, -0.3], ['l', 0.2, -0.64, 0.3, -0.54], ['d', -0.22, -0.26]],
+  [['q', -0.42, -0.5, -0.12, -0.62, 0.08, -0.48], ['l', 0.14, -0.28, 0.32, -0.38], ['d', -0.3, -0.26]]
+];
+// `letter` (optional) replaces the scuffs with one letter scratched into the
+// face: Georgia (carved/scratched surface), a dark groove with a pale lip.
+function bcShell(x, y, s, rot, tint, scuff, letter) {
+  var o = '<ellipse cx="' + x + '" cy="' + bcBn(y + 2) + '" rx="' + bcBn(s * 1.05) + '" ry="' + bcBn(s * 0.25) + '" fill="#b09660" opacity="0.38"/>';
+  o += '<g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')">';
+  o += '<path d="M0,0 L' + bcBn(-s * 0.95) + ',' + bcBn(-s * 0.55) + ' Q' + bcBn(-s * 1.05) + ',' + bcBn(-s * 1.25) + ' ' + bcBn(-s * 0.45) + ',' + bcBn(-s * 1.4) +
+    ' Q0,' + bcBn(-s * 1.58) + ' ' + bcBn(s * 0.45) + ',' + bcBn(-s * 1.4) + ' Q' + bcBn(s * 1.05) + ',' + bcBn(-s * 1.25) + ' ' + bcBn(s * 0.95) + ',' + bcBn(-s * 0.55) + ' Z" fill="' + tint + '" stroke="#a8745e" stroke-width="1"/>';
+  o += '<path d="M' + bcBn(-s * 0.7) + ',' + bcBn(-s * 1.2) + ' Q0,' + bcBn(-s * 1.5) + ' ' + bcBn(s * 0.7) + ',' + bcBn(-s * 1.2) + ' Q0,' + bcBn(-s * 1.3) + ' ' + bcBn(-s * 0.7) + ',' + bcBn(-s * 1.2) + ' Z" fill="#fff4e4" opacity="0.45"/>';
+  o += '<path d="M0,0 L' + bcBn(-s * 0.7) + ',' + bcBn(-s * 1.15) + ' M0,0 L' + bcBn(-s * 0.25) + ',' + bcBn(-s * 1.42) + ' M0,0 L' + bcBn(s * 0.25) + ',' + bcBn(-s * 1.42) + ' M0,0 L' + bcBn(s * 0.7) + ',' + bcBn(-s * 1.15) +
+    '" stroke="#c4917a" stroke-width="0.9" opacity="0.6" fill="none"/>';
+  o += '<path d="M' + bcBn(-s * 0.3) + ',' + bcBn(s * 0.12) + ' L' + bcBn(s * 0.3) + ',' + bcBn(s * 0.12) + ' L' + bcBn(s * 0.18) + ',' + bcBn(-s * 0.12) + ' L' + bcBn(-s * 0.18) + ',' + bcBn(-s * 0.12) + ' Z" fill="#d8a890"/>';
+  if (letter) {
+    var t = 'x="0" y="' + bcBn(-s * 0.36) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="' + bcBn(s * 1.02) + '"';
+    o += '<text ' + t + ' fill="#fff0dc" opacity="0.55" transform="translate(0.7,0.7)">' + letter + '</text>';
+    o += '<text ' + t + ' fill="#6e4434">' + letter + '</text>';
+    return o + '</g>';
+  }
+  var d = '', pits = '';
+  function px(v) { return bcBn(v * s); }
+  function py(v) { return bcBn(v * s * 1.6); }
+  BC_SCUFFS[scuff % BC_SCUFFS.length].forEach(function (l) {
+    if (l[0] === 'l') d += 'M' + px(l[1]) + ',' + py(l[2]) + ' L' + px(l[3]) + ',' + py(l[4]) + ' ';
+    else if (l[0] === 'q') d += 'M' + px(l[1]) + ',' + py(l[2]) + ' Q' + px(l[3]) + ',' + py(l[4]) + ' ' + px(l[5]) + ',' + py(l[6]) + ' ';
+    else pits += '<circle cx="' + px(l[1]) + '" cy="' + py(l[2]) + '" r="0.9"/>';
+  });
+  o += '<path d="' + d.trim() + '" stroke="#6e4434" stroke-width="1.3" stroke-linecap="round" opacity="0.7" fill="none"/>';
+  o += '<path d="' + d.trim() + '" stroke="#fff0dc" stroke-width="0.6" stroke-linecap="round" opacity="0.35" fill="none" transform="translate(0.7,0.7)"/>';
+  if (pits) o += '<g fill="#6e4434" opacity="0.6">' + pits + '</g>';
+  return o + '</g>';
+}
+
+function bcBeachCloseup(v) {
+  var o = '<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs>' +
+    '<linearGradient id="bcuSea' + v + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + BC_BEACH.sea + '"/><stop offset="100%" stop-color="' + BC_BEACH.seaShallow + '"/></linearGradient>' +
+    '<linearGradient id="bcuSand' + v + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + BC_BEACH.sandWet + '"/><stop offset="22%" stop-color="' + BC_BEACH.sand + '"/><stop offset="100%" stop-color="' + BC_BEACH.sandDry + '"/></linearGradient>' +
+    '<radialGradient id="bcuGlow' + v + '" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fffbe0" stop-opacity="1"/><stop offset="45%" stop-color="#ffd860" stop-opacity="0.75"/><stop offset="100%" stop-color="#ffc040" stop-opacity="0"/></radialGradient>' +
+    '</defs>';
+  // the sand, filling the frame because we are kneeling on it
+  o += '<rect width="500" height="260" fill="url(#bcuSand' + v + ')"/>';
+  // the edge of the sea at the top of the frame, and its foam
+  o += '<path d="M0,0 L500,0 L500,30 Q440,38 370,32 Q290,26 220,34 Q130,42 60,33 Q30,30 0,34 Z" fill="url(#bcuSea' + v + ')" opacity="0.85"/>';
+  o += '<path d="M0,34 Q30,30 60,33 Q130,42 220,34 Q290,26 370,32 Q440,38 500,30 L500,36 Q440,44 370,38 Q290,32 220,40 Q130,48 60,39 Q30,36 0,40 Z" fill="' + BC_BEACH.foam + '" opacity="0.6">' +
+    '<animate attributeName="opacity" values="0.45;0.75;0.45" dur="4.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>';
+  // wet sheen and the drift line
+  o += '<path d="M0,42 Q130,52 250,44 Q380,38 500,44 L500,58 Q380,52 250,58 Q130,64 0,56 Z" fill="' + BC_BEACH.sandSheen + '" opacity="0.4"/>';
+  o += '<path d="M0,74 Q110,80 230,73 Q360,66 500,74" fill="none" stroke="' + BC_BEACH.drift + '" stroke-width="2" opacity="0.45"/>';
+  // grit
+  o += '<g fill="' + BC_BEACH.grit + '" opacity="0.45">';
+  [[38, 98, 1.6], [92, 236, 1.4], [148, 120, 1.2], [276, 236, 1.7], [452, 102, 1.4], [470, 230, 1.3], [24, 196, 1.2], [334, 108, 1.1], [196, 246, 1.3], [418, 156, 1.2], [64, 150, 1], [302, 92, 1.2]].forEach(function (g) {
+    o += '<circle cx="' + g[0] + '" cy="' + g[1] + '" r="' + g[2] + '"/>';
+  });
+  o += '</g>';
+  o += '<g fill="#f8ecc8" opacity="0.55"><circle cx="118" cy="214" r="1.1"/><circle cx="246" cy="96" r="1"/><circle cx="436" cy="248" r="1.2"/><circle cx="54" cy="122" r="1"/></g>';
+  // a pebble and a broken shell fragment, so the ground is not empty
+  // (the pebble sits clear of the player's heels, where it no longer merges with his shadow)
+  o += '<path d="M150,236 Q156,226 168,230 Q176,236 168,242 Q156,244 150,236 Z" fill="#a89a8b"/><path d="M154,232 Q160,228 166,231" stroke="#c8bcae" stroke-width="1.4" fill="none" opacity="0.6"/>';
+  o += '<path d="M456,184 l8,-6 l6,4 l-4,6 Z" fill="#f0d0b8" opacity="0.8"/>';
+
+  if (v === 1) {
+    // THE CLUSTER: arranged on purpose, a loose arc with one at the centre
+    // (the whole cluster sits 40 right of where it was, to give the kneeling
+    // player the left of the frame; same seven shells, same tints, same scuffs)
+    o += '<path d="M160,190 Q250,150 314,170" fill="none" stroke="#c9a86e" stroke-width="1.2" stroke-dasharray="2 5" opacity="0.4"/>';
+    // Five shells carry the letters of the clue's fodder, HORSE, in no order
+    // ("read in order, they spell nonsense"); the other two are bare. S sits
+    // last on every reading (left-right, top-down), so no ordered subset can
+    // spell the answer. Each lettered shell is the one that slides into the
+    // beach_3 line (see the drag marks there), so the letters carry over.
+    var shells = [[172, 190, 15, -14, '#f0c8b0', 'H'], [208, 168, 16, -6, '#f5d6c0'], [248, 158, 17, 3, '#f0c8b0', 'E'], [290, 160, 16, 8, '#ecc2aa'], [340, 222, 14, 10, '#f5d6c0', 'S'], [230, 214, 14, -4, '#ecc2aa', 'O'], [278, 210, 15, 6, '#f0d0b8', 'R']];
+    shells.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i, sh[5]); });
+    // the crab, beside the cluster, tapping the nearest shell
+    o += bcBeachCrab(390, 200, 22, true);
+    // its feet have printed the sand on the way in
+    o += '<g fill="#b8996a" opacity="0.4"><circle cx="434" cy="214" r="1.4"/><circle cx="446" cy="208" r="1.4"/><circle cx="456" cy="218" r="1.4"/><circle cx="468" cy="212" r="1.4"/><circle cx="478" cy="222" r="1.4"/><circle cx="490" cy="216" r="1.4"/></g>';
+  } else {
+    // THE CLUSTER, REARRANGED: the shells now sit in one line and glow
+    // (22 right of where it was, clear of the kneeling player; same five shells)
+    var line = [[172, 176, 15, -4, '#f0c8b0'], [218, 174, 16, 2, '#f5d6c0'], [264, 172, 16, -2, '#ecc2aa'], [310, 174, 16, 3, '#f0d0b8'], [356, 176, 15, -3, '#f0c8b0']];
+    // the drag marks where they slid into place: a soft groove from each
+    // shell's base back toward where it lay in beach_1, fading as it goes
+    // (the first shell only rose a few units from its beach_1 spot, under the
+    // player's hand, so it leaves no groove; a straight 12-unit one read as a stalk)
+    var drags = ['M217,181 Q226,192 229,205', 'M263,180 Q270,191 277,203', 'M311,181 Q325,192 339,205', 'M358,182 Q375,188 392,196'];
+    o += '<defs><linearGradient id="bcuDrag' + v + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff" stop-opacity="1"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<mask id="bcuDragM' + v + '" maskUnits="userSpaceOnUse" x="0" y="176" width="500" height="32"><rect x="0" y="176" width="500" height="32" fill="url(#bcuDrag' + v + ')"/></mask></defs>';
+    o += '<g mask="url(#bcuDragM' + v + ')" fill="none" stroke-linecap="round">';
+    drags.forEach(function (p) {
+      o += '<path d="' + p + '" stroke="#b8996a" stroke-width="8" opacity="0.4" transform="translate(0,1.4)"/>' +
+        '<path d="' + p + '" stroke="#f6e8c4" stroke-width="7" opacity="0.85"/>';
+    });
+    o += '</g>';
+    line.forEach(function (sh, i) {
+      o += '<ellipse cx="' + sh[0] + '" cy="' + (sh[1] - 12) + '" rx="30" ry="25" fill="url(#bcuGlow' + v + ')" opacity="0.5">' +
+        '<animate attributeName="opacity" values="0.45;1;0.45" dur="' + bcBn(3 + i * 0.17) + 's" begin="' + bcBn(i * 0.32) + 's" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>';
+    });
+    // beach_3 runs after the solve, beside the line "the shells ... rearrange
+    // themselves to spell SHORE", so here (only here) the line reads SHORE:
+    // the same five lettered shells from beach_1, reordered.
+    var lineLetters = ['S', 'H', 'O', 'R', 'E'];
+    line.forEach(function (sh, i) { o += bcShell(sh[0], sh[1], sh[2], sh[3], sh[4], i + 2, lineLetters[i]); });
+    // the crab mid-shuffle: placement outside, motion inside
+    o += '<g><animateTransform attributeName="transform" type="translate" values="0,0;-8,-2;-16,0;-8,-2;0,0" keyTimes="0;0.25;0.5;0.75;1" dur="1.9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+      bcBeachCrab(410, 214, 22, false) + '</g>';
+    // further down the beach, a bottle rolling in on the tide
+    o += '<g transform="translate(420,44)"><g>' +
+      '<animateTransform attributeName="transform" type="translate" values="10,-2;0,1;10,-2" keyTimes="0;0.5;1" dur="4.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+      '<ellipse cx="0" cy="6" rx="14" ry="2.4" fill="#a88a52" opacity="0.35"/>' +
+      '<g><animateTransform attributeName="transform" type="rotate" values="-14 0 0;-4 0 0;-14 0 0" keyTimes="0;0.5;1" dur="4.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>' +
+      '<rect x="-12" y="-4" width="20" height="9" rx="4" fill="#7fc4a8" opacity="0.85"/>' +
+      '<rect x="7" y="-2" width="6" height="5" rx="1.5" fill="#7fc4a8" opacity="0.9"/>' +
+      '<rect x="12.5" y="-2.2" width="3.5" height="5.4" rx="1" fill="#c08a4a"/>' +
+      '<rect x="-7" y="-2" width="11" height="5" rx="2" fill="#f0e4cc" opacity="0.9"/>' +
+      '<path d="M-9,-2.5 L4,-2.5" stroke="#f4fffa" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>' +
+      '</g></g></g>';
+  }
+  // THE PLAYER, approved Webby, at the shells. Whole figure in frame, feet on
+  // the sand with his contact shadow, at the cast's natural scale beside the
+  // shells. There is no kneeling model, so the approved 'reach' pose is leant
+  // 8 degrees forward about his feet, bending him toward the cluster, and the
+  // cluster is placed so his fingertips land on its nearest shell. Drawn after
+  // the shells so the hand closes over it.
+  o += '<g transform="rotate(8 78 246)">' + bcApprovedPlace('webby', 'reach', 78, 246, 176, false) + '</g>';
+  return o + '</svg>';
+}
+
+STORY_SCENES['beach_1'] = bcBeachCloseup(1);
+STORY_SCENES['beach_2'] = STORY_SCENES['beach_1'];
+STORY_SCENES['beach_3'] = bcBeachCloseup(3);
 
 // Scene 4: Bottle rolls to feet, cliffside passage with vines
 STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="b4Sky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#7ac5e8"/><stop offset="62%" stop-color="#a8d8ee"/><stop offset="100%" stop-color="#cfe9f4"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.sky + `"/><stop offset="58%" stop-color="` + BC_BEACH.skyHorizon + `"/>
   </linearGradient>
   <linearGradient id="b4CliffFace" x1="0" y1="0" x2="1" y2="0.3">
-    <stop offset="0%" stop-color="#8a7f74"/><stop offset="48%" stop-color="#6f6459"/><stop offset="100%" stop-color="#574d44"/>
+    <stop offset="0%" stop-color="#8a7f74"/><stop offset="48%" stop-color="` + BC_BEACH.rock + `"/><stop offset="100%" stop-color="` + BC_BEACH.rockShade + `"/>
   </linearGradient>
   <linearGradient id="b4CliffLit" x1="0.2" y1="0" x2="1" y2="0.6">
-    <stop offset="0%" stop-color="#a89a8b"/><stop offset="100%" stop-color="#7d7166"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.rockLit + `"/><stop offset="100%" stop-color="#7d7166"/>
   </linearGradient>
   <linearGradient id="b4Sea" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#5fb3d9"/><stop offset="100%" stop-color="#20648f"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.seaDeep + `"/><stop offset="100%" stop-color="` + BC_BEACH.sea + `"/>
   </linearGradient>
   <linearGradient id="b4Sand" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#efdcae"/><stop offset="100%" stop-color="#d0b374"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.sandDry + `"/><stop offset="100%" stop-color="` + BC_BEACH.sand + `"/>
   </linearGradient>
-  <radialGradient id="b4CaveDepth" cx="52%" cy="66%" r="62%">
-    <stop offset="0%" stop-color="#0f0d0c"/><stop offset="55%" stop-color="#221d19"/><stop offset="100%" stop-color="#3c342d"/>
-  </radialGradient>
-  <linearGradient id="b4Mouth" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#4a4139"/><stop offset="100%" stop-color="#2a231e"/>
+  <linearGradient id="b4Slab" x1="0.2" y1="0" x2="0.8" y2="1">
+    <stop offset="0%" stop-color="#8f877c"/><stop offset="55%" stop-color="#7a7268"/><stop offset="100%" stop-color="#615a52"/>
   </linearGradient>
 </defs>
 <rect width="500" height="260" fill="url(#b4Sky)"/>
@@ -198,21 +412,21 @@ STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
      eats detail, so it goes to a wash of the sky colour rather than a
      smaller version of the near rock.
      ==================================================================== -->
-<path d="M360,150 L378,128 L396,136 L414,116 L436,124 L452,110 L470,120 L488,108 L500,116 L500,152 Z" fill="#8ea9b8" opacity="0.55"/>
+<path d="M360,150 L378,128 L396,136 L414,116 L436,124 L452,110 L470,120 L488,108 L500,116 L500,152 Z" fill="` + BC_BEACH.headland + `" opacity="0.7"/>
 <path d="M414,116 L436,124 L452,110 L462,116 L440,130 L420,124 Z" fill="#a6bcc8" opacity="0.4"/>
 
 <!-- the sea, sitting between the two headlands -->
 <path d="M156,150 L500,150 L500,196 L172,196 Z" fill="url(#b4Sea)"/>
-<path d="M156,150 L500,150 L500,155 L158,155 Z" fill="#9fd6ec" opacity="0.6"/>
+<path d="M156,150 L500,150 L500,155 L158,155 Z" fill="` + BC_BEACH.seaShallow + `" opacity="0.6"/>
 <!-- swell lines, further apart as they come toward the shore -->
-<path d="M180,166 Q260,161 340,166 Q420,171 500,164" fill="none" stroke="#8fd0e8" stroke-width="1.7" opacity="0.45" stroke-linecap="round">
+<path d="M180,166 Q260,161 340,166 Q420,171 500,164" fill="none" stroke="` + BC_BEACH.swell + `" stroke-width="1.7" opacity="0.45" stroke-linecap="round">
   <animate attributeName="opacity" values="0.25;0.55;0.25" dur="6.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M176,180 Q266,174 356,181 Q432,187 500,179" fill="none" stroke="#a8ddf0" stroke-width="2" opacity="0.4" stroke-linecap="round">
+<path d="M176,180 Q266,174 356,181 Q432,187 500,179" fill="none" stroke="` + BC_BEACH.swell + `" stroke-width="2" opacity="0.4" stroke-linecap="round">
   <animate attributeName="opacity" values="0.2;0.5;0.2" dur="7.4s" begin="1.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- foam where the sea lands on the sand -->
-<path d="M172,194 Q280,199 390,194 Q450,191 500,195 L500,201 Q400,205 280,204 Q210,202 172,199 Z" fill="#e6f4fa" opacity="0.55"/>
+<path d="M172,194 Q280,199 390,194 Q450,191 500,195 L500,201 Q400,205 280,204 Q210,202 172,199 Z" fill="` + BC_BEACH.foam + `" opacity="0.55"/>
 
 <!-- ====================================================================
      THE HEADLAND. Rock is flat planes meeting at angles, so the mass is
@@ -249,46 +463,70 @@ STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 </g>
 
 <!-- ====================================================================
-     THE CAVE. Cut into the undercut at the foot of the cliff, wide enough
-     to walk into. A hole reads by its rim and by what is INSIDE it: side
-     walls converging away from us, a floor running back, and the light
-     dying as it goes, so the dark is depth rather than paint.
+     THE PASSAGE. A narrow cut at the foot of the cliff, wide enough for one
+     person, and SHUT: a heavy stone slab sits in a rebate cut into the rock.
+     Same stone, same chisel work and same colours as the door in beach_5,
+     because it is the same door seen from further back.
      ==================================================================== -->
-<!-- the overhang: the brow of rock the mouth is cut under -->
-<path d="M28,196 Q52,140 108,132 Q166,126 200,178 Q206,190 208,200 L188,200 Q178,158 128,150 Q76,144 48,200 Z" fill="#4a4139"/>
-<path d="M40,190 Q64,146 110,140 Q158,136 190,182 L182,186 Q152,148 110,152 Q68,156 50,192 Z" fill="#645a50" opacity="0.55"/>
-<!-- the mouth itself, and the deep interior behind it -->
-<path d="M48,244 Q46,182 110,168 Q176,158 194,214 Q198,230 200,244 Z" fill="url(#b4Mouth)"/>
-<path d="M60,244 Q58,190 112,178 Q168,170 184,220 Q188,232 190,244 Z" fill="url(#b4CaveDepth)"/>
-<!-- the side walls, converging back into the hill: this is the depth -->
-<path d="M60,244 Q58,190 112,178 L118,192 Q78,204 82,244 Z" fill="#40382f" opacity="0.75"/>
-<path d="M190,244 Q186,196 152,180 L146,194 Q172,208 172,244 Z" fill="#2c2620" opacity="0.7"/>
-<!-- the floor running back, catching the last of the outside light -->
-<path d="M78,244 Q124,232 172,244 Z" fill="#6a5f52" opacity="0.7"/>
-<path d="M86,244 Q124,236 164,244 Z" fill="#8a7c6a" opacity="0.45"/>
-<!-- light landing just inside the lip, which is what makes the rest read
-     as further in rather than simply black -->
-<path d="M62,232 Q112,214 178,228 Q176,236 172,240 Q120,226 68,240 Z" fill="#b0a08a" opacity="0.18"/>
+<!-- the brow of rock the passage is cut under -->
+<path d="M70,240 Q72,160 128,146 Q184,160 186,240 L172,240 Q170,172 128,160 Q86,172 84,240 Z" fill="#4a4139"/>
+<path d="M78,226 Q82,166 128,154 Q174,166 178,226 L172,226 Q168,174 128,162 Q88,174 84,226 Z" fill="#645a50" opacity="0.55"/>
+<!-- the rebate the slab sits in, and the shadow gap round it -->
+<path d="M92,242 L92,178 Q92,172 98,172 L158,172 Q164,172 164,178 L164,242 Z" fill="#332e27"/>
+<path d="M96,242 L96,181 Q96,176 101,176 L155,176 Q160,176 160,181 L160,242 Z" fill="#241f1a"/>
+<!-- the slab, standing a little proud of the rebate -->
+<path d="M100,240 L100,184 Q100,180 104,180 L152,180 Q156,180 156,184 L156,240 Z" fill="url(#b4Slab)"/>
+<path d="M100,240 L100,184 Q100,180 104,180 L107,180 Q103,181 103,185 L103,240 Z" fill="#a09689" opacity="0.55"/>
+<path d="M156,240 L156,184 Q156,180 152,180 L149,180 Q153,181 153,185 L153,240 Z" fill="#4a443c" opacity="0.6"/>
+<!-- the sunk panel and the mason's tool marks -->
+<path d="M107,234 L107,188 Q107,186 109,186 L147,186 Q149,186 149,188 L149,234 Z" fill="#6f675c"/>
+<path d="M107,234 L107,188 Q107,186 109,186 L147,186 Q149,186 149,188 L109,188 L109,234 Z" fill="#4f483f" opacity="0.65"/>
+<path d="M149,234 L149,189 L147,191 L147,232 L109,232 L107,234 Z" fill="#8f877c" opacity="0.5"/>
+<path d="M110,229 L110,192 Q110,190 112,190 L144,190 Q146,190 146,192 L146,229 Z" fill="#7a7268" opacity="0.85"/>
+<g stroke="#655e55" stroke-width="0.8" opacity="0.4" fill="none">
+  <path d="M113,198 Q128,196 143,198 M113,206 Q128,204 143,206 M113,216 Q128,214 143,216 M113,224 Q128,222 143,224"/>
+</g>
+<!-- the shadow gap under the slab -->
+<path d="M100,237 L156,237 L156,242 L100,242 Z" fill="#1c1814" opacity="0.8"/>
 <!-- the tide line the sea has cut across the base of the cliff -->
 <path d="M-4,222 Q22,216 46,220 L46,228 Q22,224 -4,230 Z" fill="#5a6a62" opacity="0.4"/>
 <path d="M200,238 Q230,232 258,238 L258,246 Q230,240 200,246 Z" fill="#5a6a62" opacity="0.35"/>
 
-<!-- VINES, the detail the scene is named for. They hang PLUMB from the
-     overhang, because anything that hangs, hangs straight down. -->
-<path d="M74,150 Q70,182 76,214 Q79,232 75,250" fill="none" stroke="#3a8a30" stroke-width="2.4" stroke-linecap="round"/>
-<path d="M104,142 Q101,178 106,208" fill="none" stroke="#4a9a38" stroke-width="1.9" stroke-linecap="round"/>
-<path d="M136,140 Q140,176 134,206" fill="none" stroke="#3a8a30" stroke-width="2.1" stroke-linecap="round"/>
-<path d="M168,150 Q173,186 166,218 Q163,234 167,250" fill="none" stroke="#4a9a38" stroke-width="2.3" stroke-linecap="round"/>
-<path d="M190,168 Q195,196 189,222" fill="none" stroke="#3a8a30" stroke-width="1.7" stroke-linecap="round"/>
+<!-- FADED SYMBOLS carved in the rock round the passage. Abstract marks only:
+     spiral, ring, waves, chevrons, an eye. Never letters. Each is a dark cut
+     with a pale lip on its lower edge, and all of them are worn. -->
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g stroke="#3a322b" stroke-width="1.6" opacity="0.38">
+    <path d="M38.8,180.0 L38.9,180.5 L38.5,181.3 L37.5,181.7 L36.6,181.4 L35.9,180.7 L35.6,179.6 L35.8,178.4 L36.7,177.4 L38.0,176.8 L39.6,176.9 L41.0,177.8 L41.9,179.4 L42.0,181.3 L41.1,183.1 L39.4,184.4 L37.2,184.8 L35.0,184.1 L33.2,182.4 L32.4,180.0 L32.8,177.3 L34.4,175.1 L37.0,173.8 L40.0,173.8 L42.8,175.2 L44.7,177.8 L45.2,181.1 L44.1,184.4 L41.5,186.9 L38.0,188.0"/><circle cx="38" cy="180" r="8"/>
+    <circle cx="214" cy="166" r="9"/><circle cx="214" cy="166" r="1.8"/>
+    <path d="M166,104 q5,-5 10,0 q5,5 10,0 q5,-5 10,0 M166,112 q5,-5 10,0 q5,5 10,0 q5,-5 10,0"/>
+    <path d="M222,216 l5,-6 l5,6 l5,-6 l5,6 l5,-6 l5,6 l5,-6 l5,6"/>
+    <path d="M14,138 q12,-10 24,0 q-12,10 -24,0 Z"/><circle cx="26" cy="138" r="2.4"/>
+  </g>
+  <g stroke="#b0a290" stroke-width="0.8" opacity="0.28" transform="translate(0.9,1)">
+    <path d="M38.8,180.0 L38.9,180.5 L38.5,181.3 L37.5,181.7 L36.6,181.4 L35.9,180.7 L35.6,179.6 L35.8,178.4 L36.7,177.4 L38.0,176.8 L39.6,176.9 L41.0,177.8 L41.9,179.4 L42.0,181.3 L41.1,183.1 L39.4,184.4 L37.2,184.8 L35.0,184.1 L33.2,182.4 L32.4,180.0 L32.8,177.3 L34.4,175.1 L37.0,173.8 L40.0,173.8 L42.8,175.2 L44.7,177.8 L45.2,181.1 L44.1,184.4 L41.5,186.9 L38.0,188.0"/><circle cx="38" cy="180" r="8"/>
+    <circle cx="214" cy="166" r="9"/>
+    <path d="M166,104 q5,-5 10,0 q5,5 10,0 q5,-5 10,0 M166,112 q5,-5 10,0 q5,5 10,0 q5,-5 10,0"/>
+    <path d="M222,216 l5,-6 l5,6 l5,-6 l5,6 l5,-6 l5,6 l5,-6 l5,6"/>
+    <path d="M14,138 q12,-10 24,0 q-12,10 -24,0 Z"/>
+  </g>
+</g>
+
+<!-- VINES. The passage is vine-covered: they hang PLUMB from the brow,
+     framing the slab and falling across its top edge. -->
+<path d="M82,170 Q78,196 84,220 Q86,232 82,246" fill="none" stroke="#3a8a30" stroke-width="2.3" stroke-linecap="round"/>
+<path d="M108,156 Q105,176 110,198" fill="none" stroke="#4a9a38" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M140,154 Q144,172 139,190" fill="none" stroke="#3a8a30" stroke-width="1.9" stroke-linecap="round"/>
+<path d="M174,168 Q179,194 172,220 Q169,234 173,248" fill="none" stroke="#4a9a38" stroke-width="2.2" stroke-linecap="round"/>
 <g fill="#4a9a38">
-  <path d="M72,170 q-9,-3 -11,4 q8,5 11,-4 Z"/>
-  <path d="M77,196 q9,-3 11,4 q-8,5 -11,-4 Z"/>
-  <path d="M102,164 q-8,-3 -10,4 q7,4 10,-4 Z"/>
-  <path d="M137,166 q8,-3 10,4 q-7,4 -10,-4 Z"/>
-  <path d="M132,192 q-8,-3 -10,4 q7,4 10,-4 Z"/>
-  <path d="M171,178 q8,-3 10,4 q-7,4 -10,-4 Z"/>
-  <path d="M165,208 q-8,-3 -10,4 q7,4 10,-4 Z"/>
-  <path d="M191,192 q7,-3 9,4 q-6,4 -9,-4 Z"/>
+  <path d="M80,184 q-9,-3 -11,4 q8,5 11,-4 Z"/>
+  <path d="M85,210 q9,-3 11,4 q-8,5 -11,-4 Z"/>
+  <path d="M106,170 q-8,-3 -10,4 q7,4 10,-4 Z"/>
+  <path d="M110,192 q8,-3 10,4 q-7,4 -10,-4 Z"/>
+  <path d="M142,168 q8,-3 10,4 q-7,4 -10,-4 Z"/>
+  <path d="M139,184 q-8,-3 -10,4 q7,4 10,-4 Z"/>
+  <path d="M177,186 q8,-3 10,4 q-7,4 -10,-4 Z"/>
+  <path d="M171,216 q-8,-3 -10,4 q7,4 10,-4 Z"/>
 </g>
 
 <!-- ====================================================================
@@ -297,10 +535,10 @@ STORY_SCENES['beach_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <path d="M52,250 Q120,238 200,240 Q240,241 268,236 L500,196 L500,260 L40,260 Z" fill="url(#b4Sand)"/>
 <path d="M78,244 Q124,236 170,244 Q124,250 78,244 Z" fill="#cdb078" opacity="0.5"/>
 <!-- the wet strip the last wave left, darker and reflective -->
-<path d="M258,236 L500,196 L500,212 Q380,224 262,246 Z" fill="#c8ab6e" opacity="0.7"/>
-<path d="M270,238 L500,199 L500,204 Q390,216 272,242 Z" fill="#ffdca4" opacity="0.28"/>
+<path d="M258,236 L500,196 L500,212 Q380,224 262,246 Z" fill="` + BC_BEACH.sandWet + `" opacity="0.7"/>
+<path d="M270,238 L500,199 L500,204 Q390,216 272,242 Z" fill="` + BC_BEACH.sandSheen + `" opacity="0.4"/>
 <!-- the drift line where the tide stopped -->
-<path d="M212,252 Q300,242 390,234 Q446,229 500,224" fill="none" stroke="#bd9c62" stroke-width="1.8" opacity="0.45" stroke-linecap="round"/>
+<path d="M212,252 Q300,242 390,234 Q446,229 500,224" fill="none" stroke="` + BC_BEACH.drift + `" stroke-width="1.8" opacity="0.45" stroke-linecap="round"/>
 <!-- pebbles and shell fragments, sparse and unevenly spread -->
 <g fill="#c0a068" opacity="0.6">
   <path d="M304,250 q5,-3 9,1 q-4,4 -9,-1 Z"/>
@@ -350,7 +588,7 @@ STORY_SCENES['beach_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
   </radialGradient>
   <filter id="chalkFilter"><feGaussianBlur stdDeviation="0.8" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <radialGradient id="beach5Mouth" cx="50%" cy="0%" r="80%">
-    <stop offset="0%" stop-color="#7ac5e8" stop-opacity="0.28"/><stop offset="100%" stop-color="#7ac5e8" stop-opacity="0"/>
+    <stop offset="0%" stop-color="` + BC_BEACH.skyHorizon + `" stop-opacity="0.28"/><stop offset="100%" stop-color="` + BC_BEACH.skyHorizon + `" stop-opacity="0"/>
   </radialGradient>
 </defs>
 <rect width="500" height="260" fill="url(#doorCliff)"/>
@@ -433,33 +671,32 @@ STORY_SCENES['beach_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <path d="M188,118 L220,118 Q224,118 224,124 Q224,130 220,130 L188,130 Q184,130 184,124 Q184,118 188,118 Z" fill="#96805f"/>
 <path d="M188,119 L220,119 Q222,119 222,123 Q222,126 220,126 L188,126 Q186,126 186,123 Q186,119 188,119 Z" fill="#b8a080" opacity="0.7"/>
 <path d="M186,130 q3,4 6,0 M216,130 q3,4 6,0" fill="none" stroke="#6f5f46" stroke-width="1.6"/>
-<text x="204" y="127" text-anchor="middle" fill="#4a3f2e" font-family="'Fredoka One',cursive" font-size="6">PUSH</text>
+<text x="204" y="127" text-anchor="middle" fill="#4a3f2e" font-family="'JetBrains Mono',monospace" font-size="6">PUSH</text>
 <!-- PULL, a vertical one -->
 <path d="M280,120 L290,120 L292,152 L282,152 Z" fill="#4f483f" opacity="0.5"/>
 <path d="M276,116 Q282,116 282,120 L282,150 Q282,154 276,154 Q272,154 272,150 L272,120 Q272,116 276,116 Z" fill="#96805f"/>
 <path d="M276,118 Q280,118 280,121 L280,149 Q280,152 276,152 Q274,152 274,149 L274,121 Q274,118 276,118 Z" fill="#b8a080" opacity="0.7"/>
 <path d="M282,119 q4,3 0,6 M282,145 q4,3 0,6" fill="none" stroke="#6f5f46" stroke-width="1.6"/>
-<text x="277" y="137" text-anchor="middle" fill="#4a3f2e" font-family="'Fredoka One',cursive" font-size="5.5" transform="rotate(-90,277,137)">PULL</text>
+<text x="277" y="137" text-anchor="middle" fill="#4a3f2e" font-family="'JetBrains Mono',monospace" font-size="5.5" transform="rotate(-90,277,137)">PULL</text>
 
 <!-- ====================================================================
      THE CHALK. Text is frozen: not one character of it changes. It now
      sits in a rubbed patch, because chalk on rough stone leaves a smear
-     around the letters as much as the letters themselves.
+     around the letters as much as the letters themselves. It sits BELOW the
+     handles (decision 2026-10), shifted down as one block; no arrow.
      ==================================================================== -->
+<g transform="translate(0,90)">
 <path d="M182,74 Q250,66 318,74 Q322,90 318,104 Q250,112 182,104 Q178,90 182,74 Z" fill="#cfcabd" opacity="0.12"/>
 <ellipse cx="250" cy="90" rx="72" ry="20" fill="url(#chalkGlow)" opacity="0.4">
   <animate attributeName="opacity" values="0.28;0.52;0.28" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
 <g filter="url(#chalkFilter)">
-  <text x="250" y="94" text-anchor="middle" fill="#e8e4d8" font-family="'Fredoka One',cursive" font-size="14" letter-spacing="2" opacity="0.85">
+  <text x="250" y="94" text-anchor="middle" fill="#e8e4d8" font-family="Georgia,serif" font-size="14" letter-spacing="2" opacity="0.85">
     TIFL OT NEPO
     <animate attributeName="opacity" values="0.72;0.95;0.72" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </text>
 </g>
-<!-- the chalk arrow under it, drawn with a shaking hand rather than ruled -->
-<path d="M250,102 Q248,114 249,124" fill="none" stroke="#e8e4d8" stroke-width="1.6" stroke-linecap="round" opacity="0.42"/>
-<path d="M250,102 Q245,106 244,111" fill="none" stroke="#e8e4d8" stroke-width="1.5" stroke-linecap="round" opacity="0.42"/>
-<path d="M250,102 Q255,106 256,111" fill="none" stroke="#e8e4d8" stroke-width="1.5" stroke-linecap="round" opacity="0.42"/>
+</g>
 <!-- chalk dust fallen at the foot of the slab -->
 <path d="M226,230 q14,-3 28,0 q-14,4 -28,0 Z" fill="#cfcabd" opacity="0.16"/>
 
@@ -502,8 +739,8 @@ STORY_SCENES['beach_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http:/
 <path d="M0,238 Q120,230 250,234 Q380,238 500,232 L500,260 L0,260 Z" fill="#3f3931"/>
 <path d="M0,248 Q120,242 250,246 Q380,250 500,244 L500,260 L0,260 Z" fill="#332e27"/>
 <!-- sand blown in from the beach, drifted against the foot of the slab -->
-<path d="M110,244 Q250,234 390,242 Q250,254 110,244 Z" fill="#c9a86e" opacity="0.22"/>
-<path d="M156,240 Q250,232 344,238 Q250,246 156,240 Z" fill="#e8d5a3" opacity="0.14"/>
+<path d="M110,244 Q250,234 390,242 Q250,254 110,244 Z" fill="` + BC_BEACH.sandShadow + `" opacity="0.22"/>
+<path d="M156,240 Q250,232 344,238 Q250,246 156,240 Z" fill="` + BC_BEACH.sand + `" opacity="0.14"/>
 <!-- rubble: angular blocks, each with a lit top plane and a dark side -->
 <path d="M96,246 L108,238 L124,241 L128,250 L112,254 L94,251 Z" fill="#6f675c"/>
 <path d="M96,246 L108,238 L124,241 L112,245 Z" fill="#8f877c" opacity="0.55"/>

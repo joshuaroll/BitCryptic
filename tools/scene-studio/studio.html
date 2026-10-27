@@ -1,0 +1,960 @@
+<title>Scene Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: three-column workbench. Scene list | stage + lint | inspector. Committed single dark look,
+   because the stage art is dusk and underwater and needs a dark surround to judge values. */
+:root{
+  --bg:#0c1020;--panel:#141a30;--panel2:#1b2340;--line:#2a3456;--ink:#e4e8f5;--ink2:#a9b1cc;--ink3:#737d9e;
+  --amber:#f2c14e;--mint:#64d9a0;--rose:#ff8a80;--sky:#8ea8ff;
+  --mono:"Space Mono",ui-monospace,Consolas,monospace;--body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button:disabled,textarea[readonly]{opacity:.55;cursor:not-allowed}
+button:disabled:hover{border-color:var(--line)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--body);padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+button,select,input,textarea{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:.35rem .7rem;cursor:pointer}
+button:hover{border-color:var(--ink3)}
+button.primary{background:var(--amber);color:#1a1405;border-color:var(--amber);font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+input,select{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.3rem .45rem;min-width:0}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%}
+header.bar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.55rem max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);background:var(--panel)}
+header .brand{font:700 1rem var(--mono);letter-spacing:.04em}
+header .brand b{color:var(--amber)}
+header .tabs{display:flex;gap:.3rem}
+header .tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+header .status{margin-left:auto;font:.75rem var(--mono);color:var(--ink3)}
+.work{display:grid;grid-template-columns:230px minmax(0,1fr) 300px;min-height:0}
+.col{min-height:0;overflow:auto;border-right:1px solid var(--line)}
+.col:last-child{border-right:0;border-left:1px solid var(--line)}
+.sec{padding:.8rem 1rem;border-bottom:1px solid var(--line)}
+.sec h3{font:700 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:0 0 .55rem}
+#sceneSearch{width:100%}
+.scenes{list-style:none;margin:.5rem 0 0;padding:0}
+.scenes li button{all:unset;box-sizing:border-box;display:flex;gap:.4rem;align-items:center;width:100%;padding:.22rem .35rem;border-radius:4px;cursor:pointer;font:.8rem var(--mono);color:var(--ink2)}
+.scenes li button:hover{background:var(--panel2)}
+.scenes li button[aria-current="true"]{background:var(--panel2);color:var(--ink)}
+.scenes .cast{margin-left:auto;font-size:.7rem;color:var(--mint)}
+.scenes .saved{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none}
+.scenes .nosaved{width:6px;flex:none}
+.grp{font:700 .66rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:.6rem 0 .15rem}
+.center{display:flex;flex-direction:column;min-width:0}
+.stagewrap{padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.toolbar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.toolbar label{display:flex;gap:.3rem;align-items:center;font-size:.82rem;color:var(--ink2)}
+.toolbar .sep{width:1px;height:20px;background:var(--line)}
+#stage{position:relative;background:#070b16;border:1px solid var(--line);border-radius:6px;overflow:hidden;touch-action:none;user-select:none}
+#stage svg{display:block;width:100%;height:auto}
+#stage:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+#stage .ent{cursor:grab}
+#stage.dragging .ent{cursor:grabbing}
+.hint{font-size:.78rem;color:var(--ink3)}
+.lint{padding:0 1rem 1rem}
+.lint h3{font:700 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:.4rem 0}
+.lint ul{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+.lint li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.55rem;align-items:baseline;font-size:.84rem;padding:.35rem .55rem;border-radius:5px;background:var(--panel)}
+.lint li[data-entity]{cursor:pointer}
+.sev{font:700 .64rem var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:.05rem .35rem;border-radius:3px;border:1px solid}
+.sev.error{color:var(--rose);border-color:var(--rose)}.sev.warn{color:var(--amber);border-color:var(--amber)}.sev.info{color:var(--sky);border-color:var(--sky)}
+.lint .rule{font:.7rem var(--mono);color:var(--ink3);margin-left:.3rem}
+.empty{color:var(--ink3);font-size:.85rem}
+.field{display:grid;grid-template-columns:72px minmax(0,1fr);gap:.4rem;align-items:center;margin-bottom:.45rem;font-size:.84rem;color:var(--ink2)}
+.field input,.field select{width:100%}
+.field label{display:flex;gap:.4rem;align-items:center}
+.field label input{width:auto}
+.row{display:flex;flex-wrap:wrap;gap:.35rem}
+.delta{font:.72rem var(--mono);color:var(--ink3)}
+.palette{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
+.palette button{padding:.2rem;display:flex;flex-direction:column;align-items:center;gap:.1rem;font-size:.66rem;color:var(--ink2)}
+.palette svg{width:100%;height:58px}
+textarea.code{width:100%;min-height:7rem;background:var(--bg);border:1px solid var(--line);border-radius:5px;font:.72rem/1.5 var(--mono);color:var(--ink);padding:.5rem;resize:vertical;white-space:pre;overflow:auto}
+.qa{padding:1rem max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.qa .sum{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.qa .sum span{font:.75rem var(--mono);border:1px solid var(--line);border-radius:999px;padding:.25rem .65rem;color:var(--ink2)}
+.qa table{border-collapse:collapse;width:100%;font-size:.84rem}
+.qa th,.qa td{text-align:left;padding:.35rem .6rem;border-bottom:1px solid var(--line)}
+.qa th{font:700 .66rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);cursor:pointer}
+.qa td.n{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.qa tr:hover td{background:var(--panel)}
+.qa a{color:var(--amber)}
+.savechip{font:.72rem var(--mono);padding:.2rem .55rem;border-radius:999px;border:1px solid var(--line);color:var(--ink3)}
+.savechip.dirty{color:var(--amber);border-color:var(--amber)}
+.savechip.ok{color:var(--mint);border-color:var(--mint)}
+.savechip.err{color:var(--rose);border-color:var(--rose)}
+.chat{margin:0 1rem 1rem;border:1px solid var(--line);border-radius:8px;background:var(--panel);display:flex;flex-direction:column;min-width:0}
+.chat header{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+.chat header h3{font:700 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:0}
+.chat header .hint{margin:0}
+.msgs{max-height:340px;min-height:90px;overflow:auto;padding:.7rem .8rem;display:flex;flex-direction:column;gap:.55rem}
+.msg{max-width:88%;padding:.5rem .7rem;border-radius:8px;font-size:.88rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--panel2);border:1px solid var(--line)}
+.msg.assistant{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.msg.note{align-self:center;max-width:100%;font-size:.78rem;color:var(--ink3);padding:.2rem}
+.msg .acts{margin-top:.35rem;display:grid;gap:.15rem;font:.72rem var(--mono);color:var(--mint)}
+.msg .acts .req{color:var(--sky)}
+.msg .acts .bad{color:var(--rose)}
+.msg .retry{margin-top:.4rem}
+.msg .retry button{font-size:.76rem;padding:.2rem .6rem}
+.compose{display:flex;gap:.45rem;padding:.6rem .8rem;border-top:1px solid var(--line);align-items:flex-end}
+.compose textarea{flex:1;min-width:0;min-height:2.6rem;max-height:9rem;resize:vertical;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;font:inherit;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;padding:0 .8rem .6rem}
+.chips button{font-size:.76rem;padding:.2rem .55rem;border-radius:999px;color:var(--ink2)}
+.reqs{border-top:1px solid var(--line);padding:.55rem .8rem .7rem}
+.reqs h4{font:700 .66rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:0 0 .4rem}
+.reqs ul{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+.reqs li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.5rem;align-items:baseline;font-size:.82rem}
+.st{font:700 .62rem var(--mono);text-transform:uppercase;padding:.05rem .35rem;border-radius:3px;border:1px solid}
+.st.open{color:var(--sky);border-color:var(--sky)}.st.done{color:var(--mint);border-color:var(--mint)}.st.declined{color:var(--ink3);border-color:var(--ink3)}
+@media (max-width:1100px){.work{grid-template-columns:200px minmax(0,1fr)}.work .col:last-child{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
+@media (max-width:700px){.work{grid-template-columns:1fr}.col{border-right:0;max-height:none}.scenes{max-height:30vh;overflow:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+<header class="bar">
+  <div class="brand">bc▪ <b>Scene Studio</b></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tabCompose" aria-selected="true">Compose</button>
+    <button role="tab" id="tabQA" aria-selected="false">QA audit</button>
+  </div>
+  <div class="status" id="status">Loading scenes…</div>
+</header>
+
+<div class="work" id="paneCompose">
+  <aside class="col">
+    <div class="sec">
+      <h3>Scenes</h3>
+      <input id="sceneSearch" type="search" placeholder="Filter, e.g. wreck or cast" aria-label="Filter scenes">
+      <label class="hint" style="display:flex;gap:.35rem;margin-top:.45rem"><input type="checkbox" id="castOnly"> Only scenes with cast</label>
+      <div id="sceneList"></div>
+    </div>
+  </aside>
+
+  <main class="col center">
+    <div class="stagewrap">
+      <div class="toolbar">
+        <strong id="sceneTitle" style="font-family:var(--mono)">–</strong>
+        <span class="sep"></span>
+        <label><input type="checkbox" id="snap" checked> Snap feet to floor lines</label>
+        <label><input type="checkbox" id="showGuides" checked> Guides</label>
+        <button id="play" type="button">Play</button>
+        <span class="sep"></span>
+        <button id="undo" type="button" title="Ctrl+Z">Undo</button>
+        <button id="redo" type="button" title="Ctrl+Shift+Z">Redo</button>
+        <button id="resetAll" type="button" title="Back to the positions in the shipped scene files (undoable)">Reset to shipped</button>
+        <span class="sep"></span>
+        <button id="save" type="button" class="primary" title="Ctrl+S">Save positions</button>
+        <label title="Save a moment after each adjustment. Changes made through chat always save."><input type="checkbox" id="autosave" checked> Auto-save</label>
+        <span class="savechip" id="saveChip" role="status">Saved</span>
+      </div>
+      <div id="stage" tabindex="0" aria-label="Scene stage. Select a character, then use arrow keys to nudge."></div>
+      <div class="hint">Drag a character to move it. Drag the square above it to resize. Drag a mint floor line or the amber horizon to move it. Arrow keys nudge (Shift ×5). Locked figures (dashed) are held or head-only shots: edit those in code.</div>
+    </div>
+    <section class="chat" id="chat" aria-label="Ask Claude about this scene">
+      <header><h3>Ask Claude</h3><p class="hint" id="chatHint">Describe a change. Claude sees the stage, moves the cast here and saves it. Anything that needs a code edit becomes a request for Claude Code.</p></header>
+      <div class="msgs" id="msgs" role="log" aria-live="polite" aria-label="Conversation"></div>
+      <div class="chips" id="chips">
+        <button type="button" data-suggest="Put everyone's feet exactly on the nearest floor line.">Ground everyone</button>
+        <button type="button" data-suggest="Resize everyone to the cast scale for the floor they stand on.">Fit to cast scale</button>
+        <button type="button" data-suggest="What looks off about the staging in this scene?">What looks off?</button>
+      </div>
+      <form class="compose" id="chatForm">
+        <textarea id="chatInput" rows="2" placeholder="e.g. Move Croc closer to the bench and face him toward the window" aria-label="Message to Claude"></textarea>
+        <button type="submit" class="primary" id="chatSend">Send</button>
+        <button type="button" id="chatStop" hidden>Stop</button>
+      </form>
+      <div class="reqs" id="reqs" hidden><h4>Requests for Claude Code</h4><ul id="reqList"></ul></div>
+    </section>
+    <div class="lint" id="lint"></div>
+  </main>
+
+  <aside class="col">
+    <div class="sec" id="inspector"><h3>Selection</h3><p class="empty">Select a character on the stage.</p></div>
+    <div class="sec">
+      <h3>Perspective</h3>
+      <div class="field"><span>Horizon</span><input type="number" id="horizon" step="1" placeholder="not set"></div>
+      <div class="field"><span>Floors</span><div class="row" id="floors"></div></div>
+      <div class="row"><button type="button" id="addFloor">Add floor line</button><button type="button" id="guessHorizon" title="Solve the horizon from two figures of known cast ratio">Solve horizon</button></div>
+      <p class="hint" style="margin:.5rem 0 0">Expected height = reference × cast ratio × (floor − horizon) ÷ (near floor − horizon). Set a horizon and the scale check turns on.</p>
+    </div>
+    <div class="sec">
+      <h3>Add a character</h3>
+      <div class="palette" id="palette"></div>
+    </div>
+    <div class="sec">
+      <h3>Export</h3>
+      <div class="row" style="margin-bottom:.5rem">
+        <button type="button" id="copyCode">Copy code</button>
+        <button type="button" id="copyJson">Copy JSON</button>
+      </div>
+      <div class="saved hint" id="saveState"></div>
+      <textarea class="code" id="code" readonly aria-label="Generated placement code"></textarea>
+    </div>
+  </aside>
+</div>
+
+<div class="qa" id="paneQA" hidden>
+  <div class="sum" id="qaSum"></div>
+  <table><thead><tr><th data-k="key">Scene</th><th data-k="error">Errors</th><th data-k="warn">Warnings</th><th data-k="info">Info</th><th data-k="cast">Cast</th><th>Top issue</th></tr></thead><tbody id="qaBody"></tbody></table>
+</div>
+</div>
+
+<!--SCENE-KIT-->
+<script src="../../scenes/approved-cast.js"></script>
+<script>window.STORY_SCENES = window.STORY_SCENES || {};</script>
+<script src="../../scenes/characters.js"></script>
+<script src="../../scenes/art-kit.js"></script>
+<script src="../../scenes/forest.js"></script>
+<script src="../../scenes/adventure.js"></script>
+<script src="../../scenes/beach.js"></script>
+<script src="../../scenes/cafe.js"></script>
+<script src="../../scenes/cove.js"></script>
+<script src="../../scenes/skyship.js"></script>
+<script src="../../scenes/docks.js"></script>
+<script src="../../scenes/library.js"></script>
+<script src="../../scenes/observatory.js"></script>
+<script src="../../scenes/town.js"></script>
+<script src="../../scenes/workshop.js"></script>
+<script src="../../scenes/lair.js"></script>
+<script src="../../scenes/moon.js"></script>
+<script src="../../scenes/wreck.js"></script>
+<script src="../../scenes/hidden.js"></script>
+<script src="lint.js"></script>
+<!--/SCENE-KIT-->
+
+<script>
+(function(){
+"use strict";
+// Fallback copy of design/tokens.json, flattened. The artifact build injects the real file as BC_TOKENS_JSON;
+// served from the repo, the page fetches it. Only $value matters here.
+var DEFAULT_TOKENS={reference:166,nearFloor:236,cast:{fredward:1,webby:1,croc:.92,harrington:1.1,laurel:1.1,"dock-keeper":1,barista:.95,librarian:1.05,"star-watcher":1.05,wren:.85}};
+function flatTokens(j){try{var c={};Object.keys(j.scale.cast).forEach(function(k){if(k[0]!=='$')c[k]=j.scale.cast[k].$value});return{reference:j.scale.reference.$value,nearFloor:j.scale.nearFloor.$value,cast:c}}catch(e){return DEFAULT_TOKENS}}
+var TOKENS=window.BC_TOKENS_JSON?flatTokens(window.BC_TOKENS_JSON):DEFAULT_TOKENS;
+if(!window.BC_TOKENS_JSON&&location.protocol!=='file:'){try{fetch('../../design/tokens.json').then(function(r){return r.ok?r.json():null}).then(function(j){if(j){TOKENS=flatTokens(j);refreshLint()}}).catch(function(){})}catch(e){}}
+
+var CAST=Object.assign({},window.BC_APPROVED_CAST||{},window.BC_MISSION_CAST||{});
+var MISSION=window.BC_MISSION_CAST||{};
+var SCENES=window.STORY_SCENES||{};
+var KEYS=Object.keys(SCENES).filter(function(k){return typeof SCENES[k]==='string'});
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var r1=function(n){return Math.round(n*10)/10};
+
+var st={key:null,spec:null,sel:-1,undo:[],redo:[],playing:false,saved:{}};
+var svg=null,entLayer=null,ovLayer=null;
+var db=null,me=null,store='local';
+
+// ---------- scene list ----------
+function castCount(s){return (s.match(/data-(approved|mission)-character=/g)||[]).length}
+var CASTN={};KEYS.forEach(function(k){CASTN[k]=castCount(SCENES[k])});
+function buildList(){
+  var q=$('#sceneSearch').value.trim().toLowerCase(),only=$('#castOnly').checked,groups={};
+  KEYS.forEach(function(k){
+    if(only&&!CASTN[k])return;
+    if(q&&k.indexOf(q)<0&&!(q==='cast'&&CASTN[k]))return;
+    var g=k.replace(/_\d+$/,'').replace(/_end$/,' end');(groups[g]=groups[g]||[]).push(k);
+  });
+  var h='';Object.keys(groups).sort().forEach(function(g){
+    h+='<div class="grp">'+esc(g)+'</div><ul class="scenes">'+groups[g].sort(function(a,b){return(+a.split('_').pop())-(+b.split('_').pop())}).map(function(k){
+      return '<li><button type="button" data-key="'+k+'" aria-current="'+(k===st.key)+'"><span class="'+(st.saved[k]?'saved':'nosaved')+'"></span>'+esc(k)+(CASTN[k]?'<span class="cast">'+CASTN[k]+' cast</span>':'')+'</button></li>'}).join('')+'</ul>';
+  });
+  $('#sceneList').innerHTML=h||'<p class="empty">No scenes match.</p>';
+}
+
+// ---------- loading a scene: lift its cast placements out into editable entities ----------
+function loadScene(key,savedSpec,opts){
+  opts=opts||{};
+  // A reply in flight keeps running when the scene changes: it finishes into its own scene's chat doc.
+  clearTimeout(st.saveT);
+  st.key=key;st.sel=-1;st.undo=[];st.redo=[];
+  $('#sceneTitle').textContent=key;
+  var stage=$('#stage');stage.innerHTML=SCENES[key];
+  svg=stage.querySelector('svg');svg.removeAttribute('width');
+  try{svg.pauseAnimations();svg.setCurrentTime(0)}catch(e){}
+  st.playing=false;$('#play').textContent='Play';
+  var toSvg=svg.getScreenCTM().inverse(),ents=[];
+  var found=[].slice.call(svg.querySelectorAll('[data-approved-character],[data-mission-character]')).filter(function(el){
+    return !el.parentElement.closest('[data-approved-character],[data-mission-character]');
+  });
+  found.forEach(function(el){
+    var name=el.getAttribute('data-approved-character')||el.getAttribute('data-mission-character'),c=CAST[name];if(!c)return;
+    var m=toSvg.multiply(el.getScreenCTM());
+    var headOnly=!el.hasAttribute('data-approved-pose');
+    var held=!!svg.querySelector('[data-approved-hands="'+name+'"]');
+    var X=m.a*c.anchor.x+m.c*c.anchor.y+m.e,Y=m.b*c.anchor.x+m.d*c.anchor.y+m.f,H=Math.abs(m.d)*c.height;
+    var e={name:name,pose:el.getAttribute('data-approved-pose')||'(head only)',x:r1(X),floor:r1(Y),height:r1(H),flip:m.a<0,
+      helmet:!!el.querySelector('[data-dive-helmet]'),mission:el.hasAttribute('data-mission-character'),locked:headOnly||held,
+      lockReason:headOnly?'head-only close-up':held?'holds a prop between body and hands':''};
+    e.orig={x:e.x,floor:e.floor,height:e.height,flip:e.flip,pose:e.pose};
+    if(e.locked){var bb=el.getBBox(),mm=m;e.box=bboxOf(el,toSvg)}
+    else{var prev=el.previousElementSibling;if(prev&&prev.hasAttribute('data-contact-shadow'))prev.remove();el.remove()}
+    ents.push(e);
+  });
+  var floors=[],seen={};ents.forEach(function(e){if(e.locked||e.floor>262)return;var y=Math.round(e.floor);if(!seen[y]){seen[y]=1;floors.push({y:y})}});
+  st.spec={key:key,horizon:null,nearFloor:TOKENS.nearFloor,floors:floors,entities:ents};
+  if(savedSpec)applySaved(savedSpec);
+  entLayer=mk('g',{id:'studio-ents'});ovLayer=mk('g',{id:'studio-overlay'});svg.appendChild(entLayer);svg.appendChild(ovLayer);
+  st.dirty=false;
+  render();buildList();
+  setChip(savedSpec?'ok':'',savedSpec?'Saved':'Shipped layout');
+  if(!savedSpec&&!opts.noFetch)fetchSaved(key);
+}
+function bboxOf(el,toSvg){
+  var b=el.getBBox(),m=toSvg.multiply(el.getScreenCTM()),pts=[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].map(function(p){return[m.a*p[0]+m.c*p[1]+m.e,m.b*p[0]+m.d*p[1]+m.f]});
+  var xs=pts.map(function(p){return p[0]}),ys=pts.map(function(p){return p[1]});
+  return{x:Math.min.apply(0,xs),y:Math.min.apply(0,ys),w:Math.max.apply(0,xs)-Math.min.apply(0,xs),h:Math.max.apply(0,ys)-Math.min.apply(0,ys)};
+}
+function applySaved(s){
+  st.spec.horizon=s.horizon==null?null:s.horizon;
+  if(s.floors&&s.floors.length)st.spec.floors=s.floors.map(function(f){return{y:f.y}});
+  var ents=st.spec.entities,out=ents.filter(function(e){return e.locked});
+  (s.entities||[]).forEach(function(se){
+    if(se.locked)return;
+    var base=ents.filter(function(e){return !e.locked&&e.name===se.name&&!e._used})[0];
+    var e=base||{name:se.name,mission:!!MISSION[se.name],orig:null,helmet:false};
+    if(base)base._used=true;
+    ['pose','x','floor','height','flip','helmet'].forEach(function(k){if(se[k]!==undefined)e[k]=se[k]});
+    out.push(e);
+  });
+  ents.forEach(function(e){delete e._used});
+  st.spec.entities=out;
+}
+
+// ---------- rendering ----------
+var NS='http://www.w3.org/2000/svg';
+function mk(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+function expectedHeight(e){var s=st.spec;if(s.horizon==null||e.floor<=s.horizon)return null;return TOKENS.reference*(TOKENS.cast[e.name]||1)*(e.floor-s.horizon)/(s.nearFloor-s.horizon)}
+function render(){
+  var s=st.spec,h='';
+  s.entities.forEach(function(e,i){
+    if(e.locked)return;
+    var place=e.mission?bcMissionPlace:bcApprovedPlace;
+    h+='<g class="ent" data-eid="'+i+'">'+place(e.name,e.pose,e.x,e.floor,e.height,e.flip,{helmet:e.helmet?{hose:'right'}:null})+'</g>';
+  });
+  entLayer.innerHTML=h;
+  var o='',guides=$('#showGuides').checked;
+  if(guides){
+    if(s.horizon!=null)o+='<g data-horizon="1" style="cursor:ns-resize"><line x1="0" x2="500" y1="'+s.horizon+'" y2="'+s.horizon+'" stroke="#f2c14e" stroke-width="0.8" stroke-dasharray="5 3"/><rect x="0" y="'+(s.horizon-4)+'" width="500" height="8" fill="#f2c14e" fill-opacity="0.01"/><text x="4" y="'+(s.horizon-3)+'" font-size="7" fill="#f2c14e" font-family="monospace">horizon '+r1(s.horizon)+'</text></g>';
+    s.floors.forEach(function(f,i){o+='<g data-floor="'+i+'" style="cursor:ns-resize"><line x1="0" x2="500" y1="'+f.y+'" y2="'+f.y+'" stroke="#64d9a0" stroke-width="0.7" stroke-dasharray="3 3" opacity="0.85"/><rect x="0" y="'+(f.y-4)+'" width="500" height="8" fill="#64d9a0" fill-opacity="0.01"/><text x="496" y="'+(f.y-2.5)+'" text-anchor="end" font-size="6.5" fill="#64d9a0" font-family="monospace">floor '+r1(f.y)+'</text></g>'});
+    s.entities.forEach(function(e,i){
+      if(e.locked&&e.box)o+='<rect x="'+e.box.x+'" y="'+e.box.y+'" width="'+e.box.w+'" height="'+e.box.h+'" fill="none" stroke="#8ea8ff" stroke-width="0.8" stroke-dasharray="4 3" pointer-events="none"/><text x="'+(e.box.x+2)+'" y="'+(e.box.y+8)+'" font-size="6.5" fill="#8ea8ff" font-family="monospace" pointer-events="none">locked: '+esc(e.name)+'</text>';
+      if(!e.locked&&i!==st.sel){var ex=expectedHeight(e);if(ex)o+='<line x1="'+(e.x+e.height*0.24)+'" x2="'+(e.x+e.height*0.24)+'" y1="'+e.floor+'" y2="'+(e.floor-ex)+'" stroke="#8ea8ff" stroke-width="0.6" opacity="0.5" pointer-events="none"/>'}
+    });
+  }
+  if(st.sel>=0&&s.entities[st.sel]&&!s.entities[st.sel].locked){
+    var e=s.entities[st.sel],w=e.height*0.5,top=e.floor-e.height,ex=expectedHeight(e);
+    o+='<rect x="'+(e.x-w/2)+'" y="'+top+'" width="'+w+'" height="'+e.height+'" fill="none" stroke="#f2c14e" stroke-width="0.8" pointer-events="none"/>';
+    if(ex)o+='<line x1="'+(e.x+w/2+4)+'" x2="'+(e.x+w/2+4)+'" y1="'+e.floor+'" y2="'+(e.floor-ex)+'" stroke="#8ea8ff" stroke-width="1.4" pointer-events="none"/><text x="'+(e.x+w/2+7)+'" y="'+(e.floor-ex+6)+'" font-size="6.5" fill="#8ea8ff" font-family="monospace" pointer-events="none">cast scale</text>';
+    o+='<circle cx="'+e.x+'" cy="'+e.floor+'" r="2.2" fill="#f2c14e" pointer-events="none"/>';
+    o+='<rect data-handle="resize" x="'+(e.x-4)+'" y="'+(top-10)+'" width="8" height="8" rx="1.5" fill="#f2c14e" style="cursor:ns-resize"/>';
+  }
+  ovLayer.innerHTML=o;
+  renderInspector();renderFloors();refreshLint();renderCode();
+}
+
+// ---------- inspector ----------
+function renderInspector(){
+  var box=$('#inspector'),e=st.spec.entities[st.sel];
+  if(!e){box.innerHTML='<h3>Selection</h3><p class="empty">Select a character on the stage.</p>';return}
+  if(e.locked){box.innerHTML='<h3>Selection</h3><p class="empty">'+esc(e.name)+' is locked: '+esc(e.lockReason)+'.</p>';return}
+  var poses=Object.keys(CAST[e.name].poses),ex=expectedHeight(e),o=e.orig;
+  var d=o?' <span class="delta">'+[dl('x',e.x-o.x),dl('floor',e.floor-o.floor),dl('h',e.height-o.height)].filter(Boolean).join(' · ')+'</span>':' <span class="delta">new</span>';
+  box.innerHTML='<h3>Selection</h3>'
+   +'<div class="field"><span>Character</span><select id="fName">'+Object.keys(CAST).map(function(n){return'<option'+(n===e.name?' selected':'')+'>'+n+'</option>'}).join('')+'</select></div>'
+   +'<div class="field"><span>Pose</span><select id="fPose">'+poses.map(function(p){return'<option'+(p===e.pose?' selected':'')+'>'+p+'</option>'}).join('')+'</select></div>'
+   +'<div class="field"><span>x</span><input id="fX" type="number" step="0.5" value="'+e.x+'"></div>'
+   +'<div class="field"><span>Floor y</span><input id="fFloor" type="number" step="0.5" value="'+e.floor+'"></div>'
+   +'<div class="field"><span>Height</span><input id="fH" type="number" step="0.5" value="'+e.height+'"></div>'
+   +'<div class="field"><span>Facing</span><label><input id="fFlip" type="checkbox"'+(e.flip?' checked':'')+'> mirrored</label></div>'
+   +(e.name==='fredward'?'<div class="field"><span>Dive</span><label><input id="fHelmet" type="checkbox"'+(e.helmet?' checked':'')+'> helmet + hose</label></div>':'')
+   +'<p class="hint" style="margin:.2rem 0 .5rem">'+(ex?'Cast scale for this floor: <b>'+r1(ex)+'</b>':'Set a horizon to check scale.')+d+'</p>'
+   +'<div class="row">'+(ex?'<button type="button" id="fFit">Fit cast scale</button>':'')+'<button type="button" id="fSnap">Snap to floor</button><button type="button" id="fDup">Duplicate</button>'+(o?'<button type="button" id="fReset">Reset</button>':'')+'<button type="button" id="fDel">Remove</button></div>';
+}
+function dl(k,v){v=r1(v);return v?k+(v>0?' +':' ')+v:''}
+function setSel(i){st.sel=i;render()}
+function edit(fn){snapshot();fn(st.spec.entities[st.sel]);render()}
+document.addEventListener('change',function(ev){
+  var t=ev.target,e=st.spec&&st.spec.entities[st.sel];
+  if(t.id==='sceneSearch'||t.id==='castOnly'){buildList();return}
+  if(t.id==='autosave'){if(t.checked)scheduleAutosave();else clearTimeout(st.saveT);return}
+  if(t.id==='horizon'){snapshot();st.spec.horizon=t.value===''?null:+t.value;render();return}
+  if(t.dataset&&t.dataset.floorIdx!=null){snapshot();st.spec.floors[+t.dataset.floorIdx].y=+t.value;render();return}
+  if(!e)return;
+  if(t.id==='fName')edit(function(e){e.name=t.value;e.mission=!!MISSION[t.value];e.pose=Object.keys(CAST[t.value].poses)[0];if(e.name!=='fredward')e.helmet=false});
+  if(t.id==='fPose')edit(function(e){e.pose=t.value});
+  if(t.id==='fX')edit(function(e){e.x=+t.value});
+  if(t.id==='fFloor')edit(function(e){e.floor=+t.value});
+  if(t.id==='fH')edit(function(e){e.height=Math.max(8,+t.value)});
+  if(t.id==='fFlip')edit(function(e){e.flip=t.checked});
+  if(t.id==='fHelmet')edit(function(e){e.helmet=t.checked});
+});
+$('#sceneSearch').addEventListener('input',buildList);
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('button');if(!t)return;
+  if(t.dataset.key){openScene(t.dataset.key);return}
+  if(t.dataset.addChar){addChar(t.dataset.addChar);return}
+  if(t.dataset.delFloor!=null){snapshot();st.spec.floors.splice(+t.dataset.delFloor,1);render();return}
+  var e=st.spec&&st.spec.entities[st.sel];
+  switch(t.id){
+    case'fFit':edit(function(e){e.height=r1(expectedHeight(e))});break;
+    case'fSnap':edit(function(e){e.floor=nearestFloor(e.floor,1e9)});break;
+    case'fDup':snapshot();var c=JSON.parse(JSON.stringify(e));c.orig=null;c.x=r1(c.x+30);st.spec.entities.push(c);st.sel=st.spec.entities.length-1;render();break;
+    case'fReset':edit(function(e){Object.assign(e,{x:e.orig.x,floor:e.orig.floor,height:e.orig.height,flip:e.orig.flip,pose:e.orig.pose})});break;
+    case'fDel':snapshot();st.spec.entities.splice(st.sel,1);st.sel=-1;render();break;
+    case'addFloor':snapshot();st.spec.floors.push({y:st.spec.floors.length?Math.min(250,st.spec.floors[st.spec.floors.length-1].y+12):220});render();break;
+    case'guessHorizon':solveHorizon();break;
+    case'undo':undo();break;case'redo':redo();break;
+    case'resetAll':resetToShipped();break;
+    case'play':togglePlay();break;
+    case'save':save();break;
+    case'copyCode':copy($('#code').value,'Code copied');break;
+    case'copyJson':copy(JSON.stringify(specOut(),null,2),'JSON copied');break;
+    case'tabCompose':case'tabQA':showTab(t.id==='tabQA');break;
+  }
+});
+function nearestFloor(y,within){var best=y,d=within;st.spec.floors.forEach(function(f){var dd=Math.abs(f.y-y);if(dd<d){d=dd;best=f.y}});return best}
+function renderFloors(){
+  $('#horizon').value=st.spec.horizon==null?'':st.spec.horizon;
+  $('#floors').innerHTML=st.spec.floors.map(function(f,i){return'<span style="display:flex;gap:.2rem;align-items:center"><input type="number" step="0.5" style="width:4.6rem" data-floor-idx="'+i+'" value="'+f.y+'" aria-label="Floor line '+(i+1)+'"><button type="button" data-del-floor="'+i+'" aria-label="Remove floor line" style="padding:.15rem .4rem">×</button></span>'}).join('')||'<span class="hint">none</span>';
+}
+// Two unlocked figures on different floors give the horizon directly:
+// h1/r1 / (h2/r2) = (f1 - H)/(f2 - H)  =>  H = (k*f2 - f1)/(k - 1), k = (h1/r1)/(h2/r2).
+function solveHorizon(){
+  var es=st.spec.entities.filter(function(e){return!e.locked&&e.floor<=260});
+  if(es.length<2){flash('Needs two placed figures on different floors.');return}
+  es.sort(function(a,b){return a.floor-b.floor});var a=es[0],b=es[es.length-1];
+  if(Math.abs(a.floor-b.floor)<6){flash('Figures need to stand on different floors to solve a horizon.');return}
+  var k=(b.height/(TOKENS.cast[b.name]||1))/(a.height/(TOKENS.cast[a.name]||1));
+  if(Math.abs(k-1)<1e-3){flash('Those two figures imply no perspective (same scale at both depths).');return}
+  var H=(k*a.floor-b.floor)/(k-1);snapshot();st.spec.horizon=r1(H);render();flash('Horizon solved from '+a.name+' and '+b.name+'.');
+}
+function addChar(name){
+  snapshot();var f=st.spec.floors[0]?st.spec.floors[0].y:236,e={name:name,pose:Object.keys(CAST[name].poses)[0],x:250,floor:f,height:0,flip:false,helmet:false,mission:!!MISSION[name],orig:null};
+  e.height=r1(expectedHeight(e)||110);st.spec.entities.push(e);st.sel=st.spec.entities.length-1;render();
+}
+function buildPalette(){
+  $('#palette').innerHTML=Object.keys(CAST).map(function(n){
+    var c=CAST[n],p=Object.keys(c.poses)[0],art=(MISSION[n]?bcMissionPlace:bcApprovedPlace)(n,p,50,95,90,false,{shadow:false});
+    return'<button type="button" data-add-char="'+n+'" title="Add '+n+'"><svg viewBox="0 0 100 100" aria-hidden="true">'+art+'</svg>'+n+'</button>';
+  }).join('');
+}
+
+// ---------- dragging ----------
+var drag=null;
+function pt(ev){var p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+$('#stage').addEventListener('pointerdown',function(ev){
+  if(!svg||st.switching)return;var p=pt(ev),t=ev.target;
+  // Take focus so arrow-key nudges work right after clicking a checkbox or field.
+  try{$('#stage').focus({preventScroll:true})}catch(e){}
+  var h=t.closest('[data-handle]'),fl=t.closest('[data-floor]'),hz=t.closest('[data-horizon]'),en=t.closest('[data-eid]');
+  if(h){drag={mode:'resize',p:p,e:JSON.parse(JSON.stringify(st.spec.entities[st.sel]))}}
+  else if(en){var i=+en.dataset.eid;if(i!==st.sel){st.sel=i;render()}drag={mode:'move',p:p,e:JSON.parse(JSON.stringify(st.spec.entities[i]))}}
+  else if(fl){
+    // The figures standing on this line are fixed at grab time, so dragging past another line never picks up its cast.
+    var fy=st.spec.floors[+fl.dataset.floor].y;
+    drag={mode:'floor',i:+fl.dataset.floor,p:p,y:fy,members:st.spec.entities.map(function(en,i){return!en.locked&&Math.abs(en.floor-fy)<0.01?i:-1}).filter(function(i){return i>=0})}}
+  else if(hz){drag={mode:'horizon',p:p,y:st.spec.horizon}}
+  else{if(st.sel!==-1){st.sel=-1;render()}return}
+  drag.wasDirty=st.dirty;drag.redo=st.redo.slice();snapshot();drag.moved=false;$('#stage').classList.add('dragging');$('#stage').setPointerCapture(ev.pointerId);ev.preventDefault();
+});
+$('#stage').addEventListener('pointermove',function(ev){
+  if(!drag)return;var p=pt(ev),dx=p.x-drag.p.x,dy=p.y-drag.p.y;drag.moved=true;
+  var e=st.spec.entities[st.sel];
+  if(drag.mode==='move'){e.x=r1(drag.e.x+dx);var y=drag.e.floor+(ev.shiftKey?0:dy);e.floor=r1($('#snap').checked?nearestFloor(y,7):y)}
+  if(drag.mode==='resize'){e.height=r1(Math.max(8,drag.e.height-dy))}
+  if(drag.mode==='floor'){var ny=r1(drag.y+dy);drag.members.forEach(function(i){st.spec.entities[i].floor=ny});st.spec.floors[drag.i].y=ny}
+  if(drag.mode==='horizon'){st.spec.horizon=r1(drag.y+dy)}
+  render();
+});
+function endDrag(){
+  if(!drag)return;var d=drag;drag=null;$('#stage').classList.remove('dragging');
+  // A click that moved nothing is not an edit: drop its undo step and its dirty mark.
+  if(!d.moved){st.undo.pop();st.redo=d.redo;if(!d.wasDirty){st.dirty=false;clearTimeout(st.saveT);setChip(st.saved[st.key]?'ok':'',st.saved[st.key]?'Saved':'Shipped layout');return}}
+  // Re-arm on every path: the snapshot at pointerdown cleared any pending timer.
+  scheduleAutosave();
+}
+$('#stage').addEventListener('pointerup',endDrag);$('#stage').addEventListener('pointercancel',endDrag);
+document.addEventListener('keydown',function(ev){
+  if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='s'){ev.preventDefault();save();return}
+  // Only text entry keeps the keys; a checkbox or button with focus still lets the stage nudge and undo.
+  var a=document.activeElement;
+  if(a&&(a.tagName==='TEXTAREA'||a.tagName==='SELECT'||(a.tagName==='INPUT'&&!/^(checkbox|radio|button|submit)$/.test(a.type))))return;
+  if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'){ev.preventDefault();ev.shiftKey?redo():undo();return}
+  var e=st.spec&&st.spec.entities[st.sel];if(!e||e.locked)return;
+  var n=ev.shiftKey?5:1,m={ArrowLeft:[-n,0],ArrowRight:[n,0],ArrowUp:[0,-n],ArrowDown:[0,n]}[ev.key];
+  if(m){ev.preventDefault();edit(function(e){e.x=r1(e.x+m[0]);e.floor=r1(e.floor+m[1])})}
+  if(ev.key==='Delete'||ev.key==='Backspace'){ev.preventDefault();snapshot();st.spec.entities.splice(st.sel,1);st.sel=-1;render()}
+});
+
+// ---------- undo ----------
+function snap(){return JSON.stringify({spec:st.spec,sel:st.sel})}
+// Every edit takes a snapshot first, so snapshot() is also where an edit marks the layout unsaved.
+function snapshot(){st.undo.push(snap());if(st.undo.length>200)st.undo.shift();st.redo=[];markDirty()}
+function restore(s){var o=JSON.parse(s);st.spec=o.spec;st.sel=o.sel;render()}
+function undo(){if(!st.undo.length)return;st.redo.push(snap());restore(st.undo.pop());markDirty()}
+function redo(){if(!st.redo.length)return;st.undo.push(snap());restore(st.redo.pop());markDirty()}
+function resetToShipped(){var prev=snap();loadScene(st.key,null,{noFetch:true});st.undo=[prev];markDirty();flash('Back to the shipped positions. Undo brings your layout back.')}
+
+function togglePlay(){if(!svg)return;st.playing=!st.playing;try{st.playing?svg.unpauseAnimations():svg.pauseAnimations()}catch(e){}$('#play').textContent=st.playing?'Pause':'Play'}
+
+// ---------- lint ----------
+function refreshLint(){
+  if(!st.spec||!window.BCSceneLint)return;
+  var src=BCSceneLint.lintSource(SCENES[st.key]),lay=BCSceneLint.lintLayout(st.spec,TOKENS);
+  var rank={error:0,warn:1,info:2},all=lay.concat(src).sort(function(a,b){return rank[a.severity]-rank[b.severity]});
+  var groups={};src.forEach(function(r){var k=r.rule+r.severity;groups[k]=groups[k]||Object.assign({n:0},r);groups[k].n++});
+  var h='<h3>Layout checks</h3>'+(lay.length?'<ul>'+lay.map(function(r){return'<li data-entity="'+r.entity+'"><span class="sev '+r.severity+'">'+r.severity+'</span><span>'+esc(r.message)+'<span class="rule">'+r.rule+'</span></span></li>'}).join('')+'</ul>':'<p class="empty">No layout problems.</p>');
+  var gs=Object.keys(groups).map(function(k){return groups[k]}).sort(function(a,b){return rank[a.severity]-rank[b.severity]});
+  h+='<h3 style="margin-top:.8rem">Scene source checks</h3>'+(gs.length?'<ul>'+gs.map(function(r){return'<li><span class="sev '+r.severity+'">'+r.severity+'</span><span>'+(r.n>1?'<b>'+r.n+'×</b> ':'')+esc(r.message)+'<span class="rule">'+r.rule+(r.line&&r.n===1?' · line '+r.line:'')+'</span></span></li>'}).join('')+'</ul>':'<p class="empty">Clean against the scene-art rules.</p>');
+  $('#lint').innerHTML=h;
+}
+$('#lint').addEventListener('click',function(ev){var li=ev.target.closest('[data-entity]');if(li&&li.dataset.entity!=='undefined')setSel(+li.dataset.entity)});
+
+// ---------- export ----------
+function specOut(){
+  var s=st.spec;return{key:s.key,horizon:s.horizon,nearFloor:s.nearFloor,floors:s.floors,
+    entities:s.entities.map(function(e){return{name:e.name,pose:e.pose,x:e.x,floor:e.floor,height:e.height,flip:!!e.flip,helmet:!!e.helmet,mission:!!e.mission,locked:!!e.locked,orig:e.orig||null}})};
+}
+function renderCode(){
+  var lines=['// '+st.key+': absolute scene coordinates. Replace the figure\'s wrapping translate group.'];
+  st.spec.entities.forEach(function(e){
+    if(e.locked){lines.push('// '+e.name+': locked ('+e.lockReason+'), unchanged');return}
+    var fn=e.mission?'bcMissionPlace':'bcApprovedPlace',opt=e.helmet?", { helmet: { hose: 'right' } }":'';
+    var ch=e.orig?[dl('x',e.x-e.orig.x),dl('floor',e.floor-e.orig.floor),dl('h',e.height-e.orig.height),e.flip!==e.orig.flip?'flip':'',e.pose!==e.orig.pose?'pose '+e.orig.pose+'→'+e.pose:''].filter(Boolean).join(', '):'new';
+    lines.push(fn+"('"+e.name+"', '"+e.pose+"', "+e.x+', '+e.floor+', '+e.height+', '+!!e.flip+opt+')'+'   // '+(ch||'unchanged'));
+  });
+  $('#code').value=lines.join('\n');
+}
+
+// ---------- persistence: the artifact's db when published, browser storage when run from the repo ----------
+function flash(msg){$('#saveState').textContent=msg}
+function lsGet(k){try{return JSON.parse(localStorage.getItem('scene-studio:'+k)||'null')}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem('scene-studio:'+k,JSON.stringify(v));return true}catch(e){return false}}
+function setChip(kind,text){var c=$('#saveChip');c.className='savechip'+(kind?' '+kind:'');c.textContent=text}
+function markDirty(){st.dirty=true;st.ver=(st.ver||0)+1;setChip('dirty',st.readOnly?'View only: copy the JSON':'Unsaved changes');scheduleAutosave()}
+function scheduleAutosave(){
+  clearTimeout(st.saveT);
+  if(!st.dirty||drag||st.readOnly||!$('#autosave').checked)return;
+  st.saveT=setTimeout(function(){if($('#autosave').checked&&!drag)save()},1200);
+}
+// Saves resolve once the store question is settled, so an edit made in the first second
+// never lands in browser storage while the page is about to switch to the review store.
+var dbReady=new Promise(function(res){st.dbReadyResolve=res});
+function canSave(){return !st.readOnly&&!st.dbDead}
+function goReadOnly(why){
+  st.readOnly=true;clearTimeout(st.saveT);
+  $('#save').disabled=true;$('#autosave').disabled=true;
+  setChip('err','View only: copy the JSON');flash(why);
+}
+// One write at a time per document. A save asked for while one is in flight waits for it,
+// then runs once more with the latest layout, and every caller gets that later result.
+function save(){
+  clearTimeout(st.saveT);
+  if(st.saving){if(!st.nextSave)st.nextSave=st.saving.then(function(){st.nextSave=null;return save()});return st.nextSave}
+  if(st.readOnly){setChip('err','View only: copy the JSON');return Promise.resolve(false)}
+  if(st.dbDead){setChip('err','Not saved');flash('The review store stopped responding. Copy the JSON to keep this layout.');return Promise.resolve(false)}
+  st.saving=(async function(){
+    await dbReady;
+    var key=st.key,ver=st.ver,out=specOut();out.at=new Date().toISOString();if(me)out.by=me;
+    setChip('dirty','Saving…');
+    var ok=false,msg='';
+    if(db){
+      try{await db.collection('layouts').doc(key).set(out);ok=true;msg='Saved to the review store. Claude can read it back and apply it.'}
+      catch(e){
+        if(e&&(e.code==='invalid_argument'||e.code==='not_granted'||e.code==='permission_denied')&&!st.wroteOnce)goReadOnly('You can view this Studio but not save to it. Copy the JSON to share a layout.');
+        msg='Not saved ('+(e&&e.code||'error')+'). Copy the JSON instead.';
+      }
+    }else{
+      ok=lsSet(key,out);if(ok){var idx=lsGet('_index')||{};idx[key]=1;lsSet('_index',idx)}
+      msg=ok?'Saved in this browser. Copy the JSON into design/scene-specs/'+key+'.json to share it.':'Browser storage is blocked here. Copy the JSON instead.';
+    }
+    if(ok){st.wroteOnce=true;st.saved[key]=1;buildList()}
+    if(st.key===key){
+      // An edit made while the write was in flight bumped st.ver: it stays dirty and saves next.
+      if(ok&&st.ver===ver){st.dirty=false;setChip('ok','Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}
+      else if(ok){setChip('dirty','Unsaved changes');scheduleAutosave()}
+      else if(!st.readOnly)setChip('err','Not saved');
+      flash(msg);
+    }
+    st.saving=null;
+    return ok;
+  })();
+  return st.saving;
+}
+async function fetchSaved(key){
+  var v=st.ver,s=null;
+  if(db){try{var d=await db.collection('layouts').doc(key).get();if(d.exists)s=d.data()}catch(e){}}
+  else s=lsGet(key);
+  if(st.key!==key)return;
+  // Anything the user did meanwhile wins: never replace live edits with an older stored layout.
+  if(s&&(st.dirty||st.ver!==v||st.saving)){flash('There is a saved layout for this scene; your edits here replace it when saved.');return}
+  if(s){loadScene(key,s);flash('Loaded the saved layout'+(s.at?' from '+new Date(s.at).toLocaleString():'')+'. Reset to shipped drops it.')}
+  else flash('');
+}
+function copy(text,msg){try{navigator.clipboard.writeText(text).then(function(){flash(msg)},function(){selectCode(text)})}catch(e){selectCode(text)}}
+function selectCode(text){var c=$('#code');c.value=text;c.focus();c.select();flash('Select-all is ready: press Ctrl+C.')}
+async function openScene(k){
+  if(k===st.key||st.switching)return;
+  var from=st.key;st.switching=true;
+  try{
+    // Keep saving until the layout is clean: edits can land while a save is in flight.
+    while(st.dirty&&canSave()&&st.key===from){
+      if(!(await save())){flash('The layout for '+from+' did not save, so Studio stayed here. Copy the JSON, or try Save positions again.');return}
+    }
+    if(st.key!==from)return;
+    loadScene(k);loadChat(k);
+    try{history.replaceState(null,'','#'+k)}catch(e){}
+  }finally{st.switching=false}
+}
+window.addEventListener('beforeunload',function(ev){
+  if(st.dirty&&canSave()){clearTimeout(st.saveT);save();ev.preventDefault();ev.returnValue=''}
+});
+
+// ---------- layout operations: shared by the inspector, page tools and the JSON fallback ----------
+function entInfo(e,i){var ex=expectedHeight(e);return{index:i,name:e.name,pose:e.pose,x:e.x,floor:e.floor,height:e.height,flip:!!e.flip,helmet:!!e.helmet,locked:!!e.locked,lockReason:e.lockReason||undefined,expectedHeight:ex?r1(ex):null}}
+function layoutState(){
+  var s=st.spec;
+  return{scene:s.key,frame:{width:500,height:260,note:'scene units; y grows downward; floor = y of the feet; height = standing height; x = centre between the feet'},
+    horizon:s.horizon,nearFloor:s.nearFloor,floors:s.floors.map(function(f){return f.y}),
+    characters:s.entities.map(entInfo),
+    available:Object.keys(CAST).reduce(function(o,n){o[n]=Object.keys(CAST[n].poses);return o},{}),
+    layoutIssues:BCSceneLint.lintLayout(s,TOKENS).map(function(r){return r.severity+': '+r.message})};
+}
+function num(v,lo,hi,label){var n=Number(v);if(!isFinite(n))throw new Error(label+' must be a number');if(n<lo||n>hi)throw new Error(label+' must be between '+lo+' and '+hi);return r1(n)}
+// Indices shift when a character is removed, so every by-index edit also names who it means.
+function target(a){
+  var i=Number(a.index),e=st.spec.entities[i];
+  if(!e)throw new Error('No character at index '+a.index+'. Call get_layout for the current indices.');
+  if(a.name!=null&&String(a.name)!==e.name)throw new Error('Index '+i+' is '+e.name+', not '+a.name+'. Indices may have shifted; call get_layout and retry.');
+  if(e.locked)throw new Error(e.name+' is locked ('+e.lockReason+'); that needs a code edit, so file a request instead.');
+  return{i:i,e:e};
+}
+function opUpdate(a){
+  var t=target(a),e=t.e,next=Object.assign({},e);
+  if(a.x!=null)next.x=num(a.x,-100,600,'x');
+  if(a.floor!=null)next.floor=num(a.floor,0,400,'floor');
+  if(a.height!=null)next.height=num(a.height,8,600,'height');
+  if(a.flip!=null)next.flip=!!a.flip;
+  if(a.pose!=null){if(!CAST[e.name].poses[String(a.pose)])throw new Error(e.name+' has no pose "'+a.pose+'". Poses: '+Object.keys(CAST[e.name].poses).join(', '));next.pose=String(a.pose)}
+  if(a.helmet!=null){if(e.name!=='fredward'&&a.helmet)throw new Error('Only Fredward has a dive helmet.');next.helmet=!!a.helmet}
+  if(a.snapToFloor){next.floor=nearestFloor(next.floor,1e9)}
+  if(a.fitCastScale){var ex=expectedHeight(next);if(!ex)throw new Error('Set a horizon first: cast scale needs one.');next.height=r1(ex)}
+  snapshot();st.spec.entities[t.i]=next;render();
+  return entInfo(next,t.i);
+}
+function opAdd(a){
+  var name=String(a.name);if(!CAST[name])throw new Error('Unknown character "'+name+'". Cast: '+Object.keys(CAST).join(', '));
+  var pose=a.pose!=null?String(a.pose):Object.keys(CAST[name].poses)[0];
+  if(!CAST[name].poses[pose])throw new Error(name+' has no pose "'+pose+'". Poses: '+Object.keys(CAST[name].poses).join(', '));
+  var e={name:name,pose:pose,x:num(a.x==null?250:a.x,-100,600,'x'),floor:a.floor==null?(st.spec.floors[0]?st.spec.floors[0].y:236):num(a.floor,0,400,'floor'),height:0,flip:!!a.flip,helmet:name==='fredward'&&!!a.helmet,mission:!!MISSION[name],orig:null};
+  e.height=a.height!=null?num(a.height,8,600,'height'):r1(expectedHeight(e)||110);
+  snapshot();st.spec.entities.push(e);st.sel=st.spec.entities.length-1;render();
+  return entInfo(e,st.sel);
+}
+function opRemove(a){
+  var t=target(a);
+  snapshot();st.spec.entities.splice(t.i,1);st.sel=-1;render();
+  return{removed:t.e.name,note:'Indices after '+t.i+' shifted down by one.',characters:st.spec.entities.map(entInfo)};
+}
+function opPerspective(a){
+  var s=st.spec,next={horizon:s.horizon,floors:s.floors};
+  if('horizon' in a)next.horizon=a.horizon==null?null:num(a.horizon,-200,259,'horizon');
+  if(Array.isArray(a.floors))next.floors=a.floors.map(function(y){return{y:num(y,0,400,'floor line')}});
+  snapshot();s.horizon=next.horizon;s.floors=next.floors;render();
+  return{horizon:s.horizon,floors:s.floors.map(function(f){return f.y}),characters:s.entities.map(entInfo)};
+}
+async function opRequest(a,key){
+  key=key||st.key;
+  var summary=String(a.summary||'').trim(),details=String(a.details||'').trim();
+  if(!summary)throw new Error('A request needs a one-line summary.');
+  if(st.readOnly)throw new Error('This viewer cannot file requests; tell the user to copy the request text instead.');
+  var doc={scene:key,summary:summary.slice(0,200),details:details.slice(0,4000),status:'open',at:new Date().toISOString(),by:me||null,layout:specOut()};
+  if(db){
+    var ref=await db.collection('requests').add(doc);
+    // Show our own request at once, without waiting on the listener.
+    if(!chat.reqs.some(function(r){return r.id===ref.id}))chat.reqs.push(Object.assign({id:ref.id},doc));
+  }else{var list=lsGet('_requests')||[];list.push(doc);if(!lsSet('_requests',list))throw new Error('Could not store the request here.')}
+  renderRequests();
+  return{filed:true,summary:doc.summary,note:'Claude Code applies requests in the repo; the scene here does not change until then.'};
+}
+
+// ---------- chat ----------
+var chat={sample:null,limits:null,turns:[],busy:false,ctl:null,reqs:[],off:'',writes:{}};
+var CHAT_KEEP=24;
+var RULES=['You are the scene-layout assistant inside Scene Studio, a placement editor for Bit Cryptic World story scenes.',
+'The stage is 500 x 260 scene units; y grows downward. Each character has x (centre between the feet), floor (y of the feet), height (standing height), flip (mirrored), pose. All numbers in tools are scene units.',
+'When an image is attached it is the current stage drawn at exactly 2x (1000 x 520 pixels): divide pixel positions by 2 to get scene units. It shows #index tags over each character, a ruler tick every 50 units along the top and left edges, mint floor lines and the amber horizon. Without an image you cannot see the props: if a request depends on where an object is, say you are estimating, or ask.',
+'House rules, from the project art guide: feet sit exactly on a floor line; a contact shadow is drawn automatically; size follows the cast scale: expectedHeight = reference x castRatio x (floor - horizon) / (nearFloor - horizon), reported per character once a horizon is set; keep figures inside the frame unless a crop is clearly intended; never stack two figures on one footprint at the same depth. Edited figures draw in front of the scene art, so do not try to tuck someone behind furniture by position; that needs a code request.',
+'Use the tools to make the change, then reply in one to three short sentences saying what moved and why. Make only the change asked for. If the request is ambiguous, take the most reasonable reading and say what you assumed. Call tools one at a time when a later call depends on an earlier one (removals shift indices), and always pass the character name with its index.',
+'Anything outside x, floor, height, flip, pose, helmet, adding, removing, horizon and floor lines (redrawing art, colours, animation, props, layering behind objects, dialogue, a new pose) cannot be done here: call file_code_request with a clear summary and the details Claude Code needs, then tell the user it was filed. Never claim an art change was made.',
+'Locked characters (held props, head-only close-ups) cannot be moved here; file a request for them. Never write clue text or puzzle answers.'].join('\n');
+var TOOLS=[
+ {name:'get_layout',description:'Returns the current scene layout: every character with index, name, pose, x, floor, height, flip, locked, expectedHeight; the horizon; floor lines; available poses per character; current layout issues. Call it again after a removal, since indices shift.',execute:function(){return layoutState()}},
+ {name:'update_character',description:'Changes one character, addressed by index AND name (the name guards against shifted indices). Any of x, floor, height, flip, pose, helmet (Fredward only). snapToFloor puts the feet on the nearest floor line; fitCastScale sets height to the cast scale (needs a horizon). Returns the character after the change. Throws on locked characters or bad values.',
+  inputSchema:{type:'object',properties:{index:{type:'integer'},name:{type:'string'},x:{type:'number'},floor:{type:'number'},height:{type:'number'},flip:{type:'boolean'},pose:{type:'string'},helmet:{type:'boolean'},snapToFloor:{type:'boolean'},fitCastScale:{type:'boolean'}},required:['index','name']},execute:function(a){return opUpdate(a)}},
+ {name:'add_character',description:'Adds a character from the approved cast. Defaults: pose = first pose, floor = first floor line, height = cast scale (or 110 with no horizon). Returns the new character with its index.',
+  inputSchema:{type:'object',properties:{name:{type:'string'},pose:{type:'string'},x:{type:'number'},floor:{type:'number'},height:{type:'number'},flip:{type:'boolean'},helmet:{type:'boolean'}},required:['name']},execute:function(a){return opAdd(a)}},
+ {name:'remove_character',description:'Removes one character, addressed by index AND name. Later indices shift down by one; the result lists the new indices.',
+  inputSchema:{type:'object',properties:{index:{type:'integer'},name:{type:'string'}},required:['index','name']},execute:function(a){return opRemove(a)}},
+ {name:'set_perspective',description:'Sets the horizon y and/or replaces the floor lines with a list of y values. Pass clearHorizon:true to remove the horizon. Returns the updated characters with their expected heights.',
+  inputSchema:{type:'object',properties:{horizon:{type:'number'},clearHorizon:{type:'boolean'},floors:{type:'array',items:{type:'number'}}}},execute:function(a){a=a||{};if(a.clearHorizon)a.horizon=null;else if(a.horizon===undefined)delete a.horizon;return opPerspective(a)}},
+ {name:'file_code_request',description:'Files a request for Claude Code for anything that needs a code or art edit rather than a position change. summary: one line. details: what to change, where, and why.',
+  inputSchema:{type:'object',properties:{summary:{type:'string'},details:{type:'string'}},required:['summary']},execute:null}
+];
+var ERR_COPY={not_granted:'Claude is not allowed for this page. Allow it in the page\'s permissions, then reload.',sampling_disabled:'Claude is not available for this account.',rate_limited:'Too many requests just now. Try again in a minute.',session_expired:'Sign in again to keep chatting.',refused:'Claude declined that request. Try rewording it.',empty_completion:'Claude returned nothing. Try asking for something smaller.',prompt_too_large:'The conversation got too long. Start a new scene chat or ask for less.',upstream_error:'Something went wrong reaching Claude. Try again.',invalid_json:'Claude\'s answer could not be read. Try again.',
+  images_unavailable:'The stage picture could not be sent. Send again and it goes without it.',image_rejected:'The stage picture was refused. Send again and it goes without it.',tools_unavailable:'Direct edits are not available in this view. Send again and Claude will reply with the changes to apply.'};
+var HIDE_CODES={not_granted:1,sampling_disabled:1,not_declared:1,capability_disabled:1,capability_removed:1};
+var ACT_KINDS={bad:1,req:1};
+
+function chatKey(k){return 'chat:'+k}
+function cleanTurns(t){
+  return(Array.isArray(t)?t:[]).filter(function(x){return x&&(x.role==='user'||x.role==='assistant')&&typeof x.content==='string'&&x.content}).map(function(x){
+    return{role:x.role,content:x.content,at:x.at||null,retry:x.role==='assistant'&&x.retry===true||undefined,acts:(Array.isArray(x.acts)?x.acts:[]).map(function(a){return{kind:ACT_KINDS[a&&a.kind]?a.kind:'',text:String(a&&a.text||'')}}).filter(function(a){return a.text})};
+  });
+}
+async function loadChat(key){
+  // Coming back to the scene whose reply is still streaming: show that live log, not a stale copy.
+  if(chat.busy&&chat.busyKey===key){if(chat.busyTurns)chat.turns=chat.busyTurns;renderChat();renderRequests();return}
+  chat.turns=[];renderChat();renderRequests();
+  var t=null;
+  if(db){try{var d=await db.collection('chats').doc(key).get();if(d.exists)t=d.data().turns}catch(e){}}
+  else t=lsGet(chatKey(key));
+  if(st.key!==key||(chat.busy&&chat.busyKey===key))return;
+  chat.turns=cleanTurns(t);
+  renderChat();renderRequests();
+}
+// One chats write at a time per scene: a later write waits for the one in flight, then sends the newest turns.
+function persistChat(key,turns){
+  var keep=turns.filter(function(t){return!t.pending}).slice(-CHAT_KEEP).map(function(t){var o={role:t.role,content:t.content,at:t.at||null,acts:t.acts||[]};if(t.retry)o.retry=true;return o});
+  var w=chat.writes[key]||(chat.writes[key]={busy:null,next:null});
+  w.next=keep;
+  if(w.busy)return w.busy;
+  w.busy=(async function(){
+    while(w.next){var body=w.next;w.next=null;
+      if(db){try{await db.collection('chats').doc(key).set({scene:key,turns:body,at:new Date().toISOString()})}catch(e){}}
+      else lsSet(chatKey(key),body);
+    }
+    w.busy=null;
+  })();
+  return w.busy;
+}
+function msgHtml(t,i){
+  var acts=(t.acts||[]).map(function(a){return'<span class="'+(ACT_KINDS[a.kind]?a.kind:'')+'">'+esc(a.text)+'</span>'}).join('');
+  // Retry only on the newest reply, and only when the message it answers is right before it.
+  var retry=t.retry&&i===chat.turns.length-1&&i>0&&chat.turns[i-1].role==='user'&&chat.sample?'<div class="retry"><button type="button" data-retry'+(chat.busy?' disabled':'')+'>Retry</button></div>':'';
+  return'<div class="msg '+(t.role==='user'?'user':'assistant')+'"><span class="body">'+esc(t.content)+'</span>'+(acts?'<div class="acts">'+acts+'</div>':'')+retry+'</div>';
+}
+function busyNote(){return chat.busy&&chat.busyKey&&chat.busyKey!==st.key?'<div class="msg note">Claude is still replying in '+esc(chat.busyKey)+'. The reply is saved to that scene\'s chat.</div>':''}
+function renderChat(){
+  var box=$('#msgs');
+  if(!chat.turns.length){box.innerHTML='<div class="msg note">'+esc(chat.sample?'Ask for a change to '+st.key+'. The conversation is saved with the scene.':(chat.off||'Chat appears when Studio is opened on claude.ai.'))+'</div>'+busyNote();return}
+  box.innerHTML=chat.turns.map(msgHtml).join('')+busyNote();
+  box.scrollTop=box.scrollHeight;
+}
+// While a reply streams, only its own bubble changes, so screen readers are not re-read the whole log.
+function updateBubble(t){
+  var box=$('#msgs'),last=box.lastElementChild;
+  if(!last||last.classList.contains('note')){renderChat();return}
+  last.outerHTML=msgHtml(t);box.scrollTop=box.scrollHeight;
+}
+function renderRequests(){
+  var list=(db?chat.reqs:(lsGet('_requests')||[])).filter(function(r){return r&&r.scene===st.key});
+  $('#reqs').hidden=!list.length;
+  $('#reqList').innerHTML=list.map(function(r){var s=/^(open|done|declined)$/.test(r.status)?r.status:'open';return'<li><span class="st '+s+'">'+s+'</span><span>'+esc(r.summary)+(r.note?' <span class="hint">· '+esc(r.note)+'</span>':'')+'</span></li>'}).join('');
+}
+function actText(name,result,err){
+  if(err)return{kind:'bad',text:name+' failed: '+err};
+  if(name==='update_character')return{text:'#'+result.index+' '+result.name+' → x '+result.x+', floor '+result.floor+', h '+result.height+(result.flip?', mirrored':'')+', '+result.pose};
+  if(name==='add_character')return{text:'added #'+result.index+' '+result.name+' ('+result.pose+')'};
+  if(name==='remove_character')return{text:'removed '+result.removed};
+  if(name==='set_perspective')return{text:'horizon '+(result.horizon==null?'cleared':result.horizon)+', floors '+result.floors.join(', ')};
+  if(name==='file_code_request')return{kind:'req',text:'filed for Claude Code: '+result.summary};
+  return null;
+}
+// A labelled picture of the stage at exactly 2x: the scene, the cast as placed, guides, a 50-unit ruler and #index tags.
+async function stageImage(){
+  try{
+    var clone=svg.cloneNode(true);clone.setAttribute('xmlns',NS);clone.setAttribute('width','1000');clone.setAttribute('height','520');
+    var ov=clone.querySelector('#studio-overlay');if(!ov)return null;
+    var tags='';
+    for(var u=50;u<500;u+=50)tags+='<line x1="'+u+'" x2="'+u+'" y1="0" y2="5" stroke="#e4e8f5" stroke-width="0.6"/><text x="'+u+'" y="11" text-anchor="middle" font-size="5.5" font-family="monospace" fill="#e4e8f5">'+u+'</text>';
+    for(var v=50;v<260;v+=50)tags+='<line x1="0" x2="5" y1="'+v+'" y2="'+v+'" stroke="#e4e8f5" stroke-width="0.6"/><text x="7" y="'+(v+2)+'" font-size="5.5" font-family="monospace" fill="#e4e8f5">'+v+'</text>';
+    st.spec.entities.forEach(function(e,i){var top=e.locked&&e.box?e.box.y:e.floor-e.height,x=e.locked&&e.box?e.box.x+e.box.w/2:e.x,y=Math.max(12,top-12);tags+='<rect x="'+(x-17)+'" y="'+y+'" width="34" height="10" rx="2" fill="#0c1020" fill-opacity="0.85"/><text x="'+x+'" y="'+(y+7.6)+'" text-anchor="middle" font-size="7.5" font-family="monospace" fill="#f2c14e">#'+i+(e.locked?' lock':'')+'</text>'});
+    if(st.spec.horizon!=null)tags+='<line x1="0" x2="500" y1="'+st.spec.horizon+'" y2="'+st.spec.horizon+'" stroke="#f2c14e" stroke-width="0.8" stroke-dasharray="5 3"/>';
+    st.spec.floors.forEach(function(f){tags+='<line x1="0" x2="500" y1="'+f.y+'" y2="'+f.y+'" stroke="#64d9a0" stroke-width="0.7" stroke-dasharray="3 3"/>'});
+    ov.innerHTML=tags;
+    var url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml'}));
+    try{
+      var img=new Image();
+      await new Promise(function(res,rej){img.onload=res;img.onerror=rej;img.src=url});
+      var c=document.createElement('canvas');c.width=1000;c.height=520;c.getContext('2d').drawImage(img,0,0,1000,520);
+      return await new Promise(function(res){c.toBlob(function(b){res(b)},'image/png')});
+    }finally{URL.revokeObjectURL(url)}
+  }catch(e){return null}
+}
+// Only the Stop button aborts a reply; byUser is how the error path tells that apart from any other cancel.
+function chatStop(){if(chat.ctl){chat.ctl.byUser=true;chat.ctl.abort();chat.ctl=null}}
+var RETRY_CODES={cancelled:1,rate_limited:1,upstream_error:1,invalid_json:1,empty_completion:1,images_unavailable:1,image_rejected:1,tools_unavailable:1,timeout:1,network_error:1};
+function setBusy(b){
+  chat.busy=b;var inp=$('#chatInput');
+  // readOnly, not disabled: focus stays in the box, so Backspace never reaches the stage's delete key.
+  inp.readOnly=b;inp.setAttribute('aria-busy',String(b));$('#msgs').setAttribute('aria-busy',String(b));
+  $('#chatSend').disabled=b;$('#chatStop').hidden=!b;
+  [].forEach.call(document.querySelectorAll('#chips button'),function(x){x.disabled=b});
+  if(!b&&document.activeElement===document.body)inp.focus({preventScroll:true});
+}
+function chatOff(msg){chat.sample=null;chat.off=msg;$('#chatForm').hidden=true;$('#chips').hidden=true;$('#chatHint').textContent=msg;renderChat()}
+// Returns true when the message was taken (the box clears only then).
+function sendChat(text){
+  text=String(text||'').trim();if(!text||chat.busy||!chat.sample)return false;
+  runChat(text);return true;
+}
+async function runChat(text){
+  var key=st.key,turns=chat.turns,ctl=new AbortController();chat.ctl=ctl;chat.busyKey=key;chat.busyTurns=turns;
+  var userTurn={role:'user',content:text,at:new Date().toISOString()},bot={role:'assistant',content:'Thinking…',acts:[],pending:true};
+  turns.push(userTurn,bot);renderChat();setBusy(true);
+  var history=turns.slice(0,-2).filter(function(t){return t.role==='user'||t.role==='assistant'&&!t.retry}).slice(-12).map(function(t){return{role:t.role,content:t.content+(t.acts&&t.acts.length?'\n[changes: '+t.acts.map(function(a){return a.text}).join('; ')+']':'')}});
+  var input=[{role:'user',content:RULES}].concat(history,[{role:'user',content:text+'\n\n[Scene '+key+', current layout]\n'+JSON.stringify(layoutState())}]);
+  var opts={signal:ctl.signal,onText:function(u){bot.content=u.text;show()}};
+  var img=chat.limits&&chat.limits.images?await stageImage():null;if(img)opts.images=img;
+  var changed=false,leftScene=false;
+  // Only the scene that asked shows this exchange; after a switch the bubble belongs to another log.
+  function show(){if(st.key===key)updateBubble(bot)}
+  // Requests are keyed to the asking scene, so they still file after a switch; layout edits would land on the wrong stage.
+  function guard(isRequest){
+    if(ctl.signal.aborted)throw new Error('Stopped by the user.');
+    if(!isRequest&&st.key!==key){leftScene=true;throw new Error('The user switched to another scene, so layout changes cannot be applied now. File any code/art requests still needed, then reply briefly.')}
+  }
+  try{
+    if(chat.limits&&chat.limits.tools){
+      // Calls with tools are never cached, and cache must be omitted with them.
+      opts.tools=TOOLS.map(function(t){var tool={name:t.name,description:t.description,execute:async function(a,ctx){
+        a=a&&typeof a==='object'?a:{};
+        if(ctx&&ctx.signal&&ctx.signal.aborted)throw new Error('Stopped.');
+        guard(t.name==='file_code_request');
+        try{var r=t.name==='file_code_request'?await opRequest(a,key):await t.execute(a);var at=actText(t.name,r);if(at){bot.acts.push(at);if(t.name!=='file_code_request')changed=true;show()}return r}
+        catch(err){bot.acts.push(actText(t.name,null,err.message));show();throw err}
+      }};if(t.inputSchema)tool.inputSchema=t.inputSchema;return tool});
+      var res=await chat.sample(input,opts);bot.content=res.text+(res.truncated?'\n(cut short)':'');
+    }else{
+      // No page tools in this view: ask for the edits as JSON and apply them here.
+      opts.cache=false;
+      input[input.length-1].content+='\n\nReply with only JSON: {"reply": string, "ops": [{"op":"update","index":n,"name":s,...fields} | {"op":"add","name":s,...} | {"op":"remove","index":n,"name":s} | {"op":"perspective","horizon":y,"floors":[y]} | {"op":"request","summary":s,"details":s}]}. Indices refer to the layout above, before any of your ops.';
+      delete opts.onText;
+      var out=await chat.sample.json(input,opts),ops=Array.isArray(out&&out.ops)?out.ops:[];
+      guard(true);
+      // Removals last and highest index first, so every index still means the layout the model saw.
+      var rm=ops.filter(function(o){return o&&o.op==='remove'}).sort(function(x,y){return Number(y.index)-Number(x.index)});
+      var ordered=ops.filter(function(o){return o&&o.op!=='remove'}).concat(rm);
+      var FN={update:opUpdate,add:opAdd,remove:opRemove,perspective:opPerspective,request:function(o){return opRequest(o,key)}};
+      var NM={update:'update_character',add:'add_character',remove:'remove_character',perspective:'set_perspective',request:'file_code_request'};
+      for(var i=0;i<ordered.length;i++){var o=ordered[i];if(!FN[o.op])continue;
+        try{guard(o.op==='request');var r=await FN[o.op](o);var at=actText(NM[o.op],r);if(at)bot.acts.push(at);if(o.op!=='request')changed=true}catch(err){bot.acts.push(actText(NM[o.op],null,err.message))}}
+      bot.content=String(out&&out.reply||'Done.');
+    }
+  }catch(e){
+    var code=e&&e.code,byUser=!!ctl.byUser;
+    if(!code&&ctl.signal.aborted)code='cancelled';
+    var why=code==='cancelled'?(byUser?'Stopped.':'Interrupted before Claude finished. Your message was saved; press Retry.')
+      :(ERR_COPY[code]||('Something went wrong: '+(e&&e.message||code||'unknown error')+(code&&e&&e.message&&e.message.indexOf(code)<0?' ('+code+')':'')+'. Press Retry.'));
+    bot.content=(e&&e.text?e.text+'\n\n':'')+why;
+    if(!HIDE_CODES[code]&&(RETRY_CODES[code]||!ERR_COPY[code]))bot.retry=true;
+    if(code==='images_unavailable'||code==='image_rejected'){if(chat.limits)chat.limits.images=null}
+    if(code==='tools_unavailable'){if(chat.limits)chat.limits.tools=null}
+    if(HIDE_CODES[code])chatOff(code==='not_granted'?'Chat is off for this page: Claude was not allowed. Allow it in the page permissions, then reload.':'Chat is not available for this account or view.');
+  }finally{
+    delete bot.pending;
+    if(chat.ctl===ctl)chat.ctl=null;
+    if(chat.busyTurns===turns)chat.busyTurns=null;
+    if(leftScene){bot.acts.push({kind:'bad',text:'layout changes not applied: you left '+key+' mid-reply. Open it and press Retry.'});bot.retry=true}
+    setBusy(false);
+    if(st.key!==key)renderChat();// clears the "still replying" note on the scene now open
+    else{
+      if(changed){
+        // Chat edits are saved straight away: asking for a change is asking for it to be kept.
+        if(canSave()){var ok=await save();bot.acts.push({kind:ok?'':'bad',text:ok?'saved':'not saved (copy the JSON)'})}
+        else bot.acts.push({kind:'bad',text:'not saved: view only'});
+      }
+      renderChat();
+    }
+    persistChat(key,turns);
+  }
+}
+$('#chatForm').addEventListener('submit',function(ev){ev.preventDefault();var v=$('#chatInput').value;if(sendChat(v))$('#chatInput').value=''});
+$('#chatInput').addEventListener('keydown',function(ev){if(ev.isComposing||ev.keyCode===229)return;if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();$('#chatForm').requestSubmit()}});
+$('#chatStop').addEventListener('click',chatStop);
+// Retry resends the saved message in place of the failed exchange.
+$('#msgs').addEventListener('click',function(ev){
+  if(!ev.target.closest('[data-retry]')||chat.busy||!chat.sample)return;
+  var n=chat.turns.length,bot=chat.turns[n-1],user=chat.turns[n-2];
+  if(!bot||!bot.retry||!user||user.role!=='user')return;
+  chat.turns.splice(n-2,2);
+  if(!sendChat(user.content)){chat.turns.push(user,bot);renderChat()}
+});
+$('#chips').addEventListener('click',function(ev){var b=ev.target.closest('[data-suggest]');if(b)sendChat(b.dataset.suggest)});
+
+// ---------- QA audit across every scene ----------
+var qaSort={k:'warn',dir:-1};
+function buildQA(){
+  var rows=KEYS.map(function(k){var r=BCSceneLint.lintSource(SCENES[k]),c={key:k,error:0,warn:0,info:0,cast:CASTN[k],top:''};r.forEach(function(x){c[x.severity]++});var t=r.filter(function(x){return x.severity==='error'})[0]||r.filter(function(x){return x.severity==='warn'})[0]||r[0];c.top=t?t.rule:'';return c});
+  var tot={};KEYS.forEach(function(k){BCSceneLint.lintSource(SCENES[k]).forEach(function(x){var n=x.rule+' ('+x.severity+')';tot[n]=(tot[n]||0)+1})});
+  $('#qaSum').innerHTML='<span>'+KEYS.length+' scenes</span>'+Object.keys(tot).sort(function(a,b){return tot[b]-tot[a]}).map(function(n){return'<span>'+esc(n)+': '+tot[n]+'</span>'}).join('');
+  rows.sort(function(a,b){var x=a[qaSort.k],y=b[qaSort.k];return(x>y?1:x<y?-1:0)*qaSort.dir});
+  $('#qaBody').innerHTML=rows.map(function(r){return'<tr><td><a href="#'+r.key+'" data-open="'+r.key+'">'+r.key+'</a></td><td class="n">'+r.error+'</td><td class="n">'+r.warn+'</td><td class="n">'+r.info+'</td><td class="n">'+(r.cast||'')+'</td><td>'+esc(r.top)+'</td></tr>'}).join('');
+}
+$('#paneQA').addEventListener('click',function(ev){
+  var a=ev.target.closest('[data-open]');if(a){ev.preventDefault();showTab(false);openScene(a.dataset.open);return}
+  var th=ev.target.closest('th[data-k]');if(th){qaSort.dir=qaSort.k===th.dataset.k?-qaSort.dir:-1;qaSort.k=th.dataset.k;buildQA()}
+});
+function showTab(qa){$('#tabCompose').setAttribute('aria-selected',String(!qa));$('#tabQA').setAttribute('aria-selected',String(qa));$('#paneCompose').hidden=qa;$('#paneQA').hidden=!qa;if(qa)buildQA()}
+
+// ---------- boot ----------
+buildPalette();
+var startKey=(location.hash||'').slice(1);if(!SCENES[startKey])startKey=SCENES.workshop_6?'workshop_6':KEYS[0];
+var idx=lsGet('_index');if(idx)st.saved=idx;
+var STATUS=KEYS.length+' scenes · '+Object.keys(CAST).length+' cast · ';
+$('#status').textContent=STATUS+'saves stay in this browser (copy JSON to share)';
+loadScene(startKey);
+// Chat needs the claude.ai viewer; the copy says which reason applies.
+chat.off=window.claude?'Connecting to Claude…':'Chat works in the published Studio on claude.ai. Here, drag and save as usual.';
+$('#chatForm').hidden=true;$('#chips').hidden=true;
+if(!window.claude){$('#chatHint').textContent=chat.off;st.dbReadyResolve()}
+loadChat(startKey);
+// A listener gets at most one terminal error. Retry a dropped bridge once; anything else means the store is gone.
+function subscribe(name,next,retried){
+  var unsub=db.collection(name).onSnapshot(next,function(e){
+    var code=e&&e.code;
+    if((code==='unavailable'||!code)&&!retried){setTimeout(function(){subscribe(name,next,true)},800+Math.floor(Math.random()*1600));return}
+    if(code==='revoked'||code==='not_granted'||/^capability_/.test(code||'')){st.dbDead=true;clearTimeout(st.saveT);$('#status').textContent=STATUS+'saving unavailable here (copy JSON instead)';setChip('err','Not saved')}
+    else $('#status').textContent=STATUS+'live updates paused (reload to resume)';
+  });
+  return unsub;
+}
+(async function(){
+  if(!window.claude)return;
+  try{db=await window.claude.use('db')}catch(e){db=null}
+  var u=null;try{u=await window.claude.use('user');if(u&&u.id)me=await u.id()}catch(e){}
+  if(db&&u&&u.can){try{if((await u.can('data.write'))===false)goReadOnly('You can view this Studio but not save to it. Copy the JSON to share a layout.')}catch(e){}}
+  st.dbReadyResolve();
+  try{chat.sample=await window.claude.use('sample')}catch(e){chat.sample=null}
+  if(chat.sample){
+    try{chat.limits=await chat.sample.limits()}catch(e){chat.limits=null}
+    chat.off='';$('#chatForm').hidden=false;$('#chips').hidden=false;
+    $('#chatHint').textContent='Describe a change. Claude sees the stage, moves the cast here and saves it. Anything that needs a code edit becomes a request for Claude Code.';
+  }else chatOff('Chat is not available in this view.');
+  if(!db){$('#status').textContent=STATUS+'saves stay in this browser (copy JSON to share)';renderChat();return}
+  store='db';st.saved={};
+  $('#status').textContent=STATUS+(st.readOnly?'view only':'saves go to the review store');
+  subscribe('layouts',function(snap){st.saved={};snap.docs.forEach(function(d){if(d.exists)st.saved[d.id]=1});buildList()});
+  subscribe('requests',function(snap){chat.reqs=snap.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},d.data())});renderRequests()});
+  fetchSaved(st.key);loadChat(st.key);
+})();
+})();
+</script>

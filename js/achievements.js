@@ -44,10 +44,10 @@ const BCWAchievements = (() => {
     //
     // Named for the chair Canon keeps beside him rather than for the errand,
     // because the errand is not the thing that happened.
-    // The badge KEEPS THE SPOON. A reward that is only a picture of a reward
+    // The badge KEEPS THE FORK. A reward that is only a picture of a reward
     // teaches a player the next one will be too: Club Penguin sold puffle hats
     // for 200 coins, they did nothing, and nobody remembers them.
-    second_chair: { title: 'The Second Chair', desc: 'Bring something back, and the Sounding Spoon is yours to keep', icon: '🪑', category: 'story' },
+    second_chair: { title: 'The Second Chair', desc: 'Bring something back, and the Sounding Fork is yours to keep', icon: '🪑', category: 'story' },
     the_manifest: { title: 'What a Crossing Sheds', desc: 'Recover all five artifacts', icon: '🧭', category: 'story' },
     // The dock keeper's suit, whole again after years in three places.
     suited: { title: 'Sound, and Complete', desc: 'Put the diving suit back together', icon: '🪔', category: 'story' },
@@ -79,6 +79,20 @@ const BCWAchievements = (() => {
         totalPuzzlesSolved = saved.totalPuzzlesSolved || 0;
       }
     } catch {}
+    // A save that arrived whole (import, cloud pull, or a version that added
+    // the last badge after this player had already earned the rest) has
+    // never been through unlock(), so the meta badge was never evaluated.
+    check();
+  }
+
+  // Completionist is the only badge computed FROM the others, so it is the
+  // only one that can be owed without any event having fired. Evaluate it
+  // from the current set rather than only on the way through unlock().
+  function check() {
+    if (unlocked.includes('completionist')) return false;
+    const nonMeta = Object.keys(ACHIEVEMENTS).filter(k => k !== 'completionist');
+    if (!nonMeta.every(k => unlocked.includes(k))) return false;
+    return unlock('completionist');
   }
 
   function save() {
@@ -105,16 +119,27 @@ const BCWAchievements = (() => {
     if (typeof BCWAnalytics !== 'undefined') BCWAnalytics.trackAchievement(id);
     if (typeof BCWAudio !== 'undefined') BCWAudio.playSuccess();
 
-    // Check for completionist
-    const nonMeta = Object.keys(ACHIEVEMENTS).filter(k => k !== 'completionist');
-    if (nonMeta.every(k => unlocked.includes(k))) {
-      unlock('completionist');
-    }
+    check();
 
     return true;
   }
 
+  // One toast at a time. Two badges that fire in the same tick (the last
+  // ordinary one and Completionist, always) used to be appended at the same
+  // fixed position, so the second one sat on top of the first and the player
+  // saw one card and a flicker.
+  const toastQueue = [];
+  let toastShowing = false;
+
   function showAchievementNotification(achievement) {
+    toastQueue.push(achievement);
+    if (!toastShowing) showNextToast();
+  }
+
+  function showNextToast() {
+    const achievement = toastQueue.shift();
+    if (!achievement) { toastShowing = false; return; }
+    toastShowing = true;
     const notif = document.createElement('div');
     notif.className = 'achievement-notif';
     notif.innerHTML = `
@@ -130,10 +155,10 @@ const BCWAchievements = (() => {
     // Animate in
     requestAnimationFrame(() => notif.classList.add('show'));
 
-    // Remove after delay
+    // Remove after delay, then show whatever is waiting
     setTimeout(() => {
       notif.classList.remove('show');
-      setTimeout(() => notif.remove(), 500);
+      setTimeout(() => { notif.remove(); showNextToast(); }, 500);
     }, 4000);
   }
 
@@ -238,6 +263,7 @@ const BCWAchievements = (() => {
   return {
     init,
     unlock,
+    check,
     checkExploration,
     checkStoryComplete,
     checkPuzzleSolved,

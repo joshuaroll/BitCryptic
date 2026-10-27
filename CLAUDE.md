@@ -18,7 +18,7 @@ Bit Cryptic World is an interactive puzzle adventure island game with cryptic cr
 
 ```bash
 npm run verify     # THE GATE: check:syntax + check:clues + check:spoilers
-npm run test:e2e   # Playwright, 46 tests across 6 specs
+npm run test:e2e   # Playwright, 67 tests across 8 specs
 npm start          # Run the React daily-game dev server (port 3000)
 npm run build      # Build the React daily game to /build
 npm test           # Run Jest tests (react-scripts test, watch mode)
@@ -36,7 +36,7 @@ The root `index.html` island game has no build step — edit and open directly o
 | syntax | every shipped script parses — 29 of them, including the inline blocks inside the monolith |
 | content | 12 clues validated + the clue-freeze proof |
 | spoilers | all 8 `.vercelignore` exclusions still present |
-| e2e | 46 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap` |
+| e2e | 67 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline` |
 | security | secret scan (`service_role`, `GOCSPX-`, `re_`) |
 | ci | roll-up; fails if any of the above fails |
 
@@ -147,9 +147,10 @@ separately, keyed to the clue, and the roles are wrapped in at render time. That
 is what keeps the freeze proof above intact. Do not "improve" this by baking
 markup into a clue string.
 
-Only the **DINE** sample is signed off and live; that is the launch scope. The
-other 52 annotations sit in `data/anatomy-review-2026-07.md` awaiting Joshua's
-sign-off, and un-annotated clues render exactly as they always did.
+44 of the 52 July parses are live (merged 2026-09-01): every story clue, the 10
+Learn tutorials and 3 others. The 9 bonus-challenge parses still wait on Joshua's
+sign-off in `data/anatomy-review-2026-07.md` and on wiring `showClueChallenge`'s
+`clue:` path into `annotate()`. Un-annotated clues render exactly as before.
 
 ## Deployment
 
@@ -198,6 +199,21 @@ Pets are not furniture: no snap cell, no drag, no save position, ground floor
 only. `renderPets()` runs inside `renderHouse()`. There is deliberately **no
 homophone pet** (cut by Joshua). Adding a species means adding its device cheese
 to `CHEESE_TYPES` too, or `check:pets` fails.
+
+## Scene consistency: cast kit, tokens, Studio, lint
+
+- `scenes/approved-cast.js` is generated (`node scripts/build-approved-cast.cjs` after
+  `node ../Bit_Cryptic_Character_Models/render.cjs`). Place figures with
+  `bcApprovedPlace(name,pose,x,floorY,height,flip,{shadow,helmet})`; it emits the contact
+  shadow. A held prop goes between `bcApprovedHold(...).behind` and `.front` so the hands
+  close over it (Fredward's `cradle` / `hold` poses). `helmet:` dresses the approved
+  Fredward for dive scenes; never bring back the legacy suit.
+- `design/tokens.json` (W3C DTCG) holds cast scale ratios, motion, and the art style (biome palettes,
+  light, outline, depth, contact). After editing it run `npm run art:tokens`.
+- `scenes/art-kit.js` (`bcArt`) is the prop library + style engine: props placed by contact point,
+  items seated with `bcArt.on(anchors.top, ...)`. Rules: `design/STYLE.md`; `npm run check:kit` gates it.
+- `tools/scene-studio/studio.html` is the visual placement editor + QA board; see its README.
+- `npm run lint:scenes` checks every scene against the scene-art rules; errors fail `verify`.
 
 ## Bonus Challenge System
 

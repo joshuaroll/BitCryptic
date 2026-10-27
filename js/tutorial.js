@@ -24,7 +24,7 @@ const BCWTutorial = (() => {
     },
     {
       target: null,
-      title: 'Ready to Explore!',
+      title: 'Ready to Explore',
       text: 'Click on glowing locations to explore them. Solve puzzles to unlock new areas. Start at the Decoder Docks. The Dock Keeper is expecting you.',
       position: 'center'
     }

@@ -25,8 +25,8 @@ const fs = require('fs');
 const DIR = path.join(ROOT, 'scenes') + path.sep;
 
 // characters.js FIRST: it is a shared kit the scene files call into, so it has
-// to be evaluated before anything that uses bcPlace().
-const FILES = ['characters.js', 'forest.js', 'adventure.js', 'beach.js',
+// to be evaluated before anything that uses bcPlace(). art-kit.js (bcArt) likewise.
+const FILES = ['approved-cast.js', 'characters.js', 'art-kit.js', 'forest.js', 'adventure.js', 'beach.js',
   'cafe.js', 'cove.js', 'skyship.js', 'docks.js', 'library.js', 'observatory.js',
   'town.js', 'workshop.js', 'lair.js', 'moon.js', 'wreck.js', 'hidden.js'];
 

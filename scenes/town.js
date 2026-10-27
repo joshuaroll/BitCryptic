@@ -2,6 +2,156 @@
 // Keys: town_0 through town_5
 // DRAFT — for review only
 
+// ====================================================================
+// THE SQUARE'S FOUNTAIN, one object drawn one way. It had been drawn four
+// different ways across the five scenes (a pillar with jets, a ghost, a goblet
+// and town_3's column-and-bowl). This is town_3's design at mid-shot: a basin
+// with a coping you can see the thickness of, a tapering shaft on a plinth,
+// and an upper bowl showing its underside. town_3 stays the close-up of it.
+//
+// (x, y) is the CONTACT POINT: the centre of the basin's footprint on the
+// paving. At scale 1 the basin is 114 wide and the bowl rim stands 59 above y.
+// {gold:true} fills the pool and bowl with the surge and leaves the jet to the
+// scene; otherwise it runs with water and draws its own jet.
+// ====================================================================
+function townFountain(id, x, y, scale, opts) {
+  opts = opts || {};
+  var gold = !!opts.gold;
+  var pool = gold ? '#aa8820' : '#4f6f8f';
+  var surf = gold ? '#ffd700' : '#6688aa';
+  var e = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"';
+  var s = '<g data-prop="town-fountain" data-id="' + id + '" transform="translate(' + x + ' ' + y + ') scale(' + scale + ') translate(-250 -190)">'
+  // contact shadow
+  + '<path d="M190,190 Q250,180 310,190 Q250,204 190,190 Z" fill="#5c4d3b" opacity="0.3"/>'
+  // far wall and the pool it holds
+  + '<path d="M195,183 Q250,173 305,183 Q250,191 195,183 Z" fill="#8a8a9a"/>'
+  + '<path d="M199,183 Q250,175 301,183 Q250,196 199,183 Z" fill="' + pool + '" opacity="' + (gold ? 0.55 : 0.85) + '"/>'
+  + '<path d="M203,183 Q250,176 297,183 Q250,190 203,183 Z" fill="' + surf + '" opacity="' + (gold ? 0.34 : 0.6) + '">'
+  + '<animate attributeName="opacity" values="' + (gold ? '0.2;0.48;0.2' : '0.45;0.7;0.45') + '" dur="3.4s" repeatCount="indefinite" ' + e + '/></path>'
+  // near coping, over the pool, laid in blocks
+  + '<path d="M193,185 Q250,199 307,185 L306,193 Q250,209 194,193 Z" fill="#7c7c8c"/>'
+  + '<path d="M193,185 Q250,199 307,185 Q250,195 193,185 Z" fill="#9a9aaa"/>'
+  + '<path d="M197,185.4 Q250,196 303,185.4 Q250,192 197,185.4 Z" fill="#aaaabc" opacity="0.5"/>'
+  + '<g stroke="#5a5a6a" stroke-width="0.9" opacity="0.45" fill="none"><path d="M210,189 L209,199 M232,193 L231,204 M268,193 L269,204 M290,189 L291,199"/></g>'
+  + '<path d="M193,190 Q250,204 307,190 L306,193 Q250,209 194,193 Z" fill="#4a4a5a" opacity="0.3"/>'
+  // the shaft, tapering, on its plinth, with a torus at the foot and a cavetto under the bowl
+  + '<path d="M238,175 Q250,171 262,175 Q250,180 238,175 Z" fill="#7c7c8c"/>'
+  + '<path d="M239,175 L261,175 L260,181 Q250,184 240,181 Z" fill="#6a6a7a"/>'
+  + '<path d="M242,177 L258,177 L256,142 L244,142 Z" fill="#9a9aaa"/>'
+  + '<path d="M245,177 L252,177 L251,142 L246,142 Z" fill="#aaaabc" opacity="0.5"/>'
+  + '<path d="M256,177 L258,177 L256,142 L254,142 Z" fill="#6a6a7a" opacity="0.55"/>'
+  + '<path d="M247,175 L248,145 M253,175 L252.5,145" stroke="#6f6f80" stroke-width="0.6" opacity="0.4" fill="none"/>'
+  + '<path d="M240,173 Q250,169 260,173 Q250,178 240,173 Z" fill="#9a9aaa"/>'
+  + '<path d="M241,148 Q250,145 259,148 Q250,152 241,148 Z" fill="#9a9aaa"/>'
+  // the upper bowl, with its underside showing
+  + '<path d="M228,140 Q250,131 272,140 Q268,150 250,153 Q232,150 228,140 Z" fill="#7c7c8c"/>'
+  + '<path d="M228,140 Q250,131 272,140 Q250,147 228,140 Z" fill="#9a9aaa"/>'
+  + '<path d="M233,139.6 Q250,134 267,139.6 Q250,144 233,139.6 Z" fill="' + pool + '" opacity="0.55"/>'
+  + '<path d="M236,139 Q250,135 264,139 Q250,142 236,139 Z" fill="' + surf + '" opacity="' + (gold ? 0.4 : 0.6) + '">'
+  + '<animate attributeName="opacity" values="' + (gold ? '0.24;0.56;0.24' : '0.45;0.72;0.45') + '" dur="3.4s" repeatCount="indefinite" ' + e + '/></path>';
+  if (!gold) {
+    s += ''
+    // water spilling over the bowl's lip in two sheets, and where they land
+    + '<path d="M231,143 Q227,162 230,182 Q234,162 235,143 Z" fill="#aaddff" opacity="0.3">'
+    + '<animate attributeName="opacity" values="0.16;0.4;0.16" dur="3.4s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M269,143 Q273,162 270,182 Q266,162 265,143 Z" fill="#aaddff" opacity="0.28">'
+    + '<animate attributeName="opacity" values="0.14;0.38;0.14" dur="4.1s" begin="0.7s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M222,184 q8,-2.5 16,0 q-8,3 -16,0 Z" fill="#dff0fa" opacity="0.22"/>'
+    + '<path d="M262,184 q8,-2.5 16,0 q-8,3 -16,0 Z" fill="#dff0fa" opacity="0.2"/>'
+    // the jet: a column that rises, slows, and falls back in two arcs
+    + '<path d="M250,137 Q249.5,118 249,104" fill="none" stroke="#aaddff" stroke-width="2" opacity="0.45" stroke-linecap="round">'
+    + '<animate attributeName="opacity" values="0.28;0.62;0.28" dur="2.9s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M249,104 Q243,114 236,136" fill="none" stroke="#aaddff" stroke-width="1.3" opacity="0.32" stroke-linecap="round"/>'
+    + '<path d="M249,104 Q256,114 264,136" fill="none" stroke="#aaddff" stroke-width="1.3" opacity="0.3" stroke-linecap="round">'
+    + '<animate attributeName="opacity" values="0.18;0.4;0.18" dur="3.6s" begin="0.4s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M249,100 q1.6,-1 2.4,0.8 q-0.8,2.4 -2.4,2.4 q-1.6,-1.6 0,-3.2 Z" fill="#aaddff" opacity="0">'
+    + '<animate attributeName="opacity" values="0;0.7;0" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>'
+    + '<animateTransform attributeName="transform" type="translate" values="0,0;-2,-8;-4,-13" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/></path>';
+  }
+  return s + '</g>';
+}
+
+// ====================================================================
+// THE SQUARE'S STREET LAMP, one design in every town shot: the kit's lit
+// lantern (bcArt) seated on a drawn iron post. (x, y) is the foot of the post
+// on the paving. The post is 34 tall and the lantern (scale 1.2) adds 36.
+// ====================================================================
+function townLamp(idp, x, y, depth) {
+  depth = depth || 'mid';
+  var top = y - 34, r = function (v) { return Math.round(v * 10) / 10; };
+  var post = ''
+    + '<ellipse cx="' + x + '" cy="' + y + '" rx="7" ry="1.6" fill="#0a0806" opacity="0.3"/>'
+    + '<path d="M' + r(x - 5) + ',' + y + ' L' + r(x + 5) + ',' + y + ' L' + r(x + 4) + ',' + (y - 4) + ' L' + r(x - 4) + ',' + (y - 4) + ' Z" fill="#3e4454"/>'
+    + '<path d="M' + r(x - 1.8) + ',' + (y - 4) + ' L' + r(x + 1.8) + ',' + (y - 4) + ' L' + r(x + 1.4) + ',' + (top + 3) + ' L' + r(x - 1.4) + ',' + (top + 3) + ' Z" fill="#4a5266"/>'
+    + '<path d="M' + r(x - 1.8) + ',' + (y - 4) + ' L' + r(x - 0.6) + ',' + (y - 4) + ' L' + r(x - 0.5) + ',' + (top + 3) + ' L' + r(x - 1.4) + ',' + (top + 3) + ' Z" fill="#6a7488" opacity="0.5"/>'
+    + '<path d="M' + r(x - 5) + ',' + (top + 3) + ' L' + r(x + 5) + ',' + (top + 3) + ' L' + r(x + 3.5) + ',' + top + ' L' + r(x - 3.5) + ',' + top + ' Z" fill="#3e4454"/>';
+  return '<g data-prop="town-lamp">' + bcArt.layer(depth, post, 'town')
+    + bcArt.prop('lantern', { x: x, y: top, lit: true, biome: 'town', idp: idp, scale: 1.2, depth: depth, shadow: false })
+    + '</g>';
+}
+
+// ====================================================================
+// THE SQUARE'S CODE TERMINAL, one object in one place: it stands on the
+// paving just right of the fountain, exactly where town_1 put it, in every
+// shot that shows the fountain. Pass the townFountain's own (x, y, scale) and
+// the terminal is placed from them, so it cannot drift from the fountain.
+// town_1's numbers, fountain (250,194) x1.25 -> terminal (337,197) x1.45, give
+// the offsets below in fountain units.
+// ====================================================================
+function townTerminal(fx, fy, fs) {
+  var r = function (v) { return Math.round(v * 100) / 100; };
+  var x = r(fx + 69.6 * fs), y = r(fy + 2.4 * fs), k = r(1.16 * fs);
+  var e = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"';
+  return '<g data-prop="town-terminal" transform="translate(' + x + ' ' + y + ') scale(' + k + ') translate(-335 -197)">'
+    + '<ellipse cx="335" cy="197" rx="11" ry="2.6" fill="#453e36" opacity="0.3"/>'
+    + '<path d="M332,182 h6 v15 h-6 Z" fill="#3a4048"/>'
+    + '<path d="M329,195 h12 v2.4 h-12 Z" fill="#3a4048"/>'
+    + '<path d="M325,164 h20 v19 h-20 Z" fill="#2b3138"/>'
+    + '<path d="M325,164 h20 v2 h-20 Z" fill="#454d58"/>'
+    + '<path d="M327.5,167 h15 v12 h-15 Z" fill="#1f4a2c"/>'
+    + '<path d="M327.5,167 h15 v12 h-15 Z" fill="#3fbf6a" opacity="0.22">'
+    + '<animate attributeName="opacity" values="0.16;0.3;0.16" dur="3.9s" repeatCount="indefinite" ' + e + '/></path>'
+    + '<path d="M329.5,169.5 h9 v1 h-9 Z M329.5,172 h6 v1 h-6 Z" fill="#7dffa0" opacity="0.7"/>'
+    + '<rect x="336.5" y="174.2" width="2" height="2.6" fill="#7dffa0">'
+    + '<animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" calcMode="discrete" dur="1.1s" repeatCount="indefinite"/></rect>'
+    + '<path d="M327,181 h16 v1 h-16 Z" fill="#454d58"/>'
+    + '</g>';
+}
+
+// ====================================================================
+// THE FOUNTAIN'S SERVICE GRATE, shut. The story's "grate you have walked
+// over without once looking down": a steel plate with a bar grille, flush in
+// the cobbles at the basin's front left, the same plate hidden_0 opens and
+// hidden_10 shows closed. Ported verbatim from hidden_10's own drawing (town.js
+// must not call into hidden.js), in hidden_10's coordinates, where the fountain
+// is the townFountain at (250,194) x1.25; so passing any shot's fountain
+// (x, y, scale) puts the grate in the same place relative to it, scaled with
+// it. Daylight: the same drawing at reduced strength, so it sinks into the
+// paving and goes unnoticed. No glow.
+// ====================================================================
+function townGrate(fx, fy, fs) {
+  var r = function (v) { return Math.round(v * 1000) / 1000; };
+  return '<g data-prop="town-grate" opacity="0.5" transform="translate(' + r(fx) + ' ' + r(fy) + ') scale(' + r(fs / 1.25) + ') translate(-250 -194)">'
+    + '<path d="M70 213H172L181 246H61Z" fill="#34414c"/>'
+    + '<path d="M75 217H167L174 241H68Z" fill="#283643"/>'
+    + '<path d="M87 218L83 240 M102 218L100 240 M119 218V240 M135 218L137 240 M151 218L155 240" stroke="#182630" stroke-width="2"/>'
+    + '<path d="M71 214H171 M64 244H178" stroke="#566571" stroke-width="1.4"/>'
+    + '<path d="M113 224H128V227H113Z" fill="#182630"/>'
+    + '</g>';
+}
+
+// ====================================================================
+// THE SQUARE'S SKYLINE, read straight out of town_0 (far row + the scaled
+// building plane), so any other shot of the square uses the identical
+// buildings at the identical scale. Call only after town_0 is defined.
+// ====================================================================
+function townSkyline() {
+  var s = STORY_SCENES['town_0'];
+  var a = s.indexOf('<!-- far row: pale');
+  var b = s.lastIndexOf('<!--', s.indexOf('COBBLES'));
+  return (a < 0 || b < 0) ? '' : s.slice(a, b);
+}
+
 // Scene 0: Town Square opens up, grand fountain, notice boards with coded messages
 STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -35,6 +185,8 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M392,182 L392,88 L418,72 L444,88 L444,182 Z" fill="#8a9db3" opacity="0.36"/>
 <path d="M440,182 L440,100 L470,82 L500,100 L500,182 Z" fill="#7a8da3" opacity="0.4"/>
 
+<!-- Building plane: enlarge architecture around its pavement baseline. -->
+<g transform="translate(250 182) scale(1.5) translate(-250 -182)">
 <!-- mid row: the town proper, where the rooflines do the work -->
 <!-- a stepped gable, the most old-town roofline there is -->
 <path d="M14,182 L14,118 L34,118 L34,108 L54,108 L54,98 L74,98 L74,108 L94,108 L94,118 L114,118 L114,182 Z" fill="#6f8298" opacity="0.85"/>
@@ -47,8 +199,6 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M122,182 L122,74 L166,74 L166,182 Z" fill="#67798f"/>
 <path d="M118,74 L144,50 L170,74 Z" fill="#56687e"/>
 <path d="M144,50 L170,74 L160,74 Z" fill="#7d90a6" opacity="0.5"/>
-<path d="M144,50 L144,40" stroke="#ffd700" stroke-width="1.6" opacity="0.85"/>
-<path d="M144,40 L152,44 L144,48 Z" fill="#ffd700" opacity="0.8"/>
 <circle cx="144" cy="94" r="12" fill="#ffeaa7" opacity="0.55"/>
 <circle cx="144" cy="94" r="12" fill="none" stroke="#5a6276" stroke-width="1.6"/>
 <path d="M144,94 L144,87" stroke="#3a4250" stroke-width="1.4" stroke-linecap="round"/>
@@ -92,6 +242,8 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M476,126 h18 v12 h-18 Z" fill="#6b4a20"/>
 <path d="M480,130 h10 v2 h-10 Z M480,134 h6 v2 h-6 Z" fill="#ffd700" opacity="0.55"/>
 
+</g>
+
 <!-- ====================================================================
      COBBLES. The ground was one brown rectangle with six faint ellipses on it.
      Stones laid in courses that widen as they come forward is what makes a
@@ -121,65 +273,26 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M150,260 Q210,220 250,196 Q290,220 350,260 Z" fill="#8a765d" opacity="0.16"/>
 <path d="M0,258 Q120,236 250,198 Q380,236 500,258 L500,260 L0,260 Z" fill="#5c4d3b" opacity="0.12"/>
 
-<!-- Fountain base -->
-<ellipse cx="250" cy="185" rx="55" ry="18" fill="#8a8a9a"/>
-<ellipse cx="250" cy="185" rx="55" ry="18" fill="#9a9aaa" opacity="0.5"/>
-<ellipse cx="250" cy="180" rx="48" ry="14" fill="#6688aa" opacity="0.6"/>
-<!-- Fountain pillar -->
-<rect x="244" y="140" width="12" height="42" fill="#9a9aaa"/>
-<rect x="246" y="140" width="8" height="42" fill="#aaaabc" opacity="0.5"/>
-<!-- Fountain top basin -->
-<ellipse cx="250" cy="142" rx="22" ry="8" fill="#8a8a9a"/>
-<ellipse cx="250" cy="140" rx="18" ry="6" fill="#6688aa" opacity="0.5"/>
-<!-- Water streams -->
-<line x1="250" y1="135" x2="250" y2="120" stroke="#aaddff" stroke-width="1.5" opacity="0.5">
-  <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite"/>
-</line>
-<line x1="240" y1="142" x2="228" y2="165" stroke="#aaddff" stroke-width="1" opacity="0.4">
-  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" begin="0.3s"/>
-</line>
-<line x1="260" y1="142" x2="272" y2="165" stroke="#aaddff" stroke-width="1" opacity="0.4">
-  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" begin="0.6s"/>
-</line>
-<!-- Water shimmer particles -->
-<circle cx="250" cy="118" r="2" fill="#aaddff" opacity="0.3" filter="url(#townSoftGlow)">
-  <animate attributeName="cy" values="118;112;108" dur="1.5s" repeatCount="indefinite"/>
-  <animate attributeName="opacity" values="0.5;0.8;0" dur="1.5s" repeatCount="indefinite"/>
-</circle>
-<circle cx="232" cy="160" r="1.5" fill="#aaddff" opacity="0.3">
-  <animate attributeName="cy" values="155;165;175" dur="1.8s" repeatCount="indefinite"/>
-  <animate attributeName="opacity" values="0.5;0.2;0" dur="1.8s" repeatCount="indefinite"/>
-</circle>
-<circle cx="268" cy="160" r="1.5" fill="#aaddff" opacity="0.3">
-  <animate attributeName="cy" values="155;165;175" dur="1.8s" repeatCount="indefinite" begin="0.4s"/>
-  <animate attributeName="opacity" values="0.5;0.2;0" dur="1.8s" repeatCount="indefinite" begin="0.4s"/>
-</circle>
-<!-- Lantern left -->
-<rect x="118" y="140" width="4" height="40" fill="#5a4a2a"/>
-<rect x="112" y="130" width="16" height="14" rx="2" fill="#6a5a3a"/>
-<rect x="114" y="132" width="12" height="10" rx="1" fill="#ffeaa7" opacity="0.6"/>
-<circle cx="120" cy="137" r="12" fill="url(#lanternGlow)" opacity="0.5">
-  <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/>
-</circle>
-<!-- Lantern right -->
-<rect x="378" y="140" width="4" height="40" fill="#5a4a2a"/>
-<rect x="372" y="130" width="16" height="14" rx="2" fill="#6a5a3a"/>
-<rect x="374" y="132" width="12" height="10" rx="1" fill="#ffeaa7" opacity="0.6"/>
-<circle cx="380" cy="137" r="12" fill="url(#lanternGlow)" opacity="0.5">
-  <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3.5s" repeatCount="indefinite" begin="0.8s"/>
-</circle>
+<!-- the service grate, shut, flush in the cobbles at the basin's foot -->
+` + townGrate(250,194,1.25) + `
+<!-- the fountain: the shared townFountain, town_3's design at mid-shot -->
+` + townFountain('town0',250,194,1.25) + `
+<!-- Street lamps, the shared townLamp -->
+` + townLamp('town0lampL', 120, 181) + townLamp('town0lampR', 380, 181) + `
 <!-- Notice board left -->
 <rect x="50" y="145" width="4" height="38" fill="#5a3a18"/>
 <rect x="40" y="130" width="24" height="20" rx="2" fill="#6b4a18"/>
 <rect x="42" y="132" width="20" height="16" rx="1" fill="#8a6a28"/>
-<text x="52" y="141" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="4" opacity="0.7">?X=7</text>
-<text x="52" y="146" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="4" opacity="0.6">A+B=?</text>
-<!-- Notice board right -->
+<text x="52" y="141" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.7">?X=7</text>
+<text x="52" y="146" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.6">A+B=?</text>
+<!-- Notice board right, set out past Laurel so it reads apart from her -->
+<g transform="translate(32 0)">
 <rect x="446" y="145" width="4" height="38" fill="#5a3a18"/>
 <rect x="436" y="130" width="24" height="20" rx="2" fill="#6b4a18"/>
 <rect x="438" y="132" width="20" height="16" rx="1" fill="#8a6a28"/>
-<text x="448" y="141" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="4" opacity="0.7">ROT13</text>
-<text x="448" y="146" text-anchor="middle" fill="#ffd700" font-family="monospace" font-size="4" opacity="0.6">#!&amp;%</text>
+<text x="448" y="141" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.7">ROT13</text>
+<text x="448" y="146" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.6">#!&amp;%</text>
+</g>
 <!-- Fountain mist -->
 <ellipse cx="250" cy="165" rx="60" ry="25" fill="url(#fountainMist)"/>
 <!-- Street furniture, set clear of the fountain and entrances. -->
@@ -196,12 +309,55 @@ STORY_SCENES['town_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M4 2Q-2 -9 7 -7L11 0Q7 -17 15 -12L16 0Q23 -14 25 -5L21 3Z" fill="#577360"/>
 <path d="M8 0L6 -5 M15 1L15 -7 M20 2L23 -4" stroke="#839678" stroke-width="1"/>
 </g>
-<g fill="#a6acaa" opacity=".55"><path d="M126 140H144V142H126Z M146 140H164V142H146Z M300 147H314V149H300Z M320 147H335V149H320Z"/></g>
+<!-- THE TERMINAL, humming on the paving just right of the fountain: the
+     shared townTerminal, placed from the fountain's own position -->
+` + townTerminal(250, 194, 1.25) + `
+<!-- Approved cast background appearance; story and clues are unchanged. -->
+` + bcApprovedPlace('laurel','idle-folio',427,238,128,false) + `
 </svg>`;
 
 // Scene 1: Terminal hums near fountain. Three paths lead outward.
-// Reuse scene 0 — same visual composition, narrative text differs
-STORY_SCENES['town_1'] = STORY_SCENES['town_0'];
+// town_0's square, plus what this step's text names: the terminal by the
+// fountain, and the three places the paths lead to (a spire, a library, a
+// workshop sending up steam), set into the skyline. Ids are suffixed so the
+// variant never shares a gradient id with town_0.
+STORY_SCENES['town_1'] = STORY_SCENES['town_0']
+  .replace(/townSky|fountainMist|lanternGlow|townSoftGlow|town0lamp/g, function (id) { return id + 'T1'; })
+  .replace(/approved-laurel-(\d+)-/g, 'approved-laurel-$1t1-')
+  .replace('<!-- Building plane:', `<!-- THE THREE PATHS' ENDS, in the distance behind the square's own row.
+     The spire, in the gap left of the fountain. -->
+<path d="M206,182 L206,74 L214,22 L222,74 L222,182 Z" fill="#7a8da3" opacity="0.62"/>
+<path d="M214,22 L222,74 L218,74 Z" fill="#8a9db3" opacity="0.5"/>
+<path d="M203,74 L225,74 L225,79 L203,79 Z" fill="#6f8298" opacity="0.62"/>
+<g fill="#a8e0d0" opacity="0.5"><path d="M213,92 h2 v6 h-2 Z M213,110 h2 v6 h-2 Z M213,128 h2 v6 h-2 Z"/>
+  <animate attributeName="opacity" values="0.3;0.65;0.3" dur="4.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></g>
+<!-- the library, a columned front, set back right of the fountain -->
+<path d="M280,112 L300,100 L320,112 Z" fill="#8a96a8" opacity="0.72"/>
+<path d="M282,112 h36 v5 h-36 Z" fill="#7d899b" opacity="0.72"/>
+<path d="M282,117 h36 v65 h-36 Z" fill="#6f7c8f" opacity="0.6"/>
+<g fill="#97a3b4" opacity="0.72"><path d="M285,118 h4 v58 h-4 Z M293,118 h4 v58 h-4 Z M303,118 h4 v58 h-4 Z M311,118 h4 v58 h-4 Z"/></g>
+<path d="M280,176 h40 v6 h-40 Z" fill="#8a96a8" opacity="0.72"/>
+<!-- the workshop's chimney, behind the hipped roof, and its steam -->
+<path d="M375,44 h10 v32 h-10 Z" fill="#5a6276"/>
+<path d="M373,42 h14 v4 h-14 Z" fill="#4e566a"/>
+<g fill="#dfe6ee">
+  <ellipse cx="380" cy="36" rx="6" ry="4.5" opacity="0">
+    <animate attributeName="opacity" values="0;0.55;0" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-4,-12;-10,-28" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="380" cy="36" rx="7.5" ry="5.5" opacity="0">
+    <animate attributeName="opacity" values="0;0.5;0" dur="4.4s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-5,-12;-12,-28" dur="4.4s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="380" cy="36" rx="6.5" ry="5" opacity="0">
+    <animate attributeName="opacity" values="0;0.5;0" dur="4.4s" begin="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-3,-12;-8,-28" dur="4.4s" begin="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="379" cy="30" rx="8" ry="6" opacity="0.32"/>
+  <ellipse cx="373" cy="18" rx="10" ry="7" opacity="0.2"/>
+</g>
+<!-- Building plane:`);
+// The terminal comes from town_0 (townTerminal), already beside the fountain.
 
 // Scene 2: Town Crier — woman in plumed hat rings brass bell
 STORY_SCENES['town_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -233,57 +389,19 @@ STORY_SCENES['town_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      scaled for the nearer camera.
      ==================================================================== -->
 
-<!-- far row, pushed further back and dimmer at this distance -->
-<path d="M0,178 L0,104 L30,86 L60,104 L60,178 Z" fill="#8a9db3" opacity="0.3"/>
-<path d="M56,178 L56,118 L86,98 L116,118 L116,178 Z" fill="#7a8da3" opacity="0.32"/>
-<path d="M384,178 L384,112 L414,92 L444,112 L444,178 Z" fill="#8a9db3" opacity="0.3"/>
-<path d="M440,178 L440,122 L470,102 L500,122 L500,178 Z" fill="#7a8da3" opacity="0.32"/>
-
-<!-- the clock tower, nearer and larger than in town_0 -->
-<path d="M28,178 L28,52 L82,52 L82,178 Z" fill="#67798f"/>
-<path d="M22,52 L55,22 L88,52 Z" fill="#56687e"/>
-<path d="M55,22 L88,52 L76,52 Z" fill="#7d90a6" opacity="0.5"/>
-<path d="M55,22 L55,10" stroke="#ffd700" stroke-width="1.8" opacity="0.85"/>
-<path d="M55,10 L65,15 L55,20 Z" fill="#ffd700" opacity="0.8"/>
-<circle cx="55" cy="76" r="15" fill="#ffeaa7" opacity="0.55"/>
-<circle cx="55" cy="76" r="15" fill="none" stroke="#5a6276" stroke-width="1.8"/>
-<path d="M55,76 L55,67" stroke="#3a4250" stroke-width="1.6" stroke-linecap="round"/>
-<path d="M55,76 L61,80" stroke="#3a4250" stroke-width="1.4" stroke-linecap="round"/>
-<path d="M36,108 h16 v20 h-16 Z M60,108 h16 v20 h-16 Z" fill="#ffeaa7" opacity="0.38"/>
-<path d="M36,144 h38 v34 h-38 Z" fill="#4a5468" opacity="0.6"/>
-<path d="M40,147 h30 v28 h-30 Z" fill="#ffeaa7" opacity="0.22"/>
-
-<!-- a gabled house on the near left -->
-<path d="M96,178 L96,104 L142,104 L142,178 Z" fill="#6a7286"/>
-<path d="M88,104 L119,78 L150,104 Z" fill="#5a6276"/>
-<path d="M119,78 L150,104 L138,104 Z" fill="#8a9db3" opacity="0.4"/>
-<path d="M104,118 h13 v16 h-13 Z M122,118 h13 v16 h-13 Z" fill="#ffeaa7" opacity="0.42"/>
-<path d="M106,148 h26 v30 h-26 Z" fill="#4a3a20"/>
-<path d="M108,150 h22 v26 h-22 Z" fill="#5a4830" opacity="0.7"/>
-<circle cx="126" cy="164" r="1.8" fill="#ffd700" opacity="0.7"/>
-<path d="M132,96 h9 v10 h-9 Z" fill="#5a6276"/>
-
-<!-- the shop, nearer, with its awning and sign -->
-<path d="M348,178 L348,98 L438,98 L438,178 Z" fill="#647689"/>
-<path d="M342,98 L393,72 L444,98 Z" fill="#54667a"/>
-<path d="M344,136 q12,11 24,0 q12,11 24,0 q12,11 24,0 q12,11 22,0 L442,124 L344,124 Z" fill="#8a4a3a" opacity="0.9"/>
-<path d="M344,124 L442,124" stroke="#9aadc3" stroke-width="1.4" opacity="0.4"/>
-<path d="M354,150 h36 v24 h-36 Z" fill="#ffeaa7" opacity="0.34"/>
-<path d="M400,148 h26 v30 h-26 Z" fill="#4a3a20"/>
-<circle cx="405" cy="164" r="1.8" fill="#ffd700" opacity="0.7"/>
-<path d="M446,102 h14 M453,102 v12" stroke="#4a3a20" stroke-width="1.6"/>
-<path d="M444,114 h22 v15 h-22 Z" fill="#6b4a20"/>
-<path d="M448,119 h12 v2.4 h-12 Z M448,124 h8 v2.4 h-8 Z" fill="#ffd700" opacity="0.55"/>
-
-<!-- the fountain, behind the crier -->
-<ellipse cx="250" cy="176" rx="46" ry="15" fill="#8a8a9a" opacity="0.6"/>
-<ellipse cx="250" cy="172" rx="40" ry="12" fill="#9a9aaa" opacity="0.45"/>
-<path d="M245,140 L255,140 L257,172 L243,172 Z" fill="#9a9aaa" opacity="0.6"/>
-<ellipse cx="250" cy="140" rx="18" ry="6" fill="#8a8a9a" opacity="0.5"/>
-<path d="M250,134 Q250,124 250,118" stroke="#aaddff" stroke-width="1.2" opacity="0.35">
-  <animate attributeName="opacity" values="0.2;0.45;0.2" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M244,136 Q238,128 236,122 M256,136 Q262,128 264,122" fill="none" stroke="#aaddff" stroke-width="1" opacity="0.28"/>
+<!-- far row and building plane: town_0's own skyline at town_0's own scale
+     (clock tower, stepped gable, gabled house, hipped house, awning shop),
+     lifted from the town_0 string so the two can never drift apart again,
+     and seated on this scene's kerb (y 178 rather than 182). The earlier
+     bespoke copy was drawn larger than town_0, pushed the clock tower out of
+     frame and filled the foreground with house fronts. -->
+<g transform="translate(0 -4)">${townSkyline()}</g>
+<!-- the fountain, behind the crier and off her head's axis: the shared
+     townFountain, fully solid, set back on the left of the square -->
+${townGrate(164,188,1.2)}
+${townFountain('town2',164,188,1.2)}
+<!-- the terminal, where it always stands: just right of the fountain -->
+${townTerminal(164,188,1.2)}
 
 <!-- ====================================================================
      THE TOWN CRIER: Wren, from the shared cast (scenes/characters.js).
@@ -297,46 +415,9 @@ STORY_SCENES['town_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      records and does not comment, and Aufu keeps things rather than announcing
      them.
      ==================================================================== -->
-${bcPlace('wren', 17, 250, 178, { armPose: { right: { ex: 1.35, ey: -0.55, wx: 1.75, wy: -2.0 } } })}
-
-<!-- THE BELL, SHAKEN BY HAND. Her right arm is POSED by the model, not
-     drawn here: same sleeve, same outline, same elbow, same hand as her
-     other arm. The model puts that hand at (276.5, 52.5), so the bell's
-     handle starts there and the bell hangs straight off it. Nothing sits
-     between the hand and the bell, which is what used to read as a stick. -->
-<!-- the handle, a stub of the bell itself, running down out of her grip -->
-<path d="M273.5,52 L279.5,52 L279.5,62 L273.5,62 Z" fill="#8a6a10"/>
-<!-- the bell body -->
-<path d="M266.5,64 Q276.5,60 286.5,64 Q288.5,74 290.5,83 L262.5,83 Q264.5,74 266.5,64 Z" fill="#c8962a"/>
-<path d="M269.5,66 Q276.5,63 283.5,66 Q285.5,74 286.5,81 L266.5,81 Q267.5,74 269.5,66 Z" fill="#daa640" opacity="0.6"/>
-<path d="M262.5,82 Q276.5,84 290.5,82 L290.5,85 Q276.5,87 262.5,85 Z" fill="#b88620"/>
-<circle cx="276.5" cy="88" r="2.2" fill="#8a6a10"/>
-<!-- the fingers closing over the handle, drawn on top of the model's palm -->
-<path d="M272.8,50.6 q3.7,-1.7 7.4,0 M272.8,54 q3.7,-1.7 7.4,0" fill="none" stroke="#1c1722" stroke-width="0.7" opacity="0.5"/>
-
-<!-- Bell ring effect -->
-<path d="M262,59 Q256,54 258,48" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4">
-  <animate attributeName="opacity" values="0;0.6;0" dur="1.5s" repeatCount="indefinite"/>
-</path>
-<path d="M292,59 Q298,54 296,48" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4">
-  <animate attributeName="opacity" values="0;0.6;0" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
-</path>
-<path d="M255,54 Q249,50 251,44" fill="none" stroke="#ffd700" stroke-width="0.8" opacity="0.3">
-  <animate attributeName="opacity" values="0;0.5;0" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
-</path>
-<!-- Lanterns (flanking) -->
-<rect x="100" y="150" width="3" height="35" fill="#5a4a2a"/>
-<rect x="95" y="140" width="13" height="12" rx="2" fill="#6a5a3a"/>
-<rect x="97" y="142" width="9" height="8" rx="1" fill="#ffeaa7" opacity="0.5"/>
-<circle cx="101" cy="146" r="10" fill="url(#lanternGlow2)" opacity="0.4">
-  <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite"/>
-</circle>
-<rect x="397" y="150" width="3" height="35" fill="#5a4a2a"/>
-<rect x="392" y="140" width="13" height="12" rx="2" fill="#6a5a3a"/>
-<rect x="394" y="142" width="9" height="8" rx="1" fill="#ffeaa7" opacity="0.5"/>
-<circle cx="399" cy="146" r="10" fill="url(#lanternGlow2)" opacity="0.4">
-  <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3.2s" repeatCount="indefinite" begin="0.6s"/>
-</circle>
+${bcMissionPlace('wren','work',306,238,94)}
+<!-- Street lamps (flanking), the shared townLamp -->
+${townLamp('town2lampL', 83, 185)}${townLamp('town2lampR', 398.5, 185)}
 </svg>`;
 
 // Scene 3: Fountain close-up with three cryptic clues carved on the rim
@@ -345,7 +426,6 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <linearGradient id="townCloseupBg" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#4a6a8a"/><stop offset="50%" stop-color="#6a8aaa"/><stop offset="100%" stop-color="#8a9db3"/>
   </linearGradient>
-  <filter id="town3SoftGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
   <radialGradient id="waterShimmer" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#aaddff" stop-opacity="0.2"/><stop offset="100%" stop-color="#aaddff" stop-opacity="0"/>
   </radialGradient>
@@ -428,78 +508,90 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      a COPING you can see the thickness of, and it is BUILT of blocks, so
      the joints between them run out toward the viewer around the curve.
      ==================================================================== -->
+<!-- ONE RING OF STONE. The rim used to be two separate lenses, a far wall
+     and a near coping, whose ends did not meet, so the band holding the
+     clues floated free of the basin, and the clues sat half in the water and
+     half across the stone. It is now one ring: an outer ellipse and an inner
+     one, the coping is the stone between them, and the wall face drops from
+     the outer edge. The near coping is the widest part of the ring (the eye is
+     above it), wide enough to carry the clues cut into it. -->
 <!-- the shadow the basin drops on the paving -->
-<path d="M32,214 Q250,192 468,214 Q250,254 32,214 Z" fill="#5c4d3b" opacity="0.3"/>
-<!-- THE FAR WALL first, because the water sits in front of it. Its inner face
-     is what the player looks across the pool AT. -->
-<path d="M36,202 Q250,174 464,202 Q250,222 36,202 Z" fill="#8a8a9a"/>
-<path d="M44,201 Q250,178 456,201 Q250,214 44,201 Z" fill="#a4a4b6" opacity="0.6"/>
-<!-- THE POOL. Deep enough to read as a hole holding water: a dark bottom, a
-     lit far edge where the sky lands on it, and the near lip in shadow. -->
-<path d="M50,203 Q250,180 450,203 Q250,240 50,203 Z" fill="#3f5f7f"/>
-<path d="M50,203 Q250,180 450,203 Q250,224 50,203 Z" fill="#5a7c9c" opacity="0.85"/>
-<path d="M62,202 Q250,183 438,202 Q250,208 62,202 Z" fill="#8fbcd8" opacity="0.5"/>
+<path d="M30,226 Q250,206 470,226 Q250,266 30,226 Z" fill="#5c4d3b" opacity="0.3"/>
+<!-- the wall face, hanging from the front of the ring -->
+<path d="M28,207 L28,221 A222,32 0 0 0 472,221 L472,207 A222,32 0 0 1 28,207 Z" fill="#6f6f80"/>
+<path d="M28,215 L28,221 A222,32 0 0 0 472,221 L472,215 A222,32 0 0 1 28,215 Z" fill="#4a4a5a" opacity="0.36"/>
+<clipPath id="town3WallClip"><path d="M28,207 L28,221 A222,32 0 0 0 472,221 L472,207 A222,32 0 0 1 28,207 Z"/></clipPath>
+<g clip-path="url(#town3WallClip)">
+<g stroke="#5a5a6a" stroke-width="1.1" opacity="0.5" fill="none">
+  <path d="M58,222 L56,238 M110,231 L108,247 M188,237 L187,253 M312,237 L313,253 M390,231 L392,247 M442,222 L444,238"/>
+</g>
+<g stroke="#c0c0d0" stroke-width="0.7" opacity="0.3" fill="none">
+  <path d="M60,222 L58,238 M112,231 L110,247 M190,237 L189,253 M314,237 L315,253 M392,231 L394,247"/>
+</g>
+</g>
+<!-- the coping: the whole ring of stone, outer ellipse less the pool -->
+<path d="M28,207 A222,32 0 1 0 472,207 A222,32 0 1 0 28,207 Z M46,200 A204,18 0 1 0 454,200 A204,18 0 1 0 46,200 Z" fill="#9a9aaa" fill-rule="evenodd"/>
+<!-- light on the near coping, shade on the far one where the eye sees its inside edge -->
+<path d="M36,210 A214,26 0 0 0 464,210 L456,205 A206,20 0 0 1 44,205 Z" fill="#aaaabc" opacity="0.45"/>
+<path d="M28,207 A222,32 0 0 1 472,207 L454,200 A204,18 0 0 0 46,200 Z" fill="#7c7c8c" opacity="0.4"/>
+<!-- the joints between the coping slabs run across the ring, from the pool
+     edge out to the wall, and fall BETWEEN the clues: one slab, one clue -->
+<g stroke="#6a6a7a" stroke-width="0.9" opacity="0.55" fill="none">
+  <path d="M187,217.1 L185,237.6 M313,217.1 L315,237.6 M66,207.5 L52,219.5 M434,207.5 L448,219.5"/>
+</g>
+<!-- moss along the wet line where the wall meets the paving -->
+<path d="M96,248 q30,6 62,6 q-32,4 -62,-6 Z" fill="#5a6a4a" opacity="0.28"/>
+<path d="M334,253 q28,-1 56,-7 q-25,9 -56,7 Z" fill="#5a6a4a" opacity="0.24"/>
+
+<!-- THE POOL, held inside the ring's inner edge: the far inner wall the
+     player looks across, then the water, deep enough to read as a hole -->
+<clipPath id="town3PoolClip"><path d="M46,200 A204,18 0 1 0 454,200 A204,18 0 1 0 46,200 Z"/></clipPath>
+<g clip-path="url(#town3PoolClip)">
+<path d="M40,180 h420 v40 h-420 Z" fill="#8a8a9a"/>
+<path d="M40,180 h420 v6 h-420 Z" fill="#6f6f80" opacity="0.5"/>
+<path d="M44,206 A206,17 0 1 1 456,206 A206,17 0 1 1 44,206 Z" fill="#3f5f7f"/>
+<path d="M44,206 A206,17 0 1 1 456,206 L456,208 Q250,214 44,208 Z" fill="#5a7c9c" opacity="0.85"/>
+<path d="M62,196 Q250,184 438,196 Q250,196 62,196 Z" fill="#8fbcd8" opacity="0.5"/>
 <!-- the pillar and the sky in the water, broken into bands by the ripple -->
-<path d="M234,200 Q250,197 266,200 L263,232 Q250,238 237,232 Z" fill="#9a9aaa" opacity="0.22"/>
+<path d="M234,196 Q250,193 266,196 L263,216 Q250,220 237,216 Z" fill="#9a9aaa" opacity="0.22"/>
 <path d="M112,203 Q164,198 216,204 Q164,209 112,203 Z" fill="#aaddff" opacity="0.16">
   <animate attributeName="opacity" values="0.08;0.24;0.08" dur="5.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M286,204 Q334,199 384,205 Q334,210 286,204 Z" fill="#aaddff" opacity="0.14">
   <animate attributeName="opacity" values="0.07;0.21;0.07" dur="6.8s" begin="1.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M84,211 Q142,206 200,213 Q142,218 84,211 Z" fill="#8ac0e8" opacity="0.11"/>
-<path d="M304,214 Q356,209 408,216 Q356,221 304,214 Z" fill="#8ac0e8" opacity="0.1"/>
-<path d="M60,204 Q250,184 440,204 Q250,228 60,204 Z" fill="url(#waterShimmer)">
+<path d="M84,209 Q142,204 200,211 Q142,216 84,209 Z" fill="#8ac0e8" opacity="0.11"/>
+<path d="M304,211 Q356,206 408,213 Q356,218 304,211 Z" fill="#8ac0e8" opacity="0.1"/>
+<path d="M60,204 Q250,186 440,204 Q250,226 60,204 Z" fill="url(#waterShimmer)">
   <animate attributeName="opacity" values="0.4;0.85;0.4" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-
-<!-- ====================================================================
-     THE CLUES, LYING IN THE POOL. Drawn after the water and before the
-     near wall, so the coping crosses in front of the lowest line: that
-     overlap is what puts them under the surface rather than on the rim.
-     The shimmer band below rides over the top of them for the same reason.
-     ==================================================================== -->
-<circle cx="126" cy="192" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
-<circle cx="250" cy="209" r="26" fill="url(#goldTextGlow)" opacity="0.5"/>
-<circle cx="374" cy="192" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
-<g opacity="0.92" filter="url(#town3SoftGlow)">
-  <animate attributeName="opacity" values="0.5;0.82;0.5" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-  <text x="126" y="189" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Wrote, mangled,</text>
-  <text x="126" y="197" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">a tall building (5)</text>
-  <text x="250" y="206" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Moved by rail right</text>
-  <text x="250" y="213" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">to the book house (7)</text>
-  <text x="374" y="189" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">Hop works, scrambled,</text>
-  <text x="374" y="197" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7" letter-spacing="0.3">a place to build (8)</text>
-</g>
-<!-- the surface moving over the lettering -->
-<path d="M70,190 Q250,180 430,190 Q250,212 70,190 Z" fill="#8fbcd8" opacity="0.13">
+<path d="M70,196 Q250,186 430,196 Q250,214 70,196 Z" fill="#8fbcd8" opacity="0.13">
   <animate attributeName="opacity" values="0.07;0.2;0.07" dur="5.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
+<!-- the inner edge of the near coping drops its shadow on the water -->
+<path d="M46,200 A204,18 0 0 0 454,200 L454,196 A204,18 0 0 1 46,196 Z" fill="#2f4a66" opacity="0.3"/>
+</g>
+
 <!-- ====================================================================
-     THE NEAR WALL, drawn AFTER the water, because the player is standing
-     outside the basin looking over its rim: the near coping crosses in
-     front of the pool and is what gives the whole thing depth.
+     THE CLUES, CUT INTO THE NEAR COPING. Each runs along the curve of the
+     ring on its own slab, both lines inside the stone band, gilded so they
+     catch the light. Text is frozen: not one character changes. Carved
+     stone takes Georgia (design/STYLE.md "In-art type").
      ==================================================================== -->
-<path d="M32,207 Q250,234 468,207 L466,222 Q250,252 34,222 Z" fill="#6f6f80"/>
-<!-- the coping: the flat top of the wall, and the thing you can see the
-     thickness of, which is what a rim is -->
-<path d="M32,207 Q250,234 468,207 Q250,226 32,207 Z" fill="#9a9aaa"/>
-<path d="M38,207.6 Q250,228 462,207.6 Q250,220 38,207.6 Z" fill="#aaaabc" opacity="0.55"/>
-<!-- the blocks the wall is laid in. On a circular wall the joints run out
-     from the centre, following the curve, never level across the front. -->
-<g stroke="#5a5a6a" stroke-width="1.1" opacity="0.5" fill="none">
-  <path d="M58,212 L56,229 M110,219 L108,238 M166,224 L165,245 M224,228 L223,249
-           M278,228 L279,249 M336,224 L337,245 M390,219 L392,238 M438,212 L440,229"/>
+<path id="town3RimL1" d="M38.44,202.94 A211.56,23.88 0 0 0 461.56,202.94" fill="none"/>
+<path id="town3RimL2" d="M31.6,205.6 A218.4,29.2 0 0 0 468.4,205.6" fill="none"/>
+<circle cx="126" cy="226" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
+<circle cx="250" cy="230" r="26" fill="url(#goldTextGlow)" opacity="0.5"/>
+<circle cx="374" cy="226" r="24" fill="url(#goldTextGlow)" opacity="0.5"/>
+<g fill="#ffd700" stroke="#3a3a4c" stroke-width="1.1" paint-order="stroke" stroke-linejoin="round" font-family="Georgia,serif" font-size="7.2" font-weight="bold" letter-spacing="0" text-anchor="middle">
+  <animate attributeName="opacity" values="0.86;1;0.86" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  <text><textPath href="#town3RimL1" startOffset="21.24%">Wrote, mangled,</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="22.3%">a tall building (5)</textPath></text>
+  <text><textPath href="#town3RimL1" startOffset="50%">Moved by rail right</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="50%">to the book house (7)</textPath></text>
+  <text><textPath href="#town3RimL1" startOffset="78.77%">Hop works, scrambled,</textPath></text>
+  <text><textPath href="#town3RimL2" startOffset="77.7%">a place to build (8)</textPath></text>
 </g>
-<g stroke="#c0c0d0" stroke-width="0.7" opacity="0.3" fill="none">
-  <path d="M60,212 L58,229 M112,219 L110,238 M168,224 L167,245 M226,228 L225,249
-           M280,228 L281,249 M338,224 L339,245 M392,219 L394,238"/>
-</g>
-<!-- the face of the near wall falls into its own shadow under the coping -->
-<path d="M32,215 Q250,243 468,215 L466,222 Q250,252 34,222 Z" fill="#4a4a5a" opacity="0.36"/>
-<!-- and a run of moss along the wet line where the wall meets the paving -->
-<path d="M96,240 q30,6 62,6 q-32,4 -62,-6 Z" fill="#5a6a4a" opacity="0.28"/>
-<path d="M334,245 q28,-1 56,-7 q-25,9 -56,7 Z" fill="#5a6a4a" opacity="0.24"/>
 
 <!-- ====================================================================
      THE PILLAR. A rect with two rect bands. A fountain pillar tapers, sits
@@ -562,25 +654,23 @@ STORY_SCENES['town_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <animate attributeName="opacity" values="0.16;0.4;0.16" dur="3.2s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <!-- the drops thrown clear at the top of the jet -->
-<path d="M248,54 q2,-1 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#aaddff" opacity="0.4">
-  <animate attributeName="opacity" values="0.5;0.7;0" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M248,54 q2,-1 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#aaddff" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;-2,-12;-5,-20" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
-<path d="M252,56 q2,-1 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#aaddff" opacity="0.34">
-  <animate attributeName="opacity" values="0.45;0.62;0" dur="2.8s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M252,56 q2,-1 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#aaddff" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="2.8s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;3,-11;7,-18" dur="2.8s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
 
 <!-- ====================================================================
-     THE SUBMERGED CLUES. Text is frozen: not one character changes. The
-     glow halos go down BEFORE the letters so the letters sit on top of
-     their own light rather than under it.
+     GLINTS on the gilded lettering in the coping.
      ==================================================================== -->
 <!-- sparkle where the gold catches the light on the coping -->
-<path d="M172,214 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
+<path d="M160,226 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
   <animate attributeName="opacity" values="0.16;0.66;0.16" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M328,215 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
+<path d="M282,234 q2,-3 4,0 q-2,3 -4,0 Z" fill="#ffd700" opacity="0.4">
   <animate attributeName="opacity" values="0.16;0.66;0.16" dur="3.9s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
 <path d="M250,192 q1.6,-2.4 3.2,0 q-1.6,2.4 -3.2,0 Z" fill="#ffd700" opacity="0.3">
@@ -643,8 +733,6 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M122,182 L122,74 L166,74 L166,182 Z" fill="#67798f"/>
 <path d="M118,74 L144,50 L170,74 Z" fill="#56687e"/>
 <path d="M144,50 L170,74 L160,74 Z" fill="#7d90a6" opacity="0.5"/>
-<path d="M144,50 L144,40" stroke="#ffd700" stroke-width="1.6" opacity="0.85"/>
-<path d="M144,40 L152,44 L144,48 Z" fill="#ffd700" opacity="0.8"/>
 <circle cx="144" cy="94" r="12" fill="#ffeaa7" opacity="0.55"/>
 <circle cx="144" cy="94" r="12" fill="none" stroke="#5a6276" stroke-width="1.6"/>
 <path d="M144,94 L144,87" stroke="#3a4250" stroke-width="1.4" stroke-linecap="round"/>
@@ -711,6 +799,8 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <!-- wear polished into the stone where feet cross the square -->
 <path d="M150,260 Q210,220 250,196 Q290,220 350,260 Z" fill="#8a765d" opacity="0.16"/>
 <path d="M0,258 Q120,236 250,198 Q380,236 500,258 L500,260 L0,260 Z" fill="#5c4d3b" opacity="0.12"/>
+<!-- the fountain's service grate, shut, under the gold that washes over it -->
+${townGrate(250,190,1)}
 <!-- the gold from the fountain washing up the near paving -->
 <path d="M0,196 L500,196 L500,260 L0,260 Z" fill="url(#town4GoldWash)"/>
 
@@ -756,41 +846,43 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M172,204 q14,-3 27,-5 q-13,7 -27,5 Z" fill="#ffeaa7" opacity="0.14"/>
 <path d="M302,204 q14,2 27,5 q-14,2 -27,-5 Z" fill="#ffeaa7" opacity="0.14"/>
 
+<!-- town_0's street furniture, still standing at this wider camera, set back
+     a plane: the notice boards, the bench and the planter -->
+${bcArt.layer('bg', `<rect x="50" y="145" width="4" height="38" fill="#5a3a18"/>
+<rect x="40" y="130" width="24" height="20" rx="2" fill="#6b4a18"/>
+<rect x="42" y="132" width="20" height="16" rx="1" fill="#8a6a28"/>
+<text x="52" y="141" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.7">?X=7</text>
+<text x="52" y="146" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.6">A+B=?</text>
+<rect x="446" y="145" width="4" height="38" fill="#5a3a18"/>
+<rect x="436" y="130" width="24" height="20" rx="2" fill="#6b4a18"/>
+<rect x="438" y="132" width="20" height="16" rx="1" fill="#8a6a28"/>
+<text x="448" y="141" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.7">ROT13</text>
+<text x="448" y="146" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="4" opacity="0.6">#!&amp;%</text>
+<g transform="translate(408 182) scale(0.85)">
+<ellipse cx="12" cy="17" rx="15" ry="3" fill="#453e36" opacity=".24"/>
+<path d="M1 3H24L21 17H4Z" fill="#8a6654"/><path d="M0 2H25V6H0Z" fill="#aa8770"/>
+<path d="M4 2Q-2 -9 7 -7L11 0Q7 -17 15 -12L16 0Q23 -14 25 -5L21 3Z" fill="#577360"/>
+<path d="M8 0L6 -5 M15 1L15 -7 M20 2L23 -4" stroke="#839678" stroke-width="1"/>
+</g>`, 'town')}
+<!-- the bench, out on the paving in front of the lamp line, so it sits on
+     the near plane: solid, town_0's colours, not veiled back with the
+     boards behind it -->
+${bcArt.layer('fg', `<g transform="translate(70 185) scale(0.85)">
+<ellipse cx="24" cy="18" rx="29" ry="4" fill="#453e36" opacity=".25"/>
+<path d="M2 0H45V4H2Z M2 6H45V10H2Z" fill="#8c7152"/>
+<path d="M5 -1V17 M42 -1V17" stroke="#4e565b" stroke-width="2"/>
+<path d="M0 11H48L45 14H2Z" fill="#a08864"/>
+<path d="M5 14V19 M42 14V19" stroke="#4e565b" stroke-width="2"/>
+</g>`, 'town')}
+
 <!-- ====================================================================
-     THE FOUNTAIN, town_0's own, running gold. The basin was two flat
-     ellipses; it now has a coping you can see the thickness of, and the
-     pillar tapers and carries its mouldings.
+     THE FOUNTAIN, the shared townFountain, running gold. At scale 1 and
+     contact point (250,190) it is exactly the basin the surge below was
+     drawn to, so the jet still leaves the bowl where it did.
      ==================================================================== -->
-<path d="M190,190 Q250,180 310,190 Q250,204 190,190 Z" fill="#5c4d3b" opacity="0.3"/>
-<!-- far wall and the pool it holds -->
-<path d="M195,183 Q250,173 305,183 Q250,191 195,183 Z" fill="#8a8a9a"/>
-<path d="M199,183 Q250,175 301,183 Q250,196 199,183 Z" fill="#aa8820" opacity="0.55"/>
-<path d="M203,183 Q250,176 297,183 Q250,190 203,183 Z" fill="#ffd700" opacity="0.34">
-  <animate attributeName="opacity" values="0.2;0.48;0.2" dur="3.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<!-- near coping, over the pool -->
-<path d="M193,185 Q250,199 307,185 L306,193 Q250,209 194,193 Z" fill="#7c7c8c"/>
-<path d="M193,185 Q250,199 307,185 Q250,195 193,185 Z" fill="#9a9aaa"/>
-<path d="M197,185.4 Q250,196 303,185.4 Q250,192 197,185.4 Z" fill="#aaaabc" opacity="0.5"/>
-<g stroke="#5a5a6a" stroke-width="0.9" opacity="0.45" fill="none">
-  <path d="M210,189 L209,199 M232,193 L231,204 M268,193 L269,204 M290,189 L291,199"/>
-</g>
-<path d="M193,190 Q250,204 307,190 L306,193 Q250,209 194,193 Z" fill="#4a4a5a" opacity="0.3"/>
-<!-- the pillar, tapering, on its plinth -->
-<path d="M238,175 Q250,171 262,175 Q250,180 238,175 Z" fill="#7c7c8c"/>
-<path d="M239,175 L261,175 L260,181 Q250,184 240,181 Z" fill="#6a6a7a"/>
-<path d="M242,177 L258,177 L256,142 L244,142 Z" fill="#9a9aaa"/>
-<path d="M245,177 L252,177 L251,142 L246,142 Z" fill="#aaaabc" opacity="0.5"/>
-<path d="M256,177 L258,177 L256,142 L254,142 Z" fill="#6a6a7a" opacity="0.55"/>
-<path d="M240,173 Q250,169 260,173 Q250,178 240,173 Z" fill="#9a9aaa"/>
-<path d="M241,148 Q250,145 259,148 Q250,152 241,148 Z" fill="#9a9aaa"/>
-<!-- the upper bowl, with its underside showing -->
-<path d="M228,140 Q250,131 272,140 Q268,150 250,153 Q232,150 228,140 Z" fill="#7c7c8c"/>
-<path d="M228,140 Q250,131 272,140 Q250,147 228,140 Z" fill="#9a9aaa"/>
-<path d="M233,139.6 Q250,134 267,139.6 Q250,144 233,139.6 Z" fill="#aa8820" opacity="0.55"/>
-<path d="M236,139 Q250,135 264,139 Q250,142 236,139 Z" fill="#ffd700" opacity="0.4">
-  <animate attributeName="opacity" values="0.24;0.56;0.24" dur="3.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
+${townFountain('town4',250,190,1,{gold:true})}
+<!-- the terminal, where it always stands: just right of the fountain -->
+${townTerminal(250,190,1)}
 
 <!-- ====================================================================
      THE GOLDEN SURGE. Straight lines do not read as water. A jet rises,
@@ -802,14 +894,14 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M248,80 Q247,66 247,54" fill="none" stroke="#ffeaa7" stroke-width="2" opacity="0.42" stroke-linecap="round">
   <animate attributeName="opacity" values="0.22;0.6;0.22" dur="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M247,56 Q238,78 222,110 Q214,126 210,140" fill="none" stroke="#ffd700" stroke-width="1.6" opacity="0.38" stroke-linecap="round">
+<path d="M247,56 C232,56 214,110 214,183" fill="none" stroke="#ffd700" stroke-width="1.6" opacity="0.38" stroke-linecap="round">
   <animate attributeName="opacity" values="0.2;0.54;0.2" dur="3.6s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M249,56 Q258,78 274,110 Q282,126 288,140" fill="none" stroke="#ffd700" stroke-width="1.6" opacity="0.38" stroke-linecap="round">
+<path d="M249,56 C264,56 286,110 286,183" fill="none" stroke="#ffd700" stroke-width="1.6" opacity="0.38" stroke-linecap="round">
   <animate attributeName="opacity" values="0.2;0.54;0.2" dur="3.2s" begin="0.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </path>
-<path d="M244,140 Q232,116 216,138" fill="none" stroke="#ffeaa7" stroke-width="1.3" opacity="0.32" stroke-linecap="round"/>
-<path d="M256,140 Q268,116 284,138" fill="none" stroke="#ffeaa7" stroke-width="1.3" opacity="0.32" stroke-linecap="round"/>
+<path d="M244,138 Q236,118 230,139" fill="none" stroke="#ffeaa7" stroke-width="1.3" opacity="0.32" stroke-linecap="round"/>
+<path d="M256,138 Q264,118 270,139" fill="none" stroke="#ffeaa7" stroke-width="1.3" opacity="0.32" stroke-linecap="round"/>
 <!-- where the two sheets strike the pool -->
 <path d="M204,184 q10,-3 20,0 q-10,4 -20,0 Z" fill="#ffeaa7" opacity="0.32">
   <animate attributeName="opacity" values="0.16;0.46;0.16" dur="3.6s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
@@ -820,58 +912,115 @@ STORY_SCENES['town_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 
 <!-- sparks carried up off the top of the jet, each on its own timing so they
      do not pulse in unison -->
-<path d="M248,48 q2.4,-1.4 3.6,1.2 q-1.2,3.4 -3.6,3.4 q-2.4,-2.4 0,-4.6 Z" fill="#ffd700" opacity="0.5" filter="url(#goldenGlow)">
-  <animate attributeName="opacity" values="0.7;0.9;0" dur="2.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M248,48 q2.4,-1.4 3.6,1.2 q-1.2,3.4 -3.6,3.4 q-2.4,-2.4 0,-4.6 Z" fill="#ffd700" opacity="0" filter="url(#goldenGlow)">
+  <animate attributeName="opacity" values="0;0.7;0" dur="2.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;-2,-18;-6,-32" dur="2.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
-<path d="M240,60 q2,-1.2 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#ffeaa7" opacity="0.42">
-  <animate attributeName="opacity" values="0.55;0.8;0" dur="3.3s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M240,60 q2,-1.2 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#ffeaa7" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="3.3s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;-3,-16;-8,-28" dur="3.3s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
-<path d="M260,66 q2,-1.2 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#ffeaa7" opacity="0.42">
-  <animate attributeName="opacity" values="0.55;0.8;0" dur="3.05s" begin="1.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M260,66 q2,-1.2 3,1 q-1,3 -3,3 q-2,-2 0,-4 Z" fill="#ffeaa7" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="3.05s" begin="1.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;4,-15;9,-27" dur="3.05s" begin="1.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
-<path d="M232,72 q1.6,-1 2.4,0.8 q-0.8,2.4 -2.4,2.4 q-1.6,-1.6 0,-3.2 Z" fill="#ffd700" opacity="0.32">
-  <animate attributeName="opacity" values="0.44;0.7;0" dur="3.7s" begin="1.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M232,72 q1.6,-1 2.4,0.8 q-0.8,2.4 -2.4,2.4 q-1.6,-1.6 0,-3.2 Z" fill="#ffd700" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="3.7s" begin="1.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;-4,-14;-10,-26" dur="3.7s" begin="1.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
-<path d="M268,54 q1.6,-1 2.4,0.8 q-0.8,2.4 -2.4,2.4 q-1.6,-1.6 0,-3.2 Z" fill="#ffd700" opacity="0.32">
-  <animate attributeName="opacity" values="0.44;0.7;0" dur="2.85s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+<path d="M268,54 q1.6,-1 2.4,0.8 q-0.8,2.4 -2.4,2.4 q-1.6,-1.6 0,-3.2 Z" fill="#ffd700" opacity="0">
+  <animate attributeName="opacity" values="0;0.7;0" dur="2.85s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.15;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   <animateTransform attributeName="transform" type="translate" values="0,0;5,-13;11,-24" dur="2.85s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.35;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
 </path>
 
 <!-- ====================================================================
-     THE LANTERNS, town_0's pair, lit brighter now the square is running
-     gold. A lantern is a cage with a peaked cap and a ring, not a box.
+     THE LANTERNS, town_0's pair: the shared townLamp.
      ==================================================================== -->
-<path d="M117,146 L123,146 L124,182 L116,182 Z" fill="#5a4a2a"/>
-<path d="M117,146 L120,146 L121,182 L118,182 Z" fill="#7a6a45" opacity="0.5"/>
-<path d="M111,140 L129,140 L131,146 L109,146 Z" fill="#6a5a3a"/>
-<path d="M111,140 L120,131 L129,140 Z" fill="#8a7a52"/>
-<path d="M110,146 L130,146 L128,164 L112,164 Z" fill="#6a5a3a"/>
-<path d="M113,148 L127,148 L125,162 L115,162 Z" fill="#ffeaa7" opacity="0.72">
-  <animate attributeName="opacity" values="0.52;0.84;0.6;0.78;0.52" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.28;0.55;0.8;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M120,148 v14 M113,155 h14" stroke="#6a5a3a" stroke-width="0.9" opacity="0.7"/>
-<path d="M109,164 L131,164 L129,168 L111,168 Z" fill="#6a5a3a"/>
-<circle cx="120" cy="155" r="20" fill="url(#lanternGlow4)" opacity="0.55">
-  <animate attributeName="opacity" values="0.4;0.72;0.48;0.66;0.4" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.28;0.55;0.8;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<path d="M377,146 L383,146 L384,182 L376,182 Z" fill="#5a4a2a"/>
-<path d="M377,146 L380,146 L381,182 L378,182 Z" fill="#7a6a45" opacity="0.5"/>
-<path d="M371,140 L389,140 L391,146 L369,146 Z" fill="#6a5a3a"/>
-<path d="M371,140 L380,131 L389,140 Z" fill="#8a7a52"/>
-<path d="M370,146 L390,146 L388,164 L372,164 Z" fill="#6a5a3a"/>
-<path d="M373,148 L387,148 L385,162 L375,162 Z" fill="#ffeaa7" opacity="0.72">
-  <animate attributeName="opacity" values="0.52;0.84;0.6;0.78;0.52" dur="5.1s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.28;0.55;0.8;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<path d="M380,148 v14 M373,155 h14" stroke="#6a5a3a" stroke-width="0.9" opacity="0.7"/>
-<path d="M369,164 L391,164 L389,168 L371,168 Z" fill="#6a5a3a"/>
-<circle cx="380" cy="155" r="20" fill="url(#lanternGlow4)" opacity="0.55">
-  <animate attributeName="opacity" values="0.4;0.72;0.48;0.66;0.4" dur="5.1s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.28;0.55;0.8;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
+${townLamp('town4lampL', 120, 182)}${townLamp('town4lampR', 380, 182)}
+<!-- Wren, ringing the bell that opens the paths: town_2's crier, standing
+     back beside the fountain at this wider camera -->
+${bcMissionPlace('wren','work',354,222,74)}
 </svg>`;
 
-// Scene 5 (complete): Three paths glow golden — same visual as scene 4
-STORY_SCENES['town_5'] = STORY_SCENES['town_4'];
+// Scene 5 (complete): Three paths glow golden, and each now ends somewhere:
+// the left path at the rune tower (Adventure Tower), a new path at the
+// columned library standing where the far-side house was, the right path at
+// the workshop with its steam. town_4's square otherwise, ids suffixed.
+function townCut(s, from, to, insert) {
+  var a = s.indexOf(from), b = s.indexOf(to, a);
+  if (a < 0 || b < 0) return s;
+  return s.slice(0, a) + insert + s.slice(b);
+}
+STORY_SCENES['town_5'] = (function () {
+  var s = STORY_SCENES['town_4']
+    .replace(/townGoldenSky|goldenFountain|lanternGlow4|pathGlowL|pathGlowR|goldenGlow|town4GoldWash|town4lamp/g, function (id) { return id + 'T5'; });
+  // the far-side house becomes the library
+  s = townCut(s, '<!-- and one on the far side, hipped -->', '<!-- ====', `<!-- the Lexicon Library, where the far-side house stood: pediment, four columns, steps -->
+<path d="M288,114 L318,96 L348,114 Z" fill="#7d8798"/>
+<path d="M318,96 L348,114 L340,114 Z" fill="#9aa6b6" opacity="0.45"/>
+<path d="M290,114 h56 v6 h-56 Z" fill="#6f7a8c"/>
+<path d="M294,120 h48 v56 h-48 Z" fill="#59647a"/>
+<path d="M310,140 h16 v36 h-16 Z" fill="#4a3a20"/>
+<path d="M310,140 h16 v36 h-16 Z" fill="#ffd700" opacity="0.18"/>
+<g fill="#8f9bad"><path d="M296,120 h6 v56 h-6 Z M304,120 h5 v56 h-5 Z M327,120 h5 v56 h-5 Z M334,120 h6 v56 h-6 Z"/></g>
+<g fill="#a9b4c4" opacity="0.5"><path d="M296,120 h2 v56 h-2 Z M304,120 h1.6 v56 h-1.6 Z M327,120 h1.6 v56 h-1.6 Z M334,120 h2 v56 h-2 Z"/></g>
+<path d="M290,176 h56 v3 h-56 Z M286,179 h64 v3 h-64 Z" fill="#7d8798"/>
+
+`);
+  // the centre ribbon, which ran out at the player's feet, now runs to the library steps
+  s = townCut(s, '<!-- centre, to the library', '<!-- the individual setts', `<!-- the third path, from the fountain's right to the library steps -->
+<path d="M292,196 Q306,189 312,182 L332,182 Q324,192 302,202 Z" fill="#ffd700" opacity="0.15">
+  <animate attributeName="opacity" values="0.09;0.24;0.09" dur="4.5s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</path>
+<path d="M296,197 Q308,190 315,182.5 L328,182.5 Q320,191 301,200 Z" fill="#ffeaa7" opacity="0.24">
+  <animate attributeName="opacity" values="0.15;0.36;0.15" dur="4.5s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</path>
+`);
+  // and the lit setts that marked the old centre track toward the viewer
+  s = s.replace('<path d="M234,236 q16,-6 32,-1 q-15,9 -32,1 Z" fill="#ffeaa7" opacity="0.22"/>\n', '')
+       .replace('<path d="M238,214 q12,-5 23,-1 q-11,7 -23,1 Z" fill="#ffeaa7" opacity="0.18"/>\n', '');
+  // the rune tower and the workshop, where the side paths leave the frame
+  return s.replace('<!-- Wren, ringing the bell', `<!-- the Adventure Tower, at the end of the left path: a rune-cut tower cropped by the frame -->
+<ellipse cx="20" cy="235" rx="34" ry="5" fill="#3e3428" opacity="0.32"/>
+<path d="M-6,234 L-2,70 L42,70 L46,234 Z" fill="#5d6a80"/>
+<path d="M-6,234 L-2,70 L12,70 L10,234 Z" fill="#76849a" opacity="0.5"/>
+<path d="M36,70 L42,70 L46,234 L40,234 Z" fill="#46526a" opacity="0.6"/>
+<path d="M-8,70 L20,22 L48,70 Z" fill="#4a5468"/>
+<path d="M20,22 L48,70 L38,70 Z" fill="#5d6a80" opacity="0.5"/>
+<path d="M-6,66 h52 v6 h-52 Z" fill="#6c7890"/>
+<path d="M12,196 h16 v38 h-16 Z" fill="#3a3020"/>
+<g fill="#ffd700" opacity="0.7">
+  <path d="M18,92 l3,-5 l3,5 l-3,5 Z M17,118 h6 v2 h-6 Z M19,113 h2 v12 h-2 Z M16,146 l8,0 l-4,7 Z M18,170 h4 v8 h-4 Z"/>
+  <animate attributeName="opacity" values="0.45;0.85;0.45" dur="4.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</g>
+<!-- the Puzzle Workshop, at the end of the right path, chimney steaming -->
+<ellipse cx="480" cy="235" rx="36" ry="5" fill="#3e3428" opacity="0.32"/>
+<path d="M486,72 h10 v40 h-10 Z" fill="#4e566a"/>
+<path d="M484,70 h14 v4 h-14 Z" fill="#434b5e"/>
+<path d="M450,234 L450,136 L506,136 L506,234 Z" fill="#6b5a48"/>
+<path d="M450,234 L450,136 L462,136 L462,234 Z" fill="#7d6a55" opacity="0.6"/>
+<path d="M444,136 L478,104 L512,136 Z" fill="#54465a"/>
+<path d="M478,104 L512,136 L502,136 Z" fill="#6a5a70" opacity="0.5"/>
+<path d="M458,176 h22 v58 h-22 Z" fill="#3a2c1a"/>
+<path d="M486,160 h14 v16 h-14 Z" fill="#ffeaa7" opacity="0.45"/>
+<g transform="translate(478 150)" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.75">
+  <circle r="6"/><path d="M0,-9 v3 M0,6 v3 M-9,0 h3 M6,0 h3 M-6.4,-6.4 l2,2 M4.4,4.4 l2,2 M-6.4,6.4 l2,-2 M4.4,-4.4 l2,-2"/>
+</g>
+<g fill="#dfe6ee">
+  <ellipse cx="491" cy="64" rx="7" ry="5" opacity="0">
+    <animate attributeName="opacity" values="0;0.6;0" dur="4.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-5,-14;-12,-34" dur="4.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="491" cy="64" rx="8.5" ry="6" opacity="0">
+    <animate attributeName="opacity" values="0;0.55;0" dur="4.2s" begin="1.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-6,-14;-14,-34" dur="4.2s" begin="1.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="491" cy="64" rx="7.5" ry="5.5" opacity="0">
+    <animate attributeName="opacity" values="0;0.55;0" dur="4.2s" begin="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0;-4,-14;-10,-34" dur="4.2s" begin="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.3;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" additive="sum"/>
+  </ellipse>
+  <ellipse cx="489" cy="56" rx="9" ry="6.5" opacity="0.35"/>
+  <ellipse cx="482" cy="42" rx="11" ry="8" opacity="0.22"/>
+</g>
+<!-- Wren, ringing the bell`);
+})();

@@ -1,12 +1,172 @@
 // Moon story scenes — "The Mark on The Moon"
 // Keys: moon_0 through moon_7
 
+// ============================================================================
+// MARK'S HABITAT. One building, drawn by these helpers in every moon scene so
+// it cannot drift: a hemispherical glass dome, five meridian glazing bars and
+// two latitude rings, frame colour #d4d0c0, an arched airlock facing the
+// viewer, a service module with mast and dish on the sunward (right) side.
+// Inside, the same shell seen from the deck: the same five meridians and two
+// rings, the same plank floor sweeping out to meet the glass, sconces fixed to
+// the second meridian on each side.
+// ============================================================================
+const MOON_FRAME = '#d4d0c0';
+function moonSpline(v, dur, begin) {
+  return `<animate attributeName="opacity" values="${v}" dur="${dur}s"${begin ? ` begin="${begin}s"` : ''} repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>`;
+}
+// Exterior. Origin is the centre of the dome's base on the dust; s=1 is a
+// 56-wide dome. o.glow / o.door: interior and airlock light, [low, high].
+function moonHabitat(cx, gy, s, o) {
+  o = o || {};
+  const g = o.glow || [0.14, 0.26], d = o.door || [0.12, 0.22];
+  const mid = (a) => ((a[0] + a[1]) / 2).toFixed(2);
+  return `<g transform="translate(${cx},${gy}) scale(${s})">
+<ellipse cx="0" cy="0" rx="30" ry="5" fill="#4e4c46" opacity="0.55"/>
+<path d="M30,0 L30,-12 Q30,-16 34,-16 L46,-16 Q50,-16 50,-12 L50,0 Z" fill="#3a382f" stroke="${MOON_FRAME}" stroke-width="0.6" opacity="0.85"/>
+<path d="M32,-14 L48,-14 L48,-10 L32,-10 Z" fill="#8a8880" opacity="0.35"/>
+<path d="M38,-16 L39,-34" stroke="#9a9890" stroke-width="0.9" opacity="0.6" fill="none"/>
+<path d="M32,-30 A7,7 0 0 1 46,-36 L39,-33 Z" fill="#5a5850" stroke="#9a9890" stroke-width="0.7" opacity="0.75"/>
+<path d="M43,-35 A7,7 0 0 0 33,-31" fill="none" stroke="#b0aea4" stroke-width="0.5" opacity="0.4"/>
+<path d="M39,-33 L42,-39" stroke="#9a9890" stroke-width="0.5" opacity="0.5" fill="none"/>
+<circle cx="42.5" cy="-40" r="1.1" fill="#ffe880" opacity="0.7">${moonSpline('0.25;0.9;0.25', o.beacon || 2.8)}</circle>
+<path d="M-28,0 Q-28,-28 0,-29.3 Q28,-28 28,0 Z" fill="#33312a" stroke="${MOON_FRAME}" stroke-width="1" opacity="0.92"/>
+<path d="M-23,0 Q-23,-23 0,-24.1 Q23,-23 23,0 Z" fill="#ffe27a" opacity="${mid(g)}">${moonSpline(`${g[0]};${g[1]};${g[0]}`, o.glowDur || 4.6)}</path>
+<path d="M0,-29.3 L0,0 M-11.5,-28.5 Q-12.5,-14 -12.7,0 M11.5,-28.5 Q12.5,-14 12.7,0 M-21,-24.8 Q-23.4,-12.7 -23.9,0 M21,-24.8 Q23.4,-12.7 23.9,0" stroke="${MOON_FRAME}" stroke-width="0.6" opacity="0.4" fill="none"/>
+<path d="M-26.2,-16.8 Q0,-19.9 26.2,-16.8" stroke="${MOON_FRAME}" stroke-width="0.5" opacity="0.3" fill="none"/>
+<path d="M-19.5,-22.7 Q0,-25.5 19.5,-22.7" stroke="${MOON_FRAME}" stroke-width="0.4" opacity="0.22" fill="none"/>
+<path d="M17.9,-24 Q28,-16.8 28,0 L21,0 Q21,-11.55 14.65,-17.05 Z" fill="${MOON_FRAME}" opacity="0.16"/>
+<path d="M-6,0 L-6,-10 A6,6 0 0,1 6,-10 L6,0 Z" fill="#2e2a1e" stroke="${MOON_FRAME}" stroke-width="0.7" opacity="0.9"/>
+<path d="M-4.2,0 L-4.2,-9.6 A4.2,4.2 0 0,1 4.2,-9.6 L4.2,0 Z" fill="#ffe880" opacity="${mid(d)}">${moonSpline(`${d[0]};${d[1]};${d[0]}`, o.doorDur || 5.3)}</path>
+<path d="M0,-13.8 L0,0" stroke="${MOON_FRAME}" stroke-width="0.4" opacity="0.35" fill="none"/>
+<path d="M-30,0 A30,5 0 0,0 30,0" stroke="${MOON_FRAME}" stroke-width="0.7" opacity="0.55" fill="none"/>
+<path d="M-8,1 Q0,-1 8,1 Q2,8 -8,1 Z" fill="#ffe880" opacity="${(d[1] * 0.75).toFixed(2)}"/>
+</g>`;
+}
+// Interior, back half: everything seen through the glass. Dark sky, stars,
+// Earth, and ONE low dim lunar horizon with the same two craters. This is the
+// only outside any interior view gets: the plain is at infinity, so it sits
+// at the same screen place in the wide and close shots. Never paint a
+// scene-local plain over it. Then moonDomeShell.
+// o.bg: bottom colour of the backdrop. o.earth: [x, y, r, opacity].
+function moonDomeRoom(p, o) {
+  o = o || {};
+  const [ex, ey, er, eo] = o.earth || [400, 45, 10, 0.55];
+  const k = er / 10, E = (dx, dy) => `${(ex + dx * k).toFixed(1)},${(ey + dy * k).toFixed(1)}`;
+  return `<defs>
+  <linearGradient id="${p}DomeBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0a0c14"/><stop offset="100%" stop-color="${o.bg || '#1a1810'}"/>
+  </linearGradient>
+</defs>
+<rect width="500" height="260" fill="url(#${p}DomeBg)"/>
+<g fill="#f4f2ee" opacity="${o.stars || 0.4}">
+  <circle cx="80" cy="50" r="0.6"/><circle cx="140" cy="35" r="0.8"/><circle cx="200" cy="45" r="0.5"/>
+  <circle cx="260" cy="30" r="0.7"/><circle cx="320" cy="42" r="0.6"/><circle cx="380" cy="38" r="0.8"/>
+  <circle cx="420" cy="55" r="0.5"/><circle cx="110" cy="70" r="0.4"/><circle cx="350" cy="65" r="0.5"/>
+  <circle cx="180" cy="60" r="0.3"/><circle cx="300" cy="55" r="0.6"/><circle cx="430" cy="75" r="0.4"/>
+  <circle cx="40" cy="22" r="0.5"/><circle cx="470" cy="28" r="0.6"/><circle cx="230" cy="12" r="0.5"/>
+</g>
+<circle cx="${ex}" cy="${ey}" r="${er}" fill="#1a4a6a" opacity="${eo}"/>
+<path d="M${E(-5, -6)} Q${E(-1, -3)} ${E(-4, 2)} Q${E(1, 5)} ${E(5, 0)} Q${E(2, -5)} ${E(-2, -7)}" fill="#2a8a5a" opacity="${(eo * 0.55).toFixed(2)}"/>
+<circle cx="${ex}" cy="${ey}" r="${er}" fill="none" stroke="#4a9aba" stroke-width="0.3" opacity="0.2"/>
+<defs>
+  <linearGradient id="${p}Plain" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2e2c27"/><stop offset="100%" stop-color="#16150f"/>
+  </linearGradient>
+</defs>
+<path d="M0,128 Q90,122 180,126 Q280,119 380,125 Q450,121 500,127 L500,260 L0,260 Z" fill="url(#${p}Plain)"/>
+<path d="M0,128 Q90,122 180,126 Q280,119 380,125 Q450,121 500,127" stroke="#8f8d84" stroke-width="0.6" opacity="0.28" fill="none"/>
+<g opacity="0.85">
+  <ellipse cx="305" cy="134" rx="30" ry="4.6" fill="#55534c"/>
+  <ellipse cx="305" cy="134" rx="26.5" ry="3.4" fill="#1c1b17"/>
+  <path d="M278.5,134 A26.5,3.4 0 0 1 331.5,134 A19,2.2 0 0 0 278.5,134 Z" fill="#848279"/>
+  <path d="M278,135.5 l-10,1.6 M332,135.5 l10,1.6" stroke="#55534c" stroke-width="0.8" fill="none"/>
+</g>
+<g opacity="0.75">
+  <ellipse cx="112" cy="139" rx="20" ry="3.6" fill="#55534c"/>
+  <ellipse cx="112" cy="139" rx="17" ry="2.6" fill="#1c1b17"/>
+  <path d="M95,139 A17,2.6 0 0 1 129,139 A12,1.6 0 0 0 95,139 Z" fill="#848279"/>
+</g>`;
+}
+// Interior, front half: the shell, its glazing, the warm light, the deck and
+// the sconces. o.s scales the whole shell about the deck centre (250,250):
+// 1 is the wide room shot, about 1.25 is the close shot at the slab.
+// o.light: [cx%, cy%, r%, opacity] of the warm interior light.
+// o.floor: [top, bottom] deck colours. o.sconce: sconce glow, 0 for none.
+function moonDomeShell(p, o) {
+  o = o || {};
+  const s = o.s || 1, L = o.light || [50, 45, 52, 0.13], F = o.floor || ['#3a3020', '#221c12'];
+  const T = s === 1 ? '' : ` transform="translate(250,250) scale(${s}) translate(-250,-250)"`;
+  const sc = o.sconce === undefined ? 0.22 : o.sconce;
+  // a backplate clamped to the rib, a shallow shade, the bulb under it
+  const sconce = (x, dur, begin) => `<path d="M${x - 1.4},134 L${x + 1.4},134 L${x + 1.4},146 L${x - 1.4},146 Z" fill="#3a3324"/>
+<path d="M${x - 6},141 Q${x},134 ${x + 6},141 Q${x},144 ${x - 6},141 Z" fill="#4a4030"/>
+<path d="M${x - 6},141 Q${x},134 ${x + 1},135.6 Q${x - 3},137 ${x - 4},141 Z" fill="#6a5c44" opacity="0.6"/>
+<ellipse cx="${x}" cy="142.4" rx="3" ry="1.4" fill="#ffe880" opacity="${sc}">${moonSpline(`${(sc * 0.7).toFixed(2)};${(sc * 1.25).toFixed(2)};${(sc * 0.7).toFixed(2)}`, dur, begin)}</ellipse>
+<path d="M${x - 5},143 Q${x},158 ${x + 5},143 Z" fill="#ffe880" opacity="${(sc * 0.18).toFixed(3)}"/>`;
+  return `<defs>
+  <radialGradient id="${p}WarmLight" cx="${L[0]}%" cy="${L[1]}%" r="${L[2]}%">
+    <stop offset="0%" stop-color="#ffe880" stop-opacity="${L[3]}"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="${p}Floor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${F[0]}"/><stop offset="100%" stop-color="${F[1]}"/>
+  </linearGradient>
+</defs>
+<g${T}>
+<path d="M30,250 Q30,30 250,20 Q470,30 470,250" fill="none" stroke="${MOON_FRAME}" stroke-width="1.5" opacity="0.32"/>
+<path d="M50,250 Q50,50 250,40 Q450,50 450,250" fill="none" stroke="${MOON_FRAME}" stroke-width="0.5" opacity="0.15"/>
+<path d="M250,20 L250,250 M160,26 Q152,140 150,250 M340,26 Q348,140 350,250 M85,55 Q66,150 62,250 M415,55 Q434,150 438,250" stroke="${MOON_FRAME}" stroke-width="0.5" opacity="0.13" fill="none"/>
+<path d="M44,118 Q250,94 456,118 M97,72 Q250,50 403,72" stroke="${MOON_FRAME}" stroke-width="0.5" opacity="0.11" fill="none"/>
+</g>
+<rect x="0" y="0" width="500" height="260" fill="url(#${p}WarmLight)"/>
+<g${T}>
+<path d="M36,250 Q42,208 90,203 Q250,192 410,203 Q458,208 464,250 Z" fill="url(#${p}Floor)"/>
+<path d="M36,250 Q42,208 90,203 Q250,192 410,203 Q458,208 464,250 Z" fill="none" stroke="#4a3c26" stroke-width="0.8" opacity="0.5"/>
+<path d="M92,204 Q88,226 82,250 M170,199 Q168,224 164,250 M250,197 L250,250 M330,199 Q332,224 336,250 M408,204 Q412,226 418,250" stroke="#241e14" stroke-width="0.7" opacity="0.55" fill="none"/>
+<path d="M48,224 Q250,212 452,224" stroke="#241e14" stroke-width="0.6" opacity="0.4" fill="none"/>
+${sc ? sconce(71, 5.4) + '\n' + sconce(429, 6.1, 1.4) : ''}
+</g>`;
+}
+
+// Boot prints pressed into the dust: one sole and heel for every trail, one per
+// [x, y, scale, rotate, opacity]. Prints at scale 0.7 and up get the sunward
+// lip that makes them read as pressed in rather than painted on.
+function moonPrints(list) {
+  return list.map(([x, y, s, r, op]) => `<g transform="translate(${x},${y}) rotate(${r}) scale(${s})">
+<path d="M-2,-3 q4,-1 5,3 q0,4 -4,4 q-4,0 -4,-3 q0,-3 3,-4 Z M-3,4 q4,-1 5,2 q0,3 -4,3 q-3,0 -3,-2 Z" fill="#4e4c46" opacity="${op}"/>${s >= 0.7 ? `
+<path d="M-4,-6 q5,-2 8,1" stroke="#b0aea4" stroke-width="0.9" opacity="0.3" fill="none" stroke-linecap="round"/>` : ''}
+</g>`).join('\n');
+}
+// Bit Cryptic World seen from the moon: the small blue disc with its one island,
+// the construction moonDomeRoom uses through the glass, at any size.
+function moonWorld(ex, ey, er) {
+  const k = er / 10, E = (dx, dy) => `${(ex + dx * k).toFixed(1)},${(ey + dy * k).toFixed(1)}`;
+  return `<circle cx="${ex}" cy="${ey}" r="${er}" fill="#1a4a6a"/>
+<path d="M${E(-5, -6)} Q${E(-1, -3)} ${E(-4, 2)} Q${E(1, 5)} ${E(5, 0)} Q${E(2, -5)} ${E(-2, -7)}" fill="#2a8a5a" opacity="0.55"/>`;
+}
+// The globe's atmosphere: a hairline limb plus three sunward arcs, every radius
+// derived from er so the rim fits whatever size the disc is drawn at. Sun high
+// right: the limb arc runs from the top of the disc to 50 degrees below the
+// right-hand horizontal, and each outer arc is shorter and nested inside that
+// span, so the haze tapers off at both ends instead of stopping square.
+// Offsets 0 / 0.096 / 0.192 of er; angles in degrees, 0 = right, + = down.
+function moonWorldRim(ex, ey, er) {
+  const P = (r, a) => `${(ex + r * Math.cos(a * Math.PI / 180)).toFixed(1)},${(ey + r * Math.sin(a * Math.PI / 180)).toFixed(1)}`;
+  const arc = (r, a0, a1, w, col, op) => `<path d="M${P(r, a0)} A${r.toFixed(1)},${r.toFixed(1)} 0 0,1 ${P(r, a1)}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;
+  return `<circle cx="${ex}" cy="${ey}" r="${er}" fill="none" stroke="#4a9aba" stroke-width="0.5" opacity="0.3"/>
+${arc(er, -90, 50, 1.6, '#6abaee', 0.26)}
+${arc(er * 1.096, -78, 38, 1.4, '#6abaee', 0.12)}
+${arc(er * 1.192, -66, 26, 1.1, '#4a9ade', 0.06)}`;
+}
+
 // Scene 0: Moon surface, silence, craters everywhere, starfield
 STORY_SCENES['moon_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="m0Sky" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#020408"/><stop offset="100%" stop-color="#080c14"/>
   </linearGradient>
+  <radialGradient id="m0DomeGlow" cx="82%" cy="64%" r="8%">
+    <stop offset="0%" stop-color="#ffe880" stop-opacity="0.26"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
+  </radialGradient>
 </defs>
 <rect width="500" height="260" fill="url(#m0Sky)"/>
 <!-- Stars -->
@@ -64,6 +224,14 @@ STORY_SCENES['moon_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <!-- Subtle dust particles -->
 <circle cx="150" cy="175" r="1" fill="#aaa8a0" opacity="0.15"><animate attributeName="opacity" values="0.05;0.2;0.05" dur="6s" repeatCount="indefinite"/></circle>
 <circle cx="320" cy="180" r="0.8" fill="#aaa8a0" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="5s" repeatCount="indefinite" begin="2s"/></circle>
+<!-- ====================================================================
+     MARK'S DOME, far off on the horizon: the same moonHabitat as moon_7,
+     small because it is distant. Habitat first, glow second.
+     ==================================================================== -->
+${moonHabitat(410, 170, 0.42, { glow: [0.14, 0.26], door: [0.12, 0.22] })}
+<rect x="0" y="0" width="500" height="260" fill="url(#m0DomeGlow)"/>
+<!-- FOOTPRINTS, crisp in the dust, shrinking toward the airlock -->
+${moonPrints([[262, 252, 1, 38, 0.6], [278, 244, 0.95, 50, 0.58], [288, 235, 0.9, 38, 0.56], [303, 227, 0.84, 50, 0.54], [310, 219, 0.78, 38, 0.52], [325, 214, 0.72, 50, 0.5], [336, 209, 0.66, 38, 0.48], [352, 207, 0.6, 50, 0.46], [362, 203, 0.55, 38, 0.44], [374, 199, 0.5, 50, 0.42], [382, 194, 0.46, 38, 0.4], [391, 190, 0.42, 50, 0.38], [398, 185, 0.38, 38, 0.36], [404, 181, 0.34, 50, 0.34], [408, 177, 0.3, 38, 0.32], [411, 174, 0.27, 50, 0.3]])}
 <!-- Low relief and small ejecta fragments between the existing craters. -->
 <path d="M0 181L27 174L42 178L69 175L92 180 M188 177L215 171L233 176L257 173L285 179 M375 178L396 171L412 175L433 171L460 178" fill="none" stroke="#b0ada3" stroke-width="1" opacity=".3"/>
 <path d="M98 221L104 215L113 218L115 222L105 224Z M301 238L307 232L316 235L314 240Z M224 189L229 185L237 189Z" fill="#5e5c55"/>
@@ -71,202 +239,24 @@ STORY_SCENES['moon_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <g fill="#b2afa4" opacity=".35"><circle cx="117" cy="235" r=".8"/><circle cx="123" cy="233" r=".6"/><circle cx="310" cy="247" r=".9"/><circle cx="324" cy="237" r=".6"/><circle cx="232" cy="210" r=".7"/><circle cx="243" cy="213" r=".6"/></g>
 </svg>`;
 
-// Scene 1: Dome glows in distance, footprints in dust
-STORY_SCENES['moon_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <linearGradient id="m1Sky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#020408"/><stop offset="100%" stop-color="#080c14"/>
-  </linearGradient>
-  <radialGradient id="m1DomeGlow" cx="78%" cy="72%" r="16%">
-    <stop offset="0%" stop-color="#ffe880" stop-opacity="0.3"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<rect width="500" height="260" fill="url(#m1Sky)"/>
-<!-- Stars -->
-<g fill="#f4f2ee">
-  <circle cx="20" cy="15" r="0.8"/><circle cx="55" cy="40" r="0.6"/><circle cx="90" cy="10" r="1"/>
-  <circle cx="130" cy="55" r="0.5"/><circle cx="160" cy="20" r="0.7"/><circle cx="200" cy="8" r="0.9"/>
-  <circle cx="235" cy="45" r="0.6"/><circle cx="270" cy="18" r="0.8"/><circle cx="310" cy="50" r="0.5"/>
-  <circle cx="340" cy="12" r="1"/><circle cx="375" cy="38" r="0.6"/><circle cx="410" cy="22" r="0.7"/>
-  <circle cx="445" cy="48" r="0.8"/><circle cx="475" cy="14" r="0.5"/><circle cx="490" cy="55" r="0.6"/>
-  <circle cx="45" cy="70" r="0.5"/><circle cx="110" cy="80" r="0.7"/><circle cx="180" cy="65" r="0.4"/>
-  <circle cx="260" cy="75" r="0.6"/><circle cx="330" cy="68" r="0.5"/><circle cx="400" cy="78" r="0.7"/>
-  <circle cx="460" cy="65" r="0.4"/><circle cx="70" cy="95" r="0.6"/><circle cx="150" cy="100" r="0.5"/>
-  <circle cx="220" cy="90" r="0.7"/><circle cx="290" cy="95" r="0.4"/><circle cx="360" cy="88" r="0.6"/>
-  <circle cx="430" cy="92" r="0.5"/><circle cx="15" cy="110" r="0.4"/><circle cx="485" cy="105" r="0.6"/>
-  <circle cx="245" cy="28" r="0.45"><animate attributeName="opacity" values="0.35;1;0.35" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-  <circle cx="418" cy="62" r="0.4"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="5.2s" repeatCount="indefinite" begin="1.7s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-</g>
-<!-- Earth in distance -->
-<circle cx="80" cy="60" r="14" fill="#1a4a6a"/>
-<path d="M72,54 Q78,58 74,64 Q80,68 86,62 Q82,56 76,52" fill="#2a8a5a" opacity="0.5"/>
-<circle cx="80" cy="60" r="14" fill="none" stroke="#4a9aba" stroke-width="0.5" opacity="0.3"/>
-<!-- ====================================================================
-     GROUND. The horizon was two near identical bands, so the plain had no
-     depth at all. It is now three receding bands, each a touch darker and
-     flatter than the one in front, which is how a lit dust plain actually
-     falls away toward the terminator.
-     ==================================================================== -->
-<path d="M0,168 Q54,161 104,166 Q152,157 202,167 Q252,161 302,170 Q352,159 402,166 Q452,168 500,163 L500,260 L0,260 Z" fill="#8a8880"/>
-<path d="M0,178 Q60,173 112,177 Q168,169 216,179 Q266,173 318,181 Q368,171 420,178 Q460,180 500,176 L500,260 L0,260 Z" fill="#7a7870"/>
-<path d="M0,196 Q70,190 140,196 Q210,188 280,198 Q350,190 420,197 Q460,199 500,195 L500,260 L0,260 Z" fill="#6f6d65"/>
-<!-- ====================================================================
-     CRATERS, built the way moon_0 builds them. A crater is a HOLE and a hole
-     reads by its rim: the far wall catches the light while the near wall sits
-     in shadow, so the bright and dark arcs are on OPPOSITE sides of the ring.
-     The sun is high right, matching moon_0, so the lit arc is the far wall.
-     ==================================================================== -->
-<ellipse cx="58" cy="212" rx="32" ry="10" fill="#8f8d84"/><ellipse cx="58" cy="212" rx="29" ry="8" fill="#63615a"/>
-<path d="M29,212 A29,8 0 0 1 87,212 A21,5 0 0 0 29,212 Z" fill="#a8a69c" opacity="0.75"/>
-<path d="M29,212 A29,8 0 0 0 87,212 A21,5 0 0 1 29,212 Z" fill="#4e4c46" opacity="0.6"/>
-<ellipse cx="58" cy="212" rx="16" ry="4" fill="#56544e"/>
-<path d="M27,210 l-11,-3 M89,211 l10,-3 M58,201 l3,-5 M44,220 l-6,4" stroke="#9a9890" stroke-width="1.2" opacity="0.3" fill="none"/>
-<ellipse cx="196" cy="234" rx="40" ry="12" fill="#8f8d84"/><ellipse cx="196" cy="234" rx="36" ry="10" fill="#63615a"/>
-<path d="M160,234 A36,10 0 0 1 232,234 A26,7 0 0 0 160,234 Z" fill="#a8a69c" opacity="0.75"/>
-<path d="M160,234 A36,10 0 0 0 232,234 A26,7 0 0 1 160,234 Z" fill="#4e4c46" opacity="0.6"/>
-<ellipse cx="196" cy="235" rx="22" ry="5" fill="#56544e"/>
-<path d="M158,232 l-13,-3 M234,233 l12,-4 M196,221 l3,-6" stroke="#9a9890" stroke-width="1.2" opacity="0.3" fill="none"/>
-<ellipse cx="134" cy="200" rx="17" ry="6" fill="#8f8d84"/><ellipse cx="134" cy="200" rx="14" ry="4.5" fill="#63615a"/>
-<path d="M120,200 A14,4.5 0 0 1 148,200 A10,3 0 0 0 120,200 Z" fill="#a8a69c" opacity="0.75"/>
-<path d="M120,200 A14,4.5 0 0 0 148,200 A10,3 0 0 1 120,200 Z" fill="#4e4c46" opacity="0.6"/>
-<ellipse cx="134" cy="200" rx="8" ry="2" fill="#56544e"/>
-<path d="M118,198 l-5,-2 M150,199 l5,-3" stroke="#9a9890" stroke-width="1" opacity="0.28" fill="none"/>
-<ellipse cx="288" cy="252" rx="34" ry="10" fill="#8f8d84"/><ellipse cx="288" cy="252" rx="31" ry="8" fill="#63615a"/>
-<path d="M257,252 A31,8 0 0 1 319,252 A22,5 0 0 0 257,252 Z" fill="#a8a69c" opacity="0.7"/>
-<path d="M257,252 A31,8 0 0 0 319,252 A22,5 0 0 1 257,252 Z" fill="#4e4c46" opacity="0.55"/>
-<!-- Two shallow far craters, veiled toward the plain so distance eats contrast -->
-<ellipse cx="452" cy="192" rx="19" ry="5.5" fill="#7f7d75"/><ellipse cx="452" cy="192" rx="16" ry="4" fill="#67655e"/>
-<path d="M436,192 A16,4 0 0 1 468,192 A11,2.5 0 0 0 436,192 Z" fill="#98968e" opacity="0.55"/>
-<path d="M436,192 A16,4 0 0 0 468,192 A11,2.5 0 0 1 436,192 Z" fill="#56544e" opacity="0.45"/>
-<ellipse cx="96" cy="186" rx="14" ry="4" fill="#7d7b73"/><ellipse cx="96" cy="186" rx="11.5" ry="3" fill="#67655e"/>
-<path d="M84.5,186 A11.5,3 0 0 1 107.5,186 A8,2 0 0 0 84.5,186 Z" fill="#96948c" opacity="0.5"/>
-<path d="M84.5,186 A11.5,3 0 0 0 107.5,186 A8,2 0 0 1 84.5,186 Z" fill="#56544e" opacity="0.4"/>
-<!-- Ridges and angular boulders, so there is relief between the holes -->
-<path d="M228,204 Q248,196 274,203 Q252,210 228,204 Z" fill="#9a9890" opacity="0.4"/>
-<path d="M20,242 Q38,232 62,241 Q40,250 20,242 Z" fill="#6a6860" opacity="0.5"/>
-<path d="M330,222 Q352,214 378,222 Q354,229 330,222 Z" fill="#9a9890" opacity="0.35"/>
-<ellipse cx="117" cy="255" rx="19" ry="3.5" fill="#4a4840" opacity="0.45"/>
-<path d="M100,246 L116,235 L134,243 L129,255 L107,255 Z" fill="#6f6d65"/>
-<path d="M116,235 L134,243 L129,255 L120,249 Z" fill="#8f8d84" opacity="0.7"/>
-<path d="M100,246 L116,235 L120,249 L107,255 Z" fill="#46443d" opacity="0.55"/>
-<path d="M116,235 L134,243 L127,245 Z" fill="#b2b0a6" opacity="0.4"/>
-<ellipse cx="268" cy="221" rx="12" ry="2.4" fill="#4a4840" opacity="0.4"/>
-<path d="M258,214 L268,207 L279,213 L275,221 L261,221 Z" fill="#6f6d65"/>
-<path d="M268,207 L279,213 L275,221 L269,217 Z" fill="#8f8d84" opacity="0.65"/>
-<path d="M258,214 L268,207 L269,217 L261,221 Z" fill="#46443d" opacity="0.5"/>
-<ellipse cx="475" cy="256" rx="15" ry="3" fill="#4a4840" opacity="0.4"/>
-<path d="M462,248 L474,240 L488,246 L484,257 L465,257 Z" fill="#6f6d65"/>
-<path d="M474,240 L488,246 L484,257 L477,252 Z" fill="#8f8d84" opacity="0.65"/>
-<path d="M462,248 L474,240 L477,252 L465,257 Z" fill="#46443d" opacity="0.5"/>
-<!-- ====================================================================
-     FOOTPRINTS. They were plain ellipses, which read as pebbles. A boot print
-     is a sole and a heel with a gap between, pressed into dust, so each one
-     gets a raised bright lip on the sunward edge and a dark hollow inside.
-     They shrink and converge as they recede, and the last pair lands at the
-     airlock rather than stopping short of it.
-     ==================================================================== -->
-<g>
-  <path d="M256,244 q4,-1 5,3 q0,4 -4,4 q-4,0 -4,-3 q0,-3 3,-4 Z M255,251 q4,-1 5,2 q0,3 -4,3 q-3,0 -3,-2 Z" fill="#4e4c46" opacity="0.62" transform="rotate(-12,258,247)"/>
-  <path d="M274,238 q4,-1 5,3 q0,4 -4,4 q-4,0 -4,-3 q0,-3 3,-4 Z M273,245 q4,-1 5,2 q0,3 -4,3 q-3,0 -3,-2 Z" fill="#4e4c46" opacity="0.6" transform="rotate(6,276,241)"/>
-  <path d="M292,230 q3.6,-0.9 4.5,2.7 q0,3.6 -3.6,3.6 q-3.6,0 -3.6,-2.7 q0,-2.7 2.7,-3.6 Z M291,236.5 q3.6,-0.9 4.5,1.8 q0,2.7 -3.6,2.7 q-2.7,0 -2.7,-1.8 Z" fill="#4e4c46" opacity="0.58" transform="rotate(-9,294,233)"/>
-  <path d="M310,223 q3.4,-0.8 4.2,2.5 q0,3.4 -3.4,3.4 q-3.4,0 -3.4,-2.5 q0,-2.5 2.6,-3.4 Z M309,229 q3.4,-0.8 4.2,1.7 q0,2.5 -3.4,2.5 q-2.5,0 -2.5,-1.7 Z" fill="#4e4c46" opacity="0.56" transform="rotate(5,312,226)"/>
-  <path d="M327,215 q3,-0.7 3.7,2.2 q0,3 -3,3 q-3,0 -3,-2.2 q0,-2.2 2.3,-3 Z M326,220.5 q3,-0.7 3.7,1.5 q0,2.2 -3,2.2 q-2.2,0 -2.2,-1.5 Z" fill="#4e4c46" opacity="0.52" transform="rotate(-6,329,218)"/>
-  <path d="M343,208 q2.7,-0.6 3.3,2 q0,2.7 -2.7,2.7 q-2.7,0 -2.7,-2 q0,-2 2.1,-2.7 Z M342,213 q2.7,-0.6 3.3,1.3 q0,2 -2.7,2 q-2,0 -2,-1.3 Z" fill="#4e4c46" opacity="0.5" transform="rotate(8,345,210)"/>
-  <path d="M358,202 q2.3,-0.5 2.9,1.7 q0,2.3 -2.3,2.3 q-2.3,0 -2.3,-1.7 q0,-1.7 1.7,-2.3 Z M357,206 q2.3,-0.5 2.9,1.1 q0,1.7 -2.3,1.7 q-1.7,0 -1.7,-1.1 Z" fill="#4e4c46" opacity="0.46" transform="rotate(-5,360,204)"/>
-  <path d="M371,196 q2,-0.4 2.5,1.5 q0,2 -2,2 q-2,0 -2,-1.5 q0,-1.5 1.5,-2 Z M370,200 q2,-0.4 2.5,1 q0,1.5 -2,1.5 q-1.5,0 -1.5,-1 Z" fill="#4e4c46" opacity="0.42" transform="rotate(5,372,198)"/>
-  <path d="M382,192 q1.7,-0.4 2.1,1.3 q0,1.7 -1.7,1.7 q-1.7,0 -1.7,-1.3 q0,-1.3 1.3,-1.7 Z" fill="#4e4c46" opacity="0.38"/>
-  <path d="M391,189 q1.5,-0.3 1.9,1.1 q0,1.5 -1.5,1.5 q-1.5,0 -1.5,-1.1 q0,-1.1 1.1,-1.5 Z" fill="#4e4c46" opacity="0.34"/>
-</g>
-<!-- Sunward lips on the nearest prints, which is what makes them read as pressed in -->
-<path d="M254,241 q5,-2 8,1 M272,235 q5,-2 8,1 M290,228 q4,-1.6 7,0.8" stroke="#b0aea4" stroke-width="0.9" opacity="0.3" fill="none" stroke-linecap="round"/>
-<!-- ====================================================================
-     MARK'S DOME. An elliptical arc so it is a hemisphere and not a tent, with
-     panel seams following the curve. Habitat first, glow second, so the light
-     comes from inside. A service module, mast and dish give it the look of
-     somewhere a person actually lives.
-     ==================================================================== -->
-<ellipse cx="398" cy="188" rx="30" ry="5" fill="#4e4c46" opacity="0.55"/>
-<!-- Service module and mast, behind the dome -->
-<path d="M428,188 L428,176 Q428,172 432,172 L444,172 Q448,172 448,176 L448,188 Z" fill="#3a382f" stroke="#d4d0c0" stroke-width="0.6" opacity="0.85"/>
-<path d="M430,174 L446,174 L446,178 L430,178 Z" fill="#8a8880" opacity="0.35"/>
-<path d="M436,172 L437,154" stroke="#9a9890" stroke-width="0.9" opacity="0.6" fill="none"/>
-<path d="M430,158 A7,7 0 0 1 444,152 L437,155 Z" fill="#5a5850" stroke="#9a9890" stroke-width="0.7" opacity="0.75"/>
-<path d="M441,153 A7,7 0 0 0 431,157" fill="none" stroke="#b0aea4" stroke-width="0.5" opacity="0.4"/>
-<path d="M437,155 L440,149" stroke="#9a9890" stroke-width="0.5" opacity="0.5" fill="none"/>
-<circle cx="440.5" cy="148" r="1.1" fill="#ffe880" opacity="0.7">
-  <animate attributeName="opacity" values="0.25;0.9;0.25" dur="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<!-- Dome shell -->
-<path d="M370,188 A28,25 0 0,1 426,188 Z" fill="#33312a" stroke="#d4d0c0" stroke-width="1" opacity="0.92"/>
-<!-- Lit interior showing through the glass -->
-<path d="M375,188 A23,20.5 0 0,1 421,188 Z" fill="#ffe27a" opacity="0.2">
-  <animate attributeName="opacity" values="0.14;0.26;0.14" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<!-- Glazing bars, following the curve so the dome reads as glass -->
-<path d="M398,163 L398,188 M382,169 L385,188 M414,169 L411,188 M373,180 L373,188 M423,180 L423,188" stroke="#d4d0c0" stroke-width="0.6" opacity="0.4" fill="none"/>
-<path d="M371.5,180 A26,23 0 0,1 424.5,180" stroke="#d4d0c0" stroke-width="0.5" opacity="0.3" fill="none"/>
-<path d="M378,171 A20,17 0 0,1 418,171" stroke="#d4d0c0" stroke-width="0.4" opacity="0.22" fill="none"/>
-<!-- The sunward quarter of the shell catches a hard highlight -->
-<path d="M412,170 A28,25 0 0,1 426,188 L419,188 A21,19 0 0,0 408,173 Z" fill="#d4d0c0" opacity="0.16"/>
-<!-- Airlock, so there is a way in -->
-<path d="M392,188 L392,178 A6,6 0 0,1 404,178 L404,188 Z" fill="#26241e" stroke="#d4d0c0" stroke-width="0.7" opacity="0.88"/>
-<path d="M398,178 L398,188" stroke="#d4d0c0" stroke-width="0.4" opacity="0.35" fill="none"/>
-<!-- Base seal and a spill of light on the dust at the threshold -->
-<path d="M368,188 A30,5 0 0,0 428,188" stroke="#d4d0c0" stroke-width="0.7" opacity="0.55" fill="none"/>
-<path d="M390,189 Q398,187 406,189 Q400,196 390,189 Z" fill="#ffe880" opacity="0.16"/>
-<rect x="0" y="0" width="500" height="260" fill="url(#m1DomeGlow)"/>
-</svg>`;
+// Scene 1 (Mark at his desk, the dome interior) is defined after the study
+// pieces below, because it is built from them.
 
 // Scene 2: Mark introduces himself inside dome
-STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <linearGradient id="m2DomeBg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0a0c14"/><stop offset="100%" stop-color="#1a1810"/>
-  </linearGradient>
-  <radialGradient id="m2WarmLight" cx="50%" cy="42%" r="52%">
-    <stop offset="0%" stop-color="#ffe880" stop-opacity="0.13"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="m2Floor" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#3a3020"/><stop offset="100%" stop-color="#221c12"/>
-  </linearGradient>
-</defs>
-<rect width="500" height="260" fill="url(#m2DomeBg)"/>
-<!-- Curved glass dome showing stars outside -->
-<path d="M30,250 Q30,30 250,20 Q470,30 470,250" fill="none" stroke="#d4d0c0" stroke-width="1.5" opacity="0.3"/>
-<path d="M50,250 Q50,50 250,40 Q450,50 450,250" fill="none" stroke="#d4d0c0" stroke-width="0.5" opacity="0.15"/>
-<!-- Stars visible through dome -->
-<g fill="#f4f2ee" opacity="0.4">
-  <circle cx="80" cy="50" r="0.6"/><circle cx="140" cy="35" r="0.8"/><circle cx="200" cy="45" r="0.5"/>
-  <circle cx="260" cy="30" r="0.7"/><circle cx="320" cy="42" r="0.6"/><circle cx="380" cy="38" r="0.8"/>
-  <circle cx="420" cy="55" r="0.5"/><circle cx="110" cy="70" r="0.4"/><circle cx="350" cy="65" r="0.5"/>
-  <circle cx="180" cy="60" r="0.3"/><circle cx="300" cy="55" r="0.6"/><circle cx="430" cy="75" r="0.4"/>
-</g>
-<!-- Earth visible through dome glass -->
-<circle cx="400" cy="45" r="10" fill="#1a4a6a" opacity="0.6"/>
-<path d="M395,39 Q399,42 396,47 Q401,50 405,45 Q402,40 398,38" fill="#2a8a5a" opacity="0.3"/>
-<circle cx="400" cy="45" r="10" fill="none" stroke="#4a9aba" stroke-width="0.3" opacity="0.2"/>
-<!-- Glazing ribs on the dome shell, so the curve reads as built glass -->
-<path d="M250,20 L250,250 M160,26 Q152,140 150,250 M340,26 Q348,140 350,250 M85,55 Q66,150 62,250 M415,55 Q434,150 438,250" stroke="#d4d0c0" stroke-width="0.4" opacity="0.1" fill="none"/>
-<path d="M44,120 Q250,96 456,120" stroke="#d4d0c0" stroke-width="0.4" opacity="0.09" fill="none"/>
-<!-- Warm interior glow -->
-<rect x="0" y="0" width="500" height="260" fill="url(#m2WarmLight)"/>
-<!-- ====================================================================
-     FLOOR. It was a rounded rect floating in the dark with a gap between it
-     and the dome wall. Now the deck sweeps out to meet the shell on both
-     sides, with a curved front edge, so the room has a plan.
+// ============================================================================
+// MARK'S STUDY, one furniture layout shared by every wide interior (moon_2, 4,
+// 6 draw their own versions of the same pieces in the same places) and framed
+// at the edge of the close shots (moon_3, 5) so the room never rearranges.
+// ============================================================================
+const MOON_SHELVES_CHAIR = `<!-- ====================================================================
+     BOOKSHELVES. Low cases standing on the deck, set in from the curved
+     wall so their tops clear the glass: the shell is a hemisphere, and at
+     the edge of the room it is lower than a tall case. Same drawing as
+     before, scaled 0.75 and placed by its plinth on the floor.
      ==================================================================== -->
-<path d="M36,250 Q42,208 90,203 Q250,192 410,203 Q458,208 464,250 Z" fill="url(#m2Floor)"/>
-<path d="M36,250 Q42,208 90,203 Q250,192 410,203 Q458,208 464,250 Z" fill="none" stroke="#4a3c26" stroke-width="0.8" opacity="0.5"/>
-<!-- Deck seams, converging so the floor recedes -->
-<path d="M92,204 Q88,226 82,250 M170,199 Q168,224 164,250 M250,197 L250,250 M330,199 Q332,224 336,250 M408,204 Q412,226 418,250" stroke="#241e14" stroke-width="0.7" opacity="0.55" fill="none"/>
-<path d="M48,224 Q250,212 452,224" stroke="#241e14" stroke-width="0.6" opacity="0.4" fill="none"/>
-<!-- ====================================================================
-     BOOKSHELVES. They were a wavy plank with a stack of rounded rects beside
-     it, floating clear of the floor. Each is now a carcass with a back panel,
-     shelf boards, a plinth that reaches the deck, and books of varied width
-     and height with a few leaning against the next.
-     ==================================================================== -->
-<g>
+<path d="M80,213.5 Q97,209.5 116,213.5 Q97,218.5 80,213.5 Z" fill="#181208" opacity="0.5"/>
+<path d="M384,213.5 Q403,209.5 420,213.5 Q403,218.5 384,213.5 Z" fill="#181208" opacity="0.5"/>
+<g transform="translate(42.5,59.5) scale(0.75)">
   <!-- left case, carcass -->
   <path d="M58,96 L88,99 L88,206 L58,203 Z" fill="#33260f"/>
   <path d="M58,96 L88,99 L88,104 L58,101 Z" fill="#5a4526" opacity="0.8"/>
@@ -297,7 +287,7 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <path d="M62,190 L82,191.3 L82,194 L62,192.7 Z" fill="#8a6040" opacity="0.85"/>
   <path d="M63,184 L79,185 L79,188 L63,187 Z" fill="#5a6a80" opacity="0.8"/>
 </g>
-<g>
+<g transform="translate(82.5,59.5) scale(0.75)">
   <!-- right case, mirrored -->
   <path d="M442,96 L412,99 L412,206 L442,203 Z" fill="#33260f"/>
   <path d="M442,96 L412,99 L412,104 L442,101 Z" fill="#5a4526" opacity="0.8"/>
@@ -324,9 +314,6 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <path d="M414,190 L436,188.6 L436,191.4 L414,192.8 Z" fill="#8a7040" opacity="0.85"/>
   <path d="M415,184 L432,182.9 L432,185.7 L415,186.8 Z" fill="#6a5060" opacity="0.8"/>
 </g>
-<!-- Contact shadows under the cases -->
-<path d="M54,205 Q72,201 92,205 Q72,210 54,205 Z" fill="#181208" opacity="0.5"/>
-<path d="M408,205 Q426,201 446,205 Q426,210 408,205 Z" fill="#181208" opacity="0.5"/>
 <!-- ====================================================================
      ARMCHAIR, drawn before the desk it is pulled up beside. It was four
      rounded rects; a chair needs a back that curves, arms with a roll on the
@@ -354,8 +341,8 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <path d="M120,213 L123,213 L124,222 L120,222 Z" fill="#33200f"/>
   <path d="M157,213 L160,213 L159,222 L156,222 Z" fill="#33200f"/>
   <path d="M129,212 L131,212 L131,219 L129,219 Z" fill="#2a1a0c" opacity="0.7"/>
-</g>
-<!-- ====================================================================
+</g>`;
+const MOON_DESK = `<!-- ====================================================================
      DESK, drawn legs first then the top, so the top overlaps them. It was a
      plank on two sticks. Now it has a moulded front edge, a kneehole with a
      drawer, turned legs and a stretcher.
@@ -381,8 +368,8 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <path d="M156,180 Q250,176 344,180 L346,184 Q250,180 154,184 Z" fill="#6a5330"/>
   <path d="M154,184 Q250,180 346,184 L346,188 Q250,184 154,188 Z" fill="#4a3820"/>
   <path d="M158,181 Q250,177.5 342,181 Q250,179 158,181 Z" fill="#8a6e42" opacity="0.5"/>
-</g>
-<!-- ====================================================================
+</g>`;
+const MOON_DESK_GRID = `<!-- ====================================================================
      CROSSWORDS on the desk. They were blank rects standing on edge like a
      fence. A sheet lying on a table is FORESHORTENED: short from front to
      back, wide across, its grid lines converging with the desk. One is
@@ -398,7 +385,87 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <path d="M197,177.7 L204,177.3 L206.8,180.9 L199.4,181.3 Z" fill="#3a352d" opacity="0.65"/>
   <path d="M176,172 L212,170 L212.4,171.3 L176.2,173.3 Z" fill="#f4eedd" opacity="0.5"/>
   <path d="M178,183 L216,182 L216.6,183.4 L178.4,184.4 Z" fill="#a8a294" opacity="0.45"/>
+</g>`;
+const MOON_LAMP_BODY = `<!-- ====================================================================
+     CEILING LAMP. It was a floating dot. A hanging lamp hangs plumb, from a
+     flex, under a shade whose underside catches the bulb.
+     ==================================================================== -->
+<path d="M250,20 L250,68" stroke="#5a5348" stroke-width="0.7" opacity="0.6" fill="none"/>
+<path d="M236,80 Q240,66 250,66 Q260,66 264,80 Z" fill="#4a4030"/>
+<path d="M236,80 Q240,66 250,66 Q246,70 244,80 Z" fill="#6a5c44" opacity="0.7"/>
+<path d="M236,80 Q250,84 264,80 Q250,82.5 236,80 Z" fill="#ffe880" opacity="0.5"/>
+<circle cx="250" cy="82" r="3" fill="#ffe880" opacity="0.55">
+  <animate attributeName="opacity" values="0.45;0.65;0.45" dur="5.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</circle>
+<circle cx="250" cy="82" r="12" fill="#ffe880" opacity="0.07"/>`;
+// The lamp at the wide shot, with the pool it throws on the desk. The close
+// shots (moon_3, moon_5) hang MOON_LAMP_BODY under the shell's 1.25 camera,
+// so the drop matches, and throw their own light where it lands.
+const MOON_CEILING_LAMP = `${MOON_LAMP_BODY}
+<!-- the lamp throws a pool on the desk, which is why the paperwork reads -->
+<path d="M198,178 Q250,168 302,178 Q250,190 198,178 Z" fill="#ffe880" opacity="0.06"/>`;
+const MOON_CLOSE_CAM = 'translate(250,250) scale(1.25) translate(-250,-250)';
+
+// ============================================================================
+// MARK, the mission-cast hedgehog. One height for every wide interior, so he
+// stands to the desk the same way each time: MOON_MARK_H tall on the deck
+// behind the desk (MOON_MARK_FLOOR), which puts the desk top at his hips.
+// The close shots (moon_3, moon_5) use the same height times the 1.25 camera.
+// The helper draws the contact shadow itself, then breathes the figure on an
+// inner group (slow in, slower out) so the placement transform is never
+// replaced by the animation. An optional lean (degrees, + tips the head to
+// the right) pivots the whole figure about his hips, on its own static
+// group so the breathing group above it never carries a placement.
+// ============================================================================
+const MOON_MARK_H = 94, MOON_MARK_FLOOR = 204;
+function moonMark(pose, x, floor, h, flip, dur, begin, lean) {
+  const fig = bcMissionPlace('mark', pose, x, floor, h, flip, { shadow: false });
+  return `${bcApprovedShadow(x, floor, h)}
+<g><animateTransform attributeName="transform" type="translate" values="0,0;0,${(-h * 0.008).toFixed(2)};0,0" additive="sum" dur="${dur || 4.4}s"${begin ? ` begin="${begin}s"` : ''} repeatCount="indefinite" calcMode="spline" keyTimes="0;0.333;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+${lean ? `<g transform="rotate(${lean} ${x} ${(floor - h * 0.45).toFixed(1)})">${fig}</g>` : fig}
+</g>`;
+}
+
+// Scene 1: inside the dome. Mark bends over the desk, finishing the clue he
+// is writing, the desk covered in grids; the room is moon_2's study.
+STORY_SCENES['moon_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<!-- Mark's dome from inside: shared shell, glazing, deck and sconces -->
+${moonDomeRoom('m1', { earth: [400, 45, 10, 0.55] })}
+${moonDomeShell('m1', { light: [52, 52, 46, 0.12] })}
+${MOON_SHELVES_CHAIR}
+<!-- Mark bent over the desk, left of centre: stepped in close (deck line a
+     few units nearer, so the card's lower edge rests on the desk top and the
+     pencil meets it) and leaning into the work. Drawn before the desk so the
+     desk top crosses him and his legs show in the kneehole. -->
+${moonMark('work', 230, MOON_MARK_FLOOR + 5, MOON_MARK_H, false, 4.6, 0, 7)}
+${MOON_DESK}
+<!-- the desk covered in grids: the shared one, two more fanned to the right,
+     and a leaning stack at the left end -->
+${MOON_DESK_GRID}
+<g transform="translate(118,1) rotate(2,196,177)">${MOON_DESK_GRID}</g>
+<g transform="translate(148,-3) rotate(-3,196,177)">${MOON_DESK_GRID}</g>
+<g>
+  <path d="M158,166 L182,163 L184,180 L160,182 Z" fill="#cfc8b4" opacity="0.6"/>
+  <path d="M156,167 L180,164 L182,181 L158,183 Z" fill="#ddd6c2" opacity="0.66"/>
+  <path d="M154,168 L178,165 L180,182 L156,184 Z" fill="#e6dfca" opacity="0.72"/>
+  <path d="M154,168 L178,165 L178.3,166.6 L154.3,169.6 Z" fill="#f4eedd" opacity="0.45"/>
+  <path d="M158,171 L174,169 M158.3,174 L174.4,172 M158.6,177 L174.7,175" stroke="#7a746a" stroke-width="0.4" opacity="0.35" fill="none"/>
+  <path d="M154,182.6 Q166,185 180,182 Q166,186 154,184 Z" fill="#8e8878" opacity="0.4"/>
 </g>
+${MOON_CEILING_LAMP}
+</svg>`;
+
+STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+<!-- Mark's dome from inside: shared shell, glazing, deck and sconces -->
+${moonDomeRoom('m2', { earth: [400, 45, 10, 0.6] })}
+${moonDomeShell('m2', { light: [50, 42, 52, 0.13] })}
+${MOON_SHELVES_CHAIR}
+<!-- Mark behind the desk, leaning to sweep his open hand low across the
+     corner he has just cleared, between him and the mug pushed to the end.
+     Stepped in to the desk like moon_1, so the hand is at desk height. -->
+${moonMark('welcome', 288, MOON_MARK_FLOOR + 4, MOON_MARK_H, false, 4.2, 0, 4)}
+${MOON_DESK}
+${MOON_DESK_GRID}
 <g>
   <path d="M222,174 L254,175 L256,184 L221,183 Z" fill="#e2dbc9" opacity="0.82"/>
   <g stroke="#7a746a" stroke-width="0.35" opacity="0.55" fill="none">
@@ -432,7 +499,9 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <!-- ====================================================================
      MUG. It was a rect with a hook. A vessel has a curved wall that narrows
      to the foot, a rim ellipse and a handle that leaves and returns.
+     Pushed out to the desk's end, with its steam, to clear the corner.
      ==================================================================== -->
+<g transform="translate(20,0)">
 <g>
   <ellipse cx="312" cy="181" rx="8" ry="2" fill="#181208" opacity="0.4"/>
   <path d="M305,166 Q305,178 307,180 L317,180 Q319,178 319,166 Z" fill="#8a7a60"/>
@@ -452,311 +521,142 @@ STORY_SCENES['moon_2'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
     <animate attributeName="opacity" values="0;0.75;0" dur="3.4s" repeatCount="indefinite" begin="1.1s" calcMode="spline" keyTimes="0;0.45;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
 </g>
-<!-- ====================================================================
-     CEILING LAMP. It was a floating dot. A hanging lamp hangs plumb, from a
-     flex, under a shade whose underside catches the bulb.
-     ==================================================================== -->
-<path d="M250,20 L250,68" stroke="#5a5348" stroke-width="0.7" opacity="0.6" fill="none"/>
-<path d="M236,80 Q240,66 250,66 Q260,66 264,80 Z" fill="#4a4030"/>
-<path d="M236,80 Q240,66 250,66 Q246,70 244,80 Z" fill="#6a5c44" opacity="0.7"/>
-<path d="M236,80 Q250,84 264,80 Q250,82.5 236,80 Z" fill="#ffe880" opacity="0.5"/>
-<circle cx="250" cy="82" r="3" fill="#ffe880" opacity="0.55">
-  <animate attributeName="opacity" values="0.45;0.65;0.45" dur="5.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<circle cx="250" cy="82" r="12" fill="#ffe880" opacity="0.07"/>
-<!-- the lamp throws a pool on the desk, which is why the paperwork reads -->
-<path d="M198,178 Q250,168 302,178 Q250,190 198,178 Z" fill="#ffe880" opacity="0.06"/>
+</g>
+${MOON_CEILING_LAMP}
 </svg>`;
 
-// Scene 3: Puzzle — "Blemish is also a target (4)" answer MARK — clue etched in lunar rock
+// Scene 3: Puzzle — "Blemish is also a target (4)" answer MARK — clue scratched in lunar dust
 STORY_SCENES['moon_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <linearGradient id="m3Bg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0a0c14"/><stop offset="60%" stop-color="#14120e"/><stop offset="100%" stop-color="#1a1810"/>
-  </linearGradient>
   <radialGradient id="m3ClueGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffe880" stop-opacity="0.12"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
   </radialGradient>
   <filter id="m3TextGlow"><feGaussianBlur stdDeviation="1" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <!-- grain for the dust: a ragged, displaced edge, holes where the wood
+       shows through, and a fine speckle so it reads as powder, not liquid -->
+  <filter id="m3Dust" x="-8%" y="-30%" width="116%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.09 0.35" numOctaves="2" seed="4" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="12" xChannelSelector="R" yChannelSelector="G" result="ragged"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.035 0.13" numOctaves="2" seed="11" result="holes"/>
+    <feColorMatrix in="holes" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  6 0 0 0 -2.3" result="holeMask"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="1" seed="2" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.1 0 0 0 0.25" result="grainMask"/>
+    <feComposite in="holeMask" in2="grainMask" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="mask"/>
+    <feComposite in="ragged" in2="mask" operator="in"/>
+  </filter>
 </defs>
-<rect width="500" height="260" fill="url(#m3Bg)"/>
-<!-- Dome glass behind showing stars -->
-<path d="M0,0 L0,100 Q250,70 500,100 L500,0 Z" fill="#060810"/>
-<g fill="#f4f2ee" opacity="0.3">
-  <circle cx="60" cy="30" r="0.6"/><circle cx="150" cy="20" r="0.8"/><circle cx="250" cy="15" r="0.5"/>
-  <circle cx="340" cy="25" r="0.7"/><circle cx="430" cy="18" r="0.6"/><circle cx="100" cy="50" r="0.4"/>
-  <circle cx="200" cy="45" r="0.5"/><circle cx="380" cy="42" r="0.6"/><circle cx="460" cy="50" r="0.4"/>
-  <circle cx="30" cy="62" r="0.5"/><circle cx="290" cy="58" r="0.4"/>
+<!-- ====================================================================
+     MARK'S DOME from inside, the same shell as moon_2 with the camera a
+     step closer (scale 1.25 about the deck), so the glass, its five
+     meridians and two rings, the deck and the sconces all match.
+     ==================================================================== -->
+${moonDomeRoom('m3', { earth: [400, 45, 10, 0.5], stars: 0.32 })}
+${moonDomeShell('m3', { s: 1.25, light: [50, 50, 50, 0.08] })}
+<!-- ====================================================================
+     THE DESK, the same object as moon_2, framed at the right edge by the
+     close camera (the shell's 1.25 about the deck), its grid still on it.
+     ==================================================================== -->
+<g transform="translate(500,250) scale(1.25) translate(-250,-250)">
+${MOON_DESK}
+${MOON_DESK_GRID}
 </g>
-<!-- Glazing ribs on the dome wall behind -->
-<path d="M120,0 Q116,58 118,90 M250,0 L250,84 M380,0 Q384,58 382,90" stroke="#d4d0c0" stroke-width="0.4" opacity="0.1" fill="none"/>
-<path d="M0,58 Q250,36 500,58" stroke="#d4d0c0" stroke-width="0.4" opacity="0.08" fill="none"/>
-<!-- Earth through dome glass -->
-<circle cx="420" cy="35" r="8" fill="#1a4a6a" opacity="0.5"/>
-<path d="M416,31 Q419,33 417,37 Q421,39 424,35 Q422,32 418,30" fill="#2a8a5a" opacity="0.25"/>
 <!-- ====================================================================
-     FLOOR. It was a rounded rect butted against the dark. Now the deck runs
-     back to the dome wall with a plinth where the two meet, and the boards
-     converge, so the slab has somewhere to stand.
+     THE DUST. Regolith tracked in through the airlock and spread thin on the
+     deck, scuffed ragged at the edges. The clue is drawn through it with one
+     finger: a groove where the dust is pushed aside and a pale ridge heaped
+     along its sunward side, plus a wiped false start and an underline swipe.
      ==================================================================== -->
-<path d="M0,150 Q250,138 500,150 L500,260 L0,260 Z" fill="#2a2418"/>
-<path d="M0,150 Q250,138 500,150 Q250,144 0,156 Z" fill="#3d3422" opacity="0.8"/>
-<path d="M0,152 Q250,140 500,152" stroke="#4a3c26" stroke-width="0.8" opacity="0.5" fill="none"/>
-<path d="M60,145 Q46,200 24,260 M158,142 Q152,198 142,260 M250,140 L250,260 M342,142 Q348,198 358,260 M440,145 Q454,200 476,260" stroke="#211b11" stroke-width="0.8" opacity="0.5" fill="none"/>
-<path d="M0,180 Q250,168 500,180 M0,222 Q250,208 500,222" stroke="#211b11" stroke-width="0.7" opacity="0.35" fill="none"/>
+<g filter="url(#m3Dust)">
+<path d="M366.9,210.5 Q364.7,213.0 357.7,215.3 Q350.6,217.5 350.5,219.9 Q350.5,222.3 338.7,224.8 Q327.0,227.3 322.1,228.2 Q317.3,229.2 303.2,231.0 Q289.2,232.8 277.2,231.9 Q265.3,231.1 251.3,231.4 Q237.3,231.8 223.0,231.1 Q208.8,230.4 197.0,229.9 Q185.2,229.4 179.0,227.2 Q172.9,225.0 155.7,224.1 Q138.5,223.2 144.9,220.5 Q151.2,217.7 137.4,215.4 Q123.5,213.0 133.1,210.6 Q142.6,208.2 144.1,206.1 Q145.5,204.1 159.3,201.3 Q173.0,198.4 180.1,197.9 Q187.2,197.5 198.6,196.2 Q210.1,195.0 224.3,193.5 Q238.5,192.0 251.4,192.9 Q264.2,193.8 275.6,193.2 Q287.0,192.6 299.2,193.9 Q311.4,195.2 323.5,197.8 Q335.7,200.5 345.2,202.2 Q354.6,203.9 361.9,206.0 Q369.1,208.1 366.9,210.5 Z" fill="#a39f92" opacity="0.5"/>
+<path d="M335.1,209.8 Q338.5,212.0 333.2,214.3 Q327.8,216.5 321.3,218.2 Q314.7,219.8 310.6,222.1 Q306.6,224.3 293.1,226.1 Q279.6,227.9 263.8,226.8 Q248.0,225.7 234.1,226.4 Q220.2,227.1 208.7,225.7 Q197.3,224.3 187.6,222.8 Q177.9,221.3 166.0,218.9 Q154.2,216.6 150.6,214.3 Q147.0,212.0 153.3,209.9 Q159.5,207.9 171.7,206.0 Q183.8,204.2 186.5,201.3 Q189.2,198.5 205.2,198.1 Q221.2,197.8 234.6,196.8 Q248.0,195.8 262.3,196.8 Q276.6,197.7 293.2,199.0 Q309.7,200.3 321.1,202.1 Q332.4,203.9 332.1,205.7 Q331.8,207.5 335.1,209.8 Z" fill="#b8b4a6" opacity="0.34"/>
+</g>
+<!-- finger swirls, idle loops drawn while he thought -->
+<path d="M332,214 q7,-6 13,-1 q3,5 -5,6 q-6,0 -4,-4" stroke="#4a4841" stroke-width="1.4" opacity="0.45" fill="none" stroke-linecap="round"/>
+<path d="M332,213 q7,-6 13,-1" stroke="#aeaca2" stroke-width="0.5" opacity="0.4" fill="none" stroke-linecap="round"/>
+<path d="M150,218 q10,-3 18,1 M154,222 q9,-2 16,1" stroke="#4a4841" stroke-width="1.2" opacity="0.38" fill="none" stroke-linecap="round"/>
+<g filter="url(#m3Dust)"><path d="M128,221 Q138,214 150,219 Q141,225 128,221 Z M354,223 Q365,216 376,222 Q365,227 354,223 Z M176,237 Q189,232 202,236 Q189,240 176,237 Z M290,236 Q302,233 314,236 Q302,239 290,236 Z" fill="#a39f92" opacity="0.42"/></g>
+<g fill="#9a988e" opacity="0.4"><circle cx="146" cy="207" r="0.8"/><circle cx="158" cy="226" r="0.6"/><circle cx="350" cy="205" r="0.7"/><circle cx="342" cy="226" r="0.6"/><circle cx="214" cy="232" r="0.5"/><circle cx="286" cy="196" r="0.6"/><circle cx="370" cy="214" r="0.5"/><circle cx="134" cy="213" r="0.5"/></g>
+<!-- a false start, rubbed out with the side of the hand -->
+<path d="M164,206 Q172,202 180,207 Q174,213 166,211 Q160,209 164,206 Z" fill="#5a5850" opacity="0.45"/>
+<path d="M163,205.5 Q172,201 181,206" stroke="#a8a69c" stroke-width="0.7" opacity="0.4" fill="none" stroke-linecap="round"/>
+<!-- the finger's underline swipe, groove then ridge -->
+<path d="M196,226 Q250,231 308,223" stroke="#4a4841" stroke-width="2" opacity="0.55" fill="none" stroke-linecap="round"/>
+<path d="M196,224.6 Q250,229.4 308,221.6" stroke="#aeaca2" stroke-width="0.7" opacity="0.45" fill="none" stroke-linecap="round"/>
+<!-- more furrows ploughed round the clue: a bracket each side, an arc over
+     the top, and doodled waves out in the dust. Groove first, then the pale
+     ridge the finger heaps along its sunward (upper) side. -->
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M198,203 Q185,206 186,214 Q187,222 199,223 M302,202 Q316,205 315,213 Q314,221 302,223 M210,198 Q250,191 292,197 M168,219 q6,-6 12,0 q6,6 12,0 M316,227 q6,-5 12,0 q6,5 12,0 M150,212 q8,-7 16,-2 M344,207 q8,-4 14,2 M226,229 q24,4 48,-1" stroke="#34322c" stroke-width="2" opacity="0.72"/>
+  <path d="M198,203 Q185,206 186,214 Q187,222 199,223 M302,202 Q316,205 315,213 Q314,221 302,223 M210,198 Q250,191 292,197 M168,219 q6,-6 12,0 q6,6 12,0 M316,227 q6,-5 12,0 q6,5 12,0 M150,212 q8,-7 16,-2 M344,207 q8,-4 14,2 M226,229 q24,4 48,-1" stroke="#d6d1bf" stroke-width="0.8" opacity="0.7" transform="translate(-0.6,-1.5)"/>
+</g>
+<!-- the fingertip's last push, a little heap where the stroke stopped -->
+<path d="M306,220 Q311,218 314,222 Q310,225 306,223 Z" fill="#9a988e" opacity="0.5"/>
 <!-- ====================================================================
-     THE SLAB. It was a rounded pill in mauve grey, which reads as soap. A
-     piece of lunar rock is FACETED: flat planes meeting at angles, the ones
-     turned to the light pale and the ones turned away nearly black. It is
-     built here as a block with real thickness, so there is a top plane you
-     look down onto and a front face you look at, separated by a hard edge.
-     The light is high right, matching every other moon scene, so the cast
-     shadow falls down and to the LEFT.
-     ==================================================================== -->
-<path d="M138,208 Q170,199 232,200 Q286,201 318,207 Q280,220 210,221 Q152,218 138,208 Z" fill="#161208" opacity="0.65"/>
-<path d="M148,206 Q182,199 236,200 Q282,201 306,205 Q272,213 208,214 Q158,212 148,206 Z" fill="#100c06" opacity="0.5"/>
-<!-- BACK of the block, in shade, offset up and left so it reads behind -->
-<path d="M172,148 L198,139 L312,141 L332,150 L328,182 L176,182 Z" fill="#3a3831"/>
-<!-- TOP plane, looked down on, catching the most light of the three -->
-<path d="M172,148 L198,139 L312,141 L332,150 L338,158 L304,160 L186,159 L166,155 Z" fill="#9a988e"/>
-<path d="M198,139 L312,141 L332,150 L300,151 L200,149 Z" fill="#b2b0a6" opacity="0.75"/>
-<path d="M172,148 L198,139 L200,149 L186,159 L166,155 Z" fill="#7e7c73"/>
-<!-- FRONT FACE, the dressed plane that carries the clue -->
-<path d="M166,155 L186,159 L304,160 L338,158 L334,190 L312,196 L192,195 L170,188 Z" fill="#6f6d65"/>
-<!-- hard top edge, the line that makes the block read as solid -->
-<path d="M166,155 L186,159 L304,160 L338,158 L338,161.4 L304,163.4 L186,162.4 L166,158.4 Z" fill="#a8a69c" opacity="0.7"/>
-<!-- the sunward end of the face, chamfered, the brightest plane on the rock -->
-<path d="M312,160 L338,158 L334,190 L312,196 L308,163 Z" fill="#8b8980"/>
-<path d="M324,159.2 L338,158 L334,190 L324,193 Z" fill="#a2a096" opacity="0.7"/>
-<!-- the shaded end, opposite side, so bright and dark are never adjacent -->
-<path d="M166,155 L186,159 L190,195 L170,188 Z" fill="#4a4841"/>
-<path d="M166,155 L176,157 L180,190 L170,188 Z" fill="#3c3a34"/>
-<!-- BOTTOM plane, where the block meets the dust, darkest of all -->
-<path d="M170,188 L192,195 L312,196 L334,190 L336,199 L310,203 L190,202 L168,196 Z" fill="#2e2c27"/>
-<!-- fracture facets across the face -->
-<path d="M204,164 L218,178 L206,190 L196,174 Z" fill="#7c7a72" opacity="0.45"/>
-<path d="M232,163 L258,166 L262,182 L238,180 Z" fill="#605e57" opacity="0.4"/>
-<path d="M262,182 L258,166 L276,168 L280,184 Z" fill="#7a786f" opacity="0.35"/>
-<path d="M286,166 L302,167 L300,186 L288,186 Z" fill="#5c5a53" opacity="0.4"/>
-<!-- chisel marks along the dressed edge, and a chipped corner -->
-<path d="M176,164 L182,163 M177,169 L183,168 M178,174 L184,173 M179,179 L185,178" stroke="#a8a69c" stroke-width="0.8" opacity="0.4" fill="none"/>
-<path d="M334,190 L336,199 L322,196 Z" fill="#a8a69c" opacity="0.35"/>
-<path d="M198,139 L212,141 L204,146 Z" fill="#c2c0b6" opacity="0.4"/>
-<path d="M256,141 L272,142 L266,147 L254,146 Z" fill="#b2b0a6" opacity="0.35"/>
-<!-- ====================================================================
-     THE CLUE, cut into the dressed face and glowing. Sunk letters read by the
-     shadow that sits below and left of them, so a dark ghost goes down first.
+     THE CLUE, drawn in the dust. The grooves read by the shadow that sits
+     below and left of them, so a dark ghost goes down first.
      ==================================================================== -->
 <g opacity="0.5">
-  <text x="250.8" y="176" text-anchor="middle" fill="#2a2820" font-family="'Fredoka One',cursive" font-size="9" letter-spacing="0.5">Blemish is also</text>
-  <text x="250.8" y="187" text-anchor="middle" fill="#2a2820" font-family="'Fredoka One',cursive" font-size="9" letter-spacing="0.5">a target (4)</text>
+  <text x="250.8" y="210" text-anchor="middle" fill="#2a2820" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.5">Blemish is also</text>
+  <text x="250.8" y="221" text-anchor="middle" fill="#2a2820" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.5">a target (4)</text>
 </g>
 <g filter="url(#m3TextGlow)">
-  <text x="250" y="175" text-anchor="middle" fill="#ffe880" font-family="'Fredoka One',cursive" font-size="9" opacity="0.85" letter-spacing="0.5">Blemish is also</text>
-  <text x="250" y="186" text-anchor="middle" fill="#ffe880" font-family="'Fredoka One',cursive" font-size="9" opacity="0.85" letter-spacing="0.5">a target (4)</text>
+  <text x="250" y="209" text-anchor="middle" fill="#ffe880" font-family="'JetBrains Mono',monospace" font-size="9" opacity="0.85" letter-spacing="0.5">Blemish is also</text>
+  <text x="250" y="220" text-anchor="middle" fill="#ffe880" font-family="'JetBrains Mono',monospace" font-size="9" opacity="0.85" letter-spacing="0.5">a target (4)</text>
 </g>
-<ellipse cx="250" cy="178" rx="80" ry="24" fill="url(#m3ClueGlow)">
+<ellipse cx="250" cy="214" rx="80" ry="20" fill="url(#m3ClueGlow)">
   <animate attributeName="opacity" values="0.6;1;0.6" dur="4.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
-<!-- ====================================================================
-     A SMALL SIDE TABLE with the working papers. It was a floating white rect
-     with lines ruled across it. Now it is a table with legs on the deck, and
-     the grid on it has blocked squares and a couple of pencilled letters.
-     ==================================================================== -->
-<g>
-  <ellipse cx="404" cy="222" rx="52" ry="6" fill="#141009" opacity="0.45"/>
-  <path d="M368,190 L372,190 L370,220 L366,220 Z" fill="#33260f"/>
-  <path d="M436,190 L440,190 L442,220 L438,220 Z" fill="#33260f"/>
-  <path d="M362,192 L369,192 L366,218 L359,218 Z" fill="#4a3820"/>
-  <path d="M362,192 L365,192 L362,218 L359,218 Z" fill="#6a5330" opacity="0.45"/>
-  <path d="M439,192 L446,192 L449,218 L442,218 Z" fill="#4a3820"/>
-  <path d="M444,192 L446,192 L449,218 L447,218 Z" fill="#2a1e0c" opacity="0.6"/>
-  <path d="M366,206 L442,206 L442,209 L366,209 Z" fill="#3d2c17"/>
-  <path d="M352,184 Q404,180 456,184 L458,189 Q404,185 350,189 Z" fill="#6a5330"/>
-  <path d="M350,189 Q404,185 458,189 L458,193 Q404,189 350,193 Z" fill="#4a3820"/>
-  <path d="M354,185 Q404,181.5 454,185 Q404,183 354,185 Z" fill="#8a6e42" opacity="0.5"/>
-</g>
-<!-- the grid, lying on the table in its perspective -->
-<g>
-  <path d="M366,166 L420,163 L424,183 L368,185 Z" fill="#e8e0d0" opacity="0.72"/>
-  <g stroke="#7a746a" stroke-width="0.4" opacity="0.7" fill="none">
-    <path d="M377,165.4 L379,184.6 M388,164.8 L390.7,184.2 M399,164.2 L402.4,183.8 M410,163.6 L414.1,183.4"/>
-    <path d="M366.8,170 L420.8,167 M367.6,174 L421.7,171 M368.4,178 L422.6,175 M367.2,181 L423.5,179"/>
-  </g>
-  <path d="M377,165.4 L388,164.8 L390.7,169.3 L379.5,169.9 Z" fill="#3a352d" opacity="0.75"/>
-  <path d="M399,173.4 L410,172.8 L414.1,177.7 L402.9,178.3 Z" fill="#3a352d" opacity="0.7"/>
-  <path d="M366,166 L420,163 L420.4,164.5 L366.2,167.5 Z" fill="#f4eedd" opacity="0.45"/>
-  <path d="M368,185 L424,183 L424.6,184.4 L368.4,186.4 Z" fill="#a8a294" opacity="0.4"/>
-  <!-- two letters already pencilled in -->
-  <path d="M370.5,170.8 L372.6,175.4 L374.8,170.2 M371.4,173.3 L373.8,173.2" stroke="#4a4640" stroke-width="0.6" opacity="0.55" fill="none"/>
-  <path d="M392.4,175.4 L392.9,180 M392.4,175.4 L395.6,175.2 Q396.6,177.3 393,177.5 L392.6,177.5" stroke="#4a4640" stroke-width="0.6" opacity="0.5" fill="none"/>
-</g>
-<!-- a pencil laid across the table, and a chisel next to it, because someone cut that rock -->
-<path d="M354,175 Q362,177 370,179.6" stroke="#8a6a3a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-<path d="M353,174.6 Q350,174 348.6,171.8 Q351.6,172.4 353.4,173.6 Z" fill="#c8b088"/>
-<path d="M349.4,172.4 Q348.8,171.9 348.6,171.8 Q348.8,172.6 349,173 Z" fill="#3a352d"/>
-<g>
-  <path d="M424,192 Q434,190 444,192 Q436,196 424,192 Z" fill="#6a6860" opacity="0.75"/>
-  <path d="M428,190.6 Q436,188.8 442,190.8 Q436,192.4 428,190.6 Z" fill="#8a8880" opacity="0.6"/>
+<!-- the stroke he has only just finished: a fresh groove and ridge leading
+     out of the dust at his feet into the first letters, sharper than the
+     older furrows round it -->
+<path d="M190,229 Q198,221 206,216 Q211,213 214,210" stroke="#2e2c26" stroke-width="2.1" opacity="0.8" fill="none" stroke-linecap="round"/>
+<path d="M189.4,227.6 Q197.4,219.6 205.4,214.6 Q210.4,211.6 213.4,208.6" stroke="#dcd7c5" stroke-width="0.8" opacity="0.75" fill="none" stroke-linecap="round"/>
+<!-- Mark standing on the dust's left rim, the drawing hand still lifted,
+     moon_1's height under the 1.25 close camera. At x 166 (was 178) his
+     boots stand clear of the clue's left bracket instead of on it. -->
+${moonMark('explain', 166, 231, MOON_MARK_H * 1.25, false, 4.7, 0, 5)}
+<!-- regolith still on that fingertip, sifting back down onto the stroke it
+     came from; each mote fades out before it restarts, so no seam. Shifted
+     with him, so it still leaves the fingertip. -->
+<g fill="#a8a496" transform="translate(-12,0)">
+  <path d="M196.5,174.5 Q199,172.8 201.5,174 Q201,176.2 198.5,176.4 Q196.6,176.2 196.5,174.5 Z" opacity="0.7"/>
+  <circle cx="200.5" cy="178.5" r="1.1" opacity="0">
+    <animate attributeName="cy" values="178;214" dur="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;0.85;0" dur="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.2;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  <circle cx="198" cy="178" r="0.9" opacity="0">
+    <animate attributeName="cy" values="178;216" dur="3.6s" begin="1.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;0.8;0" dur="3.6s" begin="1.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.2;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  <circle cx="202" cy="178" r="0.8" opacity="0">
+    <animate attributeName="cy" values="178;213" dur="3.2s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 1 1"/>
+    <animate attributeName="opacity" values="0;0.75;0" dur="3.2s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.2;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
 </g>
 <!-- ====================================================================
-     A WORK LIGHT clamped to the dome rib, aimed at the slab. If a light
-     source exists it must be somewhere, and this is where the glow on the
-     dressed face comes from.
+     THE CEILING LAMP, the shared one, hung under the same close camera as
+     the shell so its drop matches moon_2, and aimed down at the dust, which
+     is where the glow on the clue comes from.
      ==================================================================== -->
-<path d="M250,84 L250,108" stroke="#5a5348" stroke-width="0.8" opacity="0.55" fill="none"/>
-<path d="M238,120 Q242,106 250,106 Q258,106 262,120 Z" fill="#4a4030"/>
-<path d="M238,120 Q242,106 250,106 Q246,110 244,120 Z" fill="#6a5c44" opacity="0.7"/>
-<path d="M238,120 Q250,123.5 262,120 Q250,122 238,120 Z" fill="#ffe880" opacity="0.5"/>
-<circle cx="250" cy="122" r="3" fill="#ffe880" opacity="0.45">
-  <animate attributeName="opacity" values="0.32;0.5;0.32" dur="5.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<circle cx="250" cy="122" r="18" fill="#ffe880" opacity="0.045"/>
-<path d="M240,122 Q198,142 178,152 Q216,146 250,124 Q284,146 322,152 Q302,142 260,122 Z" fill="#ffe880" opacity="0.045"/>
+<g transform="${MOON_CLOSE_CAM}">
+${MOON_LAMP_BODY}
+</g>
+<path d="M246,42 L170,212 Q250,226 330,212 L254,42 Z" fill="#ffe880" opacity="0.035"/>
 </svg>`;
 
 // Scene 4: Mark's character, warm dome interior
 STORY_SCENES['moon_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <linearGradient id="m4DomeBg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0a0c14"/><stop offset="100%" stop-color="#1a1810"/>
-  </linearGradient>
-  <radialGradient id="m4WarmLight" cx="42%" cy="55%" r="50%">
-    <stop offset="0%" stop-color="#ffe880" stop-opacity="0.14"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="m4Floor" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#3e3322"/><stop offset="100%" stop-color="#231d13"/>
-  </linearGradient>
-</defs>
-<rect width="500" height="260" fill="url(#m4DomeBg)"/>
-<!-- Curved dome glass. Closer camera than moon_2, so the shell rises out of frame -->
-<path d="M12,250 Q10,26 250,10 Q490,26 488,250" fill="none" stroke="#d4d0c0" stroke-width="1.5" opacity="0.3"/>
-<path d="M34,250 Q32,46 250,32 Q468,46 466,250" fill="none" stroke="#d4d0c0" stroke-width="0.5" opacity="0.15"/>
-<path d="M250,10 L250,250 M150,15 Q140,130 138,250 M350,15 Q360,130 362,250 M60,42 Q40,140 36,250 M440,42 Q460,140 464,250" stroke="#d4d0c0" stroke-width="0.4" opacity="0.1" fill="none"/>
-<path d="M22,116 Q250,90 478,116" stroke="#d4d0c0" stroke-width="0.4" opacity="0.09" fill="none"/>
-<!-- Stars through dome -->
-<g fill="#f4f2ee" opacity="0.35">
-  <circle cx="80" cy="50" r="0.6"/><circle cx="140" cy="35" r="0.8"/><circle cx="200" cy="45" r="0.5"/>
-  <circle cx="260" cy="30" r="0.7"/><circle cx="320" cy="42" r="0.6"/><circle cx="380" cy="38" r="0.8"/>
-  <circle cx="420" cy="55" r="0.5"/><circle cx="110" cy="70" r="0.4"/><circle cx="350" cy="65" r="0.5"/>
-  <circle cx="62" cy="88" r="0.4"/><circle cx="440" cy="82" r="0.5"/><circle cx="290" cy="60" r="0.4"/>
-</g>
-<!-- Earth through dome -->
-<circle cx="390" cy="50" r="11" fill="#1a4a6a" opacity="0.5"/>
-<path d="M385,45 Q389,48 386,53 Q391,55 395,50 Q392,46 388,44" fill="#2a8a5a" opacity="0.3"/>
-<circle cx="390" cy="50" r="11" fill="none" stroke="#4a9aba" stroke-width="0.3" opacity="0.2"/>
-<!-- Warm glow overlay -->
-<rect x="0" y="0" width="500" height="260" fill="url(#m4WarmLight)"/>
-<!-- Floor, sweeping out to meet the shell -->
-<path d="M18,250 Q26,204 84,198 Q250,186 416,198 Q474,204 482,250 Z" fill="url(#m4Floor)"/>
-<path d="M18,250 Q26,204 84,198 Q250,186 416,198 Q474,204 482,250 Z" fill="none" stroke="#4a3c26" stroke-width="0.8" opacity="0.5"/>
-<path d="M86,199 Q80,224 72,250 M168,193 Q166,222 162,250 M250,191 L250,250 M332,193 Q334,222 338,250 M414,199 Q420,224 428,250" stroke="#241e14" stroke-width="0.7" opacity="0.5" fill="none"/>
-<path d="M30,222 Q250,208 470,222" stroke="#241e14" stroke-width="0.6" opacity="0.38" fill="none"/>
-<!-- ====================================================================
-     A RUG, which is what makes a shelter read as somebody's home rather than
-     a room with furniture in it. Woven border, worn thin at the chair.
-     ==================================================================== -->
-<path d="M96,224 Q250,210 404,224 Q250,244 96,224 Z" fill="#5a3a30" opacity="0.55"/>
-<path d="M110,223.5 Q250,211.4 390,223.5 Q250,240 110,223.5 Z" fill="none" stroke="#8a5a44" stroke-width="0.8" opacity="0.4"/>
-<path d="M132,223 Q250,213 368,223 Q250,235 132,223 Z" fill="#6a4436" opacity="0.4"/>
-<path d="M150,219 Q250,214.6 350,219 M144,228 Q250,222 356,228" stroke="#8a5a44" stroke-width="0.5" opacity="0.28" fill="none"/>
-<!-- ====================================================================
-     BOOKSHELF, one tall case at left this time since the camera is closer.
-     Carcass, back panel, shelf boards, plinth on the deck, books that vary in
-     width and height with a few leaning into their neighbours.
-     ==================================================================== -->
-<g>
-  <path d="M40,74 L84,79 L84,202 L40,197 Z" fill="#33260f"/>
-  <path d="M40,74 L84,79 L84,86 L40,81 Z" fill="#5a4526" opacity="0.85"/>
-  <path d="M40,74 L46,74.7 L46,197.7 L40,197 Z" fill="#6a5330" opacity="0.5"/>
-  <path d="M78,78.4 L84,79 L84,202 L78,201.3 Z" fill="#241a0b" opacity="0.8"/>
-  <path d="M43,108 L82,112 L82,115 L43,111 Z" fill="#5a4526"/>
-  <path d="M43,140 L82,144 L82,147 L43,143 Z" fill="#5a4526"/>
-  <path d="M43,170 L82,174 L82,177 L43,173 Z" fill="#5a4526"/>
-  <path d="M41,190 L84,194 L84,199 L41,195 Z" fill="#4a3820"/>
-  <path d="M46,90 L51,90.5 L51,108.6 L46,108.1 Z" fill="#8a6040"/>
-  <path d="M51.5,86 L55,86.4 L55,109 L51.5,108.6 Z" fill="#6a8050"/>
-  <path d="M55.5,92 L62,92.7 L62,109.6 L55.5,109 Z" fill="#8a5040"/>
-  <path d="M63,88 L66,88.3 L66,110 L63,109.7 Z" fill="#5a6a80"/>
-  <path d="M67,94 L73,94.6 L73,110.4 L67,109.8 Z" fill="#8a7040"/>
-  <path d="M74,97 L81,105 L81,111 L74,110.5 Z" fill="#6a5060"/>
-  <path d="M46,122 L52,122.6 L52,140.7 L46,140.1 Z" fill="#5a6a80"/>
-  <path d="M53,118 L56,118.3 L56,141 L53,140.7 Z" fill="#8a7040"/>
-  <path d="M57,124 L64,124.7 L64,141.5 L57,140.9 Z" fill="#6a5060"/>
-  <path d="M65,120 L69,120.4 L69,141.9 L65,141.5 Z" fill="#4a6a5a"/>
-  <path d="M70,126 L76,126.6 L76,142.4 L70,141.8 Z" fill="#8a6040"/>
-  <path d="M77,123 L81,123.4 L81,142.8 L77,142.4 Z" fill="#6a8050"/>
-  <path d="M46,152 L50,152.4 L50,170.7 L46,170.3 Z" fill="#6a8050"/>
-  <path d="M51,148 L58,148.7 L58,171.5 L51,170.8 Z" fill="#8a5040"/>
-  <path d="M59,154 L62,154.3 L62,171.8 L59,171.5 Z" fill="#5a6a80"/>
-  <path d="M63,150 L68,150.5 L68,172.3 L63,171.8 Z" fill="#8a7040"/>
-  <path d="M69,156 L81,166 L81,173 L69,172.4 Z" fill="#8a6040"/>
-  <path d="M46,182 L72,184.4 L72,188.4 L46,186 Z" fill="#5a6a80" opacity="0.85"/>
-  <path d="M47,177 L68,178.9 L68,182.2 L47,180.3 Z" fill="#8a7040" opacity="0.8"/>
-  <!-- a small globe on the top, because he watches home -->
-  <circle cx="62" cy="70" r="6.5" fill="#1a4a6a"/>
-  <path d="M57,66 Q61,68 58,72 Q63,75 67,70 Q64,65 60,64" fill="#2a8a5a" opacity="0.55"/>
-  <path d="M55.5,70 Q62,73.5 68.5,70" stroke="#4a9aba" stroke-width="0.5" opacity="0.4" fill="none"/>
-  <path d="M55,72 Q62,68 69,72 Q62,80 55,72 Z" fill="#5a4526"/>
-</g>
-<path d="M36,199 Q60,194 88,199 Q60,205 36,199 Z" fill="#181208" opacity="0.5"/>
-<!-- ====================================================================
-     ARMCHAIR, turned three quarters toward the desk so the room has someone
-     in mind. A blanket thrown over the near arm, slippers pushed underneath.
-     ==================================================================== -->
-<g>
-  <ellipse cx="152" cy="212" rx="36" ry="6" fill="#181208" opacity="0.5"/>
-  <path d="M126,204 Q118,148 130,136 Q152,126 174,136 Q186,148 178,204 Z" fill="#4a2c1c"/>
-  <path d="M131,197 Q126,154 137,144 Q152,137 167,144 Q178,154 173,197 Z" fill="#5e3a26"/>
-  <path d="M137,190 Q133,160 141,151 Q152,146 163,151 Q171,160 167,190 Z" fill="#6a4838" opacity="0.75"/>
-  <path d="M144,152 Q147,168 145,188 M160,152 Q157,168 159,188" stroke="#54382a" stroke-width="0.7" opacity="0.5" fill="none"/>
-  <circle cx="145" cy="157" r="0.9" fill="#3e2418" opacity="0.6"/>
-  <circle cx="152" cy="155.5" r="0.9" fill="#3e2418" opacity="0.6"/>
-  <circle cx="159" cy="157" r="0.9" fill="#3e2418" opacity="0.6"/>
-  <circle cx="148" cy="170" r="0.9" fill="#3e2418" opacity="0.55"/>
-  <circle cx="156" cy="170" r="0.9" fill="#3e2418" opacity="0.55"/>
-  <path d="M118,204 Q113,174 121,167 Q131,162 136,170 L136,204 Z" fill="#4a2818"/>
-  <path d="M118,176 Q118,166 127,165 Q136,166 136,176 Q127,181 118,176 Z" fill="#66412c"/>
-  <path d="M186,204 Q191,174 183,167 Q173,162 168,170 L168,204 Z" fill="#3e2214"/>
-  <path d="M168,176 Q168,166 177,165 Q186,166 186,176 Q177,181 168,176 Z" fill="#5a3826"/>
-  <path d="M122,182 Q152,174 182,182 Q185,195 178,199 Q152,204 126,199 Q119,195 122,182 Z" fill="#71503b"/>
-  <path d="M122,182 Q152,174 182,182 Q152,187 122,182 Z" fill="#835f47" opacity="0.7"/>
-  <!-- blanket thrown over the near arm, hanging in uneven folds with a
-       ragged hem, so it reads as cloth rather than a cushion -->
-  <path d="M115,171 Q125,164 136,170 Q138,182 134,193 Q129,199 124,197 Q120,201 116,198 Q111,186 115,171 Z" fill="#5e4436" opacity="0.95"/>
-  <path d="M115,171 Q125,164 136,170 Q125,169 117,175 Z" fill="#7a5a48" opacity="0.6"/>
-  <path d="M120,178 Q124,186 121,196 M127,175 Q131,185 128,194 M133,174 Q135,182 133,190" stroke="#452f24" stroke-width="0.7" opacity="0.65" fill="none"/>
-  <path d="M116,198 Q120,203 124,197 Q129,202 134,193 Q131,201 124,200 Q119,204 116,198 Z" fill="#4c372b"/>
-  <!-- legs -->
-  <path d="M128,203 L132,203 L133,212 L128,212 Z" fill="#33200f"/>
-  <path d="M173,203 L177,203 L176,212 L171,212 Z" fill="#33200f"/>
-  <path d="M139,202 L142,202 L142,209 L139,209 Z" fill="#2a1a0c" opacity="0.7"/>
-  <!-- slippers pushed under the chair -->
-  <path d="M144,213 Q152,209 158,212 Q160,217 154,218 Q146,218 144,213 Z" fill="#5a4436"/>
-  <path d="M144,213 Q152,209 158,212 Q151,212 145,215 Z" fill="#76594a" opacity="0.7"/>
-  <path d="M160,214 Q168,210 174,213 Q176,218 170,219 Q162,219 160,214 Z" fill="#4e3a2e"/>
-</g>
-<!-- ====================================================================
-     DESK, legs first then the top. Same object as moon_2, seen from closer,
-     so it is drawn a little larger and the near legs read properly.
-     ==================================================================== -->
-<g>
-  <ellipse cx="316" cy="210" rx="94" ry="5.5" fill="#181208" opacity="0.45"/>
-  <path d="M256,174 L261,174 L260,205 L256,205 Z" fill="#33260f"/>
-  <path d="M372,174 L377,174 L376,205 L372,205 Z" fill="#33260f"/>
-  <path d="M240,176 L249,176 L248,185 Q251,188 248,192 L247,207 L239,207 L238,192 Q235,188 238,185 Z" fill="#4a3820"/>
-  <path d="M240,176 L243,176 L242,207 L239,207 Z" fill="#6a5330" opacity="0.5"/>
-  <path d="M386,176 L395,176 L396,185 Q399,188 396,192 L397,207 L389,207 L388,192 Q385,188 388,185 Z" fill="#4a3820"/>
-  <path d="M392,176 L395,176 L396,207 L393,207 Z" fill="#2a1e0c" opacity="0.6"/>
-  <path d="M247,196 L389,196 L389,199.5 L247,199.5 Z" fill="#3d2c17"/>
-  <path d="M252,174 L384,174 L384,188 L252,188 Z" fill="#4a3820"/>
-  <path d="M258,176 L316,176 L316,186 L258,186 Z" fill="#3d2c17"/>
-  <path d="M258,176 L316,176 L316,178.2 L258,178.2 Z" fill="#6a5330" opacity="0.4"/>
-  <path d="M284,180.5 Q290,179.5 290,181.8 Q290,184 284,183 Z" fill="#8a7a60" opacity="0.8"/>
-  <path d="M226,167 Q316,163 406,167 L408,171.5 Q316,167.5 224,171.5 Z" fill="#6a5330"/>
-  <path d="M224,171.5 Q316,167.5 408,171.5 L408,176 Q316,172 224,176 Z" fill="#4a3820"/>
-  <path d="M228,168 Q316,164.4 404,168 Q316,166 228,168 Z" fill="#8a6e42" opacity="0.5"/>
-</g>
+<!-- Mark's dome from inside: the same shell, glazing, deck and sconces as moon_2 -->
+${moonDomeRoom('m4', { earth: [400, 45, 10, 0.5], stars: 0.35 })}
+${moonDomeShell('m4', { light: [42, 55, 50, 0.14], floor: ['#3e3322', '#231d13'], sconce: 0.22 })}
+<!-- The study as moon_2 lays it out: same cases, chair, desk and lamp -->
+${MOON_SHELVES_CHAIR}
+<!-- Mark behind the desk, one hand up as he names himself: "my name and
+     my nature". Same height and deck line as moon_1. -->
+${moonMark('explain', 250, MOON_MARK_FLOOR, MOON_MARK_H, false, 4.8, 0.6)}
+${MOON_DESK}
+<!-- moon_4's own papers, pen and mug, seated on the shared desk top -->
+<g transform="translate(-58,13)">
 <!-- Crosswords lying on the desk, foreshortened onto its plane -->
 <g>
   <path d="M246,158 L282,156 L286,170 L248,171 Z" fill="#e8e0d0" opacity="0.88"/>
@@ -806,161 +706,89 @@ STORY_SCENES['moon_4'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
     <animate attributeName="opacity" values="0;0.72;0" dur="3.6s" repeatCount="indefinite" begin="1.3s" calcMode="spline" keyTimes="0;0.45;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
 </g>
-<!-- ====================================================================
-     A DESK LAMP, which is the light that actually falls on the crosswords.
-     Weighted base, jointed arm, conical shade whose mouth faces the paper.
-     ==================================================================== -->
-<g>
-  <path d="M410,166 Q420,162 430,166 Q420,170 410,166 Z" fill="#3d3527"/>
-  <path d="M418,165 Q419,150 412,140" stroke="#5a5248" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-  <path d="M412,140 Q408,133 398,131" stroke="#5a5248" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-  <circle cx="412" cy="140" r="1.6" fill="#6a6258"/>
-  <path d="M398,131 Q384,133 380,143 Q392,148 400,140 Z" fill="#4a4030"/>
-  <path d="M398,131 Q384,133 380,143 Q388,136 398,134 Z" fill="#6a5c44" opacity="0.7"/>
-  <path d="M380,143 Q390,147 400,140 Q390,145 380,143 Z" fill="#ffe880" opacity="0.5"/>
-  <path d="M382,145 Q356,158 330,168 Q356,164 392,146 Z" fill="#ffe880" opacity="0.07"/>
 </g>
-<!-- Hanging ceiling lamp, hanging plumb -->
-<path d="M250,10 L250,58" stroke="#5a5348" stroke-width="0.7" opacity="0.55" fill="none"/>
-<path d="M238,70 Q242,56 250,56 Q258,56 262,70 Z" fill="#4a4030"/>
-<path d="M238,70 Q242,56 250,56 Q246,60 244,70 Z" fill="#6a5c44" opacity="0.7"/>
-<path d="M238,70 Q250,73.5 262,70 Q250,72.5 238,70 Z" fill="#ffe880" opacity="0.5"/>
-<circle cx="250" cy="72" r="3" fill="#ffe880" opacity="0.5">
-  <animate attributeName="opacity" values="0.36;0.56;0.36" dur="6.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<circle cx="250" cy="72" r="13" fill="#ffe880" opacity="0.06"/>
-<!-- Wall sconces on the shell ribs -->
-<path d="M96,138 Q102,132 108,138 Q102,142 96,138 Z" fill="#4a4030"/>
-<circle cx="102" cy="137" r="2.6" fill="#ffe880" opacity="0.22"/>
-<path d="M394,110 Q400,104 406,110 Q400,114 394,110 Z" fill="#4a4030"/>
-<circle cx="400" cy="109" r="2.6" fill="#ffe880" opacity="0.2"/>
+${MOON_CEILING_LAMP}
 </svg>`;
 
-// Scene 5: Puzzle — "Lunar feature from confused tracer (6)" answer CRATER — clue etched in lunar rock
+// Scene 5: Puzzle — "Lunar feature from confused tracer (6)" answer CRATER — clue traced on a fogged pane
 STORY_SCENES['moon_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <linearGradient id="m5Bg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0a0c14"/><stop offset="60%" stop-color="#14120e"/><stop offset="100%" stop-color="#1a1810"/>
-  </linearGradient>
   <radialGradient id="m5ClueGlow" cx="50%" cy="50%" r="50%">
     <stop offset="0%" stop-color="#ffe880" stop-opacity="0.12"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
   </radialGradient>
   <filter id="m5TextGlow"><feGaussianBlur stdDeviation="1" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+  <radialGradient id="m5Fog" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#dfe7ea" stop-opacity="0.3"/><stop offset="65%" stop-color="#dfe7ea" stop-opacity="0.18"/><stop offset="100%" stop-color="#dfe7ea" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="m5PaneMist" cx="34%" cy="56%" r="30%">
+    <stop offset="0%" stop-color="#dfe7ea" stop-opacity="0.07"/><stop offset="100%" stop-color="#dfe7ea" stop-opacity="0"/>
+  </radialGradient>
 </defs>
-<rect width="500" height="260" fill="url(#m5Bg)"/>
-<!-- Dome glass behind showing stars and the plain outside -->
-<path d="M0,0 L0,100 Q250,70 500,100 L500,0 Z" fill="#060810"/>
-<g fill="#f4f2ee" opacity="0.3">
-  <circle cx="50" cy="25" r="0.7"/><circle cx="120" cy="15" r="0.5"/><circle cx="200" cy="30" r="0.6"/>
-  <circle cx="280" cy="12" r="0.8"/><circle cx="360" cy="28" r="0.5"/><circle cx="440" cy="20" r="0.7"/>
-  <circle cx="90" cy="55" r="0.4"/><circle cx="180" cy="48" r="0.6"/><circle cx="320" cy="45" r="0.5"/>
-  <circle cx="410" cy="52" r="0.4"/><circle cx="470" cy="38" r="0.6"/>
-</g>
-<!-- Earth through dome -->
-<circle cx="60" cy="40" r="9" fill="#1a4a6a" opacity="0.5"/>
-<path d="M56,36 Q59,38 57,42 Q61,44 64,40 Q62,37 58,35" fill="#2a8a5a" opacity="0.25"/>
+<!-- Mark's dome from inside: the moon_3 camera on the shared shell -->
+${moonDomeRoom('m5', { earth: [400, 45, 10, 0.5], stars: 0.32 })}
+${moonDomeShell('m5', { s: 1.25, light: [50, 50, 50, 0.08] })}
 <!-- ====================================================================
-     THE PLAIN OUTSIDE, seen through the glass. It was a flat band. Since the
-     answer to this clue IS a crater, the view earns a real one: rim ring,
-     lit far wall and shadowed near wall on OPPOSITE sides, ejecta streaks.
-     Distance eats contrast, so the whole thing is veiled toward the dark.
+     THE FOGGED PANE. Breath and warm air condense on the cold glass, so one
+     pane of the dome mists over: a soft patch, densest in the middle, beaded
+     at the rim, with drips running down from it. Mark has traced the clue
+     through it with a fingertip. The pane is a low one, at the height his
+     hand reaches, so the whole fogged patch sits down near the deck.
      ==================================================================== -->
-<path d="M0,100 Q100,92 200,98 Q300,88 400,96 Q450,92 500,100 L500,120 Q400,112 300,118 Q200,110 100,116 Q50,120 0,116 Z" fill="#6a6860" opacity="0.28"/>
-<g opacity="0.34">
-  <ellipse cx="300" cy="108" rx="46" ry="8" fill="#8f8d84"/>
-  <ellipse cx="300" cy="108" rx="42" ry="6" fill="#4e4c46"/>
-  <path d="M258,108 A42,6 0 0 1 342,108 A30,4 0 0 0 258,108 Z" fill="#a8a69c"/>
-  <path d="M258,108 A42,6 0 0 0 342,108 A30,4 0 0 1 258,108 Z" fill="#2e2c28"/>
-  <ellipse cx="300" cy="108" rx="24" ry="3" fill="#3e3c38"/>
-  <path d="M255,106 l-14,-3 M345,107 l13,-3 M300,99 l3,-5" stroke="#9a9890" stroke-width="1.2" opacity="0.5" fill="none"/>
+<rect x="0" y="0" width="500" height="260" fill="url(#m5PaneMist)"/>
+<!-- the fogged pane sits 20 left of where it was (position only), so the
+     glowing clue stands clear of the figure's head -->
+<g transform="translate(-20,50)">
+<ellipse cx="172" cy="97" rx="66" ry="27" fill="url(#m5Fog)"/>
+<g fill="#e8eef0" opacity="0.32">
+  <circle cx="112" cy="90" r="0.9"/><circle cx="118" cy="108" r="0.7"/><circle cx="128" cy="78" r="0.8"/>
+  <circle cx="214" cy="76" r="0.7"/><circle cx="230" cy="94" r="0.9"/><circle cx="224" cy="112" r="0.6"/>
+  <circle cx="150" cy="120" r="0.7"/><circle cx="196" cy="121" r="0.8"/><circle cx="106" cy="100" r="0.6"/>
+  <circle cx="172" cy="72" r="0.6"/><circle cx="236" cy="104" r="0.5"/><circle cx="140" cy="73" r="0.5"/>
 </g>
-<g opacity="0.22">
-  <ellipse cx="130" cy="112" rx="26" ry="5" fill="#8f8d84"/>
-  <ellipse cx="130" cy="112" rx="22" ry="3.5" fill="#4e4c46"/>
-  <path d="M108,112 A22,3.5 0 0 1 152,112 A15,2 0 0 0 108,112 Z" fill="#a8a69c"/>
-  <path d="M108,112 A22,3.5 0 0 0 152,112 A15,2 0 0 1 108,112 Z" fill="#2e2c28"/>
+<!-- drips, each a thin run ending in a bead -->
+<g stroke="#e8eef0" stroke-width="0.6" opacity="0.28" fill="none" stroke-linecap="round">
+  <path d="M138,115 L138.4,124"/><path d="M161,119 L161.2,126"/><path d="M203,117 L203.6,127"/><path d="M219,112 L219.3,119"/>
 </g>
-<path d="M420,104 L430,98 L442,103 L438,110 L424,110 Z" fill="#7a7870" opacity="0.24"/>
-<path d="M420,104 L430,98 L436,102 L426,108 Z" fill="#a8a69c" opacity="0.16"/>
-<!-- Glazing ribs on the dome wall -->
-<path d="M120,0 Q116,58 118,92 M250,0 L250,86 M380,0 Q384,58 382,92" stroke="#d4d0c0" stroke-width="0.4" opacity="0.1" fill="none"/>
-<path d="M0,58 Q250,36 500,58" stroke="#d4d0c0" stroke-width="0.4" opacity="0.08" fill="none"/>
-<!-- Floor, running back to the dome wall with converging boards -->
-<path d="M0,150 Q250,138 500,150 L500,260 L0,260 Z" fill="#2a2418"/>
-<path d="M0,150 Q250,138 500,150 Q250,144 0,156 Z" fill="#3d3422" opacity="0.8"/>
-<path d="M0,152 Q250,140 500,152" stroke="#4a3c26" stroke-width="0.8" opacity="0.5" fill="none"/>
-<path d="M60,145 Q46,200 24,260 M158,142 Q152,198 142,260 M250,140 L250,260 M342,142 Q348,198 358,260 M440,145 Q454,200 476,260" stroke="#211b11" stroke-width="0.8" opacity="0.5" fill="none"/>
-<path d="M0,180 Q250,168 500,180 M0,222 Q250,208 500,222" stroke="#211b11" stroke-width="0.7" opacity="0.35" fill="none"/>
+<g fill="#e8eef0" opacity="0.36">
+  <circle cx="138.4" cy="124.6" r="0.9"/><circle cx="161.2" cy="126.5" r="0.8"/><circle cx="203.6" cy="127.6" r="0.9"/><circle cx="219.3" cy="119.6" r="0.7"/>
+</g>
+<!-- the fingertip's wipe under the clue, clear glass where the mist is gone -->
+<path d="M130,110 Q172,114 214,108" stroke="#0e1018" stroke-width="2" opacity="0.35" fill="none" stroke-linecap="round"/>
 <!-- ====================================================================
-     THE BOULDER. moon_3 has a dressed block; this one is a rounder field
-     specimen, split open along one plane so the fresh interior is the pale
-     face that carries the clue. Same faceted construction, same light from
-     high right, same cast shadow down and to the left.
-     ==================================================================== -->
-<path d="M132,214 Q168,203 234,203 Q294,204 330,211 Q292,224 214,224 Q148,222 132,214 Z" fill="#161208" opacity="0.65"/>
-<path d="M144,211 Q182,203 238,204 Q288,205 314,209 Q276,218 208,218 Q156,216 144,211 Z" fill="#100c06" opacity="0.5"/>
-<!-- back mass, in shade -->
-<path d="M158,158 L184,142 L232,136 L296,140 L336,156 L332,190 L162,190 Z" fill="#3a3831"/>
-<!-- the weathered upper planes, catching the light -->
-<path d="M158,158 L184,142 L232,136 L296,140 L336,156 L342,164 L296,166 L200,166 L156,162 Z" fill="#8f8d84"/>
-<path d="M232,136 L296,140 L336,156 L292,157 L236,152 Z" fill="#b2b0a6" opacity="0.7"/>
-<path d="M184,142 L232,136 L236,152 L200,166 L156,162 L158,158 Z" fill="#76746c"/>
-<path d="M184,142 L232,136 L226,146 L192,150 Z" fill="#a2a096" opacity="0.5"/>
-<!-- the split face, freshly broken, so it is the palest plane on the rock -->
-<path d="M156,162 L200,166 L296,166 L342,164 L338,194 L312,201 L192,200 L162,192 Z" fill="#78766e"/>
-<path d="M156,162 L200,166 L296,166 L342,164 L342,167.6 L296,169.6 L200,169.6 L156,165.6 Z" fill="#adaba1" opacity="0.7"/>
-<!-- sunward end, brightest -->
-<path d="M306,166 L342,164 L338,194 L312,201 L302,169 Z" fill="#94928a"/>
-<path d="M326,165 L342,164 L338,194 L326,198 Z" fill="#a8a69c" opacity="0.7"/>
-<!-- shaded end, on the opposite side -->
-<path d="M156,162 L200,166 L204,200 L162,192 Z" fill="#4a4841"/>
-<path d="M156,162 L172,164 L176,196 L162,192 Z" fill="#3c3a34"/>
-<!-- bottom plane, where it meets the dust -->
-<path d="M162,192 L192,200 L312,201 L338,194 L340,203 L310,208 L190,207 L160,200 Z" fill="#2e2c27"/>
-<!-- the split line, and conchoidal fracture rings out from the break -->
-<path d="M200,166 Q206,180 202,200" stroke="#4a4841" stroke-width="1.1" opacity="0.6" fill="none"/>
-<path d="M212,170 Q220,182 214,198 M226,171 Q236,183 230,199" stroke="#5e5c55" stroke-width="0.7" opacity="0.45" fill="none"/>
-<path d="M256,168 L282,170 L286,188 L260,186 Z" fill="#66645d" opacity="0.4"/>
-<path d="M286,188 L282,170 L300,172 L302,190 Z" fill="#84827a" opacity="0.35"/>
-<path d="M176,170 L192,174 L188,192 L174,188 Z" fill="#585650" opacity="0.4"/>
-<!-- pits in the weathered top, tiny craters on a lunar rock -->
-<ellipse cx="248" cy="150" rx="6" ry="2" fill="#5e5c55" opacity="0.5"/>
-<path d="M242,150 A6,2 0 0 1 254,150 A4,1.2 0 0 0 242,150 Z" fill="#b2b0a6" opacity="0.45"/>
-<ellipse cx="278" cy="155" rx="4.5" ry="1.6" fill="#5e5c55" opacity="0.45"/>
-<path d="M273.5,155 A4.5,1.6 0 0 1 282.5,155 A3,1 0 0 0 273.5,155 Z" fill="#b2b0a6" opacity="0.4"/>
-<ellipse cx="206" cy="155" rx="5" ry="1.8" fill="#5e5c55" opacity="0.45"/>
-<path d="M201,155 A5,1.8 0 0 1 211,155 A3.4,1.1 0 0 0 201,155 Z" fill="#a2a096" opacity="0.4"/>
-<!-- chipped corners -->
-<path d="M338,194 L340,203 L326,200 Z" fill="#adaba1" opacity="0.35"/>
-<path d="M232,136 L246,138 L238,143 Z" fill="#c2c0b6" opacity="0.4"/>
-<!-- flakes knocked off the boulder, lying where they fell -->
-<path d="M348,200 L358,196 L366,201 L360,207 L350,206 Z" fill="#5e5c55"/>
-<path d="M348,200 L358,196 L362,199 L352,204 Z" fill="#8f8d84" opacity="0.55"/>
-<path d="M118,206 L128,201 L138,206 L132,212 L120,211 Z" fill="#54524b"/>
-<path d="M118,206 L128,201 L133,204 L122,209 Z" fill="#7e7c74" opacity="0.5"/>
-<!-- ====================================================================
-     THE CLUE, cut into the split face and glowing. A sunk letter reads by the
-     shadow that sits below and left of it, so a dark ghost goes down first.
+     THE CLUE, traced through the mist. The wiped strokes read darker than
+     the fog around them, so a dark ghost goes down first.
      ==================================================================== -->
 <g opacity="0.5">
-  <text x="250.8" y="182" text-anchor="middle" fill="#2a2820" font-family="'Fredoka One',cursive" font-size="9" letter-spacing="0.5">Lunar feature from</text>
-  <text x="250.8" y="193" text-anchor="middle" fill="#2a2820" font-family="'Fredoka One',cursive" font-size="9" letter-spacing="0.5">confused tracer (6)</text>
+  <text x="172.8" y="93" text-anchor="middle" fill="#2a2820" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="0">Lunar feature from</text>
+  <text x="172.8" y="104" text-anchor="middle" fill="#2a2820" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="0">confused tracer (6)</text>
 </g>
 <g filter="url(#m5TextGlow)">
-  <text x="250" y="181" text-anchor="middle" fill="#ffe880" font-family="'Fredoka One',cursive" font-size="9" opacity="0.85" letter-spacing="0.5">Lunar feature from</text>
-  <text x="250" y="192" text-anchor="middle" fill="#ffe880" font-family="'Fredoka One',cursive" font-size="9" opacity="0.85" letter-spacing="0.5">confused tracer (6)</text>
+  <text x="172" y="92" text-anchor="middle" fill="#ffe880" font-family="'JetBrains Mono',monospace" font-size="8" opacity="0.85" letter-spacing="0">Lunar feature from</text>
+  <text x="172" y="103" text-anchor="middle" fill="#ffe880" font-family="'JetBrains Mono',monospace" font-size="8" opacity="0.85" letter-spacing="0">confused tracer (6)</text>
 </g>
-<ellipse cx="250" cy="184" rx="85" ry="24" fill="url(#m5ClueGlow)">
+<ellipse cx="172" cy="97" rx="72" ry="22" fill="url(#m5ClueGlow)">
   <animate attributeName="opacity" values="0.6;1;0.6" dur="4.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </ellipse>
+</g>
+<!-- ====================================================================
+     THE DESK, the same object as moon_2, framed at the left edge by the
+     close camera (the shell's 1.25 about the deck), one grid on its top.
+     ==================================================================== -->
+<g transform="translate(0,250) scale(1.25) translate(-250,-250)">
+${MOON_DESK}
+<g transform="translate(110,0)">
+${MOON_DESK_GRID}
+</g>
+</g>
 <!-- ====================================================================
      A SURVEY CHART pinned to the dome rib on the right, showing the crater
      field with its rims drawn. The papers were blank rects on the floor.
      ==================================================================== -->
 <g>
-  <path d="M382,140 L456,136 L460,196 L384,199 Z" fill="#bdb8a8" opacity="0.45"/>
-  <path d="M382,140 L456,136 L456.4,138 L382.1,142 Z" fill="#d8d2c2" opacity="0.3"/>
-  <path d="M456,136 L460,196 L452,192 L452,138 Z" fill="#b0aa9a" opacity="0.45"/>
+  <ellipse cx="421" cy="199" rx="42" ry="3" fill="#141009" opacity="0.45"/>
+  <path d="M382,140 L456,136 L460,196 L384,199 Z" fill="#8a867a"/>
+  <path d="M382,140 L456,136 L456.4,138 L382.1,142 Z" fill="#a8a294" opacity="0.6"/>
+  <path d="M456,136 L460,196 L452,192 L452,138 Z" fill="#7c786c"/>
   <g opacity="0.55">
     <ellipse cx="412" cy="158" rx="14" ry="5" fill="none" stroke="#5a564c" stroke-width="0.7"/>
     <path d="M398,158 A14,5 0 0 1 426,158" stroke="#3a3630" stroke-width="1.1" fill="none"/>
@@ -976,187 +804,70 @@ STORY_SCENES['moon_5'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <circle cx="419" cy="138.4" r="1.4" fill="#8a8880"/>
   <path d="M384,199 Q392,194 396,186 Q394,196 390,200 Z" fill="#b0aa9a" opacity="0.5"/>
 </g>
+<!-- Mark right under the pane, turned to it, his fingertip on the glass at
+     the end of the streak it has wiped down from the last word. moon_1's
+     height under the close camera.
+     First the streak, wiped clear through the mist from the clue to his finger,
+     drawn before him so his fingertip lies over its end -->
+<path d="M219,156 Q217.5,163 216,170" stroke="#0e1018" stroke-width="3" opacity="0.14" fill="none" stroke-linecap="round"/>
+<path d="M220.8,156 Q219.4,163 218,170 M217.2,156 Q215.7,163 214.2,170" stroke="#e8eef0" stroke-width="0.45" opacity="0.3" fill="none" stroke-linecap="round"/>
+${moonMark('explain', 240, 230, MOON_MARK_H * 1.25, true, 4.3, 0.8)}
 <!-- ====================================================================
-     A CRATE and a rock hammer at the left, so the boulder arrived from
-     somewhere. A workshop reads by work in progress.
+     THE CEILING LAMP, the shared one, hung under the same close camera as
+     the shell so its drop matches moon_2. No cone: nothing below it.
      ==================================================================== -->
-<g>
-  <ellipse cx="76" cy="212" rx="34" ry="5" fill="#141009" opacity="0.45"/>
-  <path d="M46,178 L70,172 L106,176 L104,206 L74,211 L48,206 Z" fill="#4a3820"/>
-  <path d="M46,178 L70,172 L106,176 L74,182 Z" fill="#6a5330"/>
-  <path d="M74,182 L106,176 L104,206 L74,211 Z" fill="#3a2c18"/>
-  <path d="M46,178 L74,182 L74,211 L48,206 Z" fill="#57421f"/>
-  <path d="M52,186 L70,189 M52,194 L70,197 M52,202 L70,204" stroke="#33260f" stroke-width="0.8" opacity="0.6" fill="none"/>
-  <path d="M80,183 L102,179 M80,192 L102,188 M80,201 L102,197" stroke="#291f10" stroke-width="0.8" opacity="0.6" fill="none"/>
-  <!-- rock samples in the crate -->
-  <path d="M76,170 L86,165 L96,170 L92,176 L80,176 Z" fill="#6f6d65"/>
-  <path d="M76,170 L86,165 L91,168 L80,174 Z" fill="#9a988e" opacity="0.6"/>
-  <path d="M56,172 L64,168 L72,173 L68,178 L58,177 Z" fill="#5e5c55"/>
-  <path d="M56,172 L64,168 L68,171 L60,175 Z" fill="#8a8880" opacity="0.55"/>
+<g transform="${MOON_CLOSE_CAM}">
+${MOON_LAMP_BODY}
 </g>
-<!-- rock hammer leaning on the crate, where a hand left it -->
-<path d="M108,206 Q116,190 122,176" stroke="#7a5a34" stroke-width="2" stroke-linecap="round" fill="none"/>
-<path d="M116,178 L128,171 L132,176 L126,181 Z" fill="#8a8880"/>
-<path d="M116,178 L128,171 L130,173.6 L118,180 Z" fill="#b0aea4" opacity="0.6"/>
-<path d="M126,181 L132,176 L137,180 L131,183 Z" fill="#6a6860"/>
-<!-- ====================================================================
-     A WORK LIGHT on the dome rib, aimed at the split face. The glow on the
-     rock has to come from somewhere.
-     ==================================================================== -->
-<path d="M250,86 L250,112" stroke="#5a5348" stroke-width="0.8" opacity="0.55" fill="none"/>
-<path d="M238,124 Q242,110 250,110 Q258,110 262,124 Z" fill="#4a4030"/>
-<path d="M238,124 Q242,110 250,110 Q246,114 244,124 Z" fill="#6a5c44" opacity="0.7"/>
-<path d="M238,124 Q250,127.5 262,124 Q250,126 238,124 Z" fill="#ffe880" opacity="0.5"/>
-<circle cx="250" cy="126" r="3" fill="#ffe880" opacity="0.45">
-  <animate attributeName="opacity" values="0.32;0.5;0.32" dur="5.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<circle cx="250" cy="126" r="18" fill="#ffe880" opacity="0.045"/>
-<path d="M240,126 Q196,146 168,158 Q210,152 250,128 Q290,152 336,158 Q308,146 260,126 Z" fill="#ffe880" opacity="0.045"/>
 </svg>`;
 
 // Scene 6: Mark's final test (the eclipse clue), warm desk scene
 STORY_SCENES['moon_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <linearGradient id="m6DomeBg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#0a0c14"/><stop offset="100%" stop-color="#1e1a12"/>
-  </linearGradient>
-  <radialGradient id="m6WarmLight" cx="50%" cy="48%" r="56%">
-    <stop offset="0%" stop-color="#ffe880" stop-opacity="0.17"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="m6Floor" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#443724"/><stop offset="100%" stop-color="#261f14"/>
-  </linearGradient>
-</defs>
-<rect width="500" height="260" fill="url(#m6DomeBg)"/>
-<!-- Dome glass arch -->
-<path d="M30,250 Q30,30 250,20 Q470,30 470,250" fill="none" stroke="#d4d0c0" stroke-width="1.5" opacity="0.35"/>
-<path d="M50,250 Q50,50 250,40 Q450,50 450,250" fill="none" stroke="#d4d0c0" stroke-width="0.5" opacity="0.15"/>
-<path d="M250,20 L250,250 M160,26 Q152,140 150,250 M340,26 Q348,140 350,250 M85,55 Q66,150 62,250 M415,55 Q434,150 438,250" stroke="#d4d0c0" stroke-width="0.4" opacity="0.11" fill="none"/>
-<path d="M44,118 Q250,94 456,118" stroke="#d4d0c0" stroke-width="0.4" opacity="0.1" fill="none"/>
-<!-- Stars visible through dome -->
-<g fill="#f4f2ee" opacity="0.4">
-  <circle cx="80" cy="50" r="0.6"/><circle cx="140" cy="35" r="0.8"/><circle cx="200" cy="45" r="0.5"/>
-  <circle cx="260" cy="30" r="0.7"/><circle cx="320" cy="42" r="0.6"/><circle cx="380" cy="38" r="0.8"/>
-  <circle cx="420" cy="55" r="0.5"/><circle cx="110" cy="70" r="0.4"/><circle cx="350" cy="65" r="0.5"/>
-  <circle cx="180" cy="60" r="0.3"/><circle cx="300" cy="55" r="0.6"/><circle cx="430" cy="75" r="0.4"/>
-</g>
-<!-- Earth through dome, larger and warmer for the approval beat -->
-<circle cx="380" cy="48" r="12" fill="#1a4a6a" opacity="0.55"/>
-<path d="M374,42 Q379,46 376,52 Q382,56 387,48 Q384,43 378,41" fill="#2a8a5a" opacity="0.3"/>
-<circle cx="380" cy="48" r="12" fill="none" stroke="#6abaee" stroke-width="0.4" opacity="0.2"/>
-<!-- Warm glow overlay, stronger for approval -->
-<rect x="0" y="0" width="500" height="260" fill="url(#m6WarmLight)"/>
-<!-- Floor -->
-<path d="M36,250 Q42,206 90,201 Q250,190 410,201 Q458,206 464,250 Z" fill="url(#m6Floor)"/>
-<path d="M36,250 Q42,206 90,201 Q250,190 410,201 Q458,206 464,250 Z" fill="none" stroke="#54432b" stroke-width="0.8" opacity="0.5"/>
-<path d="M92,202 Q88,225 82,250 M170,197 Q168,223 164,250 M250,195 L250,250 M330,197 Q332,223 336,250 M408,202 Q412,225 418,250" stroke="#281f14" stroke-width="0.7" opacity="0.5" fill="none"/>
-<path d="M48,222 Q250,210 452,222" stroke="#281f14" stroke-width="0.6" opacity="0.38" fill="none"/>
-<!-- ====================================================================
-     BOOKSHELVES, the same two cases as moon_2. Carcass with a back panel,
-     shelf boards, a plinth on the deck, and books that vary in width and
-     height with one or two leaning into their neighbours.
-     ==================================================================== -->
-<g>
-  <path d="M58,94 L88,97 L88,204 L58,201 Z" fill="#3b2c12"/>
-  <path d="M58,94 L88,97 L88,102 L58,99 Z" fill="#66502c" opacity="0.85"/>
-  <path d="M58,94 L62,94.4 L62,201.4 L58,201 Z" fill="#7a6038" opacity="0.55"/>
-  <path d="M84,96.6 L88,97 L88,204 L84,203.6 Z" fill="#281d0d" opacity="0.8"/>
-  <path d="M60,118 L87,120 L87,122 L60,120 Z" fill="#66502c"/>
-  <path d="M60,144 L87,146 L87,148 L60,146 Z" fill="#66502c"/>
-  <path d="M60,170 L87,172 L87,174 L60,172 Z" fill="#66502c"/>
-  <path d="M59,194 L88,196 L88,199 L59,197 Z" fill="#4a3820"/>
-  <path d="M62,103 L66,103.3 L66,118.3 L62,118 Z" fill="#8a6040"/>
-  <path d="M66.5,101 L69.5,101.2 L69.5,118.4 L66.5,118.2 Z" fill="#6a8050"/>
-  <path d="M70,104 L75,104.3 L75,118.6 L70,118.3 Z" fill="#8a5040"/>
-  <path d="M75.5,102 L78,102.2 L78,118.7 L75.5,118.5 Z" fill="#5a6a80"/>
-  <path d="M79,106 L85,114 L85,119 L79,119 Z" fill="#8a7040"/>
-  <path d="M62,130 L67,130.3 L67,144.4 L62,144.1 Z" fill="#5a6a80"/>
-  <path d="M67.5,127 L70,127.2 L70,144.5 L67.5,144.3 Z" fill="#8a7040"/>
-  <path d="M70.5,131 L76,131.4 L76,144.7 L70.5,144.4 Z" fill="#6a5060"/>
-  <path d="M77,129 L81,129.2 L81,144.9 L77,144.6 Z" fill="#8a6040"/>
-  <path d="M82,132 L86,132.3 L86,145 L82,144.8 Z" fill="#4a6a5a"/>
-  <path d="M62,156 L65,156.2 L65,170.4 L62,170.2 Z" fill="#6a8050"/>
-  <path d="M65.5,153 L71,153.4 L71,170.6 L65.5,170.3 Z" fill="#8a5040"/>
-  <path d="M71.5,157 L74,157.2 L74,170.7 L71.5,170.5 Z" fill="#5a6a80"/>
-  <path d="M75,154 L79,154.3 L79,170.9 L75,170.6 Z" fill="#8a7040"/>
-  <path d="M80,159 L86,166 L86,171.1 L80,171 Z" fill="#6a5060"/>
-  <path d="M62,188 L82,189.3 L82,192 L62,190.7 Z" fill="#8a6040" opacity="0.85"/>
-  <path d="M63,182 L79,183 L79,186 L63,185 Z" fill="#5a6a80" opacity="0.8"/>
-</g>
-<g>
-  <path d="M442,94 L412,97 L412,204 L442,201 Z" fill="#3b2c12"/>
-  <path d="M442,94 L412,97 L412,102 L442,99 Z" fill="#66502c" opacity="0.85"/>
-  <path d="M438,95 L442,94 L442,201 L438,202 Z" fill="#281d0d" opacity="0.7"/>
-  <path d="M412,97 L416,96.5 L416,203 L412,204 Z" fill="#7a6038" opacity="0.45"/>
-  <path d="M413,120 L440,118 L440,120 L413,122 Z" fill="#66502c"/>
-  <path d="M413,146 L440,144 L440,146 L413,148 Z" fill="#66502c"/>
-  <path d="M413,172 L440,170 L440,172 L413,174 Z" fill="#66502c"/>
-  <path d="M412,196 L441,194 L441,197 L412,199 Z" fill="#4a3820"/>
-  <path d="M415,104 L419,103.7 L419,119.7 L415,120 Z" fill="#6a8050"/>
-  <path d="M419.5,101 L423,100.8 L423,119.4 L419.5,119.6 Z" fill="#8a5040"/>
-  <path d="M424,105 L429,104.6 L429,119.1 L424,119.4 Z" fill="#5a6a80"/>
-  <path d="M429.5,102 L433,101.8 L433,118.9 L429.5,119.1 Z" fill="#8a7040"/>
-  <path d="M434,107 L438,106.7 L438,118.7 L434,118.9 Z" fill="#8a6040"/>
-  <path d="M415,131 L420,130.6 L420,145.7 L415,146 Z" fill="#8a5040"/>
-  <path d="M420.5,128 L423,127.8 L423,145.4 L420.5,145.6 Z" fill="#5a6a80"/>
-  <path d="M424,132 L430,131.5 L430,145.1 L424,145.4 Z" fill="#8a7040"/>
-  <path d="M431,129 L435,128.7 L435,144.9 L431,145.1 Z" fill="#6a5060"/>
-  <path d="M436,134 L439,133.7 L439,144.8 L436,144.9 Z" fill="#6a8050"/>
-  <path d="M415,157 L418,156.7 L418,171.7 L415,172 Z" fill="#8a6040"/>
-  <path d="M419,154 L424,153.6 L424,171.4 L419,171.7 Z" fill="#6a8050"/>
-  <path d="M425,158 L430,157.6 L430,171.1 L425,171.4 Z" fill="#8a5040"/>
-  <path d="M431,155 L436,154.6 L436,170.8 L431,171.1 Z" fill="#5a6a80"/>
-  <!-- the finished puzzles, filed on the bottom shelf. This is the shelf that
-       carries the beat: the work is done and put away. -->
+<!-- Mark's dome from inside, the shared shell. Earth stays the same small
+     disc as moon_2 to moon_5 (r10); only the light is warmer for the
+     approval beat. The building itself does not change. -->
+${moonDomeRoom('m6', { earth: [400, 45, 10, 0.55], bg: '#1e1a12' })}
+${moonDomeShell('m6', { light: [50, 48, 56, 0.17], floor: ['#443724', '#261f14'], sconce: 0.28 })}
+<!-- The study as moon_2 lays it out: the same cases and armchair -->
+${MOON_SHELVES_CHAIR}
+<!-- the finished puzzles, filed on the right case's bottom shelf over the
+     books lying there. This is the shelf that carries the beat: the work is
+     done and put away. -->
+<g transform="translate(82.5,61) scale(0.75)">
   <path d="M414,182 L438,180.4 L438,188.4 L414,190 Z" fill="#ddd6c2" opacity="0.75"/>
   <path d="M414,182 L438,180.4 L438,181.8 L414,183.4 Z" fill="#f0eadb" opacity="0.5"/>
   <path d="M418,183.4 L418,189.7 M422,183.1 L422,189.4 M426,182.8 L426,189.1 M430,182.5 L430,188.8 M434,182.2 L434,188.5" stroke="#a09a8a" stroke-width="0.4" opacity="0.5" fill="none"/>
 </g>
-<path d="M54,203 Q72,199 92,203 Q72,208 54,203 Z" fill="#1c1508" opacity="0.5"/>
-<path d="M408,203 Q426,199 446,203 Q426,208 408,203 Z" fill="#1c1508" opacity="0.5"/>
+<!-- Mark behind the desk, reaching across it toward the card he has just
+     slid out of the drawer. Same height and deck line as moon_1. -->
+${moonMark('welcome', 200, MOON_MARK_FLOOR, MOON_MARK_H, true, 4.5, 0.3)}
+${MOON_DESK}
+<!-- moon_6's own drawer, card, grids, pen and mug, seated on the shared desk -->
+<g transform="translate(0,2)">
 <!-- ====================================================================
-     ARMCHAIR, pushed back from the desk and turned away from it: the beat is
-     that the work is finished, so nobody is sitting at it any more.
+     THE DRAWER, pulled open: the dark slot it came out of, the drawer box
+     sliding toward us with its sides showing, the cards still filed inside,
+     and the front, lower and a touch wider because it is nearer.
      ==================================================================== -->
 <g>
-  <ellipse cx="140" cy="220" rx="30" ry="5" fill="#1c1508" opacity="0.5"/>
-  <path d="M118,212 Q112,166 122,156 Q140,148 158,156 Q168,166 162,212 Z" fill="#553320"/>
-  <path d="M123,206 Q118,170 128,162 Q140,156 152,162 Q162,170 157,206 Z" fill="#6a422a"/>
-  <path d="M129,201 Q126,174 133,167 Q140,163 147,167 Q154,174 151,201 Z" fill="#7a533e" opacity="0.75"/>
-  <path d="M136,168 Q139,184 137,199 M148,168 Q145,184 147,199" stroke="#5f402f" stroke-width="0.7" opacity="0.5" fill="none"/>
-  <circle cx="134" cy="174" r="0.9" fill="#452818" opacity="0.6"/>
-  <circle cx="141" cy="172.6" r="0.9" fill="#452818" opacity="0.6"/>
-  <circle cx="148" cy="174" r="0.9" fill="#452818" opacity="0.6"/>
-  <path d="M112,212 Q107,188 114,182 Q123,178 127,186 L127,212 Z" fill="#4a2818"/>
-  <path d="M112,190 Q112,182 120,181 Q127,182 127,190 Q120,194 112,190 Z" fill="#6f4732"/>
-  <path d="M168,212 Q173,188 166,182 Q157,178 153,186 L153,212 Z" fill="#432616"/>
-  <path d="M153,190 Q153,182 161,181 Q168,182 168,190 Q161,194 153,190 Z" fill="#603c28"/>
-  <path d="M116,194 Q140,187 164,194 Q167,204 160,207 Q140,211 120,207 Q113,204 116,194 Z" fill="#7d5942"/>
-  <path d="M116,194 Q140,187 164,194 Q140,199 116,194 Z" fill="#94694e" opacity="0.7"/>
-  <path d="M120,211 L124,211 L125,220 L120,220 Z" fill="#33200f"/>
-  <path d="M155,211 L159,211 L158,220 L153,220 Z" fill="#33200f"/>
-  <path d="M130,210 L133,210 L133,217 L130,217 Z" fill="#2a1a0c" opacity="0.7"/>
+  <path d="M188,186 L246,186 L246,195 L188,195 Z" fill="#1a1208"/>
+  <path d="M188,195 L186,201 L186,203 L188,197 Z M246,195 L248,201 L248,203 L246,197 Z" fill="#3b2c12"/>
+  <path d="M188,190 L246,190 L248,197 L186,197 Z" fill="#2a1e0e"/>
+  <path d="M192,190.6 L210,190.6 L211,194 L191.6,194 Z M213,190.4 L232,190.4 L232.8,193.8 L213.4,193.8 Z" fill="#d8cfb4" opacity="0.55"/>
+  <path d="M186,197 L248,197 L248,206 L186,206 Z" fill="#48331a"/>
+  <path d="M186,197 L248,197 L248,198.6 L186,198.6 Z" fill="#7a6038" opacity="0.55"/>
+  <path d="M214,201 Q220,200 220,202 Q220,204 214,203 Z" fill="#a8967a" opacity="0.85"/>
 </g>
 <!-- ====================================================================
-     DESK, legs first then the top so the top overlaps them. Moulded lip,
-     kneehole with a drawer, turned front legs, stretcher.
+     THE CARD he kept for visitors, slid across the desk toward us by the
+     open drawer: thin, blank, lying flat and foreshortened, turned a few
+     degrees, its front edge just over the lip, corners worn round.
      ==================================================================== -->
 <g>
-  <ellipse cx="250" cy="217" rx="98" ry="5" fill="#1c1508" opacity="0.45"/>
-  <path d="M186,184 L190,184 L189,212 L186,212 Z" fill="#3b2c12"/>
-  <path d="M310,184 L314,184 L313,212 L310,212 Z" fill="#3b2c12"/>
-  <path d="M170,186 L178,186 L177,194 Q180,197 177,200 L176,214 L169,214 L168,200 Q165,197 168,194 Z" fill="#5a4527"/>
-  <path d="M170,186 L173,186 L172,214 L169,214 Z" fill="#7a6038" opacity="0.5"/>
-  <path d="M322,186 L330,186 L331,194 Q334,197 331,200 L332,214 L325,214 L324,200 Q321,197 324,194 Z" fill="#5a4527"/>
-  <path d="M327,186 L330,186 L331,214 L328,214 Z" fill="#33260f" opacity="0.6"/>
-  <path d="M176,204 L324,204 L324,207 L176,207 Z" fill="#48331a"/>
-  <path d="M182,184 L318,184 L318,197 L182,197 Z" fill="#5a4527"/>
-  <path d="M188,186 L246,186 L246,195 L188,195 Z" fill="#48331a"/>
-  <path d="M188,186 L246,186 L246,188 L188,188 Z" fill="#7a6038" opacity="0.4"/>
-  <path d="M214,190 Q220,189 220,191 Q220,193 214,192 Z" fill="#a8967a" opacity="0.8"/>
-  <path d="M156,178 Q250,174 344,178 L346,182 Q250,178 154,182 Z" fill="#7a6038"/>
-  <path d="M154,182 Q250,178 346,182 L346,186 Q250,182 154,186 Z" fill="#5a4527"/>
-  <path d="M158,179 Q250,175.5 342,179 Q250,177 158,179 Z" fill="#a08048" opacity="0.5"/>
+  <path d="M175.4,183.9 L199,182.2 L198.6,184.6 L175.8,186.4 Z" fill="#1c1508" opacity="0.3"/>
+  <path d="M173,178.5 L196.2,176.9 Q197.2,176.9 197.4,177.6 L198.4,181.2 Q198.6,182 197.6,182.1 L175,183.6 Q174,183.7 173.8,182.9 L172.2,179.3 Q172.1,178.6 173,178.5 Z" fill="#efe6cc"/>
+  <path d="M173,178.5 L196.2,176.9 Q197.2,176.9 197.4,177.6 L197.6,178.3 L172.5,180 L172.2,179.3 Q172.1,178.6 173,178.5 Z" fill="#f7f0dc" opacity="0.7"/>
+  <path d="M174.4,183.6 L197.9,182 L197.9,182.9 L174.6,184.5 Z" fill="#b8a682" opacity="0.85"/>
 </g>
 <!-- ====================================================================
      THE SOLVED GRIDS, squared up in a neat stack instead of scattered. Every
@@ -1214,39 +925,26 @@ STORY_SCENES['moon_6'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
     <animate attributeName="opacity" values="0;0.7;0" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
   </path>
 </g>
-<!-- ====================================================================
-     THE LAMP hangs plumb from the dome apex, brighter than in the other
-     interiors because this is the beat where the light goes up.
-     ==================================================================== -->
-<path d="M250,20 L250,66" stroke="#5a5348" stroke-width="0.7" opacity="0.6" fill="none"/>
-<path d="M234,80 Q239,64 250,64 Q261,64 266,80 Z" fill="#54492f"/>
-<path d="M234,80 Q239,64 250,64 Q245,68 242,80 Z" fill="#7a6a4a" opacity="0.7"/>
-<path d="M234,80 Q250,85 266,80 Q250,83 234,80 Z" fill="#ffe880" opacity="0.6"/>
-<circle cx="250" cy="82" r="4" fill="#ffe880" opacity="0.6">
-  <animate attributeName="opacity" values="0.48;0.7;0.48" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+</g>
+<!-- The shared lamp, then the lit state laid over it: this is the beat where
+     the light goes up, so the bulb and the pool on the desk brighten. -->
+${MOON_CEILING_LAMP}
+<circle cx="250" cy="82" r="2.2" fill="#fff4c0" opacity="0.5">
+  <animate attributeName="opacity" values="0.38;0.62;0.38" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
 </circle>
-<circle cx="250" cy="82" r="18" fill="#ffe880" opacity="0.09"/>
-<!-- the pool the lamp throws on the desk, which is why the grids read -->
-<path d="M186,176 Q250,164 314,176 Q250,190 186,176 Z" fill="#ffe880" opacity="0.08"/>
-<!-- Wall sconces on the shell ribs, warmer than in moon_4 -->
-<path d="M84,140 Q90,133 96,140 Q90,144 84,140 Z" fill="#54492f"/>
-<circle cx="90" cy="139" r="3" fill="#ffe880" opacity="0.28">
-  <animate attributeName="opacity" values="0.2;0.34;0.2" dur="5.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<path d="M404,140 Q410,133 416,140 Q410,144 404,140 Z" fill="#54492f"/>
-<circle cx="410" cy="139" r="3" fill="#ffe880" opacity="0.28">
-  <animate attributeName="opacity" values="0.2;0.34;0.2" dur="6.1s" repeatCount="indefinite" begin="1.4s" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
+<path d="M190,178 Q250,166 310,178 Q250,190 190,178 Z" fill="#ffe880" opacity="0.04"/>
 </svg>`;
 
-// Scene 7: Complete — dome glows, farewell, Earth rising
+// Scene 7: Complete — dome glows, farewell, Bit Cryptic World over the horizon
 STORY_SCENES['moon_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="m7Sky" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#050810"/><stop offset="100%" stop-color="#0a0e18"/>
   </linearGradient>
-  <radialGradient id="m7EarthGlow" cx="50%" cy="55%" r="30%">
-    <stop offset="0%" stop-color="#4a8aba" stop-opacity="0.08"/><stop offset="100%" stop-color="#4a8aba" stop-opacity="0"/>
+  <!-- Earthshine halo, centred on the globe (330,82,r26) and sized off it:
+       faint from the limb out to 1.8 radii. -->
+  <radialGradient id="m7EarthGlow" gradientUnits="userSpaceOnUse" cx="330" cy="82" r="46.8">
+    <stop offset="0.55" stop-color="#4a8aba" stop-opacity="0.1"/><stop offset="1" stop-color="#4a8aba" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="m7DomeGlow" cx="22%" cy="76%" r="17%">
     <stop offset="0%" stop-color="#ffe880" stop-opacity="0.34"/><stop offset="100%" stop-color="#ffe880" stop-opacity="0"/>
@@ -1271,73 +969,17 @@ STORY_SCENES['moon_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <circle cx="462" cy="40" r="0.4"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.7s" repeatCount="indefinite" begin="0.8s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
 </g>
 <!-- ====================================================================
-     EARTH, rising over the horizon. The continents were five green blobs of
-     the same size and shape, which reads as camouflage rather than a planet.
-     A globe reads by RECOGNISABLE COASTLINE and by its curvature: the seams
-     between land and sea are irregular, the shapes shrink and lean toward the
-     limb, and the hemisphere away from the sun falls into shadow. The sun is
-     high right, matching every other moon scene, so the terminator is on the
-     lower left.
+     BIT CRYPTIC WORLD, hanging over the horizon: the same small blue disc
+     with its one island that every other moon scene shows, a little larger
+     here because it is the last look home, and still small enough to cover
+     with a thumb. The sun is high right, so the terminator falls lower left
+     and the atmosphere rim sits on the sunward limb. Halo first (behind the
+     disc), then the globe, limb shading and rim, all sized from one radius.
      ==================================================================== -->
-<circle cx="310" cy="100" r="65" fill="#123f60"/>
-<!-- deep ocean, with a lighter shelf where the light strikes the sunward face -->
-<path d="M310,35 A65,65 0 0,1 358,157 A65,65 0 0,0 310,35 Z" fill="#1f6a8c" opacity="0.45"/>
-<path d="M330,38 A65,65 0 0,1 372,86 A48,48 0 0,0 330,38 Z" fill="#358aa8" opacity="0.32"/>
-<!-- ====================================================================
-     THE LANDMASSES. They were five smooth blobs of one hue and one size,
-     which reads as camouflage. A COASTLINE READS BY ITS IRREGULARITY: bays
-     bitten into it, peninsulas thrown out, islands trailing off the ends.
-     The land is muted olive against the blue, because from orbit it is
-     nothing like the postcard green.
-     ==================================================================== -->
-<!-- Africa and Arabia, the big central mass. Wide north, tapering to a point -->
-<path d="M296,70 L304,66 L312,68 L320,64 L326,70 L324,76 L330,78 L328,86 L332,92 L328,100 L324,106 L320,116 L314,126 L308,132 L306,124 L304,114 L300,106 L298,96 L294,88 L296,80 L292,74 Z" fill="#4a7a4a" opacity="0.68"/>
-<path d="M296,70 L304,66 L312,68 L320,64 L326,70 L324,76 L316,74 L306,76 L298,74 Z" fill="#7a8a4e" opacity="0.42"/>
-<path d="M304,86 L316,84 L318,96 L310,104 L304,96 Z" fill="#8a7a52" opacity="0.32"/>
-<path d="M330,78 L338,74 L344,80 L340,86 L332,86 Z" fill="#4a7a4a" opacity="0.55"/>
-<path d="M338,74 L344,72 L346,76 L342,78 Z" fill="#6a7a48" opacity="0.4"/>
-<!-- Europe, small and broken with a peninsula and an island off the west -->
-<path d="M300,58 L308,54 L318,56 L324,60 L318,64 L308,62 L302,64 Z" fill="#4a7a4a" opacity="0.55"/>
-<path d="M292,56 L297,54 L298,58 L293,59 Z" fill="#4a7a4a" opacity="0.45"/>
-<!-- the Americas, leaning toward the left limb where the curve steepens.
-     Two masses joined by a thin isthmus, which is the shape that names them -->
-<path d="M258,64 L266,58 L276,60 L284,66 L282,74 L286,80 L280,84 L272,82 L266,86 L262,80 L264,72 L256,70 Z" fill="#41704a" opacity="0.58"/>
-<path d="M280,84 L285,88 L282,92 L278,90 Z" fill="#41704a" opacity="0.5"/>
-<path d="M278,92 L283,94 L281,98 L277,96 Z" fill="#41704a" opacity="0.45"/>
-<path d="M276,98 L284,100 L288,108 L286,118 L280,128 L274,124 L272,114 L274,104 Z" fill="#41704a" opacity="0.52"/>
-<path d="M276,102 L284,104 L286,112 L278,112 Z" fill="#2a8a5a" opacity="0.26"/>
-<path d="M264,60 L272,58 L276,62 L268,64 Z" fill="#6a7c4a" opacity="0.35"/>
-<!-- Asia, wide across the sunward shoulder with a coast bitten by two seas
-     and an island arc trailing off toward the limb -->
-<path d="M326,54 L336,48 L348,50 L358,54 L366,58 L372,66 L368,72 L360,70 L354,76 L346,74 L340,80 L332,76 L328,68 L330,60 Z" fill="#4a7a4a" opacity="0.62"/>
-<path d="M336,52 L348,52 L358,56 L364,62 L354,62 L344,58 L336,58 Z" fill="#8a7a52" opacity="0.34"/>
-<path d="M334,66 L344,66 L348,72 L338,74 Z" fill="#2a8a5a" opacity="0.24"/>
-<path d="M360,74 L367,76 L365,82 L359,80 Z" fill="#4a7a4a" opacity="0.5"/>
-<path d="M354,86 L360,86 L361,91 L355,91 Z" fill="#4a7a4a" opacity="0.44"/>
-<path d="M346,94 L351,94 L352,99 L347,99 Z" fill="#4a7a4a" opacity="0.38"/>
-<path d="M340,102 L344,102 L344,106 L340,106 Z" fill="#4a7a4a" opacity="0.32"/>
-<!-- Australia, low and near the terminator so it is barely lit -->
-<path d="M338,114 L348,110 L358,114 L360,120 L354,126 L344,126 L338,122 Z" fill="#7a6a44" opacity="0.34"/>
-<path d="M362,128 L366,126 L367,131 L363,132 Z" fill="#7a6a44" opacity="0.26"/>
-<!-- polar ice, a cap that follows the curve rather than a disc -->
-<path d="M286,42 Q310,34 336,42 Q310,50 286,42 Z" fill="#c8dce8" opacity="0.3"/>
-<path d="M282,152 Q310,144 340,152 Q310,162 282,152 Z" fill="#c8dce8" opacity="0.2"/>
-<!-- Cloud bands, curving with the sphere -->
-<path d="M252,84 Q272,72 302,74 Q334,78 356,68" fill="none" stroke="#e8f0f4" stroke-width="2.6" opacity="0.11"/>
-<path d="M250,106 Q276,98 306,102 Q338,108 362,98" fill="none" stroke="#e8f0f4" stroke-width="2" opacity="0.09"/>
-<path d="M264,132 Q292,122 320,128 Q342,132 356,124" fill="none" stroke="#e8f0f4" stroke-width="1.6" opacity="0.07"/>
-<path d="M272,58 Q296,48 322,52 Q340,56 350,50" fill="none" stroke="#e8f0f4" stroke-width="1.4" opacity="0.07"/>
-<!-- a cyclone, because a planet has weather -->
-<path d="M286,112 Q296,106 302,112 Q300,120 292,120 Q286,118 286,112 Z" fill="none" stroke="#e8f0f4" stroke-width="1.1" opacity="0.1"/>
-<path d="M290,113 Q296,110 298,114 Q296,117 292,116 Z" fill="none" stroke="#e8f0f4" stroke-width="0.8" opacity="0.08"/>
-<!-- the terminator, shading the hemisphere turned away from the sun -->
-<circle cx="310" cy="100" r="65" fill="url(#m7Limb)"/>
-<circle cx="310" cy="100" r="65" fill="url(#m7EarthGlow)"/>
-<!-- Atmosphere, a bright rim on the sunward limb fading around the dark side -->
-<path d="M310,35 A65,65 0 0,1 358,157" fill="none" stroke="#6abaee" stroke-width="2.4" opacity="0.26"/>
-<path d="M310,32.5 A67.5,67.5 0 0,1 360,159" fill="none" stroke="#6abaee" stroke-width="2.2" opacity="0.13"/>
-<path d="M310,30 A70,70 0 0,1 362,161" fill="none" stroke="#4a9ade" stroke-width="1.8" opacity="0.07"/>
-<path d="M310,27 A73,73 0 0,1 364,164" fill="none" stroke="#3a8ace" stroke-width="1.4" opacity="0.04"/>
+<circle cx="330" cy="82" r="46.8" fill="url(#m7EarthGlow)"/>
+${moonWorld(330, 82, 26)}
+<circle cx="330" cy="82" r="26" fill="url(#m7Limb)"/>
+${moonWorldRim(330, 82, 26)}
 <!-- ====================================================================
      LUNAR HORIZON, three receding bands so the plain falls away rather than
      sitting as one flat wall of grey.
@@ -1385,43 +1027,20 @@ STORY_SCENES['moon_7'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M470,234 L482,240 L478,249 L472,245 Z" fill="#8f8d84" opacity="0.62"/>
 <path d="M458,242 L470,234 L472,245 L461,249 Z" fill="#46443d" opacity="0.5"/>
 <!-- ====================================================================
-     THE DOME, the same habitat as moon_1: an elliptical arc so it is a
-     hemisphere and not a tent, panel seams following the curve, an airlock,
+     THE DOME, the same habitat as moon_0: the interior shell's profile,
+     panel seams following the curve, an airlock,
      a service module and a mast. Habitat first, glow second, so the light
      comes from inside.
      ==================================================================== -->
-<ellipse cx="108" cy="197" rx="34" ry="5.5" fill="#4e4c46" opacity="0.5"/>
-<!-- service module and mast, behind the shell -->
-<path d="M142,197 L142,183 Q142,179 146,179 L160,179 Q164,179 164,183 L164,197 Z" fill="#3a382f" stroke="#d4d0c0" stroke-width="0.6" opacity="0.85"/>
-<path d="M144,181 L162,181 L162,185 L144,185 Z" fill="#8a8880" opacity="0.35"/>
-<path d="M152,179 L153,160" stroke="#9a9890" stroke-width="0.9" opacity="0.6" fill="none"/>
-<path d="M146,164 A7,7 0 0 1 160,158 L153,161 Z" fill="#5a5850" stroke="#9a9890" stroke-width="0.7" opacity="0.75"/>
-<path d="M157,159 A7,7 0 0 0 147,163" fill="none" stroke="#b0aea4" stroke-width="0.5" opacity="0.4"/>
-<path d="M153,161 L156,155" stroke="#9a9890" stroke-width="0.5" opacity="0.5" fill="none"/>
-<circle cx="156.5" cy="154" r="1.1" fill="#ffe880" opacity="0.7">
-  <animate attributeName="opacity" values="0.25;0.9;0.25" dur="3.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</circle>
-<!-- dome shell -->
-<path d="M76,197 A32,29 0 0,1 140,197 Z" fill="#33312a" stroke="#d4d0c0" stroke-width="1.1" opacity="0.9"/>
-<!-- lit interior showing through the glass, stronger than moon_1 for the farewell -->
-<path d="M81,197 A27,24.5 0 0,1 135,197 Z" fill="#ffe27a" opacity="0.3">
-  <animate attributeName="opacity" values="0.2;0.38;0.2" dur="4.1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<!-- glazing bars, following the curve -->
-<path d="M108,168 L108,197 M90,175 L93,197 M126,175 L123,197 M80,188 L80,197 M136,188 L136,197" stroke="#d4d0c0" stroke-width="0.6" opacity="0.4" fill="none"/>
-<path d="M77.5,188 A30,27 0 0,1 138.5,188" stroke="#d4d0c0" stroke-width="0.5" opacity="0.3" fill="none"/>
-<path d="M85,178 A23,20 0 0,1 131,178" stroke="#d4d0c0" stroke-width="0.4" opacity="0.22" fill="none"/>
-<!-- the sunward quarter of the shell catches a hard highlight -->
-<path d="M124,177 A32,29 0 0,1 140,197 L132,197 A24,22 0 0,0 120,180 Z" fill="#d4d0c0" opacity="0.15"/>
-<!-- airlock, lit from inside because he is still up -->
-<path d="M101,197 L101,186 A7,7 0 0,1 115,186 L115,197 Z" fill="#3a3218" stroke="#d4d0c0" stroke-width="0.7" opacity="0.9"/>
-<path d="M103,197 L103,187 A5,5 0 0,1 113,187 L113,197 Z" fill="#ffe880" opacity="0.35">
-  <animate attributeName="opacity" values="0.26;0.44;0.26" dur="5.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
-</path>
-<!-- base seal, and the light spilling onto the dust at the threshold -->
-<path d="M74,197 A34,5.5 0 0,0 142,197" stroke="#d4d0c0" stroke-width="0.7" opacity="0.55" fill="none"/>
-<path d="M98,198 Q108,196 118,198 Q112,210 98,198 Z" fill="#ffe880" opacity="0.18"/>
+<!-- the same helper as moon_0, a step closer and brighter: he is still up -->
+${moonHabitat(108, 197, 1.15, { glow: [0.2, 0.38], door: [0.26, 0.44], beacon: 3.1, glowDur: 4.1 })}
+<!-- Mark back at his desk, already composing, seen small through the lit
+     glass left of the airlock: veiled, so the glazing bars still read
+     across him and he stays inside the dome -->
+<g opacity="0.72">
+${bcMissionPlace('mark', 'work', 92, 194, 18, false, { shadow: false })}
+<path d="M83,189 L101,189 L101,190.5 L83,190.5 Z M84,190.5 L85,190.5 L85,195 L84,195 Z M99,190.5 L100,190.5 L100,195 L99,195 Z" fill="#3a2c18"/>
+</g>
 <path d="M88,199 Q108,196 128,199 Q112,216 88,199 Z" fill="#ffe880" opacity="0.08"/>
 <rect x="0" y="0" width="500" height="260" fill="url(#m7DomeGlow)"/>
-<rect x="0" y="0" width="500" height="260" fill="url(#m7EarthGlow)"/>
 </svg>`;

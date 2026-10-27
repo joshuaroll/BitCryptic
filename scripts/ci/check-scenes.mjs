@@ -46,7 +46,7 @@ let files;
 // A kit is any scenes/*.js that defines no scenes. They are evaluated first and
 // their exported functions passed into every scene file, which is exactly the
 // browser's load order.
-const KIT_FILES = ['characters.js'];
+const KIT_FILES = ['approved-cast.js', 'characters.js', 'art-kit.js'];
 
 try {
   files = readdirSync('scenes').filter((f) => f.endsWith('.js'));
@@ -71,7 +71,7 @@ for (const kit of KIT_FILES) {
     const exported = new Function(
       'STORY_SCENES', 'module', 'exports',
       src + String.fromCharCode(10) + ';return typeof module !== "undefined" && module.exports ? module.exports : {};'
-    )({}, { exports: {} }, {});
+    )({}, { exports: {} }, {}, ...kitValues);
     for (const [k, v] of Object.entries(exported)) {
       if (typeof v === 'function' || typeof v === 'object') { kitNames.push(k); kitValues.push(v); }
     }

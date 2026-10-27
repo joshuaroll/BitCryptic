@@ -1,6 +1,28 @@
 // Cove story scenes — "Cluey Cove"
-// Keys: cove_0 through cove_4
+// Keys: cove_0 through cove_6
 // DRAFT — for review only
+
+// Every small chest in the cove is the KIT chest (bcArt 'chest', cove biome)
+// wearing the same GLYPH PLATE over the kit lock: index.html says every lock
+// wears an inscription where a keyhole should be. Kit local frame: origin =
+// contact point, 60 wide, closed lid top y -54, lock plate on the seam at y
+// -31.5. The plate is drawn in the old small-chest frame and scaled into kit
+// units so it keeps its proportion of the chest. Marks are abstract only: a
+// dot, an arc, a stacked pair of dots, a ripple.
+//   glow: filter id to glow the marks (scene must define it), or null.
+//   lit:  flicker the marks (the live lock); otherwise they sit dim.
+function coveGlyphPlate(glow, lit, depth) {
+  var flick = ' calcMode="spline" keyTimes="0;0.2;0.45;0.7;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1" repeatCount="indefinite"';
+  var glyph = '<path d="M-3,-10.85 l0,0.01 M-2,-10.2 Q-1.2,-11.8 -0.4,-10.2 M0.7,-11.6 l0,0.01 M0.7,-10 l0,0.01 M1.7,-10.8 Q2.2,-11.6 2.7,-10.8 T3.4,-10.8" fill="none" stroke="#4af5a0" stroke-width="0.7" stroke-linecap="round"' +
+    (glow ? ' filter="url(#' + glow + ')"' : '') + (lit ? '>' + '<animate attributeName="opacity" values="0.35;1;0.5;0.95;0.35" dur="2.3s"' + flick + '/></path>' : ' opacity="0.55"/>');
+  var plate = '<path d="M-5,-15 L5,-15 Q5.6,-15 5.6,-14.4 L5.6,-8 Q5.6,-7.2 4.8,-7.2 L-4.8,-7.2 Q-5.6,-7.2 -5.6,-8 L-5.6,-14.4 Q-5.6,-15 -5,-15 Z" fill="#c09a3c" stroke="#4a3810" stroke-width="0.6"/>' +
+    '<path d="M-3.8,-12.8 L3.8,-12.8 L3.8,-8.9 L-3.8,-8.9 Z" fill="#1a2420"/>';
+  return '<g transform="translate(0 -31.5) scale(1.67) translate(0 11.1)">' + bcArt.layer(depth || 'fg', plate + glyph, 'cove') + '</g>';
+}
+function coveSmallChest(o, glow, lit) {
+  o.biome = 'cove';
+  return bcArt.prop('chest', o).replace(/<\/g>$/, coveGlyphPlate(glow, lit, o.depth) + '</g>');
+}
 
 // Scene 0: Vast cavern interior, bioluminescent algae on walls, treasure chests on rocky ledges
 STORY_SCENES['cove_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
@@ -103,33 +125,11 @@ STORY_SCENES['cove_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
      the corners are cornered in metal, and the hasp hangs off the front.
      A rect with a stripe is a filing box.
      ==================================================================== -->
-<!-- Chest 1, left ledge -->
-<path d="M68,168 Q82,164 98,168 Q86,172 68,168 Z" fill="#141420" opacity="0.55"/>
-<path d="M72,158 L94,158 L95,168 Q95,170 92,170 L74,170 Q71,170 71,168 Z" fill="#8a6a20"/>
-<path d="M72,158 L78,158 L78,170 L74,170 Q71,170 71,168 Z" fill="#6a5018" opacity="0.6"/>
-<path d="M87,158 L94,158 L95,168 Q95,170 92,170 L87,170 Z" fill="#a07a28" opacity="0.45"/>
-<path d="M71,158 Q71,150 76,147 Q83,144 90,147 Q95,150 95,158 Q84,161 71,158 Z" fill="#a07a28"/>
-<path d="M74,156 Q74,150 79,148 Q84,146 88,148 Q80,151 76,157 Z" fill="#c09a3c" opacity="0.45"/>
-<path d="M78,146 Q78,155 78,159" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.55"/>
-<path d="M88,146 Q88,155 88,159" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.5"/>
-<path d="M71,159 Q83,162 95,159" fill="none" stroke="#6a5018" stroke-width="1.4" opacity="0.7"/>
-<path d="M81,155 L86,155 Q87,155 87,157 L87,161 L80,161 L80,157 Q80,155 81,155 Z" fill="#ffd700" opacity="0.8"/>
-<path d="M80,163 Q80,159 83,158 Q86,159 86,163" fill="none" stroke="#ffd700" stroke-width="1.2" opacity="0.7"/>
-<path d="M80,163 L86,163 Q87,163 87,165 L87,167 Q87,168 86,168 L80,168 Q79,168 79,167 L79,165 Q79,163 80,163 Z" fill="#ffd700" opacity="0.7"/>
+<!-- Chest 1, left ledge: the kit chest, the one small-chest design in the cove -->
+${coveSmallChest({ x: 83, y: 169, scale: 0.42, depth: 'mid' })}
 
 <!-- Chest 2, right ledge -->
-<path d="M394,153 Q409,149 426,153 Q413,157 394,153 Z" fill="#141420" opacity="0.55"/>
-<path d="M398,142 L421,142 L422,153 Q422,155 419,155 L400,155 Q397,155 397,153 Z" fill="#8a6a20"/>
-<path d="M398,142 L404,142 L404,155 L400,155 Q397,155 397,153 Z" fill="#6a5018" opacity="0.6"/>
-<path d="M414,142 L421,142 L422,153 Q422,155 419,155 L414,155 Z" fill="#a07a28" opacity="0.45"/>
-<path d="M397,142 Q397,133 403,130 Q410,127 417,130 Q422,133 422,142 Q410,145 397,142 Z" fill="#a07a28"/>
-<path d="M400,140 Q400,133 406,131 Q411,129 415,131 Q406,134 402,141 Z" fill="#c09a3c" opacity="0.45"/>
-<path d="M404,129 Q404,138 404,143" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.55"/>
-<path d="M415,129 Q415,138 415,143" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.5"/>
-<path d="M397,143 Q410,146 422,143" fill="none" stroke="#6a5018" stroke-width="1.4" opacity="0.7"/>
-<path d="M407,139 L413,139 Q414,139 414,141 L414,145 L406,145 L406,141 Q406,139 407,139 Z" fill="#ffd700" opacity="0.8"/>
-<path d="M406,148 Q406,144 410,143 Q414,144 414,148" fill="none" stroke="#ffd700" stroke-width="1.2" opacity="0.7"/>
-<path d="M406,148 L414,148 Q415,148 415,150 L415,153 Q415,154 414,154 L406,154 Q405,154 405,153 L405,150 Q405,148 406,148 Z" fill="#ffd700" opacity="0.7"/>
+${coveSmallChest({ x: 410, y: 154, scale: 0.42, depth: 'mid' })}
 
 <!-- ====================================================================
      CAVE FLOOR. Wet rock, uneven, with boulders bedded in it.
@@ -154,16 +154,7 @@ STORY_SCENES['cove_0'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M160,215 Q158,226 160,236 L166,236 Q164,225 166,214 Z" fill="#22222e" opacity="0.6"/>
 
 <!-- Chest 3, lower ledge, smaller and further back -->
-<path d="M157,196 Q168,193 181,196 Q171,199 157,196 Z" fill="#141420" opacity="0.5"/>
-<path d="M160,188 L177,188 L178,196 Q178,197 176,197 L162,197 Q159,197 159,196 Z" fill="#7a5a18"/>
-<path d="M160,188 L165,188 L165,197 L162,197 Q159,197 159,196 Z" fill="#5e4614" opacity="0.6"/>
-<path d="M159,188 Q159,181 164,179 Q169,177 174,179 Q178,181 178,188 Q169,190 159,188 Z" fill="#8a6a22"/>
-<path d="M162,186 Q162,181 166,180 Q170,179 172,180 Q166,182 163,187 Z" fill="#a8842e" opacity="0.4"/>
-<path d="M165,179 Q165,185 165,189" fill="none" stroke="#5e4614" stroke-width="0.9" opacity="0.5"/>
-<path d="M172,179 Q172,185 172,189" fill="none" stroke="#5e4614" stroke-width="0.9" opacity="0.45"/>
-<path d="M159,189 Q169,191 178,189" fill="none" stroke="#5e4614" stroke-width="1.2" opacity="0.6"/>
-<path d="M166,192 Q166,189 169,188 Q172,189 172,192" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.6"/>
-<path d="M166,192 L172,192 Q173,192 173,193 L173,196 Q173,197 172,197 L166,197 Q165,197 165,196 L165,193 Q165,192 166,192 Z" fill="#ffd700" opacity="0.6"/>
+${coveSmallChest({ x: 169, y: 197, scale: 0.33, depth: 'mid' })}
 
 <!-- Tidal pools lying in the hollows: irregular, not perfect ellipses -->
 <path d="M176,246 Q214,238 254,240 Q296,242 322,249 Q296,256 252,256 Q206,255 176,246 Z" fill="#1a3a5a" opacity="0.65"/>
@@ -211,6 +202,7 @@ STORY_SCENES['cove_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <linearGradient id="cove1Lid" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#c09a3c"/><stop offset="55%" stop-color="#a07a28"/><stop offset="100%" stop-color="#7a5c1a"/>
   </linearGradient>
+  <clipPath id="cove1PoolClip"><path d="M132,212 Q168,192 216,187 Q262,183 306,188 Q356,194 376,214 Q360,238 306,245 Q254,250 202,244 Q148,236 132,212 Z"/></clipPath>
 </defs>
 <rect width="500" height="260" fill="url(#coveBg1)"/>
 
@@ -270,68 +262,80 @@ STORY_SCENES['cove_1'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M338,234 L348,222 L360,222 L366,233 Q352,239 338,234 Z" fill="#2a2a3a" opacity="0.85"/>
 
 <!-- ====================================================================
-     THE GREAT CHEST, half sunk in the pool. Its lid is a BARREL: staves
-     arching over the top, bound by iron straps that follow the curve. The
-     carcass is planked with visible seams, cornered in metal, and the wood
-     DARKENS at the waterline where it has been soaking for centuries.
+     THE GREAT CHEST, CLOSED. The same box as cove_3 in the same local
+     frame (origin = front face bottom centre on the waterline, 250,212;
+     front face x -46..46, y -30..0), so closed and open read as one chest.
+     The lid sits shut on the rim. The lock carries an inscription band of
+     glowing glyphs where a keyhole would be; the clue sits on a front plaque.
      ==================================================================== -->
-<!-- carcass -->
-<path d="M198,186 L302,186 Q306,186 306,190 L305,214 Q305,218 300,218 L200,218 Q195,218 195,214 L194,190 Q194,186 198,186 Z" fill="url(#cove1Oak)"/>
-<!-- plank seams down the front -->
-<path d="M216,187 Q215,202 216,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
-<path d="M238,187 Q237,202 238,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.45"/>
-<path d="M262,187 Q263,202 262,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.45"/>
-<path d="M284,187 Q285,202 284,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
-<!-- iron corner straps: they wrap the edge, so they show on both faces -->
-<path d="M194,190 Q194,186 198,186 L206,186 L206,218 L200,218 Q195,218 195,214 Z" fill="#4a3a12" opacity="0.55"/>
-<path d="M294,186 L302,186 Q306,186 306,190 L305,214 Q305,218 300,218 L294,218 Z" fill="#4a3a12" opacity="0.5"/>
-<!-- horizontal iron bands round the body -->
-<path d="M194,199 L306,199 L306,203 L194,203 Z" fill="#6a5018" opacity="0.75"/>
-<path d="M194,199 L306,199 L306,200 L194,200 Z" fill="#a5832e" opacity="0.35"/>
-<path d="M195,211 L305,211 L305,214 L195,214 Z" fill="#6a5018" opacity="0.6"/>
+<g clip-path="url(#cove1PoolClip)">
+<g transform="translate(250 203.5) scale(1 -1)" opacity="0.28">
+<path d="M-46,0 L46,0 L46,-30 L-46,-30 Z" fill="#8a6a20"/>
+<path d="M-47,-30 L47,-30 L47,-38 L-47,-38 Z" fill="#7a5c1a"/>
+<path d="M-31,0 L-27,0 L-27,-38 L-31,-38 Z M27,0 L31,0 L31,-38 L27,-38 Z" fill="#3a2c0c"/>
+</g>
+<path d="M206,222 Q250,219 294,222 M212,231 Q250,228 288,231 M220,239 Q250,237 280,239" fill="none" stroke="#0a2a40" stroke-width="2.2" opacity="0.55"/>
+</g>
+<!-- PHOSPHORESCENT LINE above the chest: algae light gathered into a band -->
+<!-- of abstract marks on the back wall (dots, arcs, ripples; no letters) -->
+<ellipse cx="250" cy="139" rx="42" ry="9" fill="url(#algaeGlow1)" opacity="0.45"><animate attributeName="opacity" values="0.3;0.55;0.3" dur="4.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
+<path d="M220,139 l0,0.01 M225,140.5 Q228,136.5 231,140.5 M236,137.5 l0,0.01 M236,141 l0,0.01 M241,139 Q242.5,137 244,139 T247,139 M252,138 l0,0.01 M255,140.5 Q258,136.5 261,140.5 M265,137 l0,0.01 M265,139.5 l0,0.01 M265,142 l0,0.01 M270,139 Q271.5,137 273,139 T276,139 M280,139 l0,0.01" fill="none" stroke="#4af5a0" stroke-width="1.3" stroke-linecap="round" filter="url(#coveGlow1)" opacity="0.7"><animate attributeName="opacity" values="0.45;0.9;0.55;0.85;0.45" dur="3.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.2;0.45;0.7;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<circle cx="250" cy="182" r="40" fill="url(#lockGlow1)" opacity="0.5"><animate attributeName="opacity" values="0.35;0.65;0.35" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<g transform="translate(250 212)">
+<!-- contact shadow where the box stands in the water -->
+<ellipse cx="0" cy="2" rx="54" ry="5" fill="#061420" opacity="0.22"/>
 
-<!-- lid: a barrel arch, with staves running over it -->
-<path d="M194,190 Q194,176 210,169 Q230,163 250,163 Q270,163 290,169 Q306,176 306,190 Q250,196 194,190 Z" fill="url(#cove1Lid)"/>
-<!-- stave seams following the curve of the lid -->
-<path d="M214,169 Q210,179 210,189" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.45"/>
-<path d="M232,164 Q229,177 229,191" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.4"/>
-<path d="M268,164 Q271,177 271,191" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.4"/>
-<path d="M286,169 Q290,179 290,189" fill="none" stroke="#6a5018" stroke-width="1" opacity="0.45"/>
-<!-- iron straps arching over the lid, following the same curve -->
-<path d="M203,181 Q206,172 220,166" fill="none" stroke="#6a5018" stroke-width="3" opacity="0.7" stroke-linecap="round"/>
-<path d="M297,181 Q294,172 280,166" fill="none" stroke="#6a5018" stroke-width="3" opacity="0.65" stroke-linecap="round"/>
-<!-- highlight riding the crown of the lid, which is what makes it curve -->
-<path d="M212,173 Q232,166 250,165 Q268,166 288,173 Q268,170 250,169 Q232,170 212,173 Z" fill="#e0bc58" opacity="0.35"/>
-<!-- the seam where the lid closes on the carcass -->
-<path d="M194,190 Q250,196 306,190 L306,193 Q250,199 194,193 Z" fill="#4a3a12" opacity="0.6"/>
-<!-- clasp on the crown -->
-<path d="M242,162 L258,162 Q260,162 260,165 L260,170 Q260,172 258,172 L242,172 Q240,172 240,170 L240,165 Q240,162 242,162 Z" fill="#ffd700" opacity="0.9"/>
-<path d="M243,164 L257,164 L257,166 L243,166 Z" fill="#fff0a0" opacity="0.4"/>
+<!-- LID, shut: top face seen from slightly above, back edge y -48 -->
+<path d="M-47,-38 L47,-38 L44,-48 Q0,-51 -44,-48 Z" fill="#a07a28"/>
+<path d="M-40,-46.6 Q0,-49.4 40,-46.6" fill="none" stroke="#e0bc58" stroke-width="1.2" opacity="0.55"/>
+<path d="M22,-38 L47,-38 L44,-48 Q34,-48.8 24,-49.2 Z" fill="#5e4614" opacity="0.35"/>
+<!-- iron straps running over the lid top, continuing the front straps -->
+<path d="M-31,-38 L-27,-38 L-26,-49.6 L-29.6,-49.4 Z M27,-38 L31,-38 L29.6,-49.4 L26,-49.6 Z" fill="#3a2c0c" opacity="0.7"/>
+<path d="M-47,-38 L-42,-38 L-39.5,-48.4 L-44,-48 Z M42,-38 L47,-38 L44,-48 L39.5,-48.4 Z" fill="#3a2c0c" opacity="0.8"/>
+<!-- lid skirt: the front edge of the shut lid -->
+<path d="M-47,-38 L47,-38 L47,-30.5 L-47,-30.5 Z" fill="url(#cove1Lid)"/>
+<path d="M-47,-37.4 L47,-37.4" fill="none" stroke="#e0bc58" stroke-width="0.8" opacity="0.5"/>
+<path d="M-47,-38 L-42,-38 L-42,-30.5 L-47,-30.5 Z M42,-38 L47,-38 L47,-30.5 L42,-30.5 Z" fill="#3a2c0c" opacity="0.8"/>
+<path d="M-31,-38 L-27,-38 L-27,-30.5 L-31,-30.5 Z M27,-38 L31,-38 L31,-30.5 L27,-30.5 Z" fill="#3a2c0c" opacity="0.7"/>
+<!-- the seam where lid meets box -->
+<path d="M-47,-30.5 L47,-30.5" fill="none" stroke="#2a1e08" stroke-width="1.1" opacity="0.8"/>
 
-<!-- a planed panel on the lid: the carved words need a ground to read against -->
-<path d="M206,172 Q250,167 294,172 Q296,184 294,192 Q250,197 206,192 Q204,184 206,172 Z" fill="#6a5018" opacity="0.4"/>
-<!-- INSCRIPTION on the lid, between the clasp and the shackle -->
+<!-- FRONT FACE, planked and banded (as cove_3) -->
+<path d="M-46,-30 L46,-30 L46,0 L-46,0 Z" fill="url(#cove1Oak)"/>
+<path d="M-23,-30 L-23,0 M0,-30 L0,0 M23,-30 L23,0" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
+<path d="M-46,-15 L46,-15 L46,-12 L-46,-12 Z" fill="#6a5018" opacity="0.75"/>
+<path d="M-46,-15 L46,-15 L46,-14 L-46,-14 Z" fill="#a5832e" opacity="0.35"/>
+<path d="M-46,-30 L-41,-30 L-41,0 L-46,0 Z M41,-30 L46,-30 L46,0 L41,0 Z" fill="#3a2c0c" opacity="0.8"/>
+<path d="M-31,-30 L-27,-30 L-27,0 L-31,0 Z M27,-30 L31,-30 L31,0 L27,0 Z" fill="#3a2c0c" opacity="0.7"/>
+
+<!-- LOCK PLATE hung over the lid seam: an inscription band of abstract -->
+<!-- marks (dots, arcs, a ripple) where the keyhole would be. No letters. -->
+<path d="M-8,-38.4 L8,-38.4 Q9,-38.4 9,-37.4 L9,-29 Q9,-28 8,-28 L-8,-28 Q-9,-28 -9,-29 L-9,-37.4 Q-9,-38.4 -8,-38.4 Z" fill="#ffd700" opacity="0.88"/>
+<path d="M-7,-37.4 L7,-37.4" fill="none" stroke="#fff0a0" stroke-width="0.8" opacity="0.45"/>
+<path d="M-6.6,-35.4 L6.6,-35.4 L6.6,-31.2 L-6.6,-31.2 Z" fill="#2a1e08"/>
+<path d="M-5.4,-33.3 l0,0.01 M-4,-32.5 Q-2.8,-34.5 -1.6,-32.5 M0,-34.3 l0,0.01 M0,-32.3 l0,0.01 M1.4,-33.2 Q2.1,-34.4 2.8,-33.2 T4.2,-33.2 M5.5,-33.3 l0,0.01" fill="none" stroke="#ffe066" stroke-width="0.8" stroke-linecap="round" filter="url(#lockTextGlow)"><animate attributeName="opacity" values="0.6;1;0.6" dur="2.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+
+<!-- FRONT PLAQUE carrying the clue, riveted high on the face so it -->
+<!-- stays clear of the water -->
+<path d="M-38,-27.5 L38,-27.5 Q39.5,-27.5 39.5,-26 L39.5,-12.5 Q39.5,-11 38,-11 L-38,-11 Q-39.5,-11 -39.5,-12.5 L-39.5,-26 Q-39.5,-27.5 -38,-27.5 Z" fill="#3e2e0c"/>
+<path d="M-38,-27.5 L38,-27.5 Q39.5,-27.5 39.5,-26 L39.5,-12.5 Q39.5,-11 38,-11 L-38,-11 Q-39.5,-11 -39.5,-12.5 L-39.5,-26 Q-39.5,-27.5 -38,-27.5 Z" fill="none" stroke="#a5832e" stroke-width="0.9"/>
+<circle cx="-37" cy="-25" r="0.8" fill="#c9a32c"/><circle cx="37" cy="-25" r="0.8" fill="#c9a32c"/><circle cx="-37" cy="-13.5" r="0.8" fill="#c9a32c"/><circle cx="37" cy="-13.5" r="0.8" fill="#c9a32c"/>
 <g filter="url(#lockTextGlow)">
-  <text x="250" y="179" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7.5" opacity="0.92" letter-spacing="0.2">Shelter endlessly</text>
-  <text x="250" y="188" text-anchor="middle" fill="#ffd700" font-family="'Fredoka One',cursive" font-size="7.5" opacity="0.92" letter-spacing="0.2">is a bay (4)</text>
+  <text x="0" y="-20.2" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="6.2" opacity="0.95" letter-spacing="0">Shelter endlessly</text>
+  <text x="0" y="-13.4" text-anchor="middle" fill="#ffd700" font-family="'JetBrains Mono',monospace" font-size="6.2" opacity="0.95" letter-spacing="0">is a bay (4)</text>
 </g>
 
-<!-- padlock hanging from the hasp, on the carcass below the seam -->
-<path d="M243,203 Q243,192 250,189 Q257,192 257,203" fill="none" stroke="#ffd700" stroke-width="2.6" opacity="0.9" stroke-linecap="round"/>
-<path d="M240,202 L260,202 Q263,202 263,205 L263,214 Q263,217 260,217 L240,217 Q237,217 237,214 L237,205 Q237,202 240,202 Z" fill="#ffd700" opacity="0.88"/>
-<path d="M241,204 L259,204 L259,207 L241,207 Z" fill="#fff0a0" opacity="0.35"/>
-<path d="M247,209 Q247,206 250,206 Q253,206 253,209 Q253,211 251,212 L252,215 L248,215 L249,212 Q247,211 247,209 Z" fill="#2a2a3a"/>
-<circle cx="250" cy="205" r="36" fill="url(#lockGlow1)" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+<!-- WATER over the lower third of the box: the chest is half-sunk in the -->
+<!-- pool. A translucent tint across the planks, a bright surface line, -->
+<!-- and ripples drifting over the wood beneath it. -->
+<path d="M-52,-8.4 Q-26,-9.8 0,-8.6 Q26,-9.8 52,-8.4 L52,3 Q0,6 -52,3 Z" fill="#0e3a58" opacity="0.62"/>
+<path d="M-52,-6 Q0,-4.6 52,-6 L52,3 Q0,6 -52,3 Z" fill="#0a2a40" opacity="0.45"/>
+<path d="M-40,-6.4 Q-30,-7.4 -20,-6.4 M-6,-6.8 Q6,-7.8 18,-6.8 M28,-4.2 Q36,-5 44,-4.2 M-34,-2.6 Q-22,-3.6 -10,-2.6 M6,-2.4 Q16,-3.2 26,-2.4" fill="none" stroke="#9fd8ef" stroke-width="0.6" opacity="0.3"><animate attributeName="opacity" values="0.18;0.38;0.18" dur="3.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M-52,-8.4 Q-26,-9.8 0,-8.6 Q26,-9.8 52,-8.4" fill="none" stroke="#9fd8ef" stroke-width="0.9" opacity="0.5"/>
+<!-- the silhouette line, drawn last -->
+<path d="M-46,-1 L-46,-30.5 L-47,-30.5 L-47,-38 L-44,-48 Q0,-51 44,-48 L47,-38 L47,-30.5 L46,-30.5 L46,-1" fill="none" stroke="#2a1e08" stroke-width="1.1" opacity="0.7" stroke-linejoin="round"/>
+</g>
 
-<!-- ====================================================================
-     THE WATERLINE. Water crossing the chest darkens the wood behind it and
-     refracts what is below, so the submerged part is a tinted band, not a
-     flat ellipse laid on top.
-     ==================================================================== -->
-<path d="M196,208 Q224,204 250,205 Q278,204 304,208 Q306,216 300,220 Q250,225 200,220 Q194,216 196,208 Z" fill="#0a2a40" opacity="0.55"/>
-<path d="M196,208 Q224,204 250,205 Q278,204 304,208 Q306,216 300,220 Q250,225 200,220 Q194,216 196,208 Z" fill="#7ac5e8" opacity="0.1"><animate attributeName="opacity" values="0.06;0.14;0.06" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<!-- the meniscus line itself, brightest where it cuts the wood -->
-<path d="M196,209 Q224,205 250,206 Q278,205 304,209" fill="none" stroke="#9fd8ef" stroke-width="1" opacity="0.4"/>
 <!-- gold reflected down into the water under the lock -->
 <path d="M226,214 Q250,211 274,214 Q250,232 226,214 Z" fill="#ffd700" opacity="0.07"><animate attributeName="opacity" values="0.04;0.11;0.04" dur="3.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
 <!-- ripples spreading from where the chest breaks the surface -->
@@ -378,6 +382,10 @@ STORY_SCENES['cove_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
   <linearGradient id="cove3Lid" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#7a5c1a"/><stop offset="60%" stop-color="#a07a28"/><stop offset="100%" stop-color="#c09a3c"/>
   </linearGradient>
+  <linearGradient id="cove3Inside" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#6a4e16"/><stop offset="100%" stop-color="#1e1404"/>
+  </linearGradient>
+  <clipPath id="cove3PoolClip"><path d="M132,212 Q168,192 216,187 Q262,183 306,188 Q356,194 376,214 Q360,238 306,245 Q254,250 202,244 Q148,236 132,212 Z"/></clipPath>
   <linearGradient id="cove3Beam" x1="0" y1="1" x2="0" y2="0">
     <stop offset="0%" stop-color="#ffe066" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffe066" stop-opacity="0"/>
   </linearGradient>
@@ -428,79 +436,141 @@ STORY_SCENES['cove_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <path d="M366,193 L380,193 L383,199 Q372,201 362,199 Z" fill="#5c5c72" opacity="0.45"/>
 
 <!-- ====================================================================
-     THE OPEN CHEST. Open reads by two things a closed one cannot have:
-     you see the INSIDE of the lid tipped back away from you, and you see
-     down into a dark cavity that the treasure sits in. Painted in order:
-     lid interior, then the box, then what is inside it, then the light.
+     THE OPEN CHEST, one prop in one local frame. Origin = centre of the
+     front face's bottom edge, which is also the WATERLINE (y 212), so no
+     part can drift off another. Box: front face x -46..46, y -30..0; the
+     top of the walls is a rim quad, front edge y -30, back edge y -40.
+     The lid hinges on that BACK edge and swings up behind the box, so we
+     see its underside. Paint order, back to front: reflection, contact
+     shadow, lid, hinges on the seam, rim, dark cavity, relics, front rim,
+     front face, water lapping the foot.
      ==================================================================== -->
-<!-- lid, tipped back: we see its underside, so it is dark timber with the -->
-<!-- outside curve showing beyond the top edge -->
-<path d="M204,166 Q206,152 222,146 Q250,139 278,146 Q294,152 296,166 Q250,171 204,166 Z" fill="url(#cove3Lid)"/>
-<path d="M210,163 Q212,153 224,149 Q250,143 276,149 Q288,153 290,163 Q250,167 210,163 Z" fill="#4a3810"/>
-<path d="M216,161 Q220,155 230,152 Q250,148 270,152 Q280,155 284,161 Q250,164 216,161 Z" fill="#5e4614" opacity="0.7"/>
-<!-- iron strap across the lid interior -->
-<path d="M234,150 Q233,157 233,164" fill="none" stroke="#3a2c0c" stroke-width="1.4" opacity="0.6"/>
-<path d="M266,150 Q267,157 267,164" fill="none" stroke="#3a2c0c" stroke-width="1.4" opacity="0.55"/>
-<!-- hinge barrels where the lid pivots off the back of the box -->
-<path d="M218,166 L226,166 Q228,166 228,169 L228,172 Q228,174 226,174 L218,174 Q216,174 216,172 L216,169 Q216,166 218,166 Z" fill="#6a5018" opacity="0.85"/>
-<path d="M274,166 L282,166 Q284,166 284,169 L284,172 Q284,174 282,174 L274,174 Q272,174 272,169 Z" fill="#6a5018" opacity="0.85"/>
-<path d="M244,143 L256,143 Q258,143 258,146 L258,149 Q258,151 256,151 L244,151 Q242,151 242,149 L242,146 Q242,143 244,143 Z" fill="#ffd700" opacity="0.8"/>
-
-<!-- the CAVITY: a dark mouth, which is what actually says "open" -->
-<path d="M208,176 Q250,169 292,176 Q294,186 292,192 Q250,198 208,192 Q206,186 208,176 Z" fill="#241a06"/>
-<path d="M212,178 Q250,172 288,178 Q289,184 288,188 Q250,193 212,188 Q211,184 212,178 Z" fill="#3a2a0c" opacity="0.8"/>
-
-<!-- the box itself, front face, planked and banded -->
-<path d="M206,188 L294,188 Q298,188 298,192 L297,214 Q297,218 292,218 L208,218 Q203,218 203,214 L202,192 Q202,188 206,188 Z" fill="url(#cove3Oak)"/>
-<path d="M222,189 Q221,203 222,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
-<path d="M244,189 Q243,203 244,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.45"/>
-<path d="M266,189 Q267,203 266,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.45"/>
-<path d="M278,189 Q279,203 278,217" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
-<path d="M202,192 Q202,188 206,188 L214,188 L214,218 L208,218 Q203,218 203,214 Z" fill="#4a3a12" opacity="0.5"/>
-<path d="M286,188 L294,188 Q298,188 298,192 L297,214 Q297,218 292,218 L286,218 Z" fill="#4a3a12" opacity="0.45"/>
-<path d="M202,200 L298,200 L298,204 L202,204 Z" fill="#6a5018" opacity="0.75"/>
-<path d="M202,200 L298,200 L298,201 L202,201 Z" fill="#a5832e" opacity="0.35"/>
-<path d="M203,212 L297,212 L297,215 L203,215 Z" fill="#6a5018" opacity="0.55"/>
-<!-- the rim of the box, catching the light coming up out of it -->
-<path d="M206,188 Q250,182 294,188 Q250,192 206,188 Z" fill="#d4ac48" opacity="0.55"/>
-
-<!-- ====================================================================
-     RELICS lying in the cavity, each lit from below by the hoard glow.
-     ==================================================================== -->
-<g transform="translate(-2 -6)"><!-- rolled scroll, with a shadowed end and a lit belly -->
-<path d="M224,186 Q224,181 228,180 L242,180 Q246,181 246,186 Q246,190 242,191 L228,191 Q224,190 224,186 Z" fill="#e8d8a0" opacity="0.85"/>
-<path d="M228,180 Q232,181 232,186 Q232,190 228,191 Q224,190 224,186 Q224,181 228,180 Z" fill="#cbb87e" opacity="0.9"/>
-<path d="M229,184 Q231,186 229,188" fill="none" stroke="#9a8a58" stroke-width="0.8" opacity="0.7"/>
-<path d="M242,180 Q246,181 246,186 Q246,190 242,191 Q244,187 244,186 Q244,184 242,180 Z" fill="#f4e8bc" opacity="0.6"/>
-<!-- gem: facets, so it reads as cut stone rather than a lozenge -->
-<path d="M256,180 L264,180 L268,185 L260,192 L252,185 Z" fill="#4af5a0" opacity="0.8"/>
-<path d="M256,180 L260,185 L252,185 Z" fill="#8affd0" opacity="0.7"/>
-<path d="M264,180 L268,185 L260,185 Z" fill="#2ec27a" opacity="0.75"/>
-<path d="M252,185 L260,185 L260,192 Z" fill="#3ad48c" opacity="0.6"/>
-<!-- coin stack: each disc has a lit rim and a shadowed underside -->
-<path d="M272,190 Q272,187 278,187 Q284,187 284,190 Q284,192 278,192 Q272,192 272,190 Z" fill="#c9a32c" opacity="0.85"/>
-<path d="M272,187 Q272,184 278,184 Q284,184 284,187 Q284,189 278,189 Q272,189 272,187 Z" fill="#e0bc48" opacity="0.9"/>
-<path d="M272,184 Q272,181 278,181 Q284,181 284,184 Q284,186 278,186 Q272,186 272,184 Z" fill="#ffe066" opacity="0.95"/>
-<path d="M274,183 Q278,182 282,183 Q278,184 274,183 Z" fill="#fff3b8" opacity="0.6"/>
-<!-- a coin fallen onto the box rim -->
-<path d="M290,186 Q290,184 294,184 Q297,184 297,186 Q297,188 294,188 Q290,188 290,186 Z" fill="#e0bc48" opacity="0.8"/>
-
+<g clip-path="url(#cove3PoolClip)">
+<!-- reflection: the chest above water mirrored about the waterline. The -->
+<!-- water stands at local y -8.5 (abs 203.5), as in cove_1, so the mirror -->
+<!-- maps local y to 195 - y and only the dry part (y -8.5 up) is drawn. -->
+<g transform="translate(250 195) scale(1 -1)" opacity="0.28">
+<path d="M-46,-8.5 L46,-8.5 L46,-30 L-46,-30 Z" fill="#8a6a20"/>
+<path d="M-44,-40 L44,-40 L40,-72 Q0,-75 -40,-72 Z" fill="#5e4614"/>
+<path d="M-43,-32 L43,-32 L41,-38 L-41,-38 Z" fill="#ffd700" opacity="0.6"/>
+<path d="M-31,-8.5 L-27,-8.5 L-27,-30 L-31,-30 Z M27,-8.5 L31,-8.5 L31,-30 L27,-30 Z" fill="#3a2c0c"/>
 </g>
-<path d="M208 190Q250 197 292 190L292 197Q250 204 208 197Z" fill="#8a6a20"/><path d="M208 190Q250 197 292 190" fill="none" stroke="#c9a441" stroke-width="2"/>
-<!-- ====================================================================
-     LIGHT SPILLING OUT. It must ADD, so the beams are a light gradient
-     fading upward, widening as they rise. Painted over everything.
-     ==================================================================== -->
-<path d="M232,183 L216,181 L196,114 L220,114 Z" fill="url(#cove3Beam)" opacity="0.4"><animate attributeName="opacity" values="0.25;0.5;0.25" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<path d="M262,181 L238,181 L228,98 L268,98 Z" fill="url(#cove3Beam)" opacity="0.5"><animate attributeName="opacity" values="0.32;0.66;0.32" dur="2.6s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<path d="M268,183 L284,181 L302,114 L278,114 Z" fill="url(#cove3Beam)" opacity="0.36"><animate attributeName="opacity" values="0.22;0.46;0.22" dur="3.4s" begin="1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<!-- the hot core right at the mouth of the chest -->
-<path d="M212,182 Q250,172 288,182 Q250,190 212,182 Z" fill="#ffe066" opacity="0.28"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<!-- ripples breaking the reflection up -->
+<path d="M206,222 Q250,219 294,222 M212,231 Q250,228 288,231 M220,239 Q250,237 280,239" fill="none" stroke="#0a2a40" stroke-width="2.2" opacity="0.55"/>
+</g>
+<g transform="translate(250 212)">
+<!-- contact shadow where the box stands in the water -->
+<ellipse cx="0" cy="2" rx="54" ry="5" fill="#061420" opacity="0.5"/>
 
-<!-- Water lapping the foot of the chest -->
-<path d="M204,208 Q228,204 250,205 Q272,204 296,208 Q298,215 292,219 Q250,224 208,219 Q202,215 204,208 Z" fill="#0a2a40" opacity="0.45"/>
-<path d="M204,208 Q228,204 250,205 Q272,204 296,208 Q298,215 292,219 Q250,224 208,219 Q202,215 204,208 Z" fill="#ffd700" opacity="0.06"><animate attributeName="opacity" values="0.03;0.09;0.03" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
-<path d="M204,209 Q228,205 250,206 Q272,205 296,209" fill="none" stroke="#9fd8ef" stroke-width="0.9" opacity="0.35"/>
+<!-- LID, swung back past upright. Its bottom edge IS the back rim line -->
+<!-- (y -40, x -44..44), so it pivots exactly on the box. -->
+<path d="M-44,-40 L44,-40 L40,-72 Q0,-76 -40,-72 Z" fill="url(#cove3Lid)"/>
+<!-- underside panel, recessed inside the lid's frame -->
+<path d="M-39,-42 L39,-42 L36,-68 Q0,-71 -36,-68 Z" fill="#4a3810"/>
+<path d="M-34,-44 L34,-44 L32,-64 Q0,-67 -32,-64 Z" fill="#5e4614" opacity="0.7"/>
+<!-- battens across the underside -->
+<path d="M-14,-43 L-13,-67 M14,-43 L13,-67" fill="none" stroke="#3a2c0c" stroke-width="1.4" opacity="0.6"/>
+<!-- the lid's front edge, now on top, catching the glow -->
+<path d="M-40,-72 Q0,-76 40,-72 L39,-70 Q0,-73.5 -39,-70 Z" fill="#d4ac48" opacity="0.7"/>
+<!-- hasp hanging off that edge, the lid being open -->
+<path d="M-5,-77 L5,-77 Q6,-77 6,-75 L6,-70 L-6,-70 L-6,-75 Q-6,-77 -5,-77 Z" fill="#ffd700" opacity="0.85"/>
+<path d="M-1.2,-74 L1.2,-74 L1.2,-71.5 L-1.2,-71.5 Z" fill="#3a2c0c" opacity="0.7"/>
+
+<!-- RIM: the top of all four walls, seen from slightly above -->
+<path d="M-46,-30 L46,-30 L44,-40 L-44,-40 Z" fill="#a07a28"/>
+<path d="M-44,-40 L44,-40" fill="none" stroke="#2a1e08" stroke-width="0.9" opacity="0.7"/>
+<!-- HINGES on the lid/back-rim seam: strap up the lid, knuckle on the seam -->
+<g transform="translate(-35 0)"><path d="M-2.5,-42 L-2,-57 L2,-57 L2.5,-42 Z" fill="#5a4e3a"/><path d="M-2,-56.5 L-2.3,-43" fill="none" stroke="#a89870" stroke-width="0.6" opacity="0.7"/><circle cx="0" cy="-51" r="0.9" fill="#b8a878"/><path d="M-6,-43.5 L6,-43.5 Q7,-43.5 7,-42.5 L7,-38.5 L-7,-38.5 L-7,-42.5 Q-7,-43.5 -6,-43.5 Z" fill="#4e4434"/><path d="M-6,-42.7 L6,-42.7" fill="none" stroke="#b8a878" stroke-width="0.9" opacity="0.8"/><path d="M0,-43.5 L0,-38.5" fill="none" stroke="#1a1406" stroke-width="0.7" opacity="0.7"/></g>
+<g transform="translate(35 0)"><path d="M-2.5,-42 L-2,-57 L2,-57 L2.5,-42 Z" fill="#5a4e3a"/><path d="M-2,-56.5 L-2.3,-43" fill="none" stroke="#a89870" stroke-width="0.6" opacity="0.7"/><circle cx="0" cy="-51" r="0.9" fill="#b8a878"/><path d="M-6,-43.5 L6,-43.5 Q7,-43.5 7,-42.5 L7,-38.5 L-7,-38.5 L-7,-42.5 Q-7,-43.5 -6,-43.5 Z" fill="#4e4434"/><path d="M-6,-42.7 L6,-42.7" fill="none" stroke="#b8a878" stroke-width="0.9" opacity="0.8"/><path d="M0,-43.5 L0,-38.5" fill="none" stroke="#1a1406" stroke-width="0.7" opacity="0.7"/></g>
+
+<!-- the CAVITY inside the walls: the dark mouth that says "open" -->
+<path d="M-43,-32 L43,-32 L41.5,-38.5 L-41.5,-38.5 Z" fill="url(#cove3Inside)"/>
+
+<!-- RELICS, seated IN the cavity. Drawn before the front wall, which -->
+<!-- crosses their bases. -->
+<!-- SALT-STIFF PAGES: loose sheets dried hard by the sea, standing up at -->
+<!-- angles where they set. Rime crusts their edges; the ruling on them is -->
+<!-- abstract strokes only, never readable text. -->
+<path d="M-39,-33 L-36.5,-47 L-23,-49.5 L-24.5,-35 Z" fill="#d8c99a"/>
+<path d="M-36.5,-47 L-23,-49.5" fill="none" stroke="#f4efe0" stroke-width="1" stroke-dasharray="1.6 0.9" opacity="0.85"/>
+<path d="M-34.5,-44 L-25.5,-45.6 M-34.8,-41 L-25.2,-42.5 M-35,-38 L-28,-39" fill="none" stroke="#8a7a4c" stroke-width="0.6" opacity="0.45"/>
+<path d="M23,-35 L29,-50 L41.5,-46 L38.5,-33 Z" fill="#e2d4a6"/>
+<path d="M29,-50 L41.5,-46" fill="none" stroke="#f4efe0" stroke-width="1" stroke-dasharray="1.6 0.9" opacity="0.85"/>
+<path d="M29.4,-46 L39.6,-43 M28.2,-43 L38.8,-40 M27.2,-40 L34,-38" fill="none" stroke="#8a7a4c" stroke-width="0.6" opacity="0.45"/>
+<path d="M-4,-38 L3,-47.5 L17,-45.5 L12,-37 Z" fill="#cdbd8c"/>
+<path d="M3,-47.5 L17,-45.5" fill="none" stroke="#f4efe0" stroke-width="0.9" stroke-dasharray="1.4 0.9" opacity="0.8"/>
+<!-- the bed of pages the scrolls lie on, buckled into stiff ridges -->
+<path d="M-42,-31 L-40.5,-35 L-33,-38.6 L-25,-37 L-18,-40.6 L-9,-38.8 L-2,-41.6 L7,-39.4 L15,-41.2 L24,-38.2 L33,-39.4 L40.5,-35 L42.5,-31 Z" fill="#c9b886"/>
+<path d="M-40.5,-35 L-33,-38.6 L-25,-37 L-18,-40.6 L-9,-38.8 L-2,-41.6 L7,-39.4 L15,-41.2 L24,-38.2 L33,-39.4 L40.5,-35" fill="none" stroke="#f4efe0" stroke-width="0.9" stroke-dasharray="1.8 1" opacity="0.7"/>
+<path d="M-33,-38.6 L-31,-33 M-18,-40.6 L-16,-34 M-2,-41.6 L-1,-34 M15,-41.2 L14,-34 M33,-39.4 L31,-33.5" fill="none" stroke="#9a8a58" stroke-width="0.6" opacity="0.5"/>
+<!-- ROLLED SCROLLS (the clues) lying on the pages, one end tipped up -->
+<g transform="translate(-16 -40.5) rotate(-9)">
+<path d="M-11,-3.5 L11,-3.5 Q13,-3.5 13,0 Q13,3.5 11,3.5 L-11,3.5 Q-13,3.5 -13,0 Q-13,-3.5 -11,-3.5 Z" fill="#e8d8a0"/>
+<ellipse cx="-11" cy="0" rx="2" ry="3.5" fill="#cbb87e"/>
+<path d="M-11.5,-1.2 Q-10.4,0 -11.5,1.2" fill="none" stroke="#9a8a58" stroke-width="0.7"/>
+<path d="M-9,-2.6 L11,-2.6" fill="none" stroke="#f4e8bc" stroke-width="1" opacity="0.7"/>
+<path d="M-1,-3.5 L1,-3.5 L1,3.5 L-1,3.5 Z" fill="#a03a2a" opacity="0.8"/>
+</g>
+<!-- second scroll, shorter, lying across the middle of the pages -->
+<g transform="translate(9 -41.5) rotate(7) scale(0.82)">
+<path d="M-11,-3.5 L11,-3.5 Q13,-3.5 13,0 Q13,3.5 11,3.5 L-11,3.5 Q-13,3.5 -13,0 Q-13,-3.5 -11,-3.5 Z" fill="#e2d098"/>
+<ellipse cx="11" cy="0" rx="2" ry="3.5" fill="#c4b076"/>
+<path d="M11.5,-1.2 Q10.4,0 11.5,1.2" fill="none" stroke="#9a8a58" stroke-width="0.7"/>
+<path d="M-11,-2.6 L9,-2.6" fill="none" stroke="#f4e8bc" stroke-width="1" opacity="0.7"/>
+<path d="M-3,-3.5 L-1,-3.5 L-1,3.5 L-3,3.5 Z" fill="#3a5a6a" opacity="0.8"/>
+</g>
+<!-- third scroll propped against the right-hand pages, end up -->
+<g transform="translate(26 -40) rotate(-58) scale(0.78)">
+<path d="M-11,-3.5 L11,-3.5 Q13,-3.5 13,0 Q13,3.5 11,3.5 L-11,3.5 Q-13,3.5 -13,0 Q-13,-3.5 -11,-3.5 Z" fill="#ead9a4"/>
+<ellipse cx="11" cy="0" rx="2" ry="3.5" fill="#cbb87e"/>
+<path d="M11.5,-1.2 Q10.4,0 11.5,1.2" fill="none" stroke="#9a8a58" stroke-width="0.7"/>
+<path d="M-9,-2.6 L9,-2.6" fill="none" stroke="#f4e8bc" stroke-width="1" opacity="0.7"/>
+<path d="M2,-3.5 L4,-3.5 L4,3.5 L2,3.5 Z" fill="#a03a2a" opacity="0.8"/>
+</g>
+<!-- one stiff page leaning on the inside of the front wall -->
+<path d="M-40,-31 L-37,-38 L-29.5,-36.6 L-32,-31 Z" fill="#e6d9ae"/>
+<path d="M-37,-38 L-29.5,-36.6" fill="none" stroke="#f4efe0" stroke-width="0.8" stroke-dasharray="1.2 0.8" opacity="0.8"/>
+
+<!-- FRONT RIM: the top of the front wall, in front of the relics -->
+<path d="M-46,-30 L46,-30 L43,-32 L-43,-32 Z" fill="#d4ac48"/>
+
+<!-- FRONT FACE, planked and banded -->
+<path d="M-46,-30 L46,-30 L46,0 L-46,0 Z" fill="url(#cove3Oak)"/>
+<path d="M-23,-30 L-23,0 M0,-30 L0,0 M23,-30 L23,0" fill="none" stroke="#5e4614" stroke-width="1" opacity="0.5"/>
+<path d="M-46,-15 L46,-15 L46,-12 L-46,-12 Z" fill="#6a5018" opacity="0.75"/>
+<path d="M-46,-15 L46,-15 L46,-14 L-46,-14 Z" fill="#a5832e" opacity="0.35"/>
+<!-- iron corner bands and straps -->
+<path d="M-46,-30 L-41,-30 L-41,0 L-46,0 Z M41,-30 L46,-30 L46,0 L41,0 Z" fill="#3a2c0c" opacity="0.8"/>
+<path d="M-31,-30 L-27,-30 L-27,0 L-31,0 Z M27,-30 L31,-30 L31,0 L27,0 Z" fill="#3a2c0c" opacity="0.7"/>
+<path d="M-46,-29.4 L46,-29.4" fill="none" stroke="#3a2c0c" stroke-width="1.2" opacity="0.6"/>
+<!-- GLYPH BAND where the hasp would close: an engraved inscription band -->
+<!-- (as cove_1's lock), abstract marks only (dots, arcs, a ripple). No -->
+<!-- keyhole, no letters. -->
+<path d="M-15,-28.8 L15,-28.8 Q16,-28.8 16,-27.8 L16,-20.2 Q16,-19.2 15,-19.2 L-15,-19.2 Q-16,-19.2 -16,-20.2 L-16,-27.8 Q-16,-28.8 -15,-28.8 Z" fill="#ffd700" opacity="0.85"/>
+<path d="M-14,-28 L14,-28" fill="none" stroke="#fff0a0" stroke-width="0.7" opacity="0.45"/>
+<path d="M-13.4,-26.6 L13.4,-26.6 L13.4,-21.4 L-13.4,-21.4 Z" fill="#2a1e08"/>
+<path d="M-11.6,-24 l0,0.01 M-9.4,-23 Q-8,-25.4 -6.6,-23 M-4.4,-25 l0,0.01 M-4.4,-22.8 l0,0.01 M-2.4,-24 Q-1.6,-25.4 -0.8,-24 T0.8,-24 M2.8,-24.2 l0,0.01 M4.6,-23 Q6,-25.4 7.4,-23 M9.4,-25 l0,0.01 M9.4,-22.8 l0,0.01 M11.6,-24 l0,0.01" fill="none" stroke="#ffe066" stroke-width="0.9" stroke-linecap="round"><animate attributeName="opacity" values="0.65;1;0.65" dur="2.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<!-- glow catching the front rim from inside -->
+<path d="M-43,-31.4 L43,-31.4" fill="none" stroke="#ffe066" stroke-width="0.8" opacity="0.6"/>
+
+<!-- WATERLINE, matched to cove_1: the chest stands half-sunk, water over -->
+<!-- the lower part of the box (surface at local y -8.5, abs 203.5). -->
+<path d="M-52,-8.4 Q-26,-9.8 0,-8.6 Q26,-9.8 52,-8.4 L52,3 Q0,6 -52,3 Z" fill="#0e3a58" opacity="0.62"/>
+<path d="M-52,-6 Q0,-4.6 52,-6 L52,3 Q0,6 -52,3 Z" fill="#0a2a40" opacity="0.45"/>
+<path d="M-40,-6.4 Q-30,-7.4 -20,-6.4 M-6,-6.8 Q6,-7.8 18,-6.8 M28,-4.2 Q36,-5 44,-4.2 M-34,-2.6 Q-22,-3.6 -10,-2.6 M6,-2.4 Q16,-3.2 26,-2.4" fill="none" stroke="#9fd8ef" stroke-width="0.6" opacity="0.3"><animate attributeName="opacity" values="0.18;0.38;0.18" dur="3.9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M-52,-8.4 Q-26,-9.8 0,-8.6 Q26,-9.8 52,-8.4" fill="none" stroke="#9fd8ef" stroke-width="0.9" opacity="0.5"/>
+<path d="M-52,-8.4 Q-26,-9.8 0,-8.6 Q26,-9.8 52,-8.4 L52,3 Q0,6 -52,3 Z" fill="#ffd700" opacity="0.06"><animate attributeName="opacity" values="0.03;0.09;0.03" dur="3.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+</g>
+
+<!-- ====================================================================
+     LIGHT SPILLING OUT of the mouth (y 172..180). It must ADD, so the
+     beams are a light gradient fading upward, widening as they rise.
+     ==================================================================== -->
+<path d="M228,178 L212,178 L192,112 L218,112 Z" fill="url(#cove3Beam)" opacity="0.4"><animate attributeName="opacity" values="0.25;0.5;0.25" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M262,176 L238,176 L228,96 L268,96 Z" fill="url(#cove3Beam)" opacity="0.5"><animate attributeName="opacity" values="0.32;0.66;0.32" dur="2.6s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<path d="M272,178 L288,178 L308,112 L282,112 Z" fill="url(#cove3Beam)" opacity="0.36"><animate attributeName="opacity" values="0.22;0.46;0.22" dur="3.4s" begin="1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
+<!-- the hot core right at the mouth of the chest -->
+<path d="M210,177 Q250,166 290,177 Q250,183 210,177 Z" fill="#ffe066" opacity="0.28"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></path>
 
 <!-- Cave floor either side -->
 <path d="M0,224 Q40,232 82,230 Q116,228 132,236 L132,260 L0,260 Z" fill="#2a2a3a"/>
@@ -521,8 +591,144 @@ STORY_SCENES['cove_3'] = `<svg width="100%" viewBox="0 0 500 260" xmlns="http://
 <circle cx="420" cy="150" r="1.5" fill="#7ac5e8" filter="url(#coveGlow3)"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4.2s" begin="2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/><animateMotion path="M0,0 Q-7,-7 1,-13 Q8,-6 0,0 Z" dur="6.6s" begin="2s" repeatCount="indefinite"/></circle>
 </svg>`;
 
-// Scene 4 (CAVE puzzle — "Sculpt without right makes a hollow (4)") reuses cove_3.
-// Note: cove_3 shows the opened FIRST chest; there is no second-chest/plaque art
-// in this file to carry the CAVE clue text, so the clue is shown only in the
-// puzzle dialog (index.html).
-STORY_SCENES['cove_4'] = STORY_SCENES['cove_3'];
+// Scenes 4-6: the cove_3 room (first chest open, untouched) plus the SECOND,
+// smaller chest wedged in a crack in the right-hand rock.
+//   4: CAVE puzzle. Small domed chest, locked, algae light flickering on its
+//      glyph band. The clue itself stays in the puzzle dialog (index.html).
+//   5: small chest open, a stone tablet standing in it (abstract glyphs only).
+//   6: both chests open; algae on the far wall gathering into glyphs.
+// Built from the cove_3 string with every id suffixed, so no id collides.
+(function () {
+  var EASE = ' calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" keyTimes="0;0.5;1" repeatCount="indefinite"';
+  var FLICK = ' calcMode="spline" keyTimes="0;0.2;0.45;0.7;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1" repeatCount="indefinite"';
+
+  function defs(s) {
+    return '<radialGradient id="coveNookLit' + s + '" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4af5a0" stop-opacity="0.55"/><stop offset="100%" stop-color="#4af5a0" stop-opacity="0"/></radialGradient>' +
+      '<filter id="coveNookGlow' + s + '" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="1.4" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>' +
+      '<linearGradient id="coveFloorFade' + s + '" gradientUnits="userSpaceOnUse" x1="360" y1="0" x2="420" y2="0"><stop offset="0" stop-color="#1a2030" stop-opacity="0"/><stop offset="1" stop-color="#1a2030" stop-opacity="0.7"/></linearGradient>';
+  }
+
+  // The rock outcrop on the right and the crack the chest is jammed into.
+  function rockBack() {
+    return '<!-- OUTCROP on the right, split by a crack -->' +
+      '<path d="M386,242 L390,214 L398,190 L410,168 L426,150 L442,136 L462,134 L482,144 L496,158 L500,162 L500,246 Z" fill="#3a3a4c"/>' +
+      '<path d="M398,190 L410,168 L426,150 L442,136 L462,134 L482,144 L476,149 L460,141 L445,143 L430,156 L415,175 L404,194 Z" fill="#5c5c72" opacity="0.5"/>' +
+      '<path d="M482,144 L496,158 L500,162 L500,246 L484,246 L490,196 Z" fill="#2a2a3a" opacity="0.8"/>' +
+      '<!-- the crack: a dark V from the crest down to the floor, wide enough -->' +
+      '<!-- that the chest body sits INSIDE it with dark showing either side -->' +
+      '<path d="M404,240 L410,206 L414,188 L422,168 L436,150 L446,140 L456,146 L468,160 L476,178 L482,200 L484,240 Z" fill="#0b0f18"/>' +
+      '<path d="M440,150 L446,140 L453,146 L447,152 Z" fill="#1a2030"/>' +
+      '<!-- the floor of the crack the chest is jammed down onto -->' +
+      '<path d="M406,230 L478,224 L484,240 L402,242 Z" fill="#22222e"/>';
+  }
+  function rockFront(s) {
+    return '<!-- near lips of the crack: one broad rock mass in front, rising -->' +
+      '<!-- either side over the chest flanks so the chest sits in a notch -->' +
+      '<path d="M390,250 L393,232 L400,216 L410,206 L421,204.5 L427,213 L428,224 Q446,225 462,219.5 L462,213 L468,203.5 L480,205.5 L489,218 L495,234 L497,250 Z" fill="#3a3a4c"/>' +
+      '<path d="M400,216 L410,206 L421,204.5 L424,209 L412,211.5 Z" fill="#5c5c72" opacity="0.6"/>' +
+      '<path d="M468,203.5 L480,205.5 L486,213 L473,209.5 Z" fill="#5c5c72" opacity="0.5"/>' +
+      '<path d="M428,224 Q446,225 462,219.5" fill="none" stroke="#525266" stroke-width="1.2" opacity="0.8"/>' +
+      '<path d="M410,250 L414,232 L420,224 M478,250 L476,232 L484,226" fill="none" stroke="#2a2a3a" stroke-width="1.4" opacity="0.6"/>' +
+      '<path d="M393,232 L400,216 L410,206 L421,204.5 L427,213 L428,224 Q446,225 462,219.5 L462,213 L468,203.5 L480,205.5 L489,218 L495,234" fill="none" stroke="#1f1f2a" stroke-width="1"/>' +
+      '<!-- floor shadow band under the outcrop, feathered in from the left -->' +
+      '<path d="M360,247 Q440,250 500,244 L500,260 L360,260 Z" fill="url(#coveFloorFade' + s + ')"/>';
+  }
+
+  // The small chests: the shared kit chest + glyph plate (coveSmallChest, top
+  // of file). Only the niche chest's plate glows; the live lock flickers.
+  function smallClosed(s) {
+    return coveSmallChest({ x: 0, y: 0, scale: 0.74 }, 'coveNookGlow' + s, true);
+  }
+
+  function smallOpen(s) {
+    // POLISHED STONE TABLET set down in the chest, carved with abstract marks
+    // only: dashes, dots and broken arcs. No letter shapes. Authored in the old
+    // small-chest frame (base y -17), scaled into kit units, seated on the
+    // kit's 'inside' anchor by the contents slot.
+    var tablet = '<g transform="scale(1.67) translate(0 17)">' +
+      '<g transform="rotate(-3 0 -17)">' +
+      '<path d="M-7.5,-17 L-7.5,-31 Q-7.5,-35.5 0,-35.5 Q7.5,-35.5 7.5,-31 L7.5,-17 Z" fill="#8a8e9a"/>' +
+      '<path d="M3.8,-34.7 Q7.5,-33.6 7.5,-31 L7.5,-17 L3.8,-17 Z" fill="#5c6070" opacity="0.7"/>' +
+      '<path d="M-6.5,-18 L-6.5,-30.6 Q-6.5,-33.7 -2.8,-34.6" fill="none" stroke="#c4c8d2" stroke-width="0.9" opacity="0.6"/>' +
+      '<path d="M-4.5,-30 L-2,-30 M0,-30 l0,0.01 M2,-30 L4.5,-30 M-4.2,-26.2 l0,0.01 M-2.6,-25.6 Q-1.2,-27.8 0.2,-25.6 M2,-26.2 l0,0.01 M4,-26.2 l0,0.01 M-4.5,-22.4 L-0.8,-22.4 M1.4,-22.4 l0,0.01 M3.2,-22.4 L4.5,-22.4" fill="none" stroke="#3a3e4a" stroke-width="0.9" stroke-linecap="round"/>' +
+      '<path d="M-4.5,-30 L-2,-30 M0,-30 l0,0.01 M2,-30 L4.5,-30 M-4.2,-26.2 l0,0.01 M-2.6,-25.6 Q-1.2,-27.8 0.2,-25.6 M2,-26.2 l0,0.01 M4,-26.2 l0,0.01 M-4.5,-22.4 L-0.8,-22.4 M1.4,-22.4 l0,0.01 M3.2,-22.4 L4.5,-22.4" fill="none" stroke="#4af5a0" stroke-width="0.55" stroke-linecap="round" filter="url(#coveNookGlow' + s + ')"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="4.2s"' + EASE + '/></path>' +
+      '<path d="M-7.5,-17 L-7.5,-31 Q-7.5,-35.5 0,-35.5 Q7.5,-35.5 7.5,-31 L7.5,-17" fill="none" stroke="#3a3e4a" stroke-width="0.9"/>' +
+      '</g></g>';
+    return coveSmallChest({ x: 0, y: 0, scale: 0.74, open: true, contents: tablet }, 'coveNookGlow' + s, false);
+  }
+
+  // Algae light on the chest: the crust above the crack throws it down.
+  function algaeOnChest(s, strength, dur) {
+    var lo = (0.25 * strength).toFixed(2), hi = (0.7 * strength).toFixed(2), mid = (0.35 * strength).toFixed(2), hi2 = (0.6 * strength).toFixed(2);
+    return '<path d="M467,148 Q474,144 481,147 Q483,152 478,155 Q472,156 468,153 Z" fill="#4af5a0" opacity="0.1"><animate attributeName="opacity" values="0.05;0.14;0.05" dur="4.4s"' + EASE + '/></path>' +
+      '<ellipse cx="446" cy="196" rx="34" ry="28" fill="url(#coveNookLit' + s + ')" opacity="' + lo + '"><animate attributeName="opacity" values="' + lo + ';' + hi + ';' + mid + ';' + hi2 + ';' + lo + '" dur="' + dur + '"' + FLICK + '/></ellipse>';
+  }
+
+  // Far-wall algae gathering into glyphs (scene 6). The SAME phosphorescent
+  // row as cove_1/_2 (same marks, stroke, glow and flicker), moved onto the
+  // far wall and split into four runs that light up out of step, so the row
+  // reads as gathering. Dots, arcs and ripples only: nothing alphabetic.
+  function wallGlyphs(s) {
+    var g = [
+      'M220,139 l0,0.01 M225,140.5 Q228,136.5 231,140.5',
+      'M236,137.5 l0,0.01 M236,141 l0,0.01 M241,139 Q242.5,137 244,139 T247,139',
+      'M252,138 l0,0.01 M255,140.5 Q258,136.5 261,140.5 M265,137 l0,0.01 M265,139.5 l0,0.01 M265,142 l0,0.01',
+      'M270,139 Q271.5,137 273,139 T276,139 M280,139 l0,0.01'
+    ];
+    var out = '<!-- far wall: algae light gathering into the glyph row -->' +
+      '<ellipse cx="112" cy="112" rx="42" ry="9" fill="url(#coveNookLit' + s + ')" opacity="0.45"><animate attributeName="opacity" values="0.3;0.55;0.3" dur="5.2s"' + EASE + '/></ellipse>' +
+      '<g transform="translate(-138 -27)">';
+    for (var i = 0; i < g.length; i++) {
+      var b = (i * 0.6).toFixed(1), d = [3.9, 4.3, 3.6, 4.7][i];
+      out += '<path d="' + g[i] + '" fill="none" stroke="#4af5a0" stroke-width="1.3" stroke-linecap="round" filter="url(#coveNookGlow' + s + ')" opacity="0.7">' +
+        '<animate attributeName="opacity" values="0.45;0.9;0.55;0.85;0.45" dur="' + d + 's" begin="' + b + 's"' + FLICK + '/></path>';
+    }
+    out += '</g>';
+    // motes drifting in from the crusts toward the glyphs
+    var motes = [[40, 132, 'M0,0 Q20,-8 34,-20'], [176, 140, 'M0,0 Q-14,-12 -30,-26'], [96, 150, 'M0,0 Q6,-16 8,-34']];
+    for (var j = 0; j < motes.length; j++) {
+      var m = motes[j], md = (4.6 + j * 0.7).toFixed(1), mb = (j * 1.1).toFixed(1);
+      out += '<circle cx="' + m[0] + '" cy="' + m[1] + '" r="1.2" fill="#4af5a0" filter="url(#coveNookGlow' + s + ')" opacity="0">' +
+        '<animateMotion path="' + m[2] + '" dur="' + md + 's" begin="' + mb + 's" repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.42 0 0.58 1"/>' +
+        '<animate attributeName="opacity" values="0;0.8;0" dur="' + md + 's" begin="' + mb + 's"' + EASE + '/></circle>';
+    }
+    return out;
+  }
+
+  // Scene 6: "Others sit locked on the higher ledges." Two more small chests
+  // (the same kit chest), shut and unlit, on rock shelves up the back wall.
+  // Opaque: they are set back a plane by the kit's mid-depth haze (bcArt.layer
+  // for the hand-drawn rock, depth:'mid' for the chest), not by transparency
+  // or a veil box.
+  function ledgeChests() {
+    var spots = [[40, 166, 0.43, 4], [372, 150, 0.37, -3]];
+    var out = '<!-- higher ledges with more chests, still locked -->';
+    for (var i = 0; i < spots.length; i++) {
+      var x = spots[i][0], y = spots[i][1], k = spots[i][2], r = spots[i][3];
+      out += '<g transform="translate(' + x + ' ' + y + ')">' +
+        '<!-- the buttress the shelf grows out of, running down to the floor -->' +
+        bcArt.layer('mid',
+          '<path d="M-22,6 L-30,' + (230 - y) + ' L28,' + (230 - y) + ' L20,8 Z" fill="#2a2a3a"/>' +
+          '<path d="M-22,6 L-30,' + (230 - y) + '" fill="none" stroke="#3a3a4c" stroke-width="1.6" opacity="0.7"/>' +
+          '<path d="M-30,0 L-24,-1.5 L24,-2 L31,0.5 L24,7 L4,11 L-20,8 Z" fill="#33333f"/>' +
+          '<path d="M-30,0 L-24,-1.5 L24,-2 L31,0.5" fill="none" stroke="#525266" stroke-width="1" opacity="0.7"/>' +
+          '<path d="M-20,8 L4,11 L24,7 L10,16 Z" fill="#22222e"/>', 'cove') +
+        '<g transform="translate(0 -1) rotate(' + r + ')">' + coveSmallChest({ x: 0, y: 0, scale: k, depth: 'mid' }) + '</g>' +
+        '</g>';
+    }
+    return out;
+  }
+
+  function build(sfx, opts) {
+    var s = STORY_SCENES['cove_3'].replace(/(id="|url\(#)([A-Za-z0-9_]+)/g, function (m, a, b) { return a + b + '_' + sfx; });
+    var chest = '<g transform="translate(445 224) rotate(-4) scale(1.15)">' + (opts.open ? smallOpen(sfx) : smallClosed(sfx)) + '</g>';
+    var overlay = '<!-- SECOND CHEST, wedged in the crack -->' + (opts.ledges ? ledgeChests() : '') + rockBack() + chest + rockFront(sfx) +
+      algaeOnChest(sfx, opts.algae, opts.flickDur) + (opts.glyphs ? wallGlyphs(sfx) : '') + '\n';
+    s = s.replace('</defs>', defs(sfx) + '</defs>');
+    return s.replace('<!-- Golden motes rising out of the chest -->', overlay + '<!-- Golden motes rising out of the chest -->');
+  }
+
+  STORY_SCENES['cove_4'] = build('c4', { open: false, algae: 1, flickDur: '2.3s' });
+  STORY_SCENES['cove_5'] = build('c5', { open: true, algae: 1.4, flickDur: '3.6s' });
+  STORY_SCENES['cove_6'] = build('c6', { open: true, algae: 1.1, flickDur: '4.1s', glyphs: true, ledges: true });
+})();
