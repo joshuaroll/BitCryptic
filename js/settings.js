@@ -135,7 +135,7 @@ const BCWSettings = (() => {
           <div class="settings-row">
             <label>Vertical Layout</label>
             <div class="settings-toggle-wrap">
-              <input type="checkbox" id="setting-vertical" class="settings-toggle" ${(() => { try { return localStorage.getItem('bcw_orientation') === 'portrait' ? 'checked' : ''; } catch { return ''; } })()}>
+              <input type="checkbox" id="setting-vertical" class="settings-toggle" ${(() => { try { return (window.currentOrientation ? window.currentOrientation() : localStorage.getItem('bcw_orientation')) === 'portrait' ? 'checked' : ''; } catch { return ''; } })()}>
               <label for="setting-vertical" class="settings-toggle-label"></label>
             </div>
           </div>
@@ -303,6 +303,15 @@ const BCWSettings = (() => {
 
     bindSetting('setting-anatomy', 'change', (e) => {
       setAnatomyEnabled(e.target.checked);
+      // This row is the only anatomy switch in the default look (the HUD pill
+      // is hidden there), so it does what the pill did: an open clue updates
+      // in place, and switching on shows the demo. The demo is a game modal,
+      // which sits under this panel, so the panel steps aside for it.
+      if (typeof window.refreshOpenClue === 'function') window.refreshOpenClue();
+      if (e.target.checked && typeof window.showAnatomyDemo === 'function') {
+        closeSettings();
+        window.showAnatomyDemo();
+      }
     });
 
     // Orientation lives in its own key (index.html owns the shell + picker),

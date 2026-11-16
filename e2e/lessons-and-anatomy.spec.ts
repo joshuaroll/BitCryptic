@@ -16,12 +16,16 @@ async function boot(page, opts: any = {}) {
     localStorage.setItem('bcw_tutorial_p1','true');
     localStorage.setItem('bcw_tutorial_p2','true');
   }, opts);
-  await page.goto('/index.html');
+  await page.goto('/index.html' + (opts.query || ''));
   await page.waitForTimeout(400);
 }
 
+// The two pills belong to the classic look. The default look (2026-11-16)
+// hides them: both switches live in Settings, covered further down.
+const CLASSIC = '?look=classic';
+
 test('HUD pills render and relabel', async ({ page }) => {
-  await boot(page, { settings: { anatomyEnabled: true, autoLessonsEnabled: false } });
+  await boot(page, { query: CLASSIC, settings: { anatomyEnabled: true, autoLessonsEnabled: false } });
   await expect(page.locator('#hud-anatomy')).toHaveText('Anatomy: on');
   await expect(page.locator('#hud-lessons')).toHaveText('Lessons: off');
   await page.locator('#hud-anatomy').click();
@@ -29,12 +33,31 @@ test('HUD pills render and relabel', async ({ page }) => {
 });
 
 test('anatomy demo shows a clickable clue', async ({ page }) => {
-  await boot(page, { settings: { anatomyEnabled: false, autoLessonsEnabled: false } });
+  await boot(page, { query: CLASSIC, settings: { anatomyEnabled: false, autoLessonsEnabled: false } });
   await page.locator('#hud-anatomy').click();
   const word = page.locator('#game-modal-body .anatomy-word').first();
   await expect(word).toBeVisible();
   await word.click();
   await expect(page.locator('#game-modal-body .anatomy-info')).toContainText('DEFINITION');
+});
+
+test('in the default look the Settings switch does what the pill did', async ({ page }) => {
+  await boot(page, { settings: { anatomyEnabled: false, autoLessonsEnabled: false } });
+  await expect(page.locator('#hud-anatomy')).toBeHidden();
+  await expect(page.locator('#hud-lessons')).toBeHidden();
+  await page.evaluate(`BCWSettings.open()`);
+  await page.locator('#setting-anatomy').click();
+  expect(await page.evaluate(`BCWSettings.isAnatomyEnabled()`)).toBe(true);
+  // The panel steps aside and the demo clue is tappable.
+  const word = page.locator('#game-modal-body .anatomy-word').first();
+  await expect(word).toBeVisible();
+  await word.click();
+  await expect(page.locator('#game-modal-body .anatomy-info')).toContainText('DEFINITION');
+  // Lessons has no demo: it flips and the panel stays.
+  await page.evaluate(`closeGameModal()`);
+  await page.evaluate(`BCWSettings.open()`);
+  await page.locator('#setting-auto-lessons').click();
+  expect(await page.evaluate(`BCWSettings.areAutoLessonsEnabled()`)).toBe(true);
 });
 
 // Button POSITION is fixed everywhere: lesson first, story second, in every
@@ -79,21 +102,33 @@ test('auto-lesson opens once then never again', async ({ page }) => {
 });
 
 // ── Vertical (9:8) mode ────────────────────────────────────────────────
-// Mirrors Adventure's orientation picker: asked once, remembered, and
-// changeable in Settings. Landscape must be byte-for-byte unaffected.
+// The layout follows the screen shape and nothing is asked (Joshua,
+// 2026-11-16, replacing the first-visit picker). A choice made in Settings is
+// stored and wins. Landscape must be byte-for-byte unaffected.
 
-test('first visit asks for an orientation', async ({ page }) => {
+test('a wide screen plays wide without being asked', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
   await boot(page, { orientation: null });
-  await expect(page.locator('.orientation-overlay')).toBeVisible();
-  await page.locator('.orientation-option[data-mode="portrait"]').click();
   await expect(page.locator('.orientation-overlay')).toHaveCount(0);
-  await expect(page.locator('body')).toHaveClass(/vertical-mode/);
-  expect(await page.evaluate(() => localStorage.getItem('bcw_orientation'))).toBe('portrait');
+  await expect(page.locator('body')).not.toHaveClass(/vertical-mode/);
+  // Picked, not chosen: nothing is stored until the player uses Settings.
+  expect(await page.evaluate(() => localStorage.getItem('bcw_orientation'))).toBeNull();
 });
 
-test('a stored answer is never re-asked', async ({ page }) => {
-  await boot(page, { orientation: 'landscape' });
+test('a tall screen plays vertical without being asked', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await boot(page, { orientation: null });
   await expect(page.locator('.orientation-overlay')).toHaveCount(0);
+  await expect(page.locator('body')).toHaveClass(/vertical-mode/);
+  expect(await page.evaluate(() => localStorage.getItem('bcw_orientation'))).toBeNull();
+  // Settings shows the layout in use, not a blank default.
+  await page.evaluate(`BCWSettings.open()`);
+  await expect(page.locator('#setting-vertical')).toBeChecked();
+});
+
+test('a stored choice wins over the screen shape', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await boot(page, { orientation: 'landscape' });
   await expect(page.locator('body')).not.toHaveClass(/vertical-mode/);
 });
 

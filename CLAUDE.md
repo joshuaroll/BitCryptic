@@ -18,14 +18,14 @@ Bit Cryptic World is an interactive puzzle adventure island game with cryptic cr
 
 ```bash
 npm run verify     # THE GATE: check:syntax + check:clues + check:spoilers
-npm run test:e2e   # Playwright, 67 tests across 8 specs
+npm run test:e2e   # Playwright, 85 tests across 10 specs (serves the repo with scripts/serve.cjs)
 npm start          # Run the React daily-game dev server (port 3000)
 npm run build      # Build the React daily game to /build
 npm test           # Run Jest tests (react-scripts test, watch mode)
 npm run deploy     # Build + deploy the React daily game to GitHub Pages
 ```
 
-The root `index.html` island game has no build step — edit and open directly or serve statically.
+The root `index.html` island game has no build step: edit, then serve the repo root with `node scripts/serve.cjs [port]` (default 4174, no caching, loopback only). Do not use `python -m http.server` for tests; its one connection per file made parallel workers time out.
 
 ### Tests and CI (they exist — do not assume otherwise)
 
@@ -36,7 +36,7 @@ The root `index.html` island game has no build step — edit and open directly o
 | syntax | every shipped script parses — 29 of them, including the inline blocks inside the monolith |
 | content | 12 clues validated + the clue-freeze proof |
 | spoilers | all 8 `.vercelignore` exclusions still present |
-| e2e | 67 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline` |
+| e2e | 85 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline`, `polish`, `home-designer` |
 | security | secret scan (`service_role`, `GOCSPX-`, `re_`) |
 | ci | roll-up; fails if any of the above fails |
 
@@ -90,6 +90,13 @@ cloud sync all read from it. **Adding a new persisted key means adding it to
 
 Story progress uses save schema **v2** (per-story beat position, so leaving and
 re-entering a story resumes where you were) with a lossless v1 migration.
+
+### Look, layout and the home designer (2026-11-16)
+- `js/look-next.css` + `js/look-next.js` (`BCWLook`) are the default look; every rule is scoped to `body.look-next`. `?look=classic` turns it off for the tab (sessionStorage, never a save key), `?look=next` turns it back on. Tests that need the old HUD pills boot with `?look=classic`.
+- **Nothing that animates every frame goes inside `svg.island-svg`.** A moving shape there repaints the whole map, blurs included (measured 14 fps without a GPU). Moving map dressing gets its own element beside the SVG: `#ln-foam` (own layer, stepped) and `#ln-weather` (transform-only boxes). `e2e/polish.spec.ts` guards it. Measure with a 2 second `requestAnimationFrame` count in headless Chromium before and after any new map effect.
+- There is no orientation picker. `autoOrientation()` picks from the screen shape; `bcw_orientation` is written only by the Settings toggle and wins when present. Values: `landscape` / `portrait`.
+- `js/home-designer.js` (`BCWHomeDesign`) + `js/home-designer.css` layer palette tabs, thumbnails, room depth and the progress chip over the house editor in the monolith. It stores nothing. Free-placed items carry `rw`/`rh` (room inner size when placed) so they scale on another screen; position maths uses the room's `clientWidth`/`clientHeight`, not its bounding rect (4px border).
+- A story step may name its art with `scene:`; a reordered story carries `rev` so a stale bookmark restarts it.
 
 ### CSS
 - `js/enhancements.css` — Mobile responsiveness (breakpoints: 768px, 480px), accessibility styles, settings/achievements/hints/tutorial panel styles

@@ -1,0 +1,331 @@
+/* ═══════════════════════════════════
+   HOME DESIGNER: chrome and room depth for the cottage editor.
+
+   The palette, tabs, header and progress chip are brand chrome (Dusk
+   Terminal). The room is island art: nothing here recolours it. The room
+   layers below only add shade, the same way a lamp would.
+   ═══════════════════════════════════ */
+
+/* ─── Room depth ─── */
+.hd-room-depth {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    /* under the ceiling */
+    linear-gradient(180deg, rgba(12, 8, 4, 0.32) 0%, rgba(12, 8, 4, 0) 11%),
+    /* where the wall meets the floor */
+    linear-gradient(180deg, rgba(12, 8, 4, 0) 54%, rgba(12, 8, 4, 0.22) 58%, rgba(12, 8, 4, 0.34) 58.6%, rgba(12, 8, 4, 0) 68%),
+    /* corners fall away */
+    radial-gradient(ellipse 92% 82% at 50% 46%, rgba(12, 8, 4, 0) 58%, rgba(12, 8, 4, 0.34) 100%);
+}
+
+/* The attic has its own roofline, so only the corners apply there. */
+.house-room.is-attic .hd-room-depth {
+  background: radial-gradient(ellipse 92% 82% at 50% 50%, rgba(12, 8, 4, 0) 58%, rgba(12, 8, 4, 0.3) 100%);
+}
+
+/* ─── Furniture stands on the floor, and hangs on the wall ─── */
+#house-room .furniture-item.hd-floor::before {
+  content: '';
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: -6%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(14, 9, 4, 0.5) 0%, rgba(14, 9, 4, 0.22) 46%, rgba(14, 9, 4, 0) 72%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* A rug is already flat on the floor. */
+#house-room .furniture-item.hd-type-rug::before { display: none; }
+
+/* Lifted while it is carried: the shadow drops away and spreads. */
+#house-room .furniture-item.hd-floor.dragging::before {
+  bottom: -16%;
+  opacity: 0.55;
+  transform: scaleX(1.12);
+}
+
+/* The window is a hole in the wall, so it casts nothing. */
+#house-room .furniture-item.hd-wall:not(.hd-type-houseWindow) > svg {
+  filter: drop-shadow(0 3px 3px rgba(14, 9, 4, 0.4));
+}
+
+@keyframes hdArrive {
+  0% { transform: translateY(-12px) scale(0.92); opacity: 0.2; }
+  60% { transform: translateY(2px) scale(1.02); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+#house-room .furniture-item.hd-arrive { animation: hdArrive 0.32s ease-out; }
+
+/* ─── Item tools: never cut off by the edge of the room ─── */
+.furniture-item.hd-tools-up .house-item-toolbar { bottom: auto; top: -32px; }
+.furniture-item.hd-tools-l .house-item-toolbar { left: 0; transform: none; }
+.furniture-item.hd-tools-r .house-item-toolbar { left: auto; right: 0; transform: none; }
+
+@media (pointer: coarse) {
+  .house-item-toolbar { gap: 4px; padding: 4px; bottom: -44px; }
+  .house-item-toolbar .item-tool-btn { width: 34px; height: 34px; font-size: 1rem; }
+  .furniture-item.hd-tools-up .house-item-toolbar { bottom: auto; top: -44px; }
+}
+
+/* ─── Progress toward the next house badge ─── */
+.hd-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 0 16px;
+  padding: 5px 10px;
+  border: 1px solid #2A3553;
+  border-radius: 8px;
+  background: rgba(22, 27, 46, 0.8);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.hd-progress[hidden] { display: none; }
+.hd-progress-name { color: #94A3B8; letter-spacing: 0.4px; }
+.hd-progress-num { color: #F2C14E; font-weight: 700; }
+
+.hd-progress-bar {
+  width: 54px;
+  height: 4px;
+  border-radius: 2px;
+  background: #2A3553;
+  overflow: hidden;
+}
+
+.hd-progress-bar > span {
+  display: block;
+  height: 100%;
+  background: #F2C14E;
+  transition: width 0.3s ease;
+}
+
+/* ─── Palette ─── */
+#house-editor .house-palette.hd-ready {
+  width: 236px;
+  gap: 8px;
+  background: rgba(11, 16, 33, 0.72);
+  border-left: 1px solid #2A3553;
+}
+
+.hd-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.hd-tab {
+  flex: 1 1 auto;
+  padding: 6px 4px;
+  border: 1px solid #2A3553;
+  border-radius: 6px;
+  background: rgba(22, 27, 46, 0.7);
+  color: #94A3B8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.hd-tab[hidden] { display: none; }
+.hd-tab:hover { color: #E2E8F0; border-color: rgba(242, 193, 78, 0.4); }
+
+.hd-tab.is-active {
+  color: #0B1021;
+  background: #F2C14E;
+  border-color: #F2C14E;
+}
+
+.hd-tab:focus-visible,
+.hd-ready .palette-item:focus-visible {
+  outline: 2px solid #F2C14E;
+  outline-offset: 2px;
+}
+
+.hd-pane { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.hd-pane[hidden] { display: none; }
+.hd-heading-folded { display: none; }
+.hd-pane h3 { margin-top: 6px; }
+.hd-pane .palette-section { gap: 5px; margin-bottom: 0; }
+
+.hd-ready .palette-item {
+  gap: 10px;
+  padding: 6px 10px 6px 6px;
+  border-color: #2A3553;
+  background: rgba(22, 27, 46, 0.72);
+  color: #E2E8F0;
+  font-weight: 600;
+}
+
+.hd-ready .palette-item:hover {
+  background: rgba(242, 193, 78, 0.1);
+  border-color: rgba(242, 193, 78, 0.5);
+}
+
+.hd-ready .palette-item:active { transform: scale(0.98); }
+.hd-ready .palette-item .palette-sublabel { color: #94A3B8; font-weight: 400; }
+
+/* The piece itself, on a little patch of wall. */
+.hd-ready .palette-item span.palette-icon.hd-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 4px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #5d5145 0%, #6d5f51 58%, #7d6649 58%, #6f5a40 100%);
+  box-shadow: inset 0 0 0 1px rgba(11, 16, 33, 0.5);
+  font-size: 0;
+}
+
+.hd-thumb > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* ─── Header ─── */
+#house-editor .house-header {
+  gap: 10px;
+  border-bottom: 1px solid #2A3553;
+  background: rgba(11, 16, 33, 0.6);
+}
+
+#house-editor .house-header h2 { white-space: nowrap; flex-shrink: 0; }
+#house-editor .house-header-actions { flex-shrink: 0; }
+#house-editor .house-action-btn,
+#house-editor .house-close-btn { white-space: nowrap; }
+
+/* A narrow window keeps the count and drops the badge name before any
+   button is allowed to wrap. */
+@media (max-width: 1180px) {
+  .hd-progress { margin-left: 0; }
+  .hd-progress-name { display: none; }
+  #house-editor .house-header-actions { gap: 6px; }
+  #house-editor .house-action-btn { padding: 5px 9px; }
+  #house-editor .house-close-btn { padding: 6px 12px; }
+}
+
+/* ─── Phone: the room on top, the palette as a grid beneath it ─── */
+@media (max-width: 768px) {
+  #house-editor .house-header {
+    position: relative;
+    display: block;
+    padding: 10px 12px 8px;
+  }
+
+  #house-editor .house-header h2 {
+    display: inline-block;
+    line-height: 34px;
+  }
+
+  #house-editor .house-floor-tabs { display: inline-flex; vertical-align: middle; margin-left: 8px; }
+  #house-editor .house-floor-tabs[hidden] { display: none; }
+
+  .hd-progress {
+    display: inline-flex;
+    vertical-align: middle;
+    margin: 0 0 0 8px;
+  }
+
+  .hd-progress-name,
+  .hd-progress-bar { display: none; }
+
+  /* One row of tools that scrolls sideways, instead of three wrapped rows. */
+  #house-editor .house-header-actions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    margin-top: 6px;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  #house-editor .house-header-actions::-webkit-scrollbar { display: none; }
+
+  #house-editor .house-action-btn {
+    flex: 0 0 auto;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  #house-editor .house-close-btn {
+    position: absolute;
+    top: 9px;
+    right: 12px;
+    min-height: 36px;
+    padding: 6px 14px;
+  }
+
+  #house-editor .house-room {
+    flex: 0 0 auto;
+    width: 100%;
+    aspect-ratio: 8 / 7;
+    max-height: 52dvh;
+  }
+
+  #house-editor .house-palette.hd-ready {
+    flex: 1 1 auto;
+    width: 100%;
+    max-height: none;
+    min-height: 0;
+    padding: 10px 12px 14px;
+    border-left: 0;
+    border-top: 1px solid #2A3553;
+    overflow-y: auto;
+  }
+
+  .hd-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .hd-tabs::-webkit-scrollbar { display: none; }
+  .hd-tab { flex: 0 0 auto; min-height: 36px; padding: 6px 12px; font-size: 0.68rem; }
+
+  .hd-pane .palette-section {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hd-ready .palette-item {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 6px;
+    min-height: 92px;
+    text-align: center;
+    font-size: 0.72rem;
+  }
+
+  .hd-ready .palette-item span.palette-icon.hd-thumb { width: 52px; height: 52px; }
+  .hd-ready .palette-item .palette-sublabel { display: none; }
+
+  .hd-pane .wall-color-grid,
+  .hd-pane .floor-color-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #house-room .furniture-item.hd-arrive { animation: none; }
+}
+
+body.reduced-motion #house-room .furniture-item.hd-arrive { animation: none; }

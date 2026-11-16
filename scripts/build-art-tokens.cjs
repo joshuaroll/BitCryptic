@@ -58,9 +58,17 @@ function currentBlock(src) {
   return src.slice(a, b + CLOSE.length);
 }
 
+// Git on Windows checks files out with CRLF (core.autocrlf), and generate()
+// writes LF. Compared raw, a block that is correct in every character that
+// matters was reported stale on every Windows checkout, and rewriting it left
+// art-kit.js with mixed endings and a phantom diff. So: compare with endings
+// normalised, and write in whatever ending the file already uses.
+function lf(s) { return s == null ? s : s.replace(/\r\n/g, '\n'); }
+function eolOf(src) { return src.includes('\r\n') ? '\r\n' : '\n'; }
+
 function inSync() {
   const src = fs.readFileSync(KIT, 'utf8');
-  return currentBlock(src) === generate();
+  return lf(currentBlock(src)) === generate();
 }
 
 if (require.main === module) {
@@ -69,11 +77,12 @@ if (require.main === module) {
   if (!block) { console.error('art-kit.js has no <art-tokens> markers'); process.exit(1); }
   const next = generate();
   if (process.argv.includes('--check')) {
-    if (block !== next) { console.error('scenes/art-kit.js tokens are stale: run node scripts/build-art-tokens.cjs'); process.exit(1); }
+    if (lf(block) !== next) { console.error('scenes/art-kit.js tokens are stale: run node scripts/build-art-tokens.cjs'); process.exit(1); }
     console.log('art-kit tokens in sync with design/tokens.json');
   } else {
-    fs.writeFileSync(KIT, src.replace(block, () => next));
-    console.log(block === next ? 'art-kit tokens already in sync' : 'art-kit tokens updated from design/tokens.json');
+    if (lf(block) === next) { console.log('art-kit tokens already in sync'); process.exit(0); }
+    fs.writeFileSync(KIT, src.replace(block, () => next.replace(/\n/g, eolOf(src))));
+    console.log('art-kit tokens updated from design/tokens.json');
   }
 }
 module.exports = { generate, inSync, OPEN, CLOSE };
