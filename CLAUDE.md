@@ -18,7 +18,7 @@ Bit Cryptic World is an interactive puzzle adventure island game with cryptic cr
 
 ```bash
 npm run verify     # THE GATE: check:syntax + check:clues + check:spoilers
-npm run test:e2e   # Playwright, 88 tests across 10 specs (serves the repo with scripts/serve.cjs)
+npm run test:e2e   # Playwright, 95 tests across 11 specs (serves the repo with scripts/serve.cjs)
 npm start          # Run the React daily-game dev server (port 3000)
 npm run build      # Build the React daily game to /build
 npm test           # Run Jest tests (react-scripts test, watch mode)
@@ -36,7 +36,7 @@ The root `index.html` island game has no build step: edit, then serve the repo r
 | syntax | every shipped script parses — 29 of them, including the inline blocks inside the monolith |
 | content | 12 location clues + 39 story and lesson clues validated, both freeze proofs |
 | spoilers | all 8 `.vercelignore` exclusions still present |
-| e2e | 88 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline`, `polish`, `home-designer` |
+| e2e | 95 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline`, `polish`, `home-designer` |
 | security | secret scan (`service_role`, `GOCSPX-`, `re_`) |
 | ci | roll-up; fails if any of the above fails |
 
@@ -100,6 +100,9 @@ re-entering a story resumes where you were) with a lossless v1 migration.
 - **The opening is one scene in two chapters (2026-11-17).** `INTRO_STORY` is the storm and the rescue only; its complete button unlocks the Docks silently and calls `startStory('docks')`, so the player reaches the first clue without stopping at the map. `STORIES.docks` holds all the teaching: the two halves, the Reward example, the note's clue, then the lessons question. Tutorial phase 1 shows only to a player who closed the opening early (intro done, docks not done, no story open); finishing the docks story marks it seen.
 - **The Docks story clue is a hidden word** (approved 2026-08-31). No beat before it may tell the player to read anything backwards as the way in; the mirror line on the note is an unmentioned secret. `e2e/polish.spec.ts` guards this.
 - `keepStoryControlsInView()` scrolls a long beat's controls into the panel once they appear and never pushes the start of the text off the top. Each beat resets the panel scroll.
+- **A new save opens on the start scene, and it waits (2026-11-17).** `prepareStartScene()` runs under the loading screen: whole island framed, `#intro-sky` up, `body.intro-cinematic` hiding the HUD and `.loc-label`, `#start-card` with one Begin button. Nothing starts until Begin. A story step with `sky: 'storm'` keeps the storm up (the two beats at sea); the first step without it calls `clearIntroSky()`, which fades the sky and dives the camera to the pier behind the panel. `closeStory()` always calls `clearIntroSky(true)`. `#intro-sky` sits at z-index 240, under the story panel. A test that needs the map on a blank save must click `#start-begin` first.
+- **Story text is word by word by default** (`getTextPace()`), by Joshua's call on 2026-11-17: sentence reveal looked bad. Do not change the default back; the other paces stay in Settings.
+- **Admin codes: Settings, Admin Code, `applyAdminCode()`.** `unlock` opens every non-secret location; `secret` also saves `SECRET_PLACE_CODES` and spawns the secret places. Case and outer spaces ignored. Neither marks a story complete. `secret` saves POG for the yacht with the `pog` look switched off, and never BOSTON. They ship to players and are readable in source: a convenience, not a lock. The `?debug=1` Developer Tools section is separate and unchanged.
 
 ### CSS
 - `js/enhancements.css` — Mobile responsiveness (breakpoints: 768px, 480px), accessibility styles, settings/achievements/hints/tutorial panel styles

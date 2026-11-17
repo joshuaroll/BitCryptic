@@ -74,7 +74,9 @@ test('the opening runs from the storm to the first clue without stopping at the 
     localStorage.setItem('bcw_text_pace', 'instant');
   });
   await page.goto('/index.html');
-  await expect(page.locator('#story-panel')).toHaveClass(/active/, { timeout: 30000 });
+  // The start scene waits for the player (e2e/start-and-admin.spec.ts).
+  await page.locator('#start-begin').click({ timeout: 30000 });
+  await expect(page.locator('#story-panel')).toHaveClass(/active/);
   await expect(page.locator('#story-title')).toHaveText('A Storm at Sea');
   // One click, one beat: wait for each to land before the next.
   const advance = async (total: number, from: number, to: number) => {

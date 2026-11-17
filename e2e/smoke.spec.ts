@@ -114,6 +114,10 @@ test('opens a location without errors', async ({ page }) => {
   await skipTutorial(page);
   await page.goto('/index.html');
 
+  // A new save opens on the start scene, which covers the map until Begin.
+  // Leaving the opening straight away is the shortest way onto the map.
+  await page.locator('#start-begin').click({ timeout: 30000 });
+  await page.locator('#story-close-btn').click();
   await page.locator('#loc-docks').click();
   // Something modal should appear; the exact panel varies by progress state.
   await page.waitForTimeout(600);

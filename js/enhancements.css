@@ -925,17 +925,19 @@ body.designer-mode .location:hover { transform: none; filter: none; }
 }
 
 /* ─── First-run intro: storm sky over the establishing shot ─── */
+/* Over the map and the HUD, under the story panel (249, 250), so the storm
+   can stay up while the first beats are read. */
 #intro-sky {
   position: fixed;
   inset: 0;
-  z-index: 800;
+  z-index: 240;
   display: none;
   pointer-events: none;
   background:
     radial-gradient(ellipse 80% 45% at 25% 10%, rgba(30, 38, 60, 0.95), transparent 70%),
     radial-gradient(ellipse 90% 50% at 75% 5%, rgba(22, 27, 46, 0.97), transparent 72%),
     radial-gradient(ellipse 120% 60% at 50% 0%, rgba(11, 16, 33, 0.9), transparent 80%),
-    linear-gradient(180deg, rgba(11, 16, 33, 0.85) 0%, rgba(11, 16, 33, 0.45) 45%, rgba(11, 16, 33, 0.15) 100%);
+    linear-gradient(180deg, rgba(11, 16, 33, 0.9) 0%, rgba(11, 16, 33, 0.72) 45%, rgba(11, 16, 33, 0.64) 100%);
 }
 
 #intro-sky.active {
@@ -947,24 +949,50 @@ body.designer-mode .location:hover { transform: none; filter: none; }
   opacity: 0;
 }
 
+/* Rain: two sheets of short streaks, 12 degrees off vertical, at two speeds.
+   Each sheet is a set of thin lines (the 102deg gradient) cut into dashes by
+   a mask that runs along them (192deg). Sliding a sheet by exactly one mask
+   period along the lines is seamless, and it is a transform, so the browser
+   animates it without repainting. */
 .intro-rain {
   position: absolute;
-  inset: -60px 0 0 0;
-  background-image: repeating-linear-gradient(
-    12deg,
-    transparent 0px,
-    transparent 46px,
-    rgba(180, 200, 230, 0.14) 46px,
-    rgba(180, 200, 230, 0.14) 47px,
-    transparent 47px,
-    transparent 52px
-  );
-  animation: intro-rain-fall 0.5s linear infinite;
+  inset: 0;
+  overflow: hidden;
 }
 
-@keyframes intro-rain-fall {
-  from { transform: translateY(-52px); }
-  to { transform: translateY(0); }
+.intro-rain::before,
+.intro-rain::after {
+  content: '';
+  position: absolute;
+  inset: -300px;
+  will-change: transform;
+}
+
+.intro-rain::before {
+  background-image: repeating-linear-gradient(102deg,
+    transparent 0 36px, rgba(190, 208, 235, 0.2) 36px 37px);
+  -webkit-mask-image: repeating-linear-gradient(192deg, #000 0 26px, transparent 26px 180px);
+  mask-image: repeating-linear-gradient(192deg, #000 0 26px, transparent 26px 180px);
+  animation: intro-rain-near 0.3s linear infinite;
+}
+
+.intro-rain::after {
+  background-image: repeating-linear-gradient(102deg,
+    transparent 0 60px, rgba(190, 208, 235, 0.28) 60px 61.5px);
+  -webkit-mask-image: repeating-linear-gradient(192deg, transparent 0 90px, #000 90px 132px, transparent 132px 260px);
+  mask-image: repeating-linear-gradient(192deg, transparent 0 90px, #000 90px 132px, transparent 132px 260px);
+  animation: intro-rain-far 0.37s linear infinite;
+}
+
+/* One mask period along the streak: (-sin 12deg, cos 12deg) times the period. */
+@keyframes intro-rain-near {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-37.4px, 176.1px); }
+}
+
+@keyframes intro-rain-far {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-54.1px, 254.3px); }
 }
 
 .intro-flash {
@@ -972,24 +1000,138 @@ body.designer-mode .location:hover { transform: none; filter: none; }
   inset: 0;
   background: radial-gradient(ellipse 60% 40% at 65% 15%, rgba(226, 232, 240, 0.55), transparent 70%);
   opacity: 0;
-  animation: intro-lightning 1.6s ease-out;
-  animation-iteration-count: 2;
+  /* The start scene holds for as long as the player likes, so the lightning
+     has to keep coming: one double flash in every seven seconds. */
+  animation: intro-lightning 7s ease-out infinite;
 }
 
 @keyframes intro-lightning {
   0% { opacity: 0; }
-  55% { opacity: 0; }
-  58% { opacity: 1; }
-  63% { opacity: 0.15; }
-  67% { opacity: 0.7; }
-  80% { opacity: 0; }
+  12% { opacity: 0; }
+  13% { opacity: 1; }
+  14.5% { opacity: 0.15; }
+  16% { opacity: 0.7; }
+  20% { opacity: 0; }
   100% { opacity: 0; }
 }
 
-.reduced-motion .intro-rain,
+.reduced-motion .intro-rain::before,
+.reduced-motion .intro-rain::after,
 .reduced-motion .intro-flash {
   animation: none;
 }
+
+/* ─── The start scene ─── */
+/* Until the storm lifts there is no HUD: nothing to press but Begin, and
+   nothing drawn over the island that the player has not reached yet. */
+body.intro-cinematic .hud-top,
+body.intro-cinematic .toolbar,
+body.intro-cinematic #minimap,
+body.intro-cinematic #legend-scroll,
+body.intro-cinematic #ln-objective,
+body.intro-cinematic #pet-hud,
+body.intro-cinematic .loc-label {
+  visibility: hidden;
+}
+
+#start-card {
+  position: fixed;
+  inset: 0;
+  z-index: 245;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 11vh 24px 13vh;
+  text-align: center;
+  transition: opacity 0.4s ease;
+}
+
+#start-card[hidden] { display: none; }
+
+#start-card.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.start-wordmark {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 8vw, 4rem);
+  line-height: 1.1;
+  color: #E2E8F0;
+  text-shadow: 0 2px 18px rgba(4, 8, 20, 0.85);
+}
+
+/* The solve box, as on the HUD wordmark. */
+.start-wordmark::after {
+  content: '';
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  margin-left: 0.22em;
+  background: #F2C14E;
+}
+
+.start-begin {
+  min-width: 180px;
+  min-height: 48px;
+  padding: 14px 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #F2C14E;
+  color: #0B1021;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(4, 8, 20, 0.55);
+  transition: background 0.15s ease;
+}
+
+.start-begin:hover { background: #FB923C; }
+
+.start-begin:focus-visible {
+  outline: 2px solid #E2E8F0;
+  outline-offset: 3px;
+}
+
+/* ─── Settings: admin code ─── */
+.settings-admin-row {
+  gap: 10px;
+}
+
+.settings-admin-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #2A3553;
+  border-radius: 6px;
+  background: #0B1021;
+  color: #E2E8F0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+}
+
+.settings-admin-input:focus-visible {
+  outline: 2px solid #F2C14E;
+  outline-offset: 1px;
+}
+
+.settings-admin-status {
+  min-height: 1.3em;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #64D9A0;
+}
+
+.settings-admin-status.is-error { color: #F87171; }
 
 /* ─── Clue anatomy: interactive per-word clue teaching ─── */
 .clue-line {

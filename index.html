@@ -5503,6 +5503,12 @@
     <div class="intro-flash"></div>
   </div>
 
+  <!-- The start scene: a new player's first screen. It waits for Begin. -->
+  <div id="start-card" role="region" aria-label="Bit Cryptic World" hidden>
+    <p class="start-wordmark">bit cryptic world</p>
+    <button type="button" id="start-begin" class="start-begin">Begin</button>
+  </div>
+
   <div class="story-overlay" id="story-overlay"></div>
   <div class="story-panel" id="story-panel">
     <button class="detail-close" id="story-close-btn" onclick="requestCloseStory()" aria-label="Close story">&times;</button>
@@ -8107,11 +8113,13 @@
         {
           type: 'narrative',
           speaker: null,
+          sky: 'storm',
           text: 'The rope burns your palms with every pitch of the boat. Cold water has found its way into your boots and down your collar. Lightning shows you land for half a second, an island, and then the dark again.'
         },
         {
           type: 'narrative',
           speaker: null,
+          sky: 'storm',
           text: 'A wave takes the bow. Everything goes dark.'
         },
         {
@@ -8564,9 +8572,9 @@
       typewriterInterval = null;
     }
 
-    // How story text arrives. Sentence is the default because a whole
-    // sentence can be read as a unit, where a letter crawl makes you wait
-    // on the animation rather than read.
+    // How story text arrives. Word by word is the default (Joshua,
+    // 2026-11-17: whole sentences arriving at once looked bad). The other
+    // paces stay in Settings, and a pace a player chose is kept.
     const TEXT_PACE_KEY = 'bcw_text_pace';
     const TEXT_PACES = {
       // `delay` is the beat between units. For sentences it is a floor: the
@@ -8592,7 +8600,7 @@
         const v = localStorage.getItem(TEXT_PACE_KEY);
         if (v && TEXT_PACES[v]) return v;
       } catch (e) {}
-      return 'sentence';
+      return 'word';
     }
 
     function setTextPace(v) {
@@ -8750,6 +8758,10 @@
       const completeBtn = document.getElementById('story-complete-btn');
 
       updateStoryNav(story, renderIdx);
+
+      // The storm stays overhead for as long as the story is at sea.
+      if (step.sky === 'storm') raiseIntroSky();
+      else if (introSkyUp) clearIntroSky(false);
 
       // Every beat starts at the top of the panel.
       document.getElementById('story-panel').scrollTop = 0;
@@ -9262,6 +9274,7 @@
 
     function closeStory() {
       stopTextReveal();
+      clearIntroSky(true);
       if (typeof BCWHints !== 'undefined') BCWHints.clearAllTimers();
       document.getElementById('story-overlay').classList.remove('active');
       document.getElementById('story-panel').classList.remove('active');
@@ -9517,38 +9530,101 @@
       restoreCodeCosmetics();
     }
 
-    function startIntroSequence() {
+    // ─── The start scene ───
+    // A new player meets the island the way the story does: at night, in a
+    // storm, from the water. The scene waits for Begin. It used to play by
+    // itself: half a second of sunlit map, a second and a half of storm over
+    // it, then a dive onto the pier before anyone had pressed anything.
+    const DOCKS_FOCUS = { x: 470, y: 1430 };
+    let introSkyUp = false;
+    let introDiving = false;
+
+    function docksScale() {
       const { vw, vh } = viewportSize();
+      return Math.max(1.1, Math.max(vw / 2400, vh / 2100));
+    }
 
-      // Reduced motion: no storm, no camera dive — straight to the docks
-      if (document.body.classList.contains('reduced-motion')) {
-        panX = (vw / 2) - (470 * scale);
-        panY = (vh / 2) - (1430 * scale);
-        clampPan();
-        updateTransform();
-        setTimeout(() => { startStory('_intro'); }, 600);
-        return;
-      }
+    function frameDocksNow() {
+      const { vw, vh } = viewportSize();
+      scale = docksScale();
+      panX = (vw / 2) - (DOCKS_FOCUS.x * scale);
+      panY = (vh / 2) - (DOCKS_FOCUS.y * scale);
+      clampPan();
+      updateTransform();
+    }
 
-      // Establishing shot: whole island in frame under a storm sky, then the
-      // camera dives down onto Decoder Docks and the intro story begins.
+    // Runs while the loading screen still covers the page, so its fade
+    // reveals the storm and never the daytime map.
+    function prepareStartScene() {
+      const card = document.getElementById('start-card');
+      if (!card) { frameDocksNow(); startStory('_intro'); return; }
+      // The whole island in frame, seen from the sea.
+      const { vw, vh } = viewportSize();
       scale = Math.max(0.4, Math.min(vw / 2400, vh / 2100));
       panX = (vw / 2) - (1200 * scale);
       panY = (vh / 2) - (1050 * scale);
       clampPan();
       updateTransform();
+      document.body.classList.add('intro-cinematic');
+      raiseIntroSky();
+      card.hidden = false;
+      document.getElementById('start-begin').onclick = beginFromStartScene;
+    }
 
-      const sky = document.getElementById('intro-sky');
-      if (sky) sky.classList.add('active');
+    function focusStartScene() {
+      const card = document.getElementById('start-card');
+      const btn = document.getElementById('start-begin');
+      if (card && btn && !card.hidden) btn.focus({ preventScroll: true });
+    }
 
+    function beginFromStartScene() {
+      const card = document.getElementById('start-card');
+      if (!card || card.hidden || card.classList.contains('is-leaving')) return;
+      card.classList.add('is-leaving');
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+      const calm = document.body.classList.contains('reduced-motion');
       setTimeout(() => {
-        if (sky) sky.classList.add('fading');
-        const targetScale = Math.max(1.1, Math.max(vw / 2400, vh / 2100));
-        smoothZoomTo(470, 1430, targetScale, 3000, () => {
-          if (sky) sky.remove();
-          startStory('_intro');
-        });
-      }, 1500);
+        card.hidden = true;
+        card.classList.remove('is-leaving');
+        startStory('_intro');
+      }, calm ? 0 : 420);
+    }
+
+    function raiseIntroSky() {
+      const sky = document.getElementById('intro-sky');
+      if (!sky) return;
+      sky.classList.remove('fading');
+      sky.classList.add('active');
+      introSkyUp = true;
+    }
+
+    // The storm lifts when the story reaches land. Behind the story panel the
+    // sky clears and the camera comes down onto the pier, so the map is in
+    // the right place whenever the panel closes. `instant` is for a story
+    // closed early: nothing may be left dark or hidden.
+    function clearIntroSky(instant) {
+      const sky = document.getElementById('intro-sky');
+      const cinematic = document.body.classList.contains('intro-cinematic');
+      if (!introSkyUp && !cinematic) return;
+      introSkyUp = false;
+      const settle = () => {
+        if (introSkyUp) return; // the reader stepped back out to sea
+        if (sky) sky.classList.remove('active', 'fading');
+        document.body.classList.remove('intro-cinematic');
+      };
+      if (instant || document.body.classList.contains('reduced-motion')) {
+        // A dive already under way lands on the pier by itself.
+        if (cinematic && !introDiving) frameDocksNow();
+        settle();
+        return;
+      }
+      if (sky) sky.classList.add('fading');
+      if (cinematic) {
+        introDiving = true;
+        smoothZoomTo(DOCKS_FOCUS.x, DOCKS_FOCUS.y, docksScale(), 3000, () => { introDiving = false; settle(); });
+      } else {
+        setTimeout(settle, 2000);
+      }
     }
 
     // ═══════════════════════════════════
@@ -10769,6 +10845,39 @@
         </div>
       `;
       settingsBody.appendChild(section);
+    }
+
+    // ─── Admin codes (Settings, Admin Code) ───
+    // Joshua, 2026-11-17: open the island from Settings without the ?debug=1
+    // link. These ship to everyone and can be read in this file, so they are
+    // a convenience and not a lock.
+    //   unlock   every ordinary location
+    //   secret   the same, and every secret place as well
+    // Stories are left unplayed, so each can still be played from its place.
+    // Codes that only hand out furniture or restyle the island are left out,
+    // and POG, the yacht's code, arrives with its neon look switched off.
+    const SECRET_PLACE_CODES = ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'HIDDEN', 'POG'];
+
+    function applyAdminCode(raw) {
+      const code = String(raw || '').trim().toLowerCase();
+      if (code !== 'unlock' && code !== 'secret') return { ok: false, message: 'Code not accepted.' };
+      const state = getProgress();
+      Object.keys(UNLOCK_CHAIN).forEach((id) => {
+        if (!UNLOCK_CHAIN[id].secret && !state.unlockedLocations.includes(id)) state.unlockedLocations.push(id);
+      });
+      state.introComplete = true;
+      saveProgress(state);
+      // No welcome popups for someone who has just opened the whole map.
+      try { localStorage.setItem('bcw_tutorial_p1', 'true'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      applyUnlockState();
+      if (code !== 'secret') return { ok: true, message: 'All locations unlocked.' };
+      const hadPog = getUnlockedCodes().includes('POG');
+      SECRET_PLACE_CODES.forEach(saveUnlockedCode);
+      if (!hadPog) setCosmeticOn('pog', false);
+      spawnHouse(); spawnPond(); spawnLair(); spawnMoon(); spawnAirship(); spawnYacht();
+      restoreCodeCosmetics();
+      return { ok: true, message: 'All locations unlocked, secrets included.' };
     }
 
     function debugUnlockAll() {
@@ -15427,9 +15536,7 @@
       const progress_state = getProgress();
       const isFirstVisit = !progress_state.introComplete;
 
-      const messages = isFirstVisit
-        ? ['A storm approaches...', 'Waves crash around you...', 'The boat is sinking...', 'You see land ahead...', 'Washing ashore...', 'Opening your eyes...', 'Ready!']
-        : ['Setting the clues...', 'Planting puzzle trees...', 'Filling the ocean...', 'Lighting the torches...', 'Brewing cafe coffee...', 'Releasing the fireflies...', 'Ready!'];
+      const messages = ['Setting the clues...', 'Planting puzzle trees...', 'Filling the ocean...', 'Lighting the torches...', 'Brewing cafe coffee...', 'Releasing the fireflies...', 'Ready!'];
 
       let progress = 0;
       const interval = setInterval(() => {
@@ -15441,10 +15548,11 @@
         if (progress >= 100) {
           clearInterval(interval);
           setTimeout(() => {
+            // A first visit opens on the start scene, set up before the fade.
+            if (isFirstVisit) prepareStartScene();
             document.getElementById('loading-screen').classList.add('hidden');
             if (isFirstVisit) {
-              // Start intro story sequence
-              setTimeout(() => startIntroSequence(), 500);
+              setTimeout(focusStartScene, 700);
             } else {
               // Show welcome banner for returning players
               setTimeout(() => {
