@@ -1,0 +1,467 @@
+{
+  "_comment": "Story and lesson clue freeze. Holds every answer: never deploy (data/ is in .vercelignore). Regenerate ONLY after Joshua signs off on a clue, hint or wrong-answer reply: node scripts/ci/check-clues.mjs --update-stories",
+  "generated": "2026-11-17",
+  "count": 39,
+  "digest": "941c8ec0160098891292e7ebe7528e76565441f5a7cf26789eed17dbb607857f",
+  "clues": [
+    {
+      "key": "STORIES.hidden/1",
+      "clue": "Infamous clue setter mail returned (4)",
+      "answer": [
+        "LIAM"
+      ],
+      "hint": "Returned is the instruction. Something in the line goes backwards, and only one word is short enough to turn round in four letters.",
+      "wrongReactions": [
+        "\"No.\" He does not look up. \"Which word is doing the work? One of them tells you to turn something round.\"",
+        "\"Returned. Something comes back the other way. Take the word just before it and read it backwards.\"",
+        "\"M-A-I-L, returned. L-I-A-M. He has had the name a long time. Now take it up to the terminal.\""
+      ],
+      "hash": "c2ea9df81b1784bb"
+    },
+    {
+      "key": "STORIES.docks/1",
+      "clue": "Embracing towel comes with warm greeting (7)",
+      "answer": [
+        "WELCOME"
+      ],
+      "hint": "The answer is not hiding behind the words. It is hiding INSIDE them. Read straight across \"towel comes\" and let the gap between the words disappear.",
+      "wrongReactions": [
+        "\"Not that one. Try reading the line letter by letter, straight through, and ignore where one word stops and the next starts.\"",
+        "\"Closer. The word 'Embracing' is the instruction: something in this line is holding the answer inside it. Look hard at towel comes.\"",
+        "He traces the letters on the wet plank: \"to-W-E-L-C-O-M-E-s. It was sitting there the whole time. Seven letters.\""
+      ],
+      "hash": "bf758f8183b05405"
+    },
+    {
+      "key": "STORIES.forest/1",
+      "clue": "Face remodelled into a place for coffee (4)",
+      "answer": "CAFE",
+      "hint": "The answer is an anagram. Look for a word whose letters can be rearranged.",
+      "wrongReactions": [
+        "The fox shakes its head and scratches at the word \"remodelled\" on the stone.",
+        "The fox whines softly and nudges your hand. \"Remodelled\" means the letters are shuffled. Which four-letter word can be rearranged?",
+        "The fox huffs and paws at \"face.\" Rearrange those four letters into a place that serves drinks."
+      ],
+      "hash": "8a84f2ef63f443e6"
+    },
+    {
+      "key": "STORIES.cafe/1",
+      "clue": "Something instantly perky, starts a mouthful (3)",
+      "answer": "SIP",
+      "hint": "That's an initial letters clue. \"Starts\" tells you to take the first letter of each word before it.",
+      "wrongReactions": [
+        "\"Not quite. Take the first letter of each word: Something, Instantly, Perky. What do those spell?\"",
+        "She traces the first letters on the counter with her finger: \"S... I... P...\"",
+        "\"Three letters. S, I, P. What's a small mouthful of a drink?\""
+      ],
+      "hash": "9309371cc62ca6b5"
+    },
+    {
+      "key": "STORIES.adventure/1",
+      "clue": "Warrior seized by the road (4)",
+      "answer": "HERO",
+      "hint": "A hidden word clue: the answer is concealed within the words of the clue themselves, spanning across them.",
+      "wrongReactions": [
+        "\"Incorrect. Read the words again. The answer is spelled out across them, hidden in plain sight.\"",
+        "\"Look where one word ends and the next begins. The letters bridge the gap.\"",
+        "\"The answer sits across 'the road.' Four letters. Extract them.\""
+      ],
+      "hash": "65aae319a2e759c4"
+    },
+    {
+      "key": "STORIES.adventure/2",
+      "clue": "Eat in, embraced by Germany (4)",
+      "answer": "DINE",
+      "hint": "A container clue: one word placed inside another. DE (Germany) embraces IN. The definition is \"Eat.\"",
+      "wrongReactions": [
+        "\"DE is the abbreviation for Germany. IN is embraced by it. Place IN inside DE.\"",
+        "\"D... IN... E. Put the letters together. What word means to eat?\"",
+        "\"D-I-N-E. IN, embraced by Germany. To dine is to eat.\""
+      ],
+      "hash": "41bd6de6990820e3"
+    },
+    {
+      "key": "STORIES.library/1",
+      "clue": "Chart plan (3)",
+      "answer": [
+        "MAP",
+        "A MAP"
+      ],
+      "hint": "A double definition clue: two separate definitions, both pointing to the same three-letter answer. A chart is one. A plan is the other.",
+      "wrongReactions": [
+        "\"Two definitions, one answer. What do you call a chart of the world?\"",
+        "\"Think about it: you chart a course. You also plan a route. What three-letter word means both?\"",
+        "\"M-A-P. A chart of the land, and to plan something out. Both meanings, one word.\""
+      ],
+      "hash": "061835bc958c25fb"
+    },
+    {
+      "key": "STORIES.library/2",
+      "clue": "New book (5)",
+      "answer": "NOVEL",
+      "hint": "Two words, two definitions, one answer. What word means \"new\" (as in a novel idea) AND is also a type of book?",
+      "wrongReactions": [
+        "\"Something original, something you read. Same word.\"",
+        "\"N-O-V-E-L. A novel approach. A novel on the shelf.\""
+      ],
+      "hash": "feb81ad9cf4c32a2"
+    },
+    {
+      "key": "STORIES.library/3",
+      "clue": "Departs pages (6)",
+      "answer": "LEAVES",
+      "hint": "Same idea: two separate definitions pointing to the same word. What word means \"departs\" (she leaves) AND also means \"pages\" (leaves of a book)?",
+      "wrongReactions": [
+        "\"She ___ the room. The ___ of the book. Same word.\"",
+        "\"L-E-A-V-E-S. She leaves. The leaves of a manuscript.\""
+      ],
+      "hash": "7a57339e00faa5df"
+    },
+    {
+      "key": "STORIES.workshop/1",
+      "clue": "Ache stirred after beginning of boating for a sandy shore (5)",
+      "answer": "BEACH",
+      "hint": "'Stirred' tells you the letters of 'ache' are jumbled. 'Beginning of boating' means take the first letter of 'boating'. The stirred letters come after it.",
+      "wrongReactions": [
+        "\"Not quite, but you're thinking. 'Beginning of boating' gives you the letter B. Mix that with A, C, H, E.\"",
+        "\"You've got the letters B, E, A, C, H. What word meaning 'shore' can you make from those?\"",
+        "He writes the five letters on the workbench with chalk: B, E, A, C, H. \"Rearrange these. Where do you find sand and waves?\""
+      ],
+      "hash": "571a0bbeb32aa2b0"
+    },
+    {
+      "key": "STORIES.workshop/2",
+      "clue": "Rages shattered these cogs (5)",
+      "answer": "GEARS",
+      "hint": "'Shattered' means rearrange. Rearrange R-A-G-E-S into a word meaning cogs.",
+      "wrongReactions": [
+        "\"Five letters: R, A, G, E, S. What turns inside a machine?\"",
+        "\"G-E-A-R-S. The cogs that make everything work.\""
+      ],
+      "hash": "c399dfc5b3b8ebdf"
+    },
+    {
+      "key": "STORIES.workshop/3",
+      "clue": "Traps reworked become components (5)",
+      "answer": "PARTS",
+      "hint": "'Reworked' is an anagram indicator. Rearrange T-R-A-P-S into a word meaning components.",
+      "wrongReactions": [
+        "\"T, R, A, P, S. What do you call the components of a machine?\"",
+        "\"P-A-R-T-S. Traps reworked into parts.\""
+      ],
+      "hash": "3af0958e840e1787"
+    },
+    {
+      "key": "STORIES.beach/1",
+      "clue": "Horse, broken, on the coastline (5)",
+      "answer": "SHORE",
+      "hint": "\"Broken\" is the anagram indicator. Rearrange the letters of HORSE. The definition is \"coastline.\"",
+      "wrongReactions": [
+        "The crab clicks its claws impatiently. Rearrange the letters of \"horse.\"",
+        "Five letters: H, O, R, S, E. What word meaning \"coastline\" can you spell?",
+        "S-H-O-R-E. The horse, broken apart, becomes the shore beneath your feet."
+      ],
+      "hash": "8aa2dd2d3c618b94"
+    },
+    {
+      "key": "STORIES.cove/1",
+      "clue": "Shelter endlessly is a bay (4)",
+      "answer": "COVE",
+      "hint": "A deletion clue: \"endlessly\" tells you to remove the last letter. What word for \"shelter\" loses its final letter to become a bay?",
+      "wrongReactions": [
+        "\"What's a five-letter word for shelter? Now cut off the last letter.\"",
+        "\"COVER is a shelter. Remove the last letter...\"",
+        "\"C-O-V-E-R without the R. A bay, right here around you.\""
+      ],
+      "hash": "d949c8867201a518"
+    },
+    {
+      "key": "STORIES.cove/2",
+      "clue": "Sculpt without right makes a hollow (4)",
+      "answer": "CAVE",
+      "hint": "Another deletion clue: \"without right\" means remove the letter R. What word for \"sculpt\" loses an R to become a hollow?",
+      "wrongReactions": [
+        "\"What's a five-letter word for sculpt? Now remove the letter R.\"",
+        "\"CARVE means to sculpt. Take away the R...\"",
+        "\"C-A-R-V-E without the R gives C-A-V-E. A hollow in the rock.\""
+      ],
+      "hash": "adb76460bbcc9116"
+    },
+    {
+      "key": "STORIES.lair/1",
+      "clue": "Tough about love, a dragon's pile (5)",
+      "answer": "HOARD",
+      "hint": "A container clue. \"Tough\" gives you a word, and \"about\" tells you it wraps around something very small. In tennis, love means a score.",
+      "wrongReactions": [
+        "\"Think about what 'love' means on a tennis court, mate. It's not romance.\"",
+        "\"HARD is tough. Now wrap it about the tennis score for love.\"",
+        "\"HARD, holding the round score for love inside it. What do you call everything I sleep on?\""
+      ],
+      "hash": "91210d0191502a32"
+    },
+    {
+      "key": "STORIES.lair/2",
+      "clue": "Iron fen forged into a blaze (7)",
+      "answer": "INFERNO",
+      "hint": "\"Forged\" is the anagram indicator. Melt the letters of IRON and FEN together. The definition is \"a blaze.\"",
+      "wrongReactions": [
+        "\"Seven letters out of two words. 'Forged' is doing the work here.\"",
+        "\"Iron and fen, into the forge together. What blaze comes out?\"",
+        "\"The letters of IRON FEN, melted and recast. A blaze big enough for a dragon.\""
+      ],
+      "hash": "21e0cdf82c49e366"
+    },
+    {
+      "key": "STORIES.lair/3",
+      "clue": "Riches make one strangely austerer (8)",
+      "answer": "TREASURE",
+      "hint": "\"Strangely\" is the anagram indicator, and it points at that odd word at the end. The definition is \"Riches.\"",
+      "wrongReactions": [
+        "\"Austerer. Strange word, isn't it? Stranger still once you rearrange it.\"",
+        "\"Eight letters in AUSTERER. Shuffle them into what fills this cavern.\"",
+        "\"Funny thing about hoarding riches: it makes a dragon austerer. Now put those letters back in the right order.\""
+      ],
+      "hash": "556a21416e0a0888"
+    },
+    {
+      "key": "STORIES.moon/1",
+      "clue": "Blemish is also a target (4)",
+      "answer": "MARK",
+      "hint": "This is a double definition. Both halves of the clue point to the same four-letter word. A blemish on a surface, and something you aim at.",
+      "wrongReactions": [
+        "\"Two definitions, one word. Think about what a blemish is. Think about what a target is.\"",
+        "\"A stain or scratch on a surface. Something you aim for. Four letters.\"",
+        "\"It's also a name. My name, in fact.\""
+      ],
+      "hash": "2abef8b6839223e9"
+    },
+    {
+      "key": "STORIES.moon/2",
+      "clue": "Lunar feature from confused tracer (6)",
+      "answer": "CRATER",
+      "hint": "\"Confused\" is the anagram indicator. Rearrange the letters of TRACER. The definition is \"lunar feature\".",
+      "wrongReactions": [
+        "\"The word confused tells you to jumble up some letters. Which letters?\"",
+        "\"Take T-R-A-C-E-R and rearrange them. What lunar feature can you spell?\"",
+        "\"An anagram of TRACER gives you a six-letter word for a hole on the moon's surface.\""
+      ],
+      "hash": "90d4929c77b9e078"
+    },
+    {
+      "key": "STORIES.moon/3",
+      "clue": "Overshadow left in shattered pieces (7)",
+      "answer": "ECLIPSE",
+      "hint": "Two mechanisms work together in this clue. \"Shattered\" is an anagram indicator: rearrange PIECES. \"Left\" gives a single letter (L) that slots inside the wreckage. The definition is \"overshadow.\"",
+      "wrongReactions": [
+        "\"Two mechanisms, remember. Something shatters. Something small slips inside the wreckage.\"",
+        "\"'Left' is one letter in crossword shorthand. Drop it into the shattered PIECES.\"",
+        "\"Rearrange the letters of PIECES, then slide the L for 'left' inside them. The definition is 'overshadow'. Think of what the moon does to the sun, right where you're standing.\""
+      ],
+      "hash": "19eba837270d7ec3"
+    },
+    {
+      "key": "STORIES.observatory/1",
+      "clue": "Celebrity's heavenly body (4)",
+      "answer": "STAR",
+      "hint": "A double definition: two meanings, one word. Both \"Celebrity\" and \"heavenly body\" are separate definitions of the same four-letter word.",
+      "wrongReactions": [
+        "\"Two definitions. A famous person is one. A point of light in the sky is the other. Four letters.\"",
+        "\"Think of someone on a red carpet. Now think of something twinkling above us. Same word.\"",
+        "She points upward. \"S-T-A-R. A celebrity. A heavenly body. Both meanings, one word.\""
+      ],
+      "hash": "9158731c115b0811"
+    },
+    {
+      "key": "STORIES.observatory/2",
+      "clue": "Stellar explosion in casino vault (4)",
+      "answer": "NOVA",
+      "hint": "\"In\" is the hidden-word indicator: the answer is hiding inside the clue itself. The definition is \"Stellar explosion.\" Read straight across the boundary of 'casino vault'.",
+      "wrongReactions": [
+        "\"The answer is hidden in plain sight. Let the words 'casino vault' run together and look between them.\"",
+        "\"Take the end of 'casino' and the start of 'vault'. What burst of light do you see?\"",
+        "She traces the letters with her finger: casi-NO VA-ult. \"There it is, glowing between the words. A stellar explosion.\""
+      ],
+      "hash": "1700b638f144f984"
+    },
+    {
+      "key": "STORIES.observatory/3",
+      "clue": "Company encountered celestial visitor (5)",
+      "answer": "COMET",
+      "hint": "A charade: each part of the clue gives you a fragment to assemble. \"Company\" is a common abbreviation (2 letters). \"Encountered\" is a synonym (3 letters). Put them together. The definition is \"celestial visitor.\"",
+      "wrongReactions": [
+        "\"Company has a standard short form. Two letters. You see it on business cards.\"",
+        "\"CO is company. MET means encountered. Put them together. What visits us from deep space?\"",
+        "She writes it piece by piece on the floor. \"C-O from company. M-E-T from encountered. CO-MET. A celestial visitor with a tail of ice.\""
+      ],
+      "hash": "a124554a6e2a3510"
+    },
+    {
+      "key": "STORIES.house/1",
+      "clue": "Head of household? Ring me, I live here! (4)",
+      "answer": "HOME",
+      "hint": "\"Head of\" means take the first letter. \"Ring\" is a round letter. Keep \"me\" just as it is.",
+      "wrongReactions": [
+        "\"Head of household\" gives you the letter H. What shape is a ring?",
+        "H, then O (a ring), then ME. Put them together.",
+        "H-O-M-E. The head of Household, a ring (O), and ME."
+      ],
+      "hash": "37b196929c351300"
+    },
+    {
+      "key": "STORIES.airship/1",
+      "clue": "Savoy agent conceals a journey (6)",
+      "answer": "VOYAGE",
+      "hint": "A hidden word clue: the answer is tucked inside the surrounding words, spanning the gap between them. Look at where \"savoy\" ends and \"agent\" begins.",
+      "wrongReactions": [
+        "\"Not quite. Read the letters across the two words slowly: S-A-V-O-Y-A-G-E-N-T. See a journey hiding in there?\"",
+        "\"Start from the 'V' in 'savoy' and read six letters forward: V-O-Y-A-G-E.\"",
+        "\"saVOYAGEnt. Six letters, right there in the middle. A journey.\""
+      ],
+      "hash": "2547e988f46be270"
+    },
+    {
+      "key": "STORIES.airship/2",
+      "clue": "Tacos, adrift, along the shoreline (5)",
+      "answer": "COAST",
+      "hint": "'Adrift' tells you to rearrange the letters of 'tacos.' The definition is \"shoreline.\"",
+      "wrongReactions": [
+        "\"Five letters: T, A, C, O, S. What do you call the land where sea meets shore?\"",
+        "\"C-O-A-S-T. Tacos rearranged. I won that one at a beachside puzzle tournament.\""
+      ],
+      "hash": "5bd6da1eb09b46e1"
+    },
+    {
+      "key": "STORIES.airship/3",
+      "clue": "Mum's street pole (4)",
+      "answer": "MAST",
+      "hint": "A charade: build the answer out of pieces, front to back. \"Mum\" gives a two-letter word for mother. \"Street\" has a standard two-letter abbreviation. Bolt them together. The definition is \"pole.\"",
+      "wrongReactions": [
+        "\"Think in fragments. What's the short word for mum? What's the abbreviation on every street sign?\"",
+        "\"MA is mum. ST is street. Bolt MA onto ST and you've got a ship's pole.\""
+      ],
+      "hash": "3747fa6df1e5b924"
+    },
+    {
+      "key": "STORIES.pond/1",
+      "clue": "Stagger on a fishing spool (4).",
+      "answer": "REEL",
+      "hint": "Think of a word that means both \"to stagger\" and \"a spool used for fishing line.\"",
+      "wrongReactions": [
+        "\"Two definitions, one answer. What do you call it when someone staggers or sways?\"",
+        "\"Think about what holds the fishing line. A spool that you wind. It also means to stumble.\"",
+        "\"R-E-E-L. You reel in a fish, and you reel from a shock. Four letters.\""
+      ],
+      "hash": "21fc4294d3931232"
+    },
+    {
+      "key": "TUTORIALS.docks/1",
+      "clue": "Vermin returning as a celestial body (4)",
+      "answer": "STAR",
+      "hint": "\"Returning\" tells you to reverse a word. \"Vermin\" = RATS. Reverse it.",
+      "wrongReactions": [
+        "RATS is vermin. Read it backwards.",
+        "R-A-T-S backwards is S-T-A-R. A celestial body."
+      ],
+      "hash": "d14518e20f490912"
+    },
+    {
+      "key": "TUTORIALS.forest/1",
+      "clue": "Page found in maple aftermath (4)",
+      "answer": "LEAF",
+      "hint": "\"Found in\" is the indicator. Read across \"maple aftermath\": m-a-p-l-e-a-f-t-e-r-m-a-t-h. What page do you see spanning both words?",
+      "wrongReactions": [
+        "Look at the letters where \"maple\" meets \"aftermath\": ...L-E-A-F...",
+        "map-L-E-A-F-termath. Four letters spanning the gap. A page."
+      ],
+      "hash": "7ac9a80754d48cde"
+    },
+    {
+      "key": "TUTORIALS.cafe/1",
+      "clue": "Drink initially taken every afternoon (3)",
+      "answer": "TEA",
+      "hint": "\"Drink\" is the definition. \"Initially\" says take the first letters of \"Taken Every Afternoon\": T, E, A.",
+      "wrongReactions": [
+        "\"First letter of Taken = T. First of Every = E. First of Afternoon = A.\"",
+        "\"T-E-A. A drink. The initials spell it out.\""
+      ],
+      "hash": "09027425241ae4c3"
+    },
+    {
+      "key": "TUTORIALS.town/1",
+      "clue": "Steal, somehow, these stories (5)",
+      "answer": "TALES",
+      "hint": "Rearrange S-T-E-A-L. What five-letter word meaning \"stories\" can you spell?",
+      "wrongReactions": [
+        "\"The letters are S, T, E, A, L. Jumble them into stories.\"",
+        "\"T-A-L-E-S. Stories told around a campfire.\""
+      ],
+      "hash": "b1872b29b79deeb1"
+    },
+    {
+      "key": "TUTORIALS.adventure/1",
+      "clue": "We hold 'in' the drink (4)",
+      "answer": "WINE",
+      "hint": "Put IN inside WE: W-IN-E. What drink is that?",
+      "wrongReactions": [
+        "\"W... then IN... then E. Put them together.\"",
+        "\"W-I-N-E. We holding in. A drink.\""
+      ],
+      "hash": "3ce6a1feba3c586a"
+    },
+    {
+      "key": "TUTORIALS.library/1",
+      "clue": "Not heavy and illumination (5)",
+      "answer": "LIGHT",
+      "hint": "What word means \"not heavy\" AND also means \"illumination\"?",
+      "wrongReactions": [
+        "\"Something that is not heavy. Something that provides illumination. Same word.\"",
+        "\"L-I-G-H-T. A light load. A light in the darkness.\""
+      ],
+      "hash": "3a8fbe2c3b9d7a08"
+    },
+    {
+      "key": "TUTORIALS.workshop/1",
+      "clue": "First of royal cue, broken, is a remedy (4)",
+      "answer": "CURE",
+      "hint": "\"First of royal\" = R. Now take R and CUE together and rearrange all four letters. What remedy do you get?",
+      "wrongReactions": [
+        "First of \"royal\" gives you R. Add that to the letters C, U, E. Now scramble all four.",
+        "R, C, U, E scrambled. What word meaning \"remedy\" can you make?"
+      ],
+      "hash": "a8807dd6620ac90e"
+    },
+    {
+      "key": "TUTORIALS.beach/1",
+      "clue": "Heart, shattered, becomes the planet (5)",
+      "answer": "EARTH",
+      "hint": "Rearrange H-E-A-R-T into a five-letter word for the planet we live on.",
+      "wrongReactions": [
+        "\"Five letters from 'heart': H, E, A, R, T. Our planet.\"",
+        "\"E-A-R-T-H. Heart shattered becomes Earth.\""
+      ],
+      "hash": "2a47bcfe3a6efd87"
+    },
+    {
+      "key": "TUTORIALS.cove/1",
+      "clue": "Scare endlessly leaves a mark (4)",
+      "answer": "SCAR",
+      "hint": "\"Endlessly\" means remove the last letter. SCARE without its final E...",
+      "wrongReactions": [
+        "SCARE without its last letter. What are you left with?",
+        "S-C-A-R-E minus the E = S-C-A-R. A mark left behind."
+      ],
+      "hash": "50bb84a93787d931"
+    },
+    {
+      "key": "TUTORIALS.observatory/1",
+      "clue": "Bargain event heard on a boat (4)",
+      "answer": "SAIL",
+      "hint": "\"Heard\" = homophone indicator. A bargain event is a SALE. What sounds like SALE but belongs on a boat?",
+      "wrongReactions": [
+        "\"A bargain event is a SALE. What word sounds exactly like SALE but means something on a boat?\"",
+        "\"S-A-I-L. Same sound as SALE, different spelling. You sail on a boat.\""
+      ],
+      "hash": "7f0735df74908345"
+    }
+  ]
+}

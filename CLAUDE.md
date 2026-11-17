@@ -34,7 +34,7 @@ The root `index.html` island game has no build step: edit, then serve the repo r
 | Job | Checks |
 |---|---|
 | syntax | every shipped script parses — 29 of them, including the inline blocks inside the monolith |
-| content | 12 clues validated + the clue-freeze proof |
+| content | 12 location clues + 39 story and lesson clues validated, both freeze proofs |
 | spoilers | all 8 `.vercelignore` exclusions still present |
 | e2e | 88 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline`, `polish`, `home-designer` |
 | security | secret scan (`service_role`, `GOCSPX-`, `re_`) |
@@ -135,15 +135,26 @@ Scene SVGs use `<animate>` tags, gradient defs, and blur filters. When editing:
 
 **Never add, compose, or reword a cryptic clue anywhere in this project without Joshua's explicit approval.** Propose the clue text with its full parse and wait for sign-off before editing files. Mechanical bug fixes are fine; clue content is not. Bonus-challenge clues must never duplicate clues used in the stories. All clue decisions since 2026-07-03 are recorded in `data/clue-drafts-2026-07-03.json` (approvals, vetoes, rewordings, reserved/spare clues).
 
-**This is now machine-enforced.** `data/clue-freeze.json` hashes every live clue,
-and `npm run check:clues` fails CI with a before/after diff on any change to clue
-text or answers. That is deliberate. When Joshua *has* approved a change:
+**This is now machine-enforced, by two manifests.** `npm run check:clues` fails CI
+with a before/after diff on any change to either:
+
+- `data/clue-freeze.json`: the 12 location clues written as a `clue:` property
+  (the `showClueChallenge` ones). Clue text and answer only; their hints are not hashed.
+- `data/story-clue-freeze.json` (2026-11-17): the 29 `STORIES` puzzle steps and the
+  10 `TUTORIALS` practice clues, whose clue sits inside the step's `text`. Clue,
+  answer, hint and wrong-answer replies. Until this existed a reworded story clue
+  passed the gate. Narration around the clue is not frozen, so beats can move.
+
+That is deliberate. When Joshua *has* approved a change, update only the manifest
+the change belongs to:
 
 ```bash
-node scripts/ci/check-clues.mjs --update   # then commit the manifest WITH the change
+node scripts/ci/check-clues.mjs --update           # location clues
+node scripts/ci/check-clues.mjs --update-stories   # story and lesson clues
+# then commit the manifest WITH the change
 ```
 
-Never run `--update` to make a red build go green. A failing freeze check means
+Never run either flag to make a red build go green. A failing freeze check means
 either you changed a clue you should not have, or you have an approval to record.
 
 ## Clue Anatomy Engine
