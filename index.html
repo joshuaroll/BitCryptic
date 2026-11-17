@@ -6738,10 +6738,17 @@
       },
       docks: {
         title: 'Washed Ashore',
-        rev: 2,
-        // The wake-up and the keeper's arrival play in INTRO_STORY, before he
-        // teaches anything. Scene keys keep their original numbers (docks_0
-        // and docks_2 are the intro's art now), hence the explicit `scene`s.
+        rev: 3,
+        // Chapter two of the opening. The intro's last button walks straight in
+        // here, so the player goes from the storm to a first solve without ever
+        // stopping at the map. The keeper teaches on the pier, shows one clue
+        // off the board, then turns the note over.
+        //
+        // The note's own clue is a HIDDEN WORD (approved 2026-08-31), so nothing
+        // in these beats may send the player looking for a reversal. The mirror
+        // line on the note stays as something to find; nobody points at it.
+        //
+        // Every beat names its art: the keys are the old beat numbers.
         steps: [
           {
             type: 'narrative',
@@ -6753,13 +6760,31 @@
             type: 'narrative',
             speaker: 'Dock Keeper',
             scene: 'docks_3',
-            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That last line looks like gibberish, I know. Read it the other way and it says what the island is trying to say."'
+            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            scene: 'docks_3',
+            text: '"You\'ll get clues here. Each one\'s two things stuck together. Somewhere in it there\'s a definition of the answer, same as any crossword. The rest of it is instructions for building that same answer out of letters." He watches the water. "Both parts are meant to lead you to the same word. You\'ll grow a sense for which part is definition and which is wordplay as you try more."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            scene: 'docks_3',
+            text: '"Here\'s one off the board."<br><br>"Reward sent back: a place for socks (6)"<br><br>"A place for socks, that\'s the definition, and the \'(6)\' means the answer is 6 letters long." He nods at the pinned dispatch.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            scene: 'docks_3',
+            text: '"Reward sent back: a place for socks (6)"<br><br>"Now the other half. \'Sent back\' is the wordplay indicator, and what it\'s telling you is to read something backwards. The something is Reward." He traces the letters in the air. "R-E-W-A-R-D backwards is D-R-A-W-E-R, a drawer, which is where the socks go."'
           },
           {
             type: 'puzzle',
             speaker: 'Dock Keeper',
             scene: 'docks_4',
-            text: '"That\'s the island\'s way of saying hello," he says, watching you with a small smile. He turns the note over. On the back, in a steadier hand, one line waits:<br><br>"Embracing towel comes with warm greeting (7)"',
+            text: '"Now the island\'s way of saying hello," he says, watching you with a small smile. "Nothing goes backwards in this one." He turns the note over. On the back, in a steadier hand, one line waits:<br><br>"Embracing towel comes with warm greeting (7)"',
             answer: ['WELCOME'],
             placeholder: 'Solve the cryptic clue...',
             hint: 'The answer is not hiding behind the words. It is hiding INSIDE them. Read straight across "towel comes" and let the gap between the words disappear.',
@@ -6768,13 +6793,23 @@
               '"Closer. The word \'Embracing\' is the instruction: something in this line is holding the answer inside it. Look hard at towel comes."',
               'He traces the letters on the wet plank: "to-W-E-L-C-O-M-E-s. It was sitting there the whole time. Seven letters."'
             ],
-            next: 3
+            next: 6
           },
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
             scene: 'docks_5',
             text: '"Welcome." He grins, and the lantern burns a little brighter. "That\'s what this island says to everyone who arrives. It means it, too." He nods toward the dark treeline. "When you\'re ready, the forest path will take you deeper. The trees have their own puzzles, but they\'re good company once you learn to listen."'
+          },
+          {
+            type: 'choice',
+            speaker: 'Dock Keeper',
+            scene: 'docks_5',
+            text: '"Go explore the island! Completing locations opens more paths, some with full cryptic clues, some with smaller skills the cryptics lean on later. Nothing here is scored, and the lessons and hints are yours to use." He nods up the pier. "I can put the lesson in front of you when you get somewhere new, or you can go without."',
+            choices: [
+              { label: 'Show lessons before stories', next: 8, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(true); BCWSettings.setAutoLessonsEnabled(true); } } },
+              { label: 'Do not show lessons before stories', next: 8, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(false); BCWSettings.setAutoLessonsEnabled(false); } } }
+            ]
           },
           {
             type: 'complete',
@@ -8062,7 +8097,12 @@
     // Intro story (before any location is unlocked)
     const INTRO_STORY = {
       title: 'A Storm at Sea',
-      rev: 2,
+      rev: 3,
+      // Chapter one of the opening: the storm and the rescue, and nothing else.
+      // Its last button does not stop at the map. It walks straight into
+      // STORIES.docks, where the keeper teaches and sets the first clue, so the
+      // conversation that starts on this pier is never interrupted.
+      // The wake-up and the keeper's arrival keep their docks_ art keys.
       steps: [
         {
           type: 'narrative',
@@ -8074,9 +8114,6 @@
           speaker: null,
           text: 'A wave takes the bow. Everything goes dark.'
         },
-        // The next two beats were the first and third of the docks story. They
-        // play here so the player wakes once, and meets the keeper before he
-        // starts teaching. Their art keeps its docks_ keys.
         {
           type: 'narrative',
           speaker: null,
@@ -8090,30 +8127,12 @@
           text: 'A weathered dock keeper steps out from a nearby shack, lantern in hand. His face carries a lifetime of salt, and he steadies you like he\'s done this a hundred times before. "Easy now, easy. You took quite a tumble out there." He wraps a dry blanket around your shoulders. "You\'re safe. This is Bit Cryptic World."'
         },
         {
-          type: 'narrative',
-          speaker: 'Dock Keeper',
-          text: '"You\'ll get clues here. Each one\'s two things stuck together. Somewhere in it there\'s a definition of the answer, same as any crossword. The rest of it is instructions for building that same answer out of letters." He watches the water. "Both parts are meant to lead you to the same word. You\'ll grow a sense for which part is definition and which is wordplay as you try more."'
-        },
-        {
-          type: 'narrative',
-          speaker: 'Dock Keeper',
-          text: '"Here\'s one off the board."<br><br>"Reward sent back: a place for socks (6)"<br><br>"A place for socks, that\'s the definition, and the \'(6)\' means the answer is 6 letters long." He nods at the pinned dispatch. "Now the other half. \'Sent back\' is the wordplay indicator, and what it\'s telling you is to read something backwards. The something is Reward." He traces the letters in the air. "R-E-W-A-R-D backwards is D-R-A-W-E-R, a drawer, which is where the socks go."'
-        },
-        {
-          type: 'choice',
-          speaker: 'Dock Keeper',
-          text: '"Go explore the island! Completing locations opens more paths, some with full cryptic clues, some with smaller skills the cryptics lean on later. Nothing here is scored, and the lessons and hints are yours to use." He nods up the pier. "I can put the lesson in front of you when you get somewhere new, or you can go without."',
-          choices: [
-            { label: 'Show lessons before stories', next: 7, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(true); BCWSettings.setAutoLessonsEnabled(true); } } },
-            { label: 'Do not show lessons before stories', next: 7, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(false); BCWSettings.setAutoLessonsEnabled(false); } } }
-          ]
-        },
-        {
           type: 'complete',
           speaker: null,
+          scene: 'docks_2',
           text: 'You\'ve washed ashore at the Decoder Docks of Bit Cryptic World. Your palms still smart from the rope, and somewhere up the pier a lantern is burning for you.',
           unlocks: ['docks'],
-          btnText: 'Explore the Docks'
+          btnText: 'Walk up the pier'
         }
       ]
     };
@@ -8415,7 +8434,7 @@
       const loreEntries = [];
 
       if (state.completedStories.includes('docks')) {
-        loreEntries.push({ title: 'The Dock Keeper\'s Welcome', text: 'You arrived on a tattered boat, washed ashore with no memory. The Dock Keeper gave you shelter and a compass etched with strange symbols. His first lesson: read backwards. "WELCOME HOME."' });
+        loreEntries.push({ title: 'The Dock Keeper\'s Welcome', text: 'You arrived on a tattered boat, washed ashore with no memory. The Dock Keeper gave you shelter and a compass etched with strange symbols. His first lesson: a clue is two things stuck together. "Welcome."' });
       }
       if (state.completedStories.includes('forest')) {
         loreEntries.push({ title: 'The Letter Fox', text: 'Deep in the Enigma Forest, a fox made of shimmering letters guided you to the Cryptic Cafe. Its fur shifted between alphabets as it solved the stone slab puzzle: "Face remodelled into a place for coffee."' });
@@ -8732,6 +8751,9 @@
 
       updateStoryNav(story, renderIdx);
 
+      // Every beat starts at the top of the panel.
+      document.getElementById('story-panel').scrollTop = 0;
+
       // Scene visual
       const sceneEl = document.getElementById('story-scene');
       // A step may name its art outright (`scene`), so a beat can move between
@@ -8924,10 +8946,32 @@
       }
     }
 
+    // A beat whose art, clue and text run past the bottom of the panel used to
+    // leave its Continue button out of sight. Once the controls are up, bring
+    // them into view, but never push the start of the text off the top.
+    function keepStoryControlsInView() {
+      const panel = document.getElementById('story-panel');
+      if (!panel || !panel.classList.contains('active')) return;
+      if (panel.scrollHeight <= panel.clientHeight + 4) return;
+      const pr = panel.getBoundingClientRect();
+      let bottom = 0;
+      ['story-choices', 'story-continue', 'story-complete-btn'].forEach((id) => {
+        const r = document.getElementById(id).getBoundingClientRect();
+        if (r.height > 0) bottom = Math.max(bottom, r.bottom);
+      });
+      const speaker = document.getElementById('story-speaker').getBoundingClientRect();
+      const top = (speaker.height > 0 ? speaker : document.getElementById('story-text').getBoundingClientRect()).top;
+      const over = Math.min(bottom + 20 - pr.bottom, top - pr.top - 12);
+      if (over <= 0) return;
+      const calm = document.body.classList.contains('reduced-motion');
+      panel.scrollTo({ top: panel.scrollTop + over, behavior: calm ? 'auto' : 'smooth' });
+    }
+
     function showStoryControls(step) {
       const choicesEl = document.getElementById('story-choices');
       const continueBtn = document.getElementById('story-continue');
       const completeBtn = document.getElementById('story-complete-btn');
+      requestAnimationFrame(() => requestAnimationFrame(keepStoryControlsInView));
 
       // Interactive clue anatomy (only wraps clues with approved annotations)
       if (typeof BCWClueAnatomy !== 'undefined') {
@@ -9169,8 +9213,13 @@
             if (storyId !== '_intro') {
               completeStory(storyId);
             } else {
-              // After intro, reveal docks (but let the player explore on their own)
-              revealLocationsSequence(step.unlocks, 0);
+              // The opening is one scene. The Docks open without ceremony and
+              // the keeper carries on talking: no banner, no map, no panel to
+              // find. A player who closes the story lands on the map with the
+              // Docks open and the objective pointing at them.
+              step.unlocks.forEach(unlockLocation);
+              applyUnlockState();
+              if (STORIES.docks && !isStoryComplete('docks')) startStory('docks');
             }
           } else if (storyId !== '_intro') {
             completeStory(storyId);
