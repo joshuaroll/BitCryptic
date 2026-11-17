@@ -4,7 +4,9 @@
 // ═══════════════════════════════════
 
 const BCWSharing = (() => {
-  const GAME_URL = 'https://bit-cryptic-world.vercel.app';
+  // The live address. The old Vercel preview host was still here after the
+  // M6 cutover, so every share link pointed off the site.
+  const GAME_URL = 'https://bitcryptic.org/world';
 
   function shareAchievement(title, description) {
     const text = `${title} - ${description}\n\nEarned in Bit Cryptic World. Your move.`;
@@ -41,6 +43,13 @@ const BCWSharing = (() => {
   function share(text, contentType) {
     if (typeof BCWAnalytics !== 'undefined') {
       BCWAnalytics.trackShare('native_or_clipboard', contentType);
+    }
+    // Every share path counts. The badge used to fire only from the Share
+    // button on the Town story's completion card, so a player who shared from
+    // the HUD, a catch, or a solved clue could never earn it, and without it
+    // Completionist was unreachable.
+    if (typeof BCWAchievements !== 'undefined' && BCWAchievements.checkShare) {
+      BCWAchievements.checkShare();
     }
 
     // Try native Web Share API first (mobile)

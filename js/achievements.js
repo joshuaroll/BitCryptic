@@ -67,6 +67,9 @@ const BCWAchievements = (() => {
   };
 
   let unlocked = [];
+  // Set once the saved list has been read. An award that arrived before then
+  // would be pushed onto an empty list and saved over the player's badges.
+  let ready = false;
   let puzzleStreak = 0;
   let totalPuzzlesSolved = 0;
 
@@ -82,6 +85,7 @@ const BCWAchievements = (() => {
     // A save that arrived whole (import, cloud pull, or a version that added
     // the last badge after this player had already earned the rest) has
     // never been through unlock(), so the meta badge was never evaluated.
+    ready = true;
     check();
   }
 
@@ -108,7 +112,7 @@ const BCWAchievements = (() => {
   }
 
   function unlock(id) {
-    if (unlocked.includes(id) || !ACHIEVEMENTS[id]) return false;
+    if (!ready || unlocked.includes(id) || !ACHIEVEMENTS[id]) return false;
     unlocked.push(id);
     save();
 

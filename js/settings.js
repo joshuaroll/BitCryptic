@@ -135,7 +135,7 @@ const BCWSettings = (() => {
           <div class="settings-row">
             <label>Vertical Layout</label>
             <div class="settings-toggle-wrap">
-              <input type="checkbox" id="setting-vertical" class="settings-toggle" ${(() => { try { return localStorage.getItem('bcw_orientation') === 'portrait' ? 'checked' : ''; } catch { return ''; } })()}>
+              <input type="checkbox" id="setting-vertical" class="settings-toggle" ${(() => { try { return (window.currentOrientation ? window.currentOrientation() : localStorage.getItem('bcw_orientation')) === 'portrait' ? 'checked' : ''; } catch { return ''; } })()}>
               <label for="setting-vertical" class="settings-toggle-label"></label>
             </div>
           </div>
@@ -163,7 +163,7 @@ const BCWSettings = (() => {
           <div class="settings-row">
             <label>Story Text</label>
             <select id="setting-text-pace" class="settings-select">
-              ${['sentence','word','letter','instant'].map(v =>
+              ${['word','sentence','letter','instant'].map(v =>
                 `<option value="${v}"${(typeof getTextPace === 'function' && getTextPace() === v) ? ' selected' : ''}>${
                   { sentence: 'A sentence at a time', word: 'A word at a time', letter: 'A letter at a time', instant: 'All at once' }[v]
                 }</option>`).join('')}
@@ -197,6 +197,18 @@ const BCWSettings = (() => {
              hidden until one is unlocked, so the panel never advertises that
              a secret exists. Filled by renderCosmeticToggles(). -->
         <div class="settings-section" id="cosmetics-section" hidden></div>
+
+        <!-- Admin codes: "unlock" opens every location, "secret" opens the
+             secret places as well. Checked by applyAdminCode() in index.html. -->
+        <div class="settings-section" id="admin-code-section">
+          <h3>Admin Code</h3>
+          <div class="settings-row settings-admin-row">
+            <input type="text" id="setting-admin-code" class="settings-admin-input" aria-label="Admin code"
+                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24">
+            <button type="button" class="settings-btn" id="setting-admin-apply">Apply</button>
+          </div>
+          <div class="settings-admin-status" id="setting-admin-status" role="status" aria-live="polite"></div>
+        </div>
 
         <div class="settings-section">
           <h3>Stats</h3>
@@ -303,6 +315,15 @@ const BCWSettings = (() => {
 
     bindSetting('setting-anatomy', 'change', (e) => {
       setAnatomyEnabled(e.target.checked);
+      // This row is the only anatomy switch in the default look (the HUD pill
+      // is hidden there), so it does what the pill did: an open clue updates
+      // in place, and switching on shows the demo. The demo is a game modal,
+      // which sits under this panel, so the panel steps aside for it.
+      if (typeof window.refreshOpenClue === 'function') window.refreshOpenClue();
+      if (e.target.checked && typeof window.showAnatomyDemo === 'function') {
+        closeSettings();
+        window.showAnatomyDemo();
+      }
     });
 
     // Orientation lives in its own key (index.html owns the shell + picker),
@@ -326,6 +347,25 @@ const BCWSettings = (() => {
       // guards rather than assumes: settings.js is also loaded by pages that
       // have no story panel.
       if (typeof setTextPace === 'function') setTextPace(e.target.value);
+    });
+
+    const applyAdmin = () => {
+      const input = document.getElementById('setting-admin-code');
+      const status = document.getElementById('setting-admin-status');
+      if (!input || !status) return;
+      // The codes live in the monolith with the unlock state they change.
+      const result = (typeof applyAdminCode === 'function')
+        ? applyAdminCode(input.value)
+        : { ok: false, message: 'Code not accepted.' };
+      status.textContent = result.message;
+      status.classList.toggle('is-error', !result.ok);
+      if (result.ok) input.value = '';
+    };
+    bindSetting('setting-admin-apply', 'click', applyAdmin);
+    bindSetting('setting-admin-code', 'keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      applyAdmin();
     });
 
     bindSetting('setting-font-size', 'input', (e) => {

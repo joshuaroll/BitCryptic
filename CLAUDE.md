@@ -18,14 +18,14 @@ Bit Cryptic World is an interactive puzzle adventure island game with cryptic cr
 
 ```bash
 npm run verify     # THE GATE: check:syntax + check:clues + check:spoilers
-npm run test:e2e   # Playwright, 67 tests across 8 specs
+npm run test:e2e   # Playwright, 95 tests across 11 specs (serves the repo with scripts/serve.cjs)
 npm start          # Run the React daily-game dev server (port 3000)
 npm run build      # Build the React daily game to /build
 npm test           # Run Jest tests (react-scripts test, watch mode)
 npm run deploy     # Build + deploy the React daily game to GitHub Pages
 ```
 
-The root `index.html` island game has no build step — edit and open directly or serve statically.
+The root `index.html` island game has no build step: edit, then serve the repo root with `node scripts/serve.cjs [port]` (default 4174, no caching, loopback only). Do not use `python -m http.server` for tests; its one connection per file made parallel workers time out.
 
 ### Tests and CI (they exist — do not assume otherwise)
 
@@ -34,9 +34,9 @@ The root `index.html` island game has no build step — edit and open directly o
 | Job | Checks |
 |---|---|
 | syntax | every shipped script parses — 29 of them, including the inline blocks inside the monolith |
-| content | 12 clues validated + the clue-freeze proof |
+| content | 12 location clues + 39 story and lesson clues validated, both freeze proofs |
 | spoilers | all 8 `.vercelignore` exclusions still present |
-| e2e | 67 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline` |
+| e2e | 95 Playwright tests: `smoke`, `hardening`, `sync-coverage`, `guest-nudge`, `account-settings`, `fish-log-cap`, `lessons-and-anatomy`, `questline`, `polish`, `home-designer` |
 | security | secret scan (`service_role`, `GOCSPX-`, `re_`) |
 | ci | roll-up; fails if any of the above fails |
 
@@ -91,6 +91,19 @@ cloud sync all read from it. **Adding a new persisted key means adding it to
 Story progress uses save schema **v2** (per-story beat position, so leaving and
 re-entering a story resumes where you were) with a lossless v1 migration.
 
+### Look, layout and the home designer (2026-11-16)
+- `js/look-next.css` + `js/look-next.js` (`BCWLook`) are the default look; every rule is scoped to `body.look-next`. `?look=classic` turns it off for the tab (sessionStorage, never a save key), `?look=next` turns it back on. Tests that need the old HUD pills boot with `?look=classic`.
+- **Nothing that animates every frame goes inside `svg.island-svg`.** A moving shape there repaints the whole map, blurs included (measured 14 fps without a GPU). Moving map dressing gets its own element beside the SVG: `#ln-foam` (own layer, stepped) and `#ln-weather` (transform-only boxes). `e2e/polish.spec.ts` guards it. Measure with a 2 second `requestAnimationFrame` count in headless Chromium before and after any new map effect.
+- There is no orientation picker. `autoOrientation()` picks from the screen shape; `bcw_orientation` is written only by the Settings toggle and wins when present. Values: `landscape` / `portrait`.
+- `js/home-designer.js` (`BCWHomeDesign`) + `js/home-designer.css` layer palette tabs, thumbnails, room depth and the progress chip over the house editor in the monolith. It stores nothing. Free-placed items carry `rw`/`rh` (room inner size when placed) so they scale on another screen; position maths uses the room's `clientWidth`/`clientHeight`, not its bounding rect (4px border).
+- A story step may name its art with `scene:`; a reordered story carries `rev` so a stale bookmark restarts it.
+- **The opening is one scene in two chapters (2026-11-17).** `INTRO_STORY` is the storm and the rescue only; its complete button unlocks the Docks silently and calls `startStory('docks')`, so the player reaches the first clue without stopping at the map. `STORIES.docks` holds all the teaching: the two halves, the Reward example, the note's clue, then the lessons question. Tutorial phase 1 shows only to a player who closed the opening early (intro done, docks not done, no story open); finishing the docks story marks it seen.
+- **The Docks story clue is a hidden word** (approved 2026-08-31). No beat before it may tell the player to read anything backwards as the way in; the mirror line on the note is an unmentioned secret. `e2e/polish.spec.ts` guards this.
+- `keepStoryControlsInView()` scrolls a long beat's controls into the panel once they appear and never pushes the start of the text off the top. Each beat resets the panel scroll.
+- **A new save opens on the start scene, and it waits (2026-11-17).** `prepareStartScene()` runs under the loading screen: whole island framed, `#intro-sky` up, `body.intro-cinematic` hiding the HUD and `.loc-label`, `#start-card` with one Begin button. Nothing starts until Begin. A story step with `sky: 'storm'` keeps the storm up (the two beats at sea); the first step without it calls `clearIntroSky()`, which fades the sky and dives the camera to the pier behind the panel. `closeStory()` always calls `clearIntroSky(true)`. `#intro-sky` sits at z-index 240, under the story panel. A test that needs the map on a blank save must click `#start-begin` first.
+- **Story text is word by word by default** (`getTextPace()`), by Joshua's call on 2026-11-17: sentence reveal looked bad. Do not change the default back; the other paces stay in Settings.
+- **Admin codes: Settings, Admin Code, `applyAdminCode()`.** `unlock` opens every non-secret location; `secret` also saves `SECRET_PLACE_CODES` and spawns the secret places. Case and outer spaces ignored. Neither marks a story complete. `secret` saves POG for the yacht with the `pog` look switched off, and never BOSTON. They ship to players and are readable in source: a convenience, not a lock. The `?debug=1` Developer Tools section is separate and unchanged.
+
 ### CSS
 - `js/enhancements.css` — Mobile responsiveness (breakpoints: 768px, 480px), accessibility styles, settings/achievements/hints/tutorial panel styles
 - Root `index.html` `<style>` block — All island map styles (locations, panels, HUD, toolbar, minimap, animations)
@@ -125,15 +138,26 @@ Scene SVGs use `<animate>` tags, gradient defs, and blur filters. When editing:
 
 **Never add, compose, or reword a cryptic clue anywhere in this project without Joshua's explicit approval.** Propose the clue text with its full parse and wait for sign-off before editing files. Mechanical bug fixes are fine; clue content is not. Bonus-challenge clues must never duplicate clues used in the stories. All clue decisions since 2026-07-03 are recorded in `data/clue-drafts-2026-07-03.json` (approvals, vetoes, rewordings, reserved/spare clues).
 
-**This is now machine-enforced.** `data/clue-freeze.json` hashes every live clue,
-and `npm run check:clues` fails CI with a before/after diff on any change to clue
-text or answers. That is deliberate. When Joshua *has* approved a change:
+**This is now machine-enforced, by two manifests.** `npm run check:clues` fails CI
+with a before/after diff on any change to either:
+
+- `data/clue-freeze.json`: the 12 location clues written as a `clue:` property
+  (the `showClueChallenge` ones). Clue text and answer only; their hints are not hashed.
+- `data/story-clue-freeze.json` (2026-11-17): the 29 `STORIES` puzzle steps and the
+  10 `TUTORIALS` practice clues, whose clue sits inside the step's `text`. Clue,
+  answer, hint and wrong-answer replies. Until this existed a reworded story clue
+  passed the gate. Narration around the clue is not frozen, so beats can move.
+
+That is deliberate. When Joshua *has* approved a change, update only the manifest
+the change belongs to:
 
 ```bash
-node scripts/ci/check-clues.mjs --update   # then commit the manifest WITH the change
+node scripts/ci/check-clues.mjs --update           # location clues
+node scripts/ci/check-clues.mjs --update-stories   # story and lesson clues
+# then commit the manifest WITH the change
 ```
 
-Never run `--update` to make a red build go green. A failing freeze check means
+Never run either flag to make a red build go green. A failing freeze check means
 either you changed a clue you should not have, or you have an approval to record.
 
 ## Clue Anatomy Engine

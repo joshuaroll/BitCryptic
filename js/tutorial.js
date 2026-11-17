@@ -13,8 +13,8 @@ const BCWTutorial = (() => {
   let activeSteps = [];
   let activeKey = null;
 
-  // Phase 1 — right after the intro story: orient, point at the Docks.
-  // Map movement is NOT taught yet; that comes after the first solve.
+  // Phase 1: for a player who left the opening early. Orient, point at the
+  // Docks. Map movement is NOT taught yet; that comes after the first solve.
   const PHASE1_STEPS = [
     {
       target: null,
@@ -30,7 +30,7 @@ const BCWTutorial = (() => {
     }
   ];
 
-  // Phase 2 — after the first story completes and the map has grown:
+  // Phase 2: after the first story completes and the map has grown:
   // now movement matters, so teach it.
   const PHASE2_STEPS = [
     {
@@ -75,16 +75,25 @@ const BCWTutorial = (() => {
     } catch {}
     if (flagDone(P1_KEY)) return;
 
-    // Wait for intro story to complete (not just loading screen)
-    // The tutorial should show AFTER the player finishes washing ashore
+    // Phase 1 points a lost player at the Docks. The opening now runs from the
+    // storm straight into the Docks story, so most players never need it: they
+    // reach the map with the first clue solved, and phase 2 takes over.
+    // It still fires for a player who closed the opening early and is standing
+    // on the map with nothing done. Never over an open story.
     const checkReady = setInterval(() => {
       try {
         const progress = JSON.parse(localStorage.getItem('bitcryptic_progress') || '{}');
-        if (progress.introComplete) {
+        if (!progress.introComplete) return;
+        if ((progress.completedStories || []).includes('docks')) {
           clearInterval(checkReady);
-          // Delay so unlock animations finish first
-          setTimeout(start, 2000);
+          localStorage.setItem(P1_KEY, 'true');
+          window.BCSync?.schedulePush('world');
+          return;
         }
+        const panel = document.getElementById('story-panel');
+        if (panel && panel.classList.contains('active')) return;
+        clearInterval(checkReady);
+        setTimeout(start, 1200);
       } catch {}
     }, 1000);
   }
@@ -107,6 +116,8 @@ const BCWTutorial = (() => {
 
   function start() {
     if (flagDone(P1_KEY)) return;
+    const panel = document.getElementById('story-panel');
+    if (panel && panel.classList.contains('active')) return;
     begin(PHASE1_STEPS, P1_KEY);
   }
 

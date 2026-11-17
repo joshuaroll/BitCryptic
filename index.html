@@ -13,6 +13,9 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="stylesheet" href="js/enhancements.css" />
+  <!-- Proposed look, inert unless the page is opened with ?look=next -->
+  <link rel="stylesheet" href="js/look-next.css" />
+  <link rel="stylesheet" href="js/home-designer.css" />
   <title>Bit Cryptic World</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@700&display=swap');
@@ -580,107 +583,6 @@
     body.vertical-mode .terminal-panel,
     body.vertical-mode .game-modal {
       max-width: min(94vw, calc((100dvh - 2px) * 9 / 8 - 24px));
-    }
-
-    /* ─── Orientation picker (asked once, changeable in Settings) ─── */
-    .orientation-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: rgba(11, 16, 33, 0.94);
-      backdrop-filter: blur(4px);
-    }
-
-    .orientation-card {
-      width: 100%;
-      max-width: 420px;
-      padding: 22px 20px;
-      background: #161B2E;
-      border: 1px solid #2A3553;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .orientation-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.3rem;
-      color: #E2E8F0;
-      margin: 0 0 6px;
-    }
-
-    .orientation-sub {
-      color: #94A3B8;
-      font-size: 0.85rem;
-      margin: 0 0 18px;
-      line-height: 1.5;
-    }
-
-    .orientation-options {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .orientation-option {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid #2A3553;
-      border-radius: 8px;
-      padding: 16px 10px;
-      cursor: pointer;
-      color: #E2E8F0;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .orientation-option:hover {
-      border-color: rgba(242, 193, 78, 0.5);
-      background: rgba(242, 193, 78, 0.08);
-    }
-
-    .orientation-option--recommended {
-      border-color: rgba(242, 193, 78, 0.45);
-    }
-
-    .orientation-shape {
-      display: block;
-      border: 2px solid #F2C14E;
-      border-radius: 3px;
-    }
-
-    .orientation-shape--portrait {
-      width: 27px;
-      height: 36px;
-    }
-
-    .orientation-shape--landscape {
-      width: 44px;
-      height: 28px;
-    }
-
-    .orientation-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .orientation-hint {
-      font-size: 0.72rem;
-      color: #94A3B8;
-      line-height: 1.35;
-    }
-
-    .orientation-note {
-      margin: 16px 0 0;
-      font-size: 0.72rem;
-      color: #64748B;
     }
 
     /* ─── Legend Scroll ─── */
@@ -4438,7 +4340,7 @@
           </g>
           <!-- The wreck's name, hidden until the player has actually been down
                there. Outside the rotated group so the text stays level. -->
-          <g id="map-wreck-label" hidden>
+          <g id="map-wreck-label" style="display:none">
             <text x="320" y="1300" text-anchor="middle" font-family="Inter, sans-serif"
                   font-size="19" font-weight="600" fill="#bfe4f2" opacity="0.62">The Fishington Wreck</text>
             <text x="320" y="1322" text-anchor="middle" font-family="JetBrains Mono, monospace"
@@ -5601,6 +5503,12 @@
     <div class="intro-flash"></div>
   </div>
 
+  <!-- The start scene: a new player's first screen. It waits for Begin. -->
+  <div id="start-card" role="region" aria-label="Bit Cryptic World" hidden>
+    <p class="start-wordmark">bit cryptic world</p>
+    <button type="button" id="start-begin" class="start-begin">Begin</button>
+  </div>
+
   <div class="story-overlay" id="story-overlay"></div>
   <div class="story-panel" id="story-panel">
     <button class="detail-close" id="story-close-btn" onclick="requestCloseStory()" aria-label="Close story">&times;</button>
@@ -5644,6 +5552,9 @@
   <script src="scenes/moon.js"></script>
   <script src="scenes/wreck.js"></script>
   <script src="scenes/hidden.js"></script>
+  <script src="scenes/home.js"></script>
+  <script src="scenes/pond.js"></script>
+  <script src="scenes/yacht.js"></script>
 
   <script>
     // ═══════════════════════════════════
@@ -6154,6 +6065,9 @@
       if (!state.unlockedLocations.includes(id)) {
         state.unlockedLocations.push(id);
         saveProgress(state);
+        // Explorer, Cartographer and the two secret badges were only ever
+        // evaluated at page load, so a player earned them one visit late.
+        if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkExploration(state.unlockedLocations);
       }
     }
 
@@ -6830,31 +6744,53 @@
       },
       docks: {
         title: 'Washed Ashore',
+        rev: 3,
+        // Chapter two of the opening. The intro's last button walks straight in
+        // here, so the player goes from the storm to a first solve without ever
+        // stopping at the map. The keeper teaches on the pier, shows one clue
+        // off the board, then turns the note over.
+        //
+        // The note's own clue is a HIDDEN WORD (approved 2026-08-31), so nothing
+        // in these beats may send the player looking for a reversal. The mirror
+        // line on the note stays as something to find; nobody points at it.
+        //
+        // Every beat names its art: the keys are the old beat numbers.
         steps: [
           {
             type: 'narrative',
             speaker: null,
-            text: 'Salt stings your eyes before you can open them. Waves slap the planks under your back. Beside the dock a tattered red boat rides at its fraying rope, in far better shape than you feel.'
-          },
-          {
-            type: 'narrative',
-            speaker: null,
+            scene: 'docks_1',
             text: 'A lantern flickers at the end of the pier. Pinned to its post is a soggy note, the ink barely legible: "WELcome TO BIT CRYPTIC WORLD. NOTHinG IS AS IT SEEMS." At the bottom, in smaller writing: "!EMOH EMOCLEW .S.P"'
           },
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
-            text: 'A weathered dock keeper steps out from a nearby shack, lantern in hand. His face carries a lifetime of salt, and he steadies you like he\'s done this a hundred times before. "Easy now, easy. You took quite a tumble out there." He wraps a dry blanket around your shoulders. "You\'re safe. This is Bit Cryptic World."'
+            scene: 'docks_3',
+            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it."'
           },
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
-            text: '"See that note on the post? This island loves its puzzles. Even the welcome letter has a trick to it." He taps the bottom of the soggy note. "That last line looks like gibberish, I know. Read it the other way and it says what the island is trying to say."'
+            scene: 'docks_3',
+            text: '"You\'ll get clues here. Each one\'s two things stuck together. Somewhere in it there\'s a definition of the answer, same as any crossword. The rest of it is instructions for building that same answer out of letters." He watches the water. "Both parts are meant to lead you to the same word. You\'ll grow a sense for which part is definition and which is wordplay as you try more."'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            scene: 'docks_3',
+            text: '"Here\'s one off the board."<br><br>"Reward sent back: a place for socks (6)"<br><br>"A place for socks, that\'s the definition, and the \'(6)\' means the answer is 6 letters long." He nods at the pinned dispatch.'
+          },
+          {
+            type: 'narrative',
+            speaker: 'Dock Keeper',
+            scene: 'docks_3',
+            text: '"Reward sent back: a place for socks (6)"<br><br>"Now the other half. \'Sent back\' is the wordplay indicator, and what it\'s telling you is to read something backwards. The something is Reward." He traces the letters in the air. "R-E-W-A-R-D backwards is D-R-A-W-E-R, a drawer, which is where the socks go."'
           },
           {
             type: 'puzzle',
             speaker: 'Dock Keeper',
-            text: '"That\'s the island\'s way of saying hello," he says, watching you with a small smile. He turns the note over. On the back, in a steadier hand, one line waits:<br><br>"Embracing towel comes with warm greeting (7)"',
+            scene: 'docks_4',
+            text: '"Now the island\'s way of saying hello," he says, watching you with a small smile. "Nothing goes backwards in this one." He turns the note over. On the back, in a steadier hand, one line waits:<br><br>"Embracing towel comes with warm greeting (7)"',
             answer: ['WELCOME'],
             placeholder: 'Solve the cryptic clue...',
             hint: 'The answer is not hiding behind the words. It is hiding INSIDE them. Read straight across "towel comes" and let the gap between the words disappear.',
@@ -6863,16 +6799,28 @@
               '"Closer. The word \'Embracing\' is the instruction: something in this line is holding the answer inside it. Look hard at towel comes."',
               'He traces the letters on the wet plank: "to-W-E-L-C-O-M-E-s. It was sitting there the whole time. Seven letters."'
             ],
-            next: 5
+            next: 6
           },
           {
             type: 'narrative',
             speaker: 'Dock Keeper',
+            scene: 'docks_5',
             text: '"Welcome." He grins, and the lantern burns a little brighter. "That\'s what this island says to everyone who arrives. It means it, too." He nods toward the dark treeline. "When you\'re ready, the forest path will take you deeper. The trees have their own puzzles, but they\'re good company once you learn to listen."'
+          },
+          {
+            type: 'choice',
+            speaker: 'Dock Keeper',
+            scene: 'docks_5',
+            text: '"Go explore the island! Completing locations opens more paths, some with full cryptic clues, some with smaller skills the cryptics lean on later. Nothing here is scored, and the lessons and hints are yours to use." He nods up the pier. "I can put the lesson in front of you when you get somewhere new, or you can go without."',
+            choices: [
+              { label: 'Show lessons before stories', next: 8, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(true); BCWSettings.setAutoLessonsEnabled(true); } } },
+              { label: 'Do not show lessons before stories', next: 8, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(false); BCWSettings.setAutoLessonsEnabled(false); } } }
+            ]
           },
           {
             type: 'complete',
             speaker: null,
+            scene: 'docks_6',
             text: 'A path through the trees shimmers into view beyond the docks. The dock keeper presses a worn compass into your palm, etched with strange symbols. "For the road. Come back anytime you need a rest." He tips his hat and heads back to his shack, whistling.',
             unlocks: ['forest'],
             btnText: 'Enter the Forest'
@@ -8155,42 +8103,44 @@
     // Intro story (before any location is unlocked)
     const INTRO_STORY = {
       title: 'A Storm at Sea',
+      rev: 3,
+      // Chapter one of the opening: the storm and the rescue, and nothing else.
+      // Its last button does not stop at the map. It walks straight into
+      // STORIES.docks, where the keeper teaches and sets the first clue, so the
+      // conversation that starts on this pier is never interrupted.
+      // The wake-up and the keeper's arrival keep their docks_ art keys.
       steps: [
         {
           type: 'narrative',
           speaker: null,
+          sky: 'storm',
           text: 'The rope burns your palms with every pitch of the boat. Cold water has found its way into your boots and down your collar. Lightning shows you land for half a second, an island, and then the dark again.'
         },
         {
           type: 'narrative',
           speaker: null,
-          text: 'A wave takes the bow. Everything goes dark. When you open your eyes again, you\'re lying on weathered wooden planks, the storm reduced to a far-off grumble, and the dock under you creaks like it\'s making up its mind.'
+          sky: 'storm',
+          text: 'A wave takes the bow. Everything goes dark.'
+        },
+        {
+          type: 'narrative',
+          speaker: null,
+          scene: 'docks_0',
+          text: 'Salt stings your eyes before you can open them. Waves slap the planks under your back. Beside the dock a tattered red boat rides at its fraying rope, in far better shape than you feel.'
         },
         {
           type: 'narrative',
           speaker: 'Dock Keeper',
-          text: '"You\'ll get clues here. Each one\'s two things stuck together. Somewhere in it there\'s a definition of the answer, same as any crossword. The rest of it is instructions for building that same answer out of letters." He watches the water. "Both parts are meant to lead you to the same word. You\'ll grow a sense for which part is definition and which is wordplay as you try more."'
-        },
-        {
-          type: 'narrative',
-          speaker: 'Dock Keeper',
-          text: '"Here\'s one off the board."<br><br>"Reward sent back: a place for socks (6)"<br><br>"A place for socks, that\'s the definition, and the \'(6)\' means the answer is 6 letters long." He nods at the pinned dispatch. "Now the other half. \'Sent back\' is the wordplay indicator, and what it\'s telling you is to read something backwards. The something is Reward." He traces the letters in the air. "R-E-W-A-R-D backwards is D-R-A-W-E-R, a drawer, which is where the socks go."'
-        },
-        {
-          type: 'choice',
-          speaker: 'Dock Keeper',
-          text: '"Go explore the island! Completing locations opens more paths, some with full cryptic clues, some with smaller skills the cryptics lean on later. Nothing here is scored, and the lessons and hints are yours to use." He nods up the pier. "I can put the lesson in front of you when you get somewhere new, or you can go without."',
-          choices: [
-            { label: 'Show lessons before stories', next: 5, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(true); BCWSettings.setAutoLessonsEnabled(true); } } },
-            { label: 'Do not show lessons before stories', next: 5, onclick: () => { if (typeof BCWSettings !== 'undefined') { BCWSettings.setTutorialsEnabled(false); BCWSettings.setAutoLessonsEnabled(false); } } }
-          ]
+          scene: 'docks_2',
+          text: 'A weathered dock keeper steps out from a nearby shack, lantern in hand. His face carries a lifetime of salt, and he steadies you like he\'s done this a hundred times before. "Easy now, easy. You took quite a tumble out there." He wraps a dry blanket around your shoulders. "You\'re safe. This is Bit Cryptic World."'
         },
         {
           type: 'complete',
           speaker: null,
+          scene: 'docks_2',
           text: 'You\'ve washed ashore at the Decoder Docks of Bit Cryptic World. Your palms still smart from the rope, and somewhere up the pier a lantern is burning for you.',
           unlocks: ['docks'],
-          btnText: 'Explore the Docks'
+          btnText: 'Walk up the pier'
         }
       ]
     };
@@ -8492,7 +8442,7 @@
       const loreEntries = [];
 
       if (state.completedStories.includes('docks')) {
-        loreEntries.push({ title: 'The Dock Keeper\'s Welcome', text: 'You arrived on a tattered boat, washed ashore with no memory. The Dock Keeper gave you shelter and a compass etched with strange symbols. His first lesson: read backwards. "WELCOME HOME."' });
+        loreEntries.push({ title: 'The Dock Keeper\'s Welcome', text: 'You arrived on a tattered boat, washed ashore with no memory. The Dock Keeper gave you shelter and a compass etched with strange symbols. His first lesson: a clue is two things stuck together. "Welcome."' });
       }
       if (state.completedStories.includes('forest')) {
         loreEntries.push({ title: 'The Letter Fox', text: 'Deep in the Enigma Forest, a fox made of shimmering letters guided you to the Cryptic Cafe. Its fur shifted between alphabets as it solved the stone slab puzzle: "Face remodelled into a place for coffee."' });
@@ -8622,9 +8572,9 @@
       typewriterInterval = null;
     }
 
-    // How story text arrives. Sentence is the default because a whole
-    // sentence can be read as a unit, where a letter crawl makes you wait
-    // on the animation rather than read.
+    // How story text arrives. Word by word is the default (Joshua,
+    // 2026-11-17: whole sentences arriving at once looked bad). The other
+    // paces stay in Settings, and a pace a player chose is kept.
     const TEXT_PACE_KEY = 'bcw_text_pace';
     const TEXT_PACES = {
       // `delay` is the beat between units. For sentences it is a floor: the
@@ -8650,7 +8600,7 @@
         const v = localStorage.getItem(TEXT_PACE_KEY);
         if (v && TEXT_PACES[v]) return v;
       } catch (e) {}
-      return 'sentence';
+      return 'word';
     }
 
     function setTextPace(v) {
@@ -8711,8 +8661,19 @@
     function persistStoryPos() {
       if (!currentStoryId) return;
       const state = getProgress();
-      state.storyProgress[currentStoryId] = { visited: visitedSteps.slice() };
+      const bookmark = { visited: visitedSteps.slice() };
+      const story = getStoryData(currentStoryId);
+      if (story && story.rev) bookmark.rev = story.rev;
+      state.storyProgress[currentStoryId] = bookmark;
       saveProgress(state);
+    }
+
+    // A bookmark is a list of step indexes, so it only means anything against
+    // the step list it was made from. A story whose beats have been reordered
+    // carries a `rev`; a bookmark from another rev restarts the story rather
+    // than resuming on the wrong beat (which could skip its puzzle).
+    function bookmarkMatchesStory(saved, story) {
+      return (saved.rev || 0) === (story.rev || 0);
     }
 
     // The single advance path: every continue/choice/solve goes through here.
@@ -8768,6 +8729,7 @@
       // Resume from the saved frontier if this story was left mid-way
       const saved = getProgress().storyProgress[storyId];
       const validSaved = saved && Array.isArray(saved.visited) && saved.visited.length &&
+        bookmarkMatchesStory(saved, story) &&
         saved.visited.every(i => Number.isInteger(i) && i >= 0 && i < story.steps.length) &&
         !isStoryComplete(storyId);
       visitedSteps = validSaved ? saved.visited.slice() : [0];
@@ -8797,9 +8759,18 @@
 
       updateStoryNav(story, renderIdx);
 
+      // The storm stays overhead for as long as the story is at sea.
+      if (step.sky === 'storm') raiseIntroSky();
+      else if (introSkyUp) clearIntroSky(false);
+
+      // Every beat starts at the top of the panel.
+      document.getElementById('story-panel').scrollTop = 0;
+
       // Scene visual
       const sceneEl = document.getElementById('story-scene');
-      const sceneKey = currentStoryId + '_' + renderIdx;
+      // A step may name its art outright (`scene`), so a beat can move between
+      // stories, or be cut, without renumbering every scene key after it.
+      const sceneKey = step.scene || (currentStoryId + '_' + renderIdx);
       if (STORY_SCENES && STORY_SCENES[sceneKey]) {
         sceneEl.innerHTML = STORY_SCENES[sceneKey];
         sceneEl.classList.add('visible');
@@ -8987,10 +8958,32 @@
       }
     }
 
+    // A beat whose art, clue and text run past the bottom of the panel used to
+    // leave its Continue button out of sight. Once the controls are up, bring
+    // them into view, but never push the start of the text off the top.
+    function keepStoryControlsInView() {
+      const panel = document.getElementById('story-panel');
+      if (!panel || !panel.classList.contains('active')) return;
+      if (panel.scrollHeight <= panel.clientHeight + 4) return;
+      const pr = panel.getBoundingClientRect();
+      let bottom = 0;
+      ['story-choices', 'story-continue', 'story-complete-btn'].forEach((id) => {
+        const r = document.getElementById(id).getBoundingClientRect();
+        if (r.height > 0) bottom = Math.max(bottom, r.bottom);
+      });
+      const speaker = document.getElementById('story-speaker').getBoundingClientRect();
+      const top = (speaker.height > 0 ? speaker : document.getElementById('story-text').getBoundingClientRect()).top;
+      const over = Math.min(bottom + 20 - pr.bottom, top - pr.top - 12);
+      if (over <= 0) return;
+      const calm = document.body.classList.contains('reduced-motion');
+      panel.scrollTo({ top: panel.scrollTop + over, behavior: calm ? 'auto' : 'smooth' });
+    }
+
     function showStoryControls(step) {
       const choicesEl = document.getElementById('story-choices');
       const continueBtn = document.getElementById('story-continue');
       const completeBtn = document.getElementById('story-complete-btn');
+      requestAnimationFrame(() => requestAnimationFrame(keepStoryControlsInView));
 
       // Interactive clue anatomy (only wraps clues with approved annotations)
       if (typeof BCWClueAnatomy !== 'undefined') {
@@ -9232,8 +9225,13 @@
             if (storyId !== '_intro') {
               completeStory(storyId);
             } else {
-              // After intro, reveal docks (but let the player explore on their own)
-              revealLocationsSequence(step.unlocks, 0);
+              // The opening is one scene. The Docks open without ceremony and
+              // the keeper carries on talking: no banner, no map, no panel to
+              // find. A player who closes the story lands on the map with the
+              // Docks open and the objective pointing at them.
+              step.unlocks.forEach(unlockLocation);
+              applyUnlockState();
+              if (STORIES.docks && !isStoryComplete('docks')) startStory('docks');
             }
           } else if (storyId !== '_intro') {
             completeStory(storyId);
@@ -9276,6 +9274,7 @@
 
     function closeStory() {
       stopTextReveal();
+      clearIntroSky(true);
       if (typeof BCWHints !== 'undefined') BCWHints.clearAllTimers();
       document.getElementById('story-overlay').classList.remove('active');
       document.getElementById('story-panel').classList.remove('active');
@@ -9459,6 +9458,10 @@
         const title = locations[locId] ? locations[locId].title : locId;
         showUnlockBanner(title);
 
+        // The new pin was unlocked after the last repaint, so without this it
+        // carried no open/done state until the next story or a reload.
+        updateLocationStates();
+
         // Clean up inline styles
         setTimeout(() => {
           locEl.style.transition = '';
@@ -9527,38 +9530,101 @@
       restoreCodeCosmetics();
     }
 
-    function startIntroSequence() {
+    // ─── The start scene ───
+    // A new player meets the island the way the story does: at night, in a
+    // storm, from the water. The scene waits for Begin. It used to play by
+    // itself: half a second of sunlit map, a second and a half of storm over
+    // it, then a dive onto the pier before anyone had pressed anything.
+    const DOCKS_FOCUS = { x: 470, y: 1430 };
+    let introSkyUp = false;
+    let introDiving = false;
+
+    function docksScale() {
       const { vw, vh } = viewportSize();
+      return Math.max(1.1, Math.max(vw / 2400, vh / 2100));
+    }
 
-      // Reduced motion: no storm, no camera dive — straight to the docks
-      if (document.body.classList.contains('reduced-motion')) {
-        panX = (vw / 2) - (470 * scale);
-        panY = (vh / 2) - (1430 * scale);
-        clampPan();
-        updateTransform();
-        setTimeout(() => { startStory('_intro'); }, 600);
-        return;
-      }
+    function frameDocksNow() {
+      const { vw, vh } = viewportSize();
+      scale = docksScale();
+      panX = (vw / 2) - (DOCKS_FOCUS.x * scale);
+      panY = (vh / 2) - (DOCKS_FOCUS.y * scale);
+      clampPan();
+      updateTransform();
+    }
 
-      // Establishing shot: whole island in frame under a storm sky, then the
-      // camera dives down onto Decoder Docks and the intro story begins.
+    // Runs while the loading screen still covers the page, so its fade
+    // reveals the storm and never the daytime map.
+    function prepareStartScene() {
+      const card = document.getElementById('start-card');
+      if (!card) { frameDocksNow(); startStory('_intro'); return; }
+      // The whole island in frame, seen from the sea.
+      const { vw, vh } = viewportSize();
       scale = Math.max(0.4, Math.min(vw / 2400, vh / 2100));
       panX = (vw / 2) - (1200 * scale);
       panY = (vh / 2) - (1050 * scale);
       clampPan();
       updateTransform();
+      document.body.classList.add('intro-cinematic');
+      raiseIntroSky();
+      card.hidden = false;
+      document.getElementById('start-begin').onclick = beginFromStartScene;
+    }
 
-      const sky = document.getElementById('intro-sky');
-      if (sky) sky.classList.add('active');
+    function focusStartScene() {
+      const card = document.getElementById('start-card');
+      const btn = document.getElementById('start-begin');
+      if (card && btn && !card.hidden) btn.focus({ preventScroll: true });
+    }
 
+    function beginFromStartScene() {
+      const card = document.getElementById('start-card');
+      if (!card || card.hidden || card.classList.contains('is-leaving')) return;
+      card.classList.add('is-leaving');
+      if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
+      const calm = document.body.classList.contains('reduced-motion');
       setTimeout(() => {
-        if (sky) sky.classList.add('fading');
-        const targetScale = Math.max(1.1, Math.max(vw / 2400, vh / 2100));
-        smoothZoomTo(470, 1430, targetScale, 3000, () => {
-          if (sky) sky.remove();
-          startStory('_intro');
-        });
-      }, 1500);
+        card.hidden = true;
+        card.classList.remove('is-leaving');
+        startStory('_intro');
+      }, calm ? 0 : 420);
+    }
+
+    function raiseIntroSky() {
+      const sky = document.getElementById('intro-sky');
+      if (!sky) return;
+      sky.classList.remove('fading');
+      sky.classList.add('active');
+      introSkyUp = true;
+    }
+
+    // The storm lifts when the story reaches land. Behind the story panel the
+    // sky clears and the camera comes down onto the pier, so the map is in
+    // the right place whenever the panel closes. `instant` is for a story
+    // closed early: nothing may be left dark or hidden.
+    function clearIntroSky(instant) {
+      const sky = document.getElementById('intro-sky');
+      const cinematic = document.body.classList.contains('intro-cinematic');
+      if (!introSkyUp && !cinematic) return;
+      introSkyUp = false;
+      const settle = () => {
+        if (introSkyUp) return; // the reader stepped back out to sea
+        if (sky) sky.classList.remove('active', 'fading');
+        document.body.classList.remove('intro-cinematic');
+      };
+      if (instant || document.body.classList.contains('reduced-motion')) {
+        // A dive already under way lands on the pier by itself.
+        if (cinematic && !introDiving) frameDocksNow();
+        settle();
+        return;
+      }
+      if (sky) sky.classList.add('fading');
+      if (cinematic) {
+        introDiving = true;
+        smoothZoomTo(DOCKS_FOCUS.x, DOCKS_FOCUS.y, docksScale(), 3000, () => { introDiving = false; settle(); });
+      } else {
+        setTimeout(settle, 2000);
+      }
     }
 
     // ═══════════════════════════════════
@@ -9588,6 +9654,8 @@
 
     function updateTransform() {
       world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      // Lets map furniture (labels, pins) size itself against the camera.
+      world.style.setProperty('--map-scale', scale.toFixed(3));
       updateMinimap();
     }
 
@@ -9715,19 +9783,41 @@
     }
 
     // ═══════════════════════════════════
-    //  ORIENTATION — vertical (9:8) or landscape
-    //  Asked once on first visit, remembered, changeable in Settings. Mirrors
-    //  Adventure's OrientationPicker so a player meets the same question and
-    //  the same shape in both games. Vertical is preselected per Joshua.
+    //  ORIENTATION: vertical (9:8) or landscape
+    //  The layout follows the shape of the screen: taller than wide plays
+    //  vertical, anything else plays wide. Nothing is asked. A choice made in
+    //  Settings is stored and wins from then on (Joshua, 2026-11-16; this
+    //  replaced the first-visit picker).
     // ═══════════════════════════════════
     const ORIENTATION_KEY = 'bcw_orientation';
+    let appliedOrientation = null;
 
+    // The stored choice, or null when the player has never made one.
     function getOrientation() {
       try { return localStorage.getItem(ORIENTATION_KEY); } catch { return null; }
     }
 
+    function autoOrientation() {
+      try {
+        const type = screen.orientation && screen.orientation.type;
+        // A handheld reports its own orientation, and that does not change
+        // when the keyboard opens and squeezes the window.
+        if (type && window.matchMedia('(pointer: coarse)').matches) {
+          return type.indexOf('portrait') === 0 ? 'portrait' : 'landscape';
+        }
+      } catch {}
+      return window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+    }
+
+    function currentOrientation() {
+      return getOrientation() || autoOrientation();
+    }
+
     function applyOrientation(mode) {
+      appliedOrientation = mode;
       document.body.classList.toggle('vertical-mode', mode === 'portrait');
+      const cb = document.getElementById('setting-vertical');
+      if (cb) cb.checked = (mode === 'portrait');
       // resetView derives scale from the container, so re-running it re-frames
       // the island to the new width instead of leaving it clipped.
       if (typeof resetView === 'function') requestAnimationFrame(resetView);
@@ -9738,48 +9828,26 @@
       try { localStorage.setItem(ORIENTATION_KEY, mode); } catch {}
       window.BCSync?.schedulePush('world');
       applyOrientation(mode);
-      const cb = document.getElementById('setting-vertical');
-      if (cb) cb.checked = (mode === 'portrait');
     }
     window.setOrientation = setOrientation;
     window.getOrientation = getOrientation;
-
-    function showOrientationPicker() {
-      if (getOrientation()) return;
-      const ov = document.createElement('div');
-      ov.className = 'orientation-overlay';
-      ov.innerHTML = `
-        <div class="orientation-card" role="dialog" aria-label="Choose a layout">
-          <h2 class="orientation-title">How do you want to play?</h2>
-          <p class="orientation-sub">Bit Cryptic World fits either shape. Pick whichever suits your screen.</p>
-          <div class="orientation-options">
-            <button class="orientation-option orientation-option--recommended" data-mode="portrait">
-              <span class="orientation-shape orientation-shape--portrait" aria-hidden="true"></span>
-              <span class="orientation-name">Vertical</span>
-              <span class="orientation-hint">Tall and narrow. Good for phones.</span>
-            </button>
-            <button class="orientation-option" data-mode="landscape">
-              <span class="orientation-shape orientation-shape--landscape" aria-hidden="true"></span>
-              <span class="orientation-name">Horizontal</span>
-              <span class="orientation-hint">Wide. Good for a desktop window.</span>
-            </button>
-          </div>
-          <p class="orientation-note">You can change this any time in Settings.</p>
-        </div>`;
-      ov.addEventListener('click', (e) => {
-        const btn = e.target.closest('.orientation-option');
-        if (!btn) return;
-        setOrientation(btn.dataset.mode);
-        if (typeof BCWAudio !== 'undefined') BCWAudio.playClick();
-        ov.remove();
-      });
-      document.body.appendChild(ov);
-    }
+    window.currentOrientation = currentOrientation;
 
     function initOrientation() {
-      const saved = getOrientation();
-      if (saved) { applyOrientation(saved); return; }
-      showOrientationPicker();
+      applyOrientation(currentOrientation());
+      // Turning a phone or tablet re-picks, until the player has chosen.
+      const follow = () => {
+        if (getOrientation()) return;
+        const mode = autoOrientation();
+        if (mode !== appliedOrientation) applyOrientation(mode);
+      };
+      try {
+        if (screen.orientation && screen.orientation.addEventListener) {
+          screen.orientation.addEventListener('change', follow);
+        } else {
+          window.addEventListener('orientationchange', follow);
+        }
+      } catch {}
     }
 
     function toggleAutoLessons() {
@@ -9931,6 +9999,8 @@
         // Cleared means the story is done and nothing optional is outstanding.
         el.classList.add(isLocationCleared(id, state) ? 'is-cleared' : 'is-done');
       });
+      // Anything that points at "what is left to do" repaints off this.
+      document.dispatchEvent(new CustomEvent('bcw:locations-updated'));
     }
 
     // Everything a location can still owe the player beyond its story. Kept in
@@ -10229,14 +10299,20 @@
           // So wait for the transition to actually finish, with a timeout
           // fallback because transitionend never fires under prefers-reduced-
           // motion or when a background tab throttles animations.
+          //
+          // And only count it once focus has actually landed. The first
+          // attempt used to be final: on a slow frame the 300ms fallback
+          // fired before the dialog was visible, the no-op was recorded as
+          // done, and the real transitionend was then ignored. A busy phone
+          // opened this dialog with nothing focused.
           let focused = false;
           const takeFocus = () => {
             if (focused || settled) return;
-            focused = true;
             try { cancelBtn.focus(); } catch (e) {}
+            focused = document.activeElement === cancelBtn;
           };
-          overlay.addEventListener('transitionend', takeFocus, { once: true });
-          setTimeout(takeFocus, 300);
+          overlay.addEventListener('transitionend', takeFocus);
+          [300, 600, 1200, 2400].forEach((ms) => setTimeout(takeFocus, ms));
         });
         if (typeof BCWAudio !== 'undefined') BCWAudio.playMenuOpen();
         if (typeof BCWAccessibility !== 'undefined') BCWAccessibility.announce(o.title || 'Confirmation required');
@@ -10326,7 +10402,7 @@
         for (const step of story.steps) {
           if (step.type !== 'puzzle' || !step.answer) continue;
           const answer = Array.isArray(step.answer) ? step.answer[0] : step.answer;
-          const clue = (step.clue || step.text || '').replace(/^"|"$/g, '');
+          const clue = clueFromStep(step);
           if (!clue || !answer) continue;
           out.push({
             clue: clue,
@@ -10340,6 +10416,27 @@
         }
       }
       return out;
+    }
+
+    // The clue inside a puzzle beat, exactly as written. A story beat wraps its
+    // clue in narration ('He taps a brass plate on the machine: "..."'), and the
+    // engine used to print the whole beat on the plate as if it were the clue.
+    // A beat with no clue it can find is skipped rather than shown raw.
+    function clueFromStep(step) {
+      if (step.clue) return step.clue;
+      const text = step.text || '';
+      try {
+        if (typeof CLUE_ANNOTATIONS !== 'undefined') {
+          let best = '';
+          for (const key in CLUE_ANNOTATIONS) {
+            if (key.length > best.length && text.includes(key)) best = key;
+          }
+          if (best) return best;
+        }
+      } catch (e) {}
+      // No annotation: the last quoted run that ends in an enumeration.
+      const quoted = text.match(/"([^"<]*\(\d+(?:[,-]\d+)*\))"/g);
+      return quoted ? quoted[quoted.length - 1].slice(1, -1) : '';
     }
 
     // The device for a clue, from the anatomy annotations. Returns null when
@@ -10748,6 +10845,39 @@
         </div>
       `;
       settingsBody.appendChild(section);
+    }
+
+    // ─── Admin codes (Settings, Admin Code) ───
+    // Joshua, 2026-11-17: open the island from Settings without the ?debug=1
+    // link. These ship to everyone and can be read in this file, so they are
+    // a convenience and not a lock.
+    //   unlock   every ordinary location
+    //   secret   the same, and every secret place as well
+    // Stories are left unplayed, so each can still be played from its place.
+    // Codes that only hand out furniture or restyle the island are left out,
+    // and POG, the yacht's code, arrives with its neon look switched off.
+    const SECRET_PLACE_CODES = ['COME IN', 'FISH', 'LR', 'MARK', 'FLOAT', 'HIDDEN', 'POG'];
+
+    function applyAdminCode(raw) {
+      const code = String(raw || '').trim().toLowerCase();
+      if (code !== 'unlock' && code !== 'secret') return { ok: false, message: 'Code not accepted.' };
+      const state = getProgress();
+      Object.keys(UNLOCK_CHAIN).forEach((id) => {
+        if (!UNLOCK_CHAIN[id].secret && !state.unlockedLocations.includes(id)) state.unlockedLocations.push(id);
+      });
+      state.introComplete = true;
+      saveProgress(state);
+      // No welcome popups for someone who has just opened the whole map.
+      try { localStorage.setItem('bcw_tutorial_p1', 'true'); } catch (e) {}
+      window.BCSync?.schedulePush('world');
+      applyUnlockState();
+      if (code !== 'secret') return { ok: true, message: 'All locations unlocked.' };
+      const hadPog = getUnlockedCodes().includes('POG');
+      SECRET_PLACE_CODES.forEach(saveUnlockedCode);
+      if (!hadPog) setCosmeticOn('pog', false);
+      spawnHouse(); spawnPond(); spawnLair(); spawnMoon(); spawnAirship(); spawnYacht();
+      restoreCodeCosmetics();
+      return { ok: true, message: 'All locations unlocked, secrets included.' };
     }
 
     function debugUnlockAll() {
@@ -12228,6 +12358,7 @@
     const HOUSE_MAX_UNDO = 50;
     let houseSnapMode = true;        // true = grid snap, false = free (5px)
     let houseScaleMode = false;       // true = drag resizes, false = drag moves
+    let houseListenerScope = new AbortController();
     let houseSelectedIdx = -1;       // currently selected item index
     let houseLighting = 'day';       // day, warm, night
     const FREE_STEP = 5;             // pixel step in free mode
@@ -12332,22 +12463,103 @@
       renderHouse();
     }
 
-    function getDefaultWindowItem() {
-      // Centred on the wall, 2x default size
+    // Free-placed items are stored in pixels of the room they were placed in,
+    // with that room's size beside them (rw, rh). Rendering scales by the room
+    // on screen now, so one layout holds on a phone, in a desktop window and
+    // across a synced save. Items saved before this carry no size and are read
+    // as pixels of the current room, exactly as they always were.
+    // Pieces are positioned inside the room's border, so that inner box is
+    // the size a stored position is measured against.
+    function houseInner(rect) {
       const room = document.getElementById('house-room');
-      const rw = room ? room.offsetWidth : 400;
-      const rh = room ? room.offsetHeight : 300;
-      const w = 320, h = 240;
-      return { type: 'houseWindow', xPx: Math.round((rw - w) / 2), yPx: Math.round(rh * 0.06), wPx: w, hPx: h };
+      return {
+        width: (room && room.clientWidth) || rect.width,
+        height: (room && room.clientHeight) || rect.height
+      };
+    }
+
+    function housePxBox(item, rect, def) {
+      const inner = houseInner(rect);
+      const sx = item.rw ? inner.width / item.rw : 1;
+      const sy = item.rh ? inner.height / item.rh : 1;
+      return {
+        x: (item.xPx || 0) * sx,
+        y: (item.yPx || 0) * sy,
+        w: item.wPx ? item.wPx * sx : rect.width * ((def && def.cols) || 1) / SNAP_COLS,
+        h: item.hPx ? item.hPx * sy : rect.height * ((def && def.rows) || 1) / SNAP_ROWS
+      };
+    }
+
+    function stampRoom(item, rect) {
+      const inner = houseInner(rect);
+      item.rw = Math.round(inner.width);
+      item.rh = Math.round(inner.height);
+    }
+
+    function getDefaultWindowItem() {
+      // Centred on the wall. Measured against a nominal 800x600 room rather
+      // than the live one: this runs while the editor is still hidden, when
+      // the room measures zero, which used to hang every new cottage's window
+      // half off the left edge.
+      return { type: 'houseWindow', xPx: 240, yPx: 36, wPx: 320, hPx: 240, rw: 800, rh: 600 };
     }
 
     function ensureDefaultWindow() {
       const state = getHouseState();
-      const hasWindow = state.items.some(i => i.type === 'houseWindow');
-      if (!hasWindow) {
+      const win = state.items.find(i => i.type === 'houseWindow');
+      if (!win) {
         state.items.unshift(getDefaultWindowItem());
         saveHouseState(state);
+      } else if (!win.rw && win.xPx === -160 && win.yPx === 0 && win.wPx === 320 && win.hPx === 240) {
+        // The half-hidden default from before, never moved: put it back on the wall.
+        Object.assign(win, getDefaultWindowItem());
+        saveHouseState(state);
       }
+    }
+
+    // Where a new piece goes: the empty spot nearest the middle of its zone,
+    // so furniture arrives side by side instead of stacked on one cell. Rugs
+    // lie flat, so things may stand on them and they only avoid each other.
+    function houseItemFrac(item, rect) {
+      const def = FURNITURE_DEFS[item.type] || {};
+      if (item.xPx !== undefined && rect.width && rect.height) {
+        const b = housePxBox(item, rect, def);
+        const inner = houseInner(rect);
+        return { x0: b.x / inner.width, y0: b.y / inner.height, x1: (b.x + b.w) / inner.width, y1: (b.y + b.h) / inner.height };
+      }
+      const c = item.col || 0, r = item.row || 0;
+      return { x0: c / SNAP_COLS, y0: r / SNAP_ROWS, x1: (c + (def.cols || 1)) / SNAP_COLS, y1: (r + (def.rows || 1)) / SNAP_ROWS };
+    }
+
+    function findFreeCell(type, items) {
+      const def = FURNITURE_DEFS[type] || {};
+      const cols = def.cols || 1, rows = def.rows || 1;
+      const wall = def.zone === 'wall';
+      const room = document.getElementById('house-room');
+      const rect = room ? room.getBoundingClientRect() : { width: 0, height: 0 };
+      const isRug = type === 'rug';
+      const taken = (items || [])
+        .filter(i => FURNITURE_DEFS[i.type] && ((i.type === 'rug') === isRug))
+        .map(i => houseItemFrac(i, rect));
+      const e = 0.004;
+      const free = (c, r) => !taken.some(b =>
+        c / SNAP_COLS < b.x1 - e && (c + cols) / SNAP_COLS > b.x0 + e &&
+        r / SNAP_ROWS < b.y1 - e && (r + rows) / SNAP_ROWS > b.y0 + e);
+      // Top rows to try, best first. Floor pieces are placed by where their
+      // feet land: mid-floor, then the front, then back against the wall.
+      const tops = wall
+        ? [0, 1, 2].filter(r => r + rows - 1 <= ZONE_WALL_MAX_ROW)
+        : [4, 5, 3].map(b => b - rows + 1).filter(r => r >= ZONE_FLOOR_MIN_ROW);
+      const mid = Math.floor((SNAP_COLS - cols) / 2);
+      const colOrder = [];
+      for (let d = 0; d <= SNAP_COLS; d++) {
+        [mid + d, mid - d].forEach(c => {
+          if (c >= 0 && c <= SNAP_COLS - cols && !colOrder.includes(c)) colOrder.push(c);
+        });
+      }
+      for (const r of tops) for (const c of colOrder) if (free(c, r)) return { col: c, row: r };
+      // A full room: fall back to the middle, as before.
+      return { col: mid, row: wall ? 0 : ZONE_FLOOR_MIN_ROW };
     }
 
     // ─── Snap Mode Toggle ───
@@ -12485,9 +12697,12 @@
       if (!state.items[idx]) return;
       const orig = state.items[idx];
       const copy = JSON.parse(JSON.stringify(orig));
-      // Offset slightly so the copy is visible
-      if (houseSnapMode) {
-        copy.col = Math.min(SNAP_COLS - 1, (copy.col || 0) + 1);
+      // The copy lands in the nearest empty spot. A free-placed original keeps
+      // its custom size, so its copy steps aside instead.
+      if (copy.xPx === undefined) {
+        const spot = findFreeCell(copy.type, state.items);
+        copy.col = spot.col;
+        copy.row = spot.row;
       } else {
         copy.xPx = (copy.xPx || 0) + 20;
         copy.yPx = (copy.yPx || 0) + 20;
@@ -12692,7 +12907,9 @@
       applyWallColor(state.wallColor);
       applyFloorColor(state.floorColor || '#8b7355');
 
-      // Clear existing furniture & snap cells
+      // Clear existing furniture & snap cells, and the drag listeners with them
+      houseListenerScope.abort();
+      houseListenerScope = new AbortController();
       room.querySelectorAll('.furniture-item, .house-snap-cell').forEach(el => el.remove());
 
       // Create snap grid cells (only in grid mode)
@@ -12720,6 +12937,7 @@
       renderPets(room);
 
       applyRoomLighting();
+      if (typeof BCWHomeDesign !== 'undefined') BCWHomeDesign.refresh();
     }
 
     // ═══════════════════════════════════
@@ -14323,7 +14541,9 @@
     // nothing new is drawn: it just stops being anonymous.
     function labelWreckOnMap() {
       const el = document.getElementById('map-wreck-label');
-      if (el) el.removeAttribute('hidden');
+      // `hidden` is an HTML attribute and does nothing on an SVG <g>, so the
+      // name used to show from the first second of a new save.
+      if (el) el.style.display = '';
     }
 
     // Pets need two things before one will follow you home: somewhere to live,
@@ -14468,26 +14688,36 @@
       if (!def) return;
 
       const item = { type };
+      const spot = findFreeCell(type, state.items);
 
       if (houseSnapMode) {
-        item.col = Math.floor((SNAP_COLS - (def.cols || 1)) / 2);
-        item.row = def.zone === 'wall' ? 0 : ZONE_FLOOR_MIN_ROW;
+        item.col = spot.col;
+        item.row = spot.row;
       } else {
-        // Free mode: place centered
+        // Free mode: the same empty spot, in pixels
         const room = document.getElementById('house-room');
         const rect = room.getBoundingClientRect();
-        item.xPx = Math.round(rect.width * 0.4 / FREE_STEP) * FREE_STEP;
-        item.yPx = def.zone === 'wall'
-          ? Math.round(rect.height * 0.1 / FREE_STEP) * FREE_STEP
-          : Math.round(rect.height * 0.55 / FREE_STEP) * FREE_STEP;
+        item.xPx = Math.round(rect.width * spot.col / SNAP_COLS / FREE_STEP) * FREE_STEP;
+        item.yPx = Math.round(rect.height * spot.row / SNAP_ROWS / FREE_STEP) * FREE_STEP;
         item.wPx = Math.round(rect.width * (def.cols || 1) / SNAP_COLS / FREE_STEP) * FREE_STEP;
         item.hPx = Math.round(rect.height * (def.rows || 1) / SNAP_ROWS / FREE_STEP) * FREE_STEP;
+        stampRoom(item, rect);
       }
 
       state.items.push(item);
       saveHouseState(state);
+      // The new piece arrives selected, so its tools and the arrow keys are
+      // already on it.
+      deselectHouseItem();
+      houseSelectedIdx = state.items.length - 1;
       createFurnitureElement(item, state.items.length - 1);
+      const placed = document.querySelector('#house-room .furniture-item[data-idx="' + (state.items.length - 1) + '"]');
+      if (placed) {
+        placed.classList.add('hd-arrive');
+        placed.addEventListener('animationend', () => placed.classList.remove('hd-arrive'), { once: true });
+      }
       if (typeof BCWAchievements !== 'undefined') BCWAchievements.checkHouseItems(state.items.length);
+      if (typeof BCWHomeDesign !== 'undefined') BCWHomeDesign.refresh();
     }
 
     // ─── Story Reward Trophies ───
@@ -14711,13 +14941,16 @@
       // Use pixel positioning when item already has px coords OR when in free mode
       const usePx = hasPixelPos || !houseSnapMode;
 
+      el.classList.add(def.zone === 'wall' ? 'hd-wall' : 'hd-floor', 'hd-type-' + item.type);
+
       if (usePx) {
         const rect = room.getBoundingClientRect();
-        // Convert grid coords to px if needed
-        const xPx = hasPixelPos ? item.xPx : ((item.col || 0) / SNAP_COLS * rect.width);
-        const yPx = hasPixelPos ? item.yPx : ((item.row || 0) / SNAP_ROWS * rect.height);
-        const wPx = hasPixelPos && item.wPx ? item.wPx : (rect.width * colSpan / SNAP_COLS);
-        const hPx = hasPixelPos && item.hPx ? item.hPx : (rect.height * rowSpan / SNAP_ROWS);
+        // Convert grid coords to px if needed; stored pixels scale to this room
+        const box = hasPixelPos ? housePxBox(item, rect, def) : null;
+        const xPx = box ? box.x : ((item.col || 0) / SNAP_COLS * rect.width);
+        const yPx = box ? box.y : ((item.row || 0) / SNAP_ROWS * rect.height);
+        const wPx = box ? box.w : (rect.width * colSpan / SNAP_COLS);
+        const hPx = box ? box.h : (rect.height * rowSpan / SNAP_ROWS);
         el.style.left = xPx + 'px';
         el.style.top = yPx + 'px';
         el.style.width = wPx + 'px';
@@ -14781,8 +15014,10 @@
         scaling = true;
         const touch = e.touches ? e.touches[0] : e;
         scaleStartX = touch.clientX; scaleStartY = touch.clientY;
-        scaleStartW = parseFloat(el.style.width) || 80;
-        scaleStartH = parseFloat(el.style.height) || 60;
+        // The size on screen. A grid piece is sized in percent, and reading
+        // that as pixels made the first drag collapse it.
+        scaleStartW = el.offsetWidth || 80;
+        scaleStartH = el.offsetHeight || 60;
         document.addEventListener('mousemove', onScaleMove);
         document.addEventListener('mouseup', onScaleEnd);
         document.addEventListener('touchmove', onScaleMove, { passive: false });
@@ -14809,9 +15044,16 @@
         const state = getHouseState();
         const i = parseInt(el.dataset.idx);
         if (state.items[i]) {
-          state.items[i].wPx = parseFloat(el.style.width);
-          state.items[i].hPx = parseFloat(el.style.height);
-          if (!state.items[i].xPx) { state.items[i].xPx = parseFloat(el.style.left) || 0; state.items[i].yPx = parseFloat(el.style.top) || 0; }
+          // Everything is read back off the element, in this room's pixels.
+          const roomRect = room.getBoundingClientRect();
+          const pct = (v, size) => (String(v).indexOf('%') > -1 ? parseFloat(v) / 100 * size : parseFloat(v)) || 0;
+          state.items[i].wPx = pct(el.style.width, roomRect.width);
+          state.items[i].hPx = pct(el.style.height, roomRect.height);
+          state.items[i].xPx = pct(el.style.left, roomRect.width);
+          state.items[i].yPx = pct(el.style.top, roomRect.height);
+          delete state.items[i].col;
+          delete state.items[i].row;
+          stampRoom(state.items[i], roomRect);
           saveHouseState(state);
         }
       }
@@ -14921,6 +15163,7 @@
           state.items[i].yPx = finalY;
           state.items[i].wPx = parseFloat(el.style.width) || rect.width * colSpan / SNAP_COLS;
           state.items[i].hPx = parseFloat(el.style.height) || rect.height * rowSpan / SNAP_ROWS;
+          stampRoom(state.items[i], rect);
           // Remove grid keys
           delete state.items[i].col;
           delete state.items[i].row;
@@ -14942,6 +15185,8 @@
           delete state.items[i].yPx;
           delete state.items[i].wPx;
           delete state.items[i].hPx;
+          delete state.items[i].rw;
+          delete state.items[i].rh;
 
           setTimeout(() => el.classList.remove('snapping'), 200);
         }
@@ -14957,19 +15202,38 @@
         if (!didDrag) {
           selectHouseItem(i);
         }
+        // Once the snap has settled, put the tools on the side with room.
+        setTimeout(() => houseToolsSide(el, room), 220);
       }
 
+      // Every piece listens on the document for its own drag. Tied to the
+      // current render, or each redraw left another full set behind for good.
+      const scope = houseListenerScope.signal;
       el.addEventListener('mousedown', onStart);
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onEnd);
+      document.addEventListener('mousemove', onMove, { signal: scope });
+      document.addEventListener('mouseup', onEnd, { signal: scope });
       el.addEventListener('touchstart', onStart, { passive: false });
-      document.addEventListener('touchmove', onMove, { passive: false });
-      document.addEventListener('touchend', onEnd);
+      document.addEventListener('touchmove', onMove, { passive: false, signal: scope });
+      document.addEventListener('touchend', onEnd, { signal: scope });
 
       room.appendChild(el);
+      houseToolsSide(el, room);
 
       // Restore selection
       if (idx === houseSelectedIdx) el.classList.add('selected');
+    }
+
+    // A piece in the front row has no room under it for its tools, and one
+    // against a side wall has none beside it. Both used to be cut off by the
+    // edge of the room.
+    function houseToolsSide(el, room) {
+      const r = room.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const b = el.getBoundingClientRect();
+      const cx = b.left + b.width / 2;
+      el.classList.toggle('hd-tools-up', b.bottom > r.bottom - 48);
+      el.classList.toggle('hd-tools-l', cx - 110 < r.left);
+      el.classList.toggle('hd-tools-r', cx + 110 > r.right);
     }
 
     // ─── Keyboard Shortcuts ───
@@ -15008,7 +15272,12 @@
             item.wPx = rect.width * (def.cols || 1) / SNAP_COLS;
             item.hPx = rect.height * (def.rows || 1) / SNAP_ROWS;
             delete item.col; delete item.row;
+          } else {
+            // Bring a stored position into this room before moving it.
+            const b = housePxBox(item, rect, def);
+            item.xPx = b.x; item.yPx = b.y; item.wPx = b.w; item.hPx = b.h;
           }
+          stampRoom(item, rect);
           if (e.key === 'ArrowLeft') item.xPx = Math.max(0, item.xPx - FREE_STEP);
           if (e.key === 'ArrowRight') item.xPx = Math.min(rect.width - FREE_STEP, item.xPx + FREE_STEP);
           if (e.key === 'ArrowUp') item.yPx = Math.max(0, item.yPx - FREE_STEP);
@@ -15267,9 +15536,7 @@
       const progress_state = getProgress();
       const isFirstVisit = !progress_state.introComplete;
 
-      const messages = isFirstVisit
-        ? ['A storm approaches...', 'Waves crash around you...', 'The boat is sinking...', 'You see land ahead...', 'Washing ashore...', 'Opening your eyes...', 'Ready!']
-        : ['Setting the clues...', 'Planting puzzle trees...', 'Filling the ocean...', 'Lighting the torches...', 'Brewing cafe coffee...', 'Releasing the fireflies...', 'Ready!'];
+      const messages = ['Setting the clues...', 'Planting puzzle trees...', 'Filling the ocean...', 'Lighting the torches...', 'Brewing cafe coffee...', 'Releasing the fireflies...', 'Ready!'];
 
       let progress = 0;
       const interval = setInterval(() => {
@@ -15281,10 +15548,11 @@
         if (progress >= 100) {
           clearInterval(interval);
           setTimeout(() => {
+            // A first visit opens on the start scene, set up before the fade.
+            if (isFirstVisit) prepareStartScene();
             document.getElementById('loading-screen').classList.add('hidden');
             if (isFirstVisit) {
-              // Start intro story sequence
-              setTimeout(() => startIntroSequence(), 500);
+              setTimeout(focusStartScene, 700);
             } else {
               // Show welcome banner for returning players
               setTimeout(() => {
@@ -17440,6 +17708,8 @@
 <script src="js/islanders.js"></script>
 <script src="js/notebook.js"></script>
 <script src="js/notebookUI.js"></script>
+<script src="js/look-next.js"></script>
+<script src="js/home-designer.js"></script>
 <!-- Account/cloud-sync. type="module" because it dynamically imports the shared
      auth modules; it boots after load and no-ops entirely when auth is not
      configured, so the island never depends on it. -->
